@@ -21,4 +21,12 @@ export const EXTERNAL_LINKS = {
   charmedMinds: `${PATIENT_SITE}/bhw-charmed-patient-mockup.html`,
   mindMood: `${PATIENT_SITE}/bhw-mindmood-patient-mockup.html`,
   flow: `${PATIENT_SITE}/bhw-flow-patient-mockup.html`,
+  /**
+   * Primary Care's page ships **inside this app** (`public/bhw-primarycare-patient-mockup.html`),
+   * so it's served from Care Connect's own origin — a base-relative URL keeps it
+   * working whether the app sits at a domain root or a sub-path. If you'd rather
+   * all four programs share the BHWcrewOS host, move that file beside its siblings
+   * and swap this for `${PATIENT_SITE}/bhw-primarycare-patient-mockup.html`.
+   */
+  primaryCare: `${import.meta.env.BASE_URL}bhw-primarycare-patient-mockup.html`,
 } as const

@@ -107,10 +107,13 @@ Also still open, carried over from the design handoff:
   _deploy preview_** (`src/data/externalLinks.ts`), which is per-PR and
   ephemeral — swap `PATIENT_SITE` there for the production host before launch.
   Mind & Mood, CharmEd Minds, Flow and the Blueprint (portal login) all point at
-  their pages; **Primary Care has no page yet** and stays `#`. Still open: the
-  "Older announcements" archive (`Masthead`), "Meet the care team", and the New
-  patient forms / Billing / Good Faith Estimate / Request records / Legal footer
-  links — all still `#`.
+  their pages. **Primary Care's page ships inside this app** at
+  `public/bhw-primarycare-patient-mockup.html` (a self-contained static page in
+  the "Opal & Ironstone" style) and is served from Care Connect's own origin;
+  move it to the BHWcrewOS host if you'd rather all four programs share a domain.
+  Still open: the "Older announcements" archive (`Masthead`), "Meet the care
+  team", and the New patient forms / Billing / Good Faith Estimate / Request
+  records / Legal footer links — all still `#`.
 - NP Am's actual recommendation list. What's in `src/data/resources.ts` is
   placeholder copy written in her voice; every partner code is invented.
 - The real body illustration. The current figure is the placeholder SVG from the

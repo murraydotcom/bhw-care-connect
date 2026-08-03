@@ -66,8 +66,7 @@ export const PROGRAMS: Program[] = [
     who: 'Anyone who wants one clinician who knows the whole picture and coordinates the rest.',
     first:
       'A full physical, medication review, screenings you’re due for, and same-day labs downstairs.',
-    // No BHWcrewOS Primary Care page provided yet — still a placeholder.
-    href: '#',
+    href: EXTERNAL_LINKS.primaryCare,
   },
   {
     key: 'mm',
