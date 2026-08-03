@@ -81,6 +81,17 @@ main{padding:clamp(1.5rem,4vw,2.75rem) 0 3rem}
 .section-head h2{font-size:clamp(1.3rem,2.6vw,1.7rem)}
 .section-head a{font-size:.88rem; font-weight:600; color:var(--clay)}
 
+/* your programs */
+.programs{display:grid; grid-template-columns:repeat(3,1fr); gap:1rem}
+@media (max-width:760px){.programs{grid-template-columns:1fr}}
+.prog{display:flex; align-items:center; gap:.9rem; background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--sh-sm); padding:1.05rem 1.2rem; transition:box-shadow .18s ease, transform .18s ease}
+.prog:hover{box-shadow:var(--sh-md); transform:translateY(-2px)}
+.prog .badge{width:40px; height:40px; border-radius:11px; flex:none; display:grid; place-items:center; color:#fff}
+.prog .badge svg{width:20px; height:20px; stroke:#fff; fill:none; stroke-width:1.8}
+.prog b{display:block; color:var(--fg-strong)}
+.prog span{font-size:.85rem; color:var(--fg-muted)}
+.prog .arrow{margin-left:auto; color:var(--clay); font-weight:700; font-size:1.1rem}
+
 /* stat tiles */
 .stats{display:grid; grid-template-columns:repeat(4,1fr); gap:1rem}
 .stat{background:var(--card); border:1px solid var(--line); border-radius:var(--r-lg); box-shadow:var(--sh-sm); padding:1.1rem 1.2rem; display:flex; flex-direction:column; gap:.35rem}
@@ -190,6 +201,27 @@ footer .emrg b{color:#e0a896}
         </div>
         <a class="btn btn-ghost" href="#" style="margin-left:auto">Message care team</a>
       </div>
+    </div>
+
+    <!-- YOUR PROGRAMS (the program pages live here, behind sign-in) -->
+    <div class="section-head"><h2>Your programs</h2><span class="muted" style="font-size:.85rem">Your enrolled program pages</span></div>
+    <div class="programs">
+      <!-- NOTE: BHWcrewOS deploy-preview URLs — swap for the production host before launch. -->
+      <a class="prog" href="https://deploy-preview-3--bhwcrewos.netlify.app/bhw-mindmood-patient-mockup.html">
+        <span class="badge" style="background:var(--lavender)"><svg viewBox="0 0 24 24"><path d="M12 21C12 21 4 14.5 4 9a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 5.5-8 12-8 12z"/></svg></span>
+        <div><b>Mind &amp; Mood</b><span>Psychiatry &amp; medication management</span></div>
+        <span class="arrow">→</span>
+      </a>
+      <a class="prog" href="https://deploy-preview-3--bhwcrewos.netlify.app/bhw-charmed-patient-mockup.html">
+        <span class="badge" style="background:var(--blue)"><svg viewBox="0 0 24 24"><path d="M21 12a8 8 0 0 1-8 8H5l-2 2V6a4 4 0 0 1 4-4h6a8 8 0 0 1 8 8z"/></svg></span>
+        <div><b>CharmEd Minds</b><span>Therapy &amp; skills groups</span></div>
+        <span class="arrow">→</span>
+      </a>
+      <a class="prog" href="https://deploy-preview-3--bhwcrewos.netlify.app/bhw-flow-patient-mockup.html">
+        <span class="badge" style="background:var(--sage)"><svg viewBox="0 0 24 24"><path d="M4 14c4 0 4-4 8-4s4 4 8 4M4 18c4 0 4-4 8-4s4 4 8 4"/></svg></span>
+        <div><b>Flow</b><span>Weight, metabolic &amp; hormone care</span></div>
+        <span class="arrow">→</span>
+      </a>
     </div>
 
     <!-- STAT TILES -->

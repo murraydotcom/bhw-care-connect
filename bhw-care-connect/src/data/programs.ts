@@ -47,7 +47,12 @@ export interface Program {
   blurb: string
   who: string
   first: string
-  /** Where "Open the program page →" goes once the BHWcrewOS pages are wired. */
+  /**
+   * Where the card's CTA goes. The program pages themselves live **behind
+   * sign-in**, inside the patient's Blueprint profile — so from the public hub
+   * every card routes to the Health Blueprint (`EXTERNAL_LINKS.patientPortal`),
+   * and the per-program pages are linked from there. Not the program page URL.
+   */
   href: string
 }
 
@@ -66,8 +71,7 @@ export const PROGRAMS: Program[] = [
     who: 'Anyone who wants one clinician who knows the whole picture and coordinates the rest.',
     first:
       'A full physical, medication review, screenings you’re due for, and same-day labs downstairs.',
-    // Primary Care's "program page" is the public New Patient landing (intake + upload).
-    href: EXTERNAL_LINKS.newPatient,
+    href: EXTERNAL_LINKS.patientPortal,
   },
   {
     key: 'mm',
@@ -84,7 +88,7 @@ export const PROGRAMS: Program[] = [
     who: 'Adults who want medication managed carefully — including anyone tapering, switching, or starting for the first time.',
     first:
       '60 minutes, mostly listening. History, current meds, labs if needed, and a plan you agreed to before you leave.',
-    href: EXTERNAL_LINKS.mindMood,
+    href: EXTERNAL_LINKS.patientPortal,
   },
   {
     key: 'cm',
@@ -100,7 +104,7 @@ export const PROGRAMS: Program[] = [
     who: 'Anyone looking for talk therapy, DBT-style skills, or a group that doesn’t feel like a waiting room.',
     first:
       'A 20-minute match call first, then a 50-minute intake with the therapist you were matched to.',
-    href: EXTERNAL_LINKS.charmedMinds,
+    href: EXTERNAL_LINKS.patientPortal,
   },
   {
     key: 'fl',
@@ -116,6 +120,6 @@ export const PROGRAMS: Program[] = [
     who: 'Patients working on weight, insulin resistance, PCOS or fatigue — GLP-1 medications included when they fit.',
     first:
       'Labs, body composition, a food-and-life history, and honest talk about what you actually want to change.',
-    href: EXTERNAL_LINKS.flow,
+    href: EXTERNAL_LINKS.patientPortal,
   },
 ]

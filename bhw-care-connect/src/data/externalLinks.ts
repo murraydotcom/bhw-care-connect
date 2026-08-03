@@ -22,7 +22,12 @@ const IN_APP = (file: string) => `${import.meta.env.BASE_URL}${file}`
 export const EXTERNAL_LINKS = {
   /** Care Connect hub + reviews section on the BHWcrewOS site. */
   hub: PATIENT_SITE,
-  /** Program pages on BHWcrewOS, each with its own review card. */
+  /**
+   * Program pages on BHWcrewOS, each with its own review card. These live
+   * **behind sign-in** — a patient reaches them from their Blueprint profile,
+   * NOT from the public hub. The hub's program cards route to `patientPortal`;
+   * these URLs are linked from the Blueprint dashboard's "Your programs" section.
+   */
   charmedMinds: `${PATIENT_SITE}/bhw-charmed-patient-mockup.html`,
   mindMood: `${PATIENT_SITE}/bhw-mindmood-patient-mockup.html`,
   flow: `${PATIENT_SITE}/bhw-flow-patient-mockup.html`,

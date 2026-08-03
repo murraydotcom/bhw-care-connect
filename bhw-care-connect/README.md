@@ -103,21 +103,27 @@ and it must not be logged to an error tracker or an analytics tool.
 
 Also still open, carried over from the design handoff:
 
-- **Patient destinations are wired in `src/data/externalLinks.ts`.** Two kinds:
-  - *On the BHWcrewOS site* (Mind & Mood, CharmEd Minds, Flow) — pointed at a
-    Netlify **deploy preview**, which is per-PR and ephemeral. Swap `PATIENT_SITE`
-    for the production host before launch.
+- **Patient destinations are wired in `src/data/externalLinks.ts`.** The program
+  pages live **behind sign-in**, so the flow is: public hub → sign in → the
+  Blueprint profile → the program page.
+  - *The public hub's program cards* (all four) route to the **Health Blueprint
+    sign-in** (`patientPortal`), labelled "Open in your Blueprint". They do **not**
+    deep-link to the program pages.
+  - *The program pages on BHWcrewOS* (Mind & Mood, CharmEd Minds, Flow) are linked
+    from the Blueprint dashboard's **"Your programs"** section, not the hub. They
+    point at a Netlify **deploy preview** — per-PR and ephemeral; swap
+    `PATIENT_SITE` for the production host before launch.
   - *Shipped inside this app* (`public/`, self-contained "Opal & Ironstone" pages):
     - **New Patient** (`bhw-new-patient-mockup.html`) — the public, pre-visit
-      landing for Primary Care, with an intake questionnaire and document upload.
-      **No sign-in.** It's where the Primary Care card and the footer's "New
-      patient forms" link now go. The intake form and uploads are **UI only** —
-      nothing submits or stores. Real submission is PHI and must post to a
-      BAA-covered service (see `src/lib/submit.ts`).
+      landing with an intake questionnaire and document upload. **No sign-in.**
+      Reached from the footer's "New patient forms" link. The form and uploads are
+      **UI only** — nothing submits or stores. Real submission is PHI and must post
+      to a BAA-covered service (see `src/lib/submit.ts`).
     - **Personal Health Blueprint** (`bhw-blueprint-portal-mockup.html`) — the
-      **signed-in** dashboard: measurement tiles, trend charts, and
-      subjective/objective care goals. It's where every Blueprint link points
-      (`CONTACT.blueprintUrl`). It's a static preview — no real auth or data.
+      **signed-in** dashboard: "Your programs", measurement tiles, trend charts,
+      and subjective/objective care goals. Every Blueprint link and every program
+      card points here (`CONTACT.blueprintUrl` / `patientPortal`). Static preview —
+      no real auth or data.
   - Still open: the "Older announcements" archive (`Masthead`), "Meet the care
     team", and the Billing / Good Faith Estimate / Request records / Legal footer
     links — all still `#`.

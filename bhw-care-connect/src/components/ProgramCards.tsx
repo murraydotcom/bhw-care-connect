@@ -116,7 +116,7 @@ function ProgramCard({ program, theme, flipped, onFlip }: ProgramCardProps) {
               <span className={styles.backValue}>{program.first}</span>
             </span>
             <a className={styles.backLink} href={program.href}>
-              Open the program page →
+              Open in your Blueprint →
             </a>
           </div>
         </div>
