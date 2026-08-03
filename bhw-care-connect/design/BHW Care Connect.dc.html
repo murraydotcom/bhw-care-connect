@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="tokens/fonts.css">
+<link rel="stylesheet" href="tokens/tokens.css">
+<style>
+body{margin:0;background:var(--bg)}
+a{color:var(--link);text-underline-offset:.15em}
+a:hover{color:var(--link-hover)}
+button{font-family:inherit}
+input,textarea,select{font-family:inherit}
+@keyframes cc-rise{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+:where(a,button,input,textarea,[tabindex]):focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+</style>
+</helmet>
+<div style="background:var(--bg);color:var(--fg);font-family:var(--font-sans);font-size:var(--text-base);line-height:var(--leading-normal);min-height:100vh;-webkit-font-smoothing:antialiased">
+
+  <header style="position:sticky;top:0;z-index:200;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--divider)">
+    <div style="max-width:var(--container-lg);margin:0 auto;padding:14px 24px;display:flex;align-items:center;gap:18px">
+      <button onClick="{{ goHub }}" style="display:flex;align-items:center;gap:10px;background:none;border:0;padding:0;cursor:pointer;text-align:left">
+        <span style="width:30px;height:30px;border-radius:var(--radius-pill);background-image:var(--opal-stone);box-shadow:var(--edge-gold);flex:0 0 30px"></span>
+        <span style="display:flex;flex-direction:column;line-height:1.1">
+          <span style="font-family:var(--font-display);font-size:var(--text-md);color:var(--fg-strong);letter-spacing:var(--tracking-tight)">BHW Care Connect</span>
+          <span style="font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--brand-clay);font-weight:600">Baltimore Healthcare &amp; Wellness</span>
+        </span>
+      </button>
+      <nav style="margin-left:auto;display:flex;align-items:center;gap:8px;flex-wrap:wrap">
+        <button onClick="{{ goHub }}" style="background:none;border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;color:var(--fg-muted);padding:8px 10px;border-radius:var(--radius-pill)" style-hover="color:var(--fg-strong);background:var(--bg-muted)">Home</button>
+        <button onClick="{{ goPrograms }}" style="background:none;border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;color:var(--fg-muted);padding:8px 10px;border-radius:var(--radius-pill)" style-hover="color:var(--fg-strong);background:var(--bg-muted)">Programs</button>
+        <button onClick="{{ goNews }}" style="background:none;border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;color:var(--fg-muted);padding:8px 10px;border-radius:var(--radius-pill)" style-hover="color:var(--fg-strong);background:var(--bg-muted)">Announcements</button>
+        <button onClick="{{ goTriage }}" style="background:var(--accent);color:var(--accent-fg);border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;padding:9px 18px;border-radius:var(--radius-pill);box-shadow:var(--shadow-sm)" style-hover="background:var(--accent-hover)">Ask your team</button>
+        <button onClick="{{ toggleAuth }}" title="Demo: switch signed in / signed out" style="background:none;border:1px solid var(--border-strong);cursor:pointer;font-size:var(--text-2xs);letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--fg-muted);padding:7px 12px;border-radius:var(--radius-pill)">{{ authLabel }}</button>
+      </nav>
+    </div>
+  </header>
+
+  <sc-if value="{{ isHub }}" hint-placeholder-val="{{ true }}">
+  <main style="max-width:var(--container-lg);margin:0 auto;padding:0 24px 96px">
+
+    <sc-if value="{{ pinned }}" hint-placeholder-val="{{ true }}">
+    <div style="display:flex;gap:14px;align-items:flex-start;margin-top:22px;padding:16px 20px;border-radius:var(--radius-md);background:var(--warning-bg);border:1px solid var(--border)">
+      <span style="width:3px;align-self:stretch;border-radius:var(--radius-pill);background:var(--warning);flex:0 0 3px"></span>
+      <div style="flex:1;min-width:0">
+        <p style="margin:0 0 3px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Pinned · {{ pinned.date }}</p>
+        <p style="margin:0;font-size:var(--text-base);color:var(--fg-strong)"><strong style="font-weight:600">{{ pinned.title }}</strong> — {{ pinned.dek }}</p>
+      </div>
+      <button onClick="{{ pinned.open }}" style="flex:none;background:transparent;border:1px solid var(--border-strong);color:var(--fg-strong);font-size:var(--text-sm);font-weight:600;padding:8px 16px;border-radius:var(--radius-pill);cursor:pointer" style-hover="border-color:var(--accent);color:var(--accent)">Read</button>
+    </div>
+    </sc-if>
+
+    <section style="margin-top:28px;border-radius:var(--radius-xl);background-image:var(--opal-stone);box-shadow:var(--shadow-md),var(--edge-gold);padding:clamp(28px,5vw,56px);display:grid;gap:34px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));align-items:center">
+      <div>
+        <p style="margin:0 0 12px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">{{ heroEyebrow }}</p>
+        <h1 style="font-family:var(--font-display);font-weight:500;font-size:clamp(2rem,5vw,var(--text-4xl));line-height:1.1;letter-spacing:var(--tracking-tight);color:var(--fg-strong);margin:0 0 14px;text-wrap:balance">{{ heroTitle }}</h1>
+        <p style="margin:0 0 26px;font-size:var(--text-md);color:var(--fg);max-width:46ch;text-wrap:pretty">{{ heroBody }}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px">
+          <button onClick="{{ goTriage }}" style="background:var(--accent);color:var(--accent-fg);border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;padding:12px 24px;border-radius:var(--radius-pill);box-shadow:var(--shadow-sm)" style-hover="background:var(--accent-hover)">Send a question</button>
+          <button onClick="{{ goPrograms }}" style="background:transparent;color:var(--fg-strong);border:1px solid var(--border-strong);cursor:pointer;font-size:var(--text-sm);font-weight:600;padding:12px 24px;border-radius:var(--radius-pill)" style-hover="border-color:var(--accent);color:var(--accent)">See our programs</button>
+        </div>
+      </div>
+      <div style="background:color-mix(in srgb,var(--bg-elevated) 82%,transparent);border-radius:var(--radius-lg);padding:22px 24px;border:1px solid var(--border)">
+        <p style="margin:0 0 14px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">{{ panelTitle }}</p>
+        <sc-for list="{{ panelRows }}" as="row" hint-placeholder-count="3">
+          <div style="display:flex;gap:12px;align-items:flex-start;padding:12px 0;border-top:1px solid var(--divider)">
+            <span style="width:8px;height:8px;border-radius:50%;margin-top:7px;flex:0 0 8px;background: {{ row.tint }}"></span>
+            <div style="flex:1;min-width:0">
+              <p style="margin:0;font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">{{ row.title }}</p>
+              <p style="margin:2px 0 0;font-size:var(--text-sm);color:var(--fg-muted)">{{ row.meta }}</p>
+            </div>
+            <button onClick="{{ row.action }}" style="flex:none;background:none;border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;color:var(--link);padding:0">{{ row.cta }}</button>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section ref="{{ refChannels }}" style="margin-top:64px">
+      <p style="margin:0 0 6px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Ways to reach us</p>
+      <h2 style="font-family:var(--font-display);font-weight:500;font-size:var(--text-2xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong);margin:0 0 24px">Pick whatever is easiest today.</h2>
+      <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(230px,1fr))">
+        <sc-for list="{{ channels }}" as="ch" hint-placeholder-count="6">
+          <button onClick="{{ ch.action }}" style="text-align:left;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px;box-shadow:var(--shadow-sm);cursor:pointer;display:flex;flex-direction:column;gap:8px;transition:transform var(--duration-base) var(--ease-out),box-shadow var(--duration-base) var(--ease-out)" style-hover="transform:translateY(-2px);box-shadow:var(--shadow-md)">
+            <span style="width:34px;height:34px;border-radius:var(--radius-pill);display:grid;place-items:center;font-family:var(--font-display);font-size:var(--text-md);background: {{ ch.quiet }};color: {{ ch.tint }}">{{ ch.mark }}</span>
+            <span style="font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">{{ ch.title }}</span>
+            <span style="font-size:var(--text-sm);color:var(--fg-muted);text-wrap:pretty">{{ ch.body }}</span>
+            <span style="margin-top:auto;padding-top:10px;font-size:var(--text-xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--fg-subtle)">{{ ch.meta }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="display:flex;gap:14px;align-items:flex-start;margin-top:18px;padding:16px 20px;border-radius:var(--radius-md);background:var(--danger-bg);border:1px solid var(--border)">
+        <span style="width:3px;align-self:stretch;border-radius:var(--radius-pill);background:var(--danger);flex:0 0 3px"></span>
+        <p style="margin:0;font-size:var(--text-sm);color:var(--fg-strong)"><strong style="font-weight:600">If this is an emergency, call 911.</strong> For urgent needs after hours, call the office at <a href="tel:+14105550142">(410) 555-0142</a> and press 1 — the on-call clinician is paged directly.</p>
+      </div>
+    </section>
+
+    <section ref="{{ refPrograms }}" style="margin-top:72px">
+      <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:24px">
+        <div>
+          <p style="margin:0 0 6px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Our programs</p>
+          <h2 style="font-family:var(--font-display);font-weight:500;font-size:var(--text-2xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong);margin:0">Four ways we care for you.</h2>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:6px;padding:4px;background:var(--bg-muted);border-radius:var(--radius-pill)">
+          <sc-for list="{{ cardStyles }}" as="opt" hint-placeholder-count="3">
+            <button onClick="{{ opt.action }}" style="border:0;cursor:pointer;font-size:var(--text-xs);font-weight:600;padding:7px 14px;border-radius:var(--radius-pill);background: {{ opt.bg }};color: {{ opt.fg }}">{{ opt.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{ cardsStone }}" hint-placeholder-val="{{ true }}">
+      <div style="display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+        <sc-for list="{{ programs }}" as="p" hint-placeholder-count="4">
+          <button onClick="{{ p.open }}" style="text-align:left;border:1px solid var(--border);border-radius:var(--radius-lg);padding:26px;cursor:pointer;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;gap:10px;min-height:230px;transition:transform var(--duration-base) var(--ease-out),box-shadow var(--duration-base) var(--ease-out);background: {{ p.veil }}" style-hover="transform:translateY(-3px);box-shadow:var(--shadow-md)">
+            <span style="font-family:var(--font-display);font-size:var(--text-lg);opacity:.5;color: {{ p.tint }}">{{ p.num }}</span>
+            <span style="font-family:var(--font-display);font-size:var(--text-xl);font-weight:500;letter-spacing:var(--tracking-tight);color:var(--fg-strong);line-height:1.15">{{ p.name }}</span>
+            <span style="font-size:var(--text-sm);color:var(--fg);text-wrap:pretty">{{ p.blurb }}</span>
+            <span style="margin-top:auto;padding-top:14px;font-size:var(--text-sm);font-weight:600;color: {{ p.tint }}">Explore {{ p.short }} →</span>
+          </button>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ cardsEditorial }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+        <sc-for list="{{ programs }}" as="p" hint-placeholder-count="4">
+          <button onClick="{{ p.open }}" style="text-align:left;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);padding:0;overflow:hidden;cursor:pointer;box-shadow:var(--shadow-sm);display:flex;flex-direction:column;transition:transform var(--duration-base) var(--ease-out),box-shadow var(--duration-base) var(--ease-out)" style-hover="transform:translateY(-3px);box-shadow:var(--shadow-md)">
+            <span style="height:120px;display:grid;place-items:center;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--fg-subtle);border-bottom:1px solid var(--border);background: {{ p.veil }}">Photo — {{ p.short }}</span>
+            <span style="padding:22px;display:flex;flex-direction:column;gap:9px">
+              <span style="width:26px;height:2px;background: {{ p.tint }}"></span>
+              <span style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;color:var(--fg-strong);line-height:1.2">{{ p.name }}</span>
+              <span style="font-family:var(--font-serif);font-size:var(--text-sm);line-height:var(--leading-relaxed);color:var(--fg-muted);text-wrap:pretty">{{ p.blurb }}</span>
+            </span>
+          </button>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ cardsMinimal }}" hint-placeholder-val="{{ false }}">
+      <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden">
+        <sc-for list="{{ programs }}" as="p" hint-placeholder-count="4">
+          <button onClick="{{ p.open }}" style="width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--divider);cursor:pointer;padding:22px 24px;display:flex;gap:18px;align-items:center;flex-wrap:wrap" style-hover="background:var(--bg-sunken)">
+            <span style="width:6px;height:38px;border-radius:var(--radius-pill);flex:0 0 6px;background: {{ p.tint }}"></span>
+            <span style="flex:1;min-width:200px;display:flex;flex-direction:column;gap:3px">
+              <span style="font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">{{ p.name }}</span>
+              <span style="font-size:var(--text-sm);color:var(--fg-muted)">{{ p.blurb }}</span>
+            </span>
+            <span style="font-size:var(--text-sm);font-weight:600;color:var(--link)">Open →</span>
+          </button>
+        </sc-for>
+      </div>
+      </sc-if>
+    </section>
+
+    <section ref="{{ refNews }}" style="margin-top:72px">
+      <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:24px">
+        <div>
+          <p style="margin:0 0 6px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">From the office</p>
+          <h2 style="font-family:var(--font-display);font-weight:500;font-size:var(--text-2xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong);margin:0">What's new at BHW.</h2>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:6px;padding:4px;background:var(--bg-muted);border-radius:var(--radius-pill)">
+          <sc-for list="{{ newsStyles }}" as="opt" hint-placeholder-count="2">
+            <button onClick="{{ opt.action }}" style="border:0;cursor:pointer;font-size:var(--text-xs);font-weight:600;padding:7px 14px;border-radius:var(--radius-pill);background: {{ opt.bg }};color: {{ opt.fg }}">{{ opt.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <sc-if value="{{ newsFeed }}" hint-placeholder-val="{{ true }}">
+      <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden">
+        <sc-for list="{{ announcements }}" as="a" hint-placeholder-count="4">
+          <button onClick="{{ a.open }}" style="width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--divider);cursor:pointer;padding:20px 24px;display:flex;gap:20px;align-items:flex-start;flex-wrap:wrap" style-hover="background:var(--bg-sunken)">
+            <span style="flex:0 0 92px;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--fg-subtle);padding-top:3px">{{ a.date }}</span>
+            <span style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:5px">
+              <span style="font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">{{ a.title }}</span>
+              <span style="font-size:var(--text-sm);color:var(--fg-muted);text-wrap:pretty">{{ a.dek }}</span>
+            </span>
+            <span style="flex:none;font-size:var(--text-xs);font-weight:600;padding:.32em .8em;border-radius:var(--radius-pill);background: {{ a.quiet }};color: {{ a.tint }}">{{ a.tag }}</span>
+          </button>
+        </sc-for>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ newsCards }}" hint-placeholder-val="{{ false }}">
+      <div style="display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">
+        <sc-for list="{{ announcements }}" as="a" hint-placeholder-count="4">
+          <button onClick="{{ a.open }}" style="text-align:left;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);cursor:pointer;padding:24px;display:flex;flex-direction:column;gap:10px;transition:transform var(--duration-base) var(--ease-out)" style-hover="transform:translateY(-3px)">
+            <span style="align-self:flex-start;font-size:var(--text-xs);font-weight:600;padding:.32em .8em;border-radius:var(--radius-pill);background: {{ a.quiet }};color: {{ a.tint }}">{{ a.tag }}</span>
+            <span style="font-family:var(--font-display);font-size:var(--text-lg);font-weight:500;color:var(--fg-strong);line-height:1.2">{{ a.title }}</span>
+            <span style="font-family:var(--font-serif);font-size:var(--text-sm);line-height:var(--leading-relaxed);color:var(--fg-muted);text-wrap:pretty">{{ a.dek }}</span>
+            <span style="margin-top:auto;padding-top:12px;font-family:var(--font-mono);font-size:var(--text-xs);color:var(--fg-subtle)">{{ a.date }}</span>
+          </button>
+        </sc-for>
+      </div>
+      </sc-if>
+    </section>
+
+    <section style="margin-top:72px;display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(290px,1fr))">
+      <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:26px">
+        <p style="margin:0 0 16px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Office hours</p>
+        <sc-for list="{{ hours }}" as="h" hint-placeholder-count="4">
+          <div style="display:flex;justify-content:space-between;gap:16px;padding:9px 0;border-top:1px solid var(--divider);font-size:var(--text-sm)">
+            <span style="color:var(--fg-strong);font-weight:600">{{ h.day }}</span>
+            <span style="color:var(--fg-muted)">{{ h.time }}</span>
+          </div>
+        </sc-for>
+        <p style="margin:16px 0 0;font-size:var(--text-sm);color:var(--fg-muted)">Telehealth visits run until 7:00 pm Tuesdays and Thursdays.</p>
+      </div>
+
+      <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden;display:flex;flex-direction:column">
+        <div style="height:160px;display:grid;place-items:center;background:var(--bg-muted);border-bottom:1px solid var(--border);font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;color:var(--fg-subtle)">Map placeholder</div>
+        <div style="padding:24px">
+          <p style="margin:0 0 8px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Find us</p>
+          <p style="margin:0 0 4px;font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">BHW Medical Group</p>
+          <p style="margin:0 0 16px;font-size:var(--text-sm);color:var(--fg-muted)">1200 Charles Street, Suite 300<br>Baltimore, MD 21201 · Garage parking validated</p>
+          <a href="#" style="font-size:var(--text-sm);font-weight:600">Get directions →</a>
+        </div>
+      </div>
+
+      <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:26px">
+        <p style="margin:0 0 16px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Forms to download</p>
+        <sc-for list="{{ forms }}" as="f" hint-placeholder-count="4">
+          <a href="#" style="display:flex;gap:12px;align-items:center;padding:11px 0;border-top:1px solid var(--divider);text-decoration:none">
+            <span style="width:28px;height:34px;border-radius:3px;border:1px solid var(--border-strong);flex:0 0 28px;background:var(--bg-sunken)"></span>
+            <span style="flex:1;min-width:0">
+              <span style="display:block;font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">{{ f.name }}</span>
+              <span style="display:block;font-size:var(--text-xs);color:var(--fg-subtle)">{{ f.meta }}</span>
+            </span>
+          </a>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="margin-top:72px;display:grid;gap:40px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+      <div>
+        <p style="margin:0 0 6px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Your care team</p>
+        <h2 style="font-family:var(--font-display);font-weight:500;font-size:var(--text-xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong);margin:0 0 20px">The people who answer.</h2>
+        <div style="display:grid;gap:18px;grid-template-columns:repeat(auto-fill,minmax(130px,1fr))">
+          <sc-for list="{{ team }}" as="t" hint-placeholder-count="4">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <span style="aspect-ratio:1;border-radius:var(--radius-md);display:grid;place-items:center;font-family:var(--font-display);font-size:var(--text-xl);color:var(--fg-subtle);background: {{ t.veil }};border:1px solid var(--border)">{{ t.initials }}</span>
+              <span style="font-size:var(--text-sm);font-weight:600;color:var(--fg-strong);line-height:1.25">{{ t.name }}</span>
+              <span style="font-size:var(--text-xs);color:var(--fg-muted);margin-top:-6px">{{ t.role }}</span>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      <div>
+        <p style="margin:0 0 6px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Common questions</p>
+        <h2 style="font-family:var(--font-display);font-weight:500;font-size:var(--text-xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong);margin:0 0 20px">Answered before you ask.</h2>
+        <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);overflow:hidden">
+          <sc-for list="{{ faqs }}" as="q" hint-placeholder-count="5">
+            <div style="border-top:1px solid var(--divider)">
+              <button onClick="{{ q.toggle }}" style="width:100%;text-align:left;background:none;border:0;cursor:pointer;padding:16px 20px;display:flex;gap:14px;align-items:center;font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">
+                <span style="flex:1">{{ q.q }}</span>
+                <span style="flex:none;color:var(--fg-subtle);font-weight:400">{{ q.sign }}</span>
+              </button>
+              <sc-if value="{{ q.open }}" hint-placeholder-val="{{ false }}">
+                <p style="margin:0;padding:0 20px 18px;font-size:var(--text-sm);color:var(--fg-muted);line-height:var(--leading-relaxed);text-wrap:pretty">{{ q.a }}</p>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{ isTriage }}" hint-placeholder-val="{{ false }}">
+  <main style="max-width:var(--container-md);margin:0 auto;padding:28px 24px 96px">
+    <button onClick="{{ goHub }}" style="background:none;border:0;cursor:pointer;padding:0;font-size:var(--text-sm);font-weight:600;color:var(--fg-muted)">← Back to Care Connect</button>
+
+    <sc-if value="{{ notDone }}" hint-placeholder-val="{{ true }}">
+    <div style="margin-top:22px;display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap">
+      <div style="flex:1;min-width:240px">
+        <p style="margin:0 0 6px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Ask your care team</p>
+        <h1 style="font-family:var(--font-display);font-weight:500;font-size:var(--text-3xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong);margin:0">Tell us what you need.</h1>
+      </div>
+      <div style="display:flex;gap:6px;padding:4px;background:var(--bg-muted);border-radius:var(--radius-pill)">
+        <sc-for list="{{ formModes }}" as="opt" hint-placeholder-count="2">
+          <button onClick="{{ opt.action }}" style="border:0;cursor:pointer;font-size:var(--text-xs);font-weight:600;padding:7px 14px;border-radius:var(--radius-pill);background: {{ opt.bg }};color: {{ opt.fg }}">{{ opt.label }}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <sc-if value="{{ isStepper }}" hint-placeholder-val="{{ true }}">
+      <div style="display:flex;gap:8px;margin-top:26px">
+        <sc-for list="{{ steps }}" as="s" hint-placeholder-count="4">
+          <div style="flex:1;display:flex;flex-direction:column;gap:7px">
+            <span style="height:3px;border-radius:var(--radius-pill);background: {{ s.bar }}"></span>
+            <span style="font-size:var(--text-2xs);letter-spacing:.07em;text-transform:uppercase;font-weight:600;color: {{ s.fg }}">{{ s.label }}</span>
+          </div>
+        </sc-for>
+      </div>
+    </sc-if>
+
+    <div style="margin-top:26px;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:clamp(22px,4vw,36px);display:flex;flex-direction:column;gap:30px">
+
+      <sc-if value="{{ secCategory }}" hint-placeholder-val="{{ true }}">
+      <div>
+        <h2 style="font-family:var(--font-display);font-weight:500;font-size:var(--text-lg);color:var(--fg-strong);margin:0 0 4px">What is this about?</h2>
+        <p style="margin:0 0 18px;font-size:var(--text-sm);color:var(--fg-muted)">This routes your note to the right person on the first try.</p>
+        <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(200px,1fr))">
+          <sc-for list="{{ categories }}" as="c" hint-placeholder-count="4">
+            <button onClick="{{ c.pick }}" style="text-align:left;cursor:pointer;border-radius:var(--radius-md);padding:16px 18px;display:flex;flex-direction:column;gap:4px;background: {{ c.bg }};border:1px solid {{ c.bd }}">
+              <span style="font-size:var(--text-base);font-weight:600;color:var(--fg-strong)">{{ c.label }}</span>
+              <span style="font-size:var(--text-sm);color:var(--fg-muted)">{{ c.hint }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ secBranch }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <h2 style="font-family:var(--font-display);font-weight:500;font-size:var(--text-lg);color:var(--fg-strong);margin:0 0 4px">{{ branchTitle }}</h2>
+        <p style="margin:0 0 18px;font-size:var(--text-sm);color:var(--fg-muted)">{{ branchHint }}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:10px">
+          <sc-for list="{{ branchOptions }}" as="b" hint-placeholder-count="4">
+            <button onClick="{{ b.pick }}" style="cursor:pointer;border-radius:var(--radius-pill);padding:10px 18px;font-size:var(--text-sm);font-weight:600;background: {{ b.bg }};color: {{ b.fg }};border:1px solid {{ b.bd }}">{{ b.label }}</button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ showFollowUp }}" hint-placeholder-val="{{ false }}">
+          <div style="margin-top:20px;padding:18px 20px;border-radius:var(--radius-md);background:var(--bg-sunken);border:1px solid var(--border)">
+            <p style="margin:0 0 10px;font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">{{ followUpQ }}</p>
+            <input type="text" placeholder="{{ followUpPh }}" onInput="{{ setFollowUp }}" style="width:100%;box-sizing:border-box;font-size:var(--text-base);color:var(--fg);background:var(--bg);border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:.7em .9em">
+          </div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ secUrgency }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <h2 style="font-family:var(--font-display);font-weight:500;font-size:var(--text-lg);color:var(--fg-strong);margin:0 0 4px">How are you feeling right now?</h2>
+        <p style="margin:0 0 18px;font-size:var(--text-sm);color:var(--fg-muted)">Check anything that's true today. Nothing here replaces calling 911.</p>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <sc-for list="{{ flags }}" as="f" hint-placeholder-count="5">
+            <button onClick="{{ f.toggle }}" style="text-align:left;cursor:pointer;display:flex;gap:12px;align-items:center;border-radius:var(--radius-md);padding:13px 16px;font-size:var(--text-sm);color:var(--fg-strong);background: {{ f.bg }};border:1px solid {{ f.bd }}">
+              <span style="width:18px;height:18px;border-radius:5px;flex:0 0 18px;display:grid;place-items:center;font-size:11px;color:var(--fg-on-accent);background: {{ f.box }};border:1px solid {{ f.bd }}">{{ f.mark }}</span>
+              <span>{{ f.label }}</span>
+            </button>
+          </sc-for>
+        </div>
+        <sc-if value="{{ anyFlag }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:14px;align-items:flex-start;margin-top:16px;padding:16px 20px;border-radius:var(--radius-md);background:var(--danger-bg);border:1px solid var(--border);animation:cc-rise var(--duration-base) var(--ease-out)">
+            <span style="width:3px;align-self:stretch;border-radius:var(--radius-pill);background:var(--danger);flex:0 0 3px"></span>
+            <p style="margin:0;font-size:var(--text-sm);color:var(--fg-strong)"><strong style="font-weight:600">Please call us instead of waiting.</strong> What you checked can't safely wait for a message. Call <a href="tel:+14105550142">(410) 555-0142</a>, or 911 if it's severe. You can still send this note — we'll see it flagged.</p>
+          </div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ secDetails }}" hint-placeholder-val="{{ false }}">
+      <div>
+        <h2 style="font-family:var(--font-display);font-weight:500;font-size:var(--text-lg);color:var(--fg-strong);margin:0 0 4px">In your own words.</h2>
+        <p style="margin:0 0 14px;font-size:var(--text-sm);color:var(--fg-muted)">When it started, what you've tried, what worries you most.</p>
+        <textarea rows="6" placeholder="Start typing…" onInput="{{ setDetail }}" style="width:100%;box-sizing:border-box;font-size:var(--text-base);line-height:var(--leading-normal);color:var(--fg);background:var(--bg);border:1px solid var(--border-strong);border-radius:var(--radius-sm);padding:.8em .9em;resize:vertical"></textarea>
+        <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:10px;align-items:center">
+          <button onClick="{{ addFile }}" style="cursor:pointer;background:var(--accent-quiet);color:var(--accent-quiet-fg);border:0;font-size:var(--text-sm);font-weight:600;padding:10px 18px;border-radius:var(--radius-pill)">＋ Add a photo or document</button>
+          <sc-for list="{{ files }}" as="f" hint-placeholder-count="0">
+            <span style="display:inline-flex;align-items:center;gap:8px;font-size:var(--text-xs);font-weight:600;padding:.45em .9em;border-radius:var(--radius-pill);background:var(--bg-muted);color:var(--fg-muted)">{{ f.name }}<button onClick="{{ f.remove }}" style="background:none;border:0;cursor:pointer;color:var(--fg-subtle);padding:0;font-size:14px">×</button></span>
+          </sc-for>
+        </div>
+        <p style="margin:12px 0 0;font-size:var(--text-xs);color:var(--fg-subtle)">Photos are stored in your chart. Please don't send images of anything you'd rather show us in person.</p>
+      </div>
+      </sc-if>
+
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding-top:4px;border-top:1px solid var(--divider);margin-top:-6px;padding-top:24px">
+        <sc-if value="{{ showBack }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ prevStep }}" style="cursor:pointer;background:transparent;color:var(--fg-strong);border:1px solid var(--border-strong);font-size:var(--text-sm);font-weight:600;padding:11px 22px;border-radius:var(--radius-pill)">Back</button>
+        </sc-if>
+        <sc-if value="{{ showNext }}" hint-placeholder-val="{{ true }}">
+          <button onClick="{{ nextStep }}" style="cursor:pointer;background:var(--accent);color:var(--accent-fg);border:0;font-size:var(--text-sm);font-weight:600;padding:11px 26px;border-radius:var(--radius-pill);box-shadow:var(--shadow-sm);opacity: {{ nextOpacity }}">Continue</button>
+        </sc-if>
+        <sc-if value="{{ showSubmit }}" hint-placeholder-val="{{ false }}">
+          <button onClick="{{ submit }}" style="cursor:pointer;background:var(--accent);color:var(--accent-fg);border:0;font-size:var(--text-sm);font-weight:600;padding:11px 26px;border-radius:var(--radius-pill);box-shadow:var(--shadow-sm);opacity: {{ submitOpacity }}">Send to my care team</button>
+        </sc-if>
+        <span style="font-size:var(--text-sm);color:var(--fg-muted)">{{ etaHint }}</span>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ isDone }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:26px;border-radius:var(--radius-xl);background-image:var(--opal-stone);box-shadow:var(--shadow-md),var(--edge-gold);padding:clamp(28px,5vw,48px);animation:cc-rise var(--duration-slow) var(--ease-out)">
+      <p style="margin:0 0 10px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Sent · {{ ticketId }}</p>
+      <h1 style="font-family:var(--font-display);font-weight:500;font-size:var(--text-3xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong);margin:0 0 12px">We have it. Nothing else to do right now.</h1>
+      <p style="margin:0 0 26px;font-size:var(--text-md);color:var(--fg);max-width:52ch;text-wrap:pretty">{{ doneBody }}</p>
+      <div style="background:color-mix(in srgb,var(--bg-elevated) 84%,transparent);border:1px solid var(--border);border-radius:var(--radius-lg);padding:22px 24px;max-width:520px">
+        <sc-for list="{{ receipt }}" as="r" hint-placeholder-count="4">
+          <div style="display:flex;justify-content:space-between;gap:20px;padding:10px 0;border-top:1px solid var(--divider);font-size:var(--text-sm)">
+            <span style="color:var(--fg-muted)">{{ r.k }}</span>
+            <span style="color:var(--fg-strong);font-weight:600;text-align:right">{{ r.v }}</span>
+          </div>
+        </sc-for>
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:26px">
+        <button onClick="{{ goHub }}" style="cursor:pointer;background:var(--accent);color:var(--accent-fg);border:0;font-size:var(--text-sm);font-weight:600;padding:12px 24px;border-radius:var(--radius-pill);box-shadow:var(--shadow-sm)">Back to Care Connect</button>
+        <button onClick="{{ resetForm }}" style="cursor:pointer;background:transparent;color:var(--fg-strong);border:1px solid var(--border-strong);font-size:var(--text-sm);font-weight:600;padding:12px 24px;border-radius:var(--radius-pill)">Send another</button>
+      </div>
+      <p style="font-family:var(--font-script);color:var(--accent-3);font-size:var(--text-lg);margin:22px 0 0">Thank you for telling us — we'd rather hear early than late.</p>
+    </div>
+    </sc-if>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{ isProgram }}" hint-placeholder-val="{{ false }}">
+  <main style="max-width:var(--container-lg);margin:0 auto;padding:28px 24px 96px">
+    <button onClick="{{ goHub }}" style="background:none;border:0;cursor:pointer;padding:0;font-size:var(--text-sm);font-weight:600;color:var(--fg-muted)">← Back to Care Connect</button>
+    <section style="margin-top:22px;border-radius:var(--radius-xl);padding:clamp(28px,5vw,52px);border:1px solid var(--border);background: {{ prog.veil }}">
+      <p style="margin:0 0 12px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color: {{ prog.tint }}">{{ prog.eyebrow }}</p>
+      <h1 style="font-family:var(--font-display);font-weight:500;font-size:clamp(2rem,5vw,var(--text-4xl));line-height:1.1;letter-spacing:var(--tracking-tight);color:var(--fg-strong);margin:0 0 14px;max-width:20ch;text-wrap:balance">{{ prog.name }}</h1>
+      <p style="margin:0;font-size:var(--text-md);color:var(--fg);max-width:60ch;text-wrap:pretty">{{ prog.long }}</p>
+      <div style="display:flex;flex-wrap:wrap;gap:12px;margin-top:28px">
+        <button onClick="{{ askAboutProgram }}" style="cursor:pointer;background:var(--accent);color:var(--accent-fg);border:0;font-size:var(--text-sm);font-weight:600;padding:12px 24px;border-radius:var(--radius-pill);box-shadow:var(--shadow-sm)">Ask about {{ prog.short }}</button>
+        <a href="#" style="text-decoration:none;background:transparent;color:var(--fg-strong);border:1px solid var(--border-strong);font-size:var(--text-sm);font-weight:600;padding:12px 24px;border-radius:var(--radius-pill)">Open your {{ prog.short }} pages →</a>
+      </div>
+    </section>
+
+    <section style="margin-top:44px;display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(270px,1fr))">
+      <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:26px">
+        <p style="margin:0 0 14px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">What we look after</p>
+        <sc-for list="{{ prog.treats }}" as="t" hint-placeholder-count="4">
+          <p style="margin:0;padding:10px 0;border-top:1px solid var(--divider);font-size:var(--text-sm);color:var(--fg)">{{ t }}</p>
+        </sc-for>
+      </div>
+      <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:26px">
+        <p style="margin:0 0 14px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">What to expect</p>
+        <sc-for list="{{ prog.steps }}" as="s" hint-placeholder-count="3">
+          <div style="display:flex;gap:12px;padding:12px 0;border-top:1px solid var(--divider)">
+            <span style="width:30px;height:30px;flex:0 0 30px;border-radius:var(--radius-pill);display:grid;place-items:center;font-family:var(--font-display);font-size:var(--text-sm);background:var(--accent-quiet);color:var(--accent-quiet-fg)">{{ s.n }}</span>
+            <div>
+              <p style="margin:0;font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">{{ s.title }}</p>
+              <p style="margin:2px 0 0;font-size:var(--text-sm);color:var(--fg-muted)">{{ s.body }}</p>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+      <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm);padding:26px">
+        <p style="margin:0 0 14px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Who you'll see</p>
+        <sc-for list="{{ prog.people }}" as="p" hint-placeholder-count="2">
+          <div style="display:flex;gap:12px;align-items:center;padding:12px 0;border-top:1px solid var(--divider)">
+            <span style="width:44px;height:44px;flex:0 0 44px;border-radius:var(--radius-md);display:grid;place-items:center;font-family:var(--font-display);color:var(--fg-subtle);background:var(--bg-muted);border:1px solid var(--border)">{{ p.initials }}</span>
+            <div>
+              <p style="margin:0;font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">{{ p.name }}</p>
+              <p style="margin:1px 0 0;font-size:var(--text-xs);color:var(--fg-muted)">{{ p.role }}</p>
+            </div>
+          </div>
+        </sc-for>
+        <p style="margin:16px 0 0;font-size:var(--text-xs);color:var(--fg-subtle)">Photo placeholders — send us headshots and we'll drop them in.</p>
+      </div>
+    </section>
+
+    <section style="margin-top:44px">
+      <p style="margin:0 0 16px;font-size:var(--text-xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Other programs</p>
+      <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+        <sc-for list="{{ otherPrograms }}" as="p" hint-placeholder-count="3">
+          <button onClick="{{ p.open }}" style="text-align:left;cursor:pointer;background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px;display:flex;flex-direction:column;gap:6px" style-hover="border-color:var(--border-strong)">
+            <span style="width:22px;height:2px;background: {{ p.tint }}"></span>
+            <span style="font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">{{ p.name }}</span>
+          </button>
+        </sc-for>
+      </div>
+    </section>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{ isNews }}" hint-placeholder-val="{{ false }}">
+  <main style="max-width:var(--container-sm);margin:0 auto;padding:28px 24px 96px">
+    <button onClick="{{ goHub }}" style="background:none;border:0;cursor:pointer;padding:0;font-size:var(--text-sm);font-weight:600;color:var(--fg-muted)">← Back to Care Connect</button>
+    <article style="margin-top:26px">
+      <div style="display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:14px">
+        <span style="font-size:var(--text-xs);font-weight:600;padding:.32em .8em;border-radius:var(--radius-pill);background: {{ ann.quiet }};color: {{ ann.tint }}">{{ ann.tag }}</span>
+        <span style="font-family:var(--font-mono);font-size:var(--text-xs);color:var(--fg-subtle)">{{ ann.date }}</span>
+      </div>
+      <h1 style="font-family:var(--font-display);font-weight:500;font-size:var(--text-3xl);line-height:1.12;letter-spacing:var(--tracking-tight);color:var(--fg-strong);margin:0 0 18px;text-wrap:balance">{{ ann.title }}</h1>
+      <p style="font-family:var(--font-serif);font-size:var(--text-md);line-height:var(--leading-relaxed);color:var(--fg);margin:0 0 18px;text-wrap:pretty">{{ ann.dek }}</p>
+      <sc-for list="{{ ann.body }}" as="para" hint-placeholder-count="3">
+        <p style="font-family:var(--font-serif);font-size:var(--text-base);line-height:var(--leading-relaxed);color:var(--fg);margin:0 0 18px;text-wrap:pretty">{{ para }}</p>
+      </sc-for>
+      <div style="margin-top:34px;padding-top:24px;border-top:1px solid var(--divider);display:flex;flex-wrap:wrap;gap:12px;align-items:center">
+        <button onClick="{{ goTriage }}" style="cursor:pointer;background:var(--accent);color:var(--accent-fg);border:0;font-size:var(--text-sm);font-weight:600;padding:11px 22px;border-radius:var(--radius-pill)">Questions? Ask your team</button>
+        <button onClick="{{ goNews }}" style="cursor:pointer;background:transparent;color:var(--fg-strong);border:1px solid var(--border-strong);font-size:var(--text-sm);font-weight:600;padding:11px 22px;border-radius:var(--radius-pill)">All announcements</button>
+      </div>
+    </article>
+  </main>
+  </sc-if>
+
+  <footer style="border-top:1px solid var(--divider);background:var(--bg-sunken)">
+    <div style="max-width:var(--container-lg);margin:0 auto;padding:38px 24px;display:flex;gap:20px;flex-wrap:wrap;align-items:center">
+      <p style="margin:0;font-size:var(--text-sm);color:var(--fg-muted)">BHW Medical Group · 1200 Charles Street, Baltimore MD · <a href="tel:+14105550142">(410) 555-0142</a></p>
+      <p style="margin:0 0 0 auto;font-size:var(--text-xs);color:var(--fg-subtle)">Care Connect is not for emergencies. Call 911.</p>
+    </div>
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280,&quot;height&quot;:900}}">
+class Component extends DCLogic {
+  state = {
+    view: 'hub', signedIn: true, cardStyle: 'stone', newsStyle: 'feed',
+    mode: 'stepper', step: 0, cat: null, branch: null, followUp: '',
+    flags: [], detail: '', files: [], done: false, faq: 0,
+    progId: 'primary', annId: 'a1'
+  };
+
+  refPrograms = React.createRef();
+  refNews = React.createRef();
+  refChannels = React.createRef();
+
+  set(k, v) { this.setState({ [k]: v }); }
+  go(view) { this.setState({ view }); window.scrollTo(0, 0); }
+
+  scrollToRef(ref) {
+    const run = () => {
+      const el = ref.current;
+      if (!el) return;
+      const top = el.getBoundingClientRect().top + window.scrollY - 84;
+      window.scrollTo(0, top);
+    };
+    if (this.state.view !== 'hub') this.setState({ view: 'hub' }, () => requestAnimationFrame(run));
+    else run();
+  }
+
+  PROGRAMS() {
+    return [
+      { id: 'primary', num: '01', short: 'Primary Care', name: 'BHW Primary Care',
+        eyebrow: 'Baltimore Healthcare & Wellness',
+        blurb: 'Your medical home — annual visits, everyday illness, chronic conditions, referrals.',
+        long: 'The front door to everything else. One clinician who knows your history, keeps your medication list honest, and coordinates with the specialty programs so you are not the one carrying your own chart between offices.',
+        tint: 'var(--accent)', quiet: 'var(--accent-quiet)', veil: 'color-mix(in srgb, var(--accent-quiet) 42%, var(--bg-elevated))',
+        treats: ['Annual physicals and preventive screening', 'Blood pressure, cholesterol, diabetes', 'Same-week sick visits and telehealth', 'Medication reviews and refills', 'Referrals and specialist coordination'],
+        steps: [{ n: '1', title: 'A long first visit', body: 'Sixty minutes. History, labs ordered, questions answered.' }, { n: '2', title: 'A written plan', body: 'You leave with it in Care Connect, not just in your head.' }, { n: '3', title: 'Check-ins that fit', body: 'In person, video, or a message — whatever the week allows.' }],
+        people: [{ initials: 'AJ', name: 'Dr. Adaeze Johnson', role: 'Internal Medicine' }, { initials: 'RM', name: 'Rosa Mendez, NP', role: 'Nurse Practitioner' }] },
+      { id: 'flow', num: '02', short: 'Flow', name: 'Flow — Vascular Testing Center',
+        eyebrow: 'Heart · Vessels · Metabolism · Nerves',
+        blurb: 'Non-invasive testing for the heart, vessels, metabolism and the nerves.',
+        long: 'Flow looks at circulation as one system. Non-invasive vascular studies, metabolic panels and nerve testing under one roof, read the same week — so a numb foot or a stubborn blood pressure gets an answer instead of another referral.',
+        tint: 'var(--accent-2)', quiet: 'var(--accent-2-quiet)', veil: 'color-mix(in srgb, var(--accent-2-quiet) 42%, var(--bg-elevated))',
+        treats: ['Arterial and venous ultrasound', 'Ankle-brachial index and pulse volume', 'Metabolic and lipid workups', 'Peripheral neuropathy testing', 'Post-procedure surveillance'],
+        steps: [{ n: '1', title: 'Testing day', body: 'Most studies take under an hour. Wear something loose.' }, { n: '2', title: 'Read within days', body: 'Results posted to your Flow pages with plain-language notes.' }, { n: '3', title: 'A plan, not a PDF', body: 'We walk it through with you and loop in Primary Care.' }],
+        people: [{ initials: 'TC', name: 'Dr. Tomas Cruz', role: 'Vascular Medicine' }, { initials: 'KB', name: 'Kayla Brooks, RVT', role: 'Vascular Technologist' }] },
+      { id: 'charmed', num: '03', short: 'CharmEd Minds', name: 'CharmEd Minds',
+        eyebrow: 'Brain health · Cognition · Neurodivergence',
+        blurb: 'Brain health, cognition and neurodivergent care — assessment through everyday strategy.',
+        long: 'For memory that feels different, attention that has always worked its own way, and brains that were never built for the standard instructions. Full cognitive assessment, ADHD and autism evaluation for adults, and practical strategy that survives contact with real life.',
+        tint: 'var(--brand-clay)', quiet: 'var(--warning-bg)', veil: 'color-mix(in srgb, var(--warning-bg) 34%, var(--bg-elevated))',
+        treats: ['Adult ADHD and autism evaluation', 'Memory and cognitive assessment', 'Post-concussion and long-COVID fog', 'Executive-function coaching', 'Accommodation letters and documentation'],
+        steps: [{ n: '1', title: 'Intake conversation', body: 'History, school and work story, what you actually want to change.' }, { n: '2', title: 'Structured testing', body: 'Two sessions, paced so fatigue does not skew the picture.' }, { n: '3', title: 'Findings you can use', body: 'A readable report, plus strategies and any letters you need.' }],
+        people: [{ initials: 'NP', name: 'Dr. Nia Palmer', role: 'Neuropsychology' }, { initials: 'DS', name: 'Devon Shaw, LCPC', role: 'Cognitive Coach' }] },
+      { id: 'mind', num: '04', short: 'Mind & Mood', name: 'BHW Mind & Mood',
+        eyebrow: 'Integrative mental health & substance use',
+        blurb: 'Integrative mental health and substance-use care, without the wait or the judgment.',
+        long: 'Therapy, medication management and substance-use treatment held by one team, integrated with your medical care. We treat the whole picture — sleep, thyroid, grief, alcohol, trauma — because none of it happens in a separate body.',
+        tint: 'var(--accent-3)', quiet: 'var(--accent-3-quiet)', veil: 'color-mix(in srgb, var(--accent-3-quiet) 42%, var(--bg-elevated))',
+        treats: ['Depression, anxiety, bipolar care', 'Medication management', 'Alcohol and opioid use treatment (MAT)', 'Trauma-informed therapy', 'Perinatal and grief support'],
+        steps: [{ n: '1', title: 'Reach out any way', body: 'Message, call, or ask your primary clinician to walk you over.' }, { n: '2', title: 'First appointment within two weeks', body: 'Sooner if things are sharp. Tell us and we will find room.' }, { n: '3', title: 'Care that adjusts', body: 'We change the plan as often as your life does.' }],
+        people: [{ initials: 'LO', name: 'Dr. Leah Okafor', role: 'Psychiatry' }, { initials: 'MR', name: 'Marcus Reed, LCSW-C', role: 'Therapy & Recovery' }] }
+    ];
+  }
+
+  ANNOUNCEMENTS() {
+    return [
+      { id: 'a1', date: 'Jul 28', tag: 'Hours', tint: 'var(--warning)', quiet: 'var(--warning-bg)', pinned: true,
+        title: 'Labor Day weekend — office closed Sept 1',
+        dek: 'The office is closed Monday, September 1. On-call coverage runs the whole weekend.',
+        body: ['We will be closed Monday, September 1 for Labor Day, reopening Tuesday at 8:00 am. Refill requests sent after Thursday noon may not be filled until Tuesday, so if you are running low, send the request this week.',
+          'On-call coverage runs the entire weekend. Call the main line and press 1 — a BHW clinician answers, not an answering service.',
+          'Flow testing scheduled for that Monday has already been moved; you will see the new time on your Flow pages and get a text confirmation.'] },
+      { id: 'a2', date: 'Jul 21', tag: 'Mind & Mood', tint: 'var(--accent-3)', quiet: 'var(--accent-3-quiet)',
+        title: 'Evening therapy slots opened for fall',
+        dek: 'Tuesday and Thursday 5–7 pm appointments are now bookable through the end of the year.',
+        body: ['We heard the same thing from a lot of you: the care was right, the hours were not. Starting in September, Mind & Mood is holding evening slots on Tuesdays and Thursdays until 7:00 pm, in person and by video.',
+          'Existing patients get first pick through August 15. After that they open to everyone on the waitlist.'] },
+      { id: 'a3', date: 'Jul 14', tag: 'Flow', tint: 'var(--accent-2)', quiet: 'var(--accent-2-quiet)',
+        title: 'Vascular results now post within 48 hours',
+        dek: 'Our new reading workflow cuts the wait for Flow studies roughly in half.',
+        body: ['Vascular studies read same-week used to mean five to seven days. With a second reader on staff, most results now post to your Flow pages within 48 hours, with a plain-language summary alongside the clinical report.',
+          'If something needs attention sooner, you will get a call before the result posts. We do not let you find out from a portal.'] },
+      { id: 'a4', date: 'Jun 30', tag: 'CharmEd', tint: 'var(--brand-clay)', quiet: 'var(--warning-bg)',
+        title: 'Adult ADHD evaluations: what the wait actually looks like',
+        dek: 'A note on our current timeline, and what you can do while you wait.',
+        body: ['Demand for adult evaluation has more than doubled this year. We are currently booking assessments about ten weeks out, and we would rather tell you that plainly than keep you guessing.',
+          'While you wait: start the intake questionnaire, gather old report cards or work reviews if you have them, and know that if things become urgent, we can bring you in for a bridging visit with Primary Care.'] }
+    ];
+  }
+
+  CATEGORIES() {
+    return [
+      { id: 'clinical', label: 'A health question', hint: 'Symptom, side effect, or something about your plan', eta: '1 business day', team: 'Clinical triage nurse' },
+      { id: 'refill', label: 'A refill', hint: 'Prescription renewal or pharmacy change', eta: '2 business days', team: 'Pharmacy team' },
+      { id: 'billing', label: 'Billing or insurance', hint: 'A bill, coverage, or a payment plan', eta: '2 business days', team: 'Patient accounts' },
+      { id: 'scheduling', label: 'An appointment', hint: 'Book, move, or cancel a visit', eta: 'Same day', team: 'Front desk' }
+    ];
+  }
+
+  BRANCH() {
+    return {
+      clinical: { title: "What's going on?", hint: 'Pick the closest one — you can explain in your own words next.',
+        opts: ['A new symptom', 'Something is getting worse', 'A question about my plan', 'A medication side effect'],
+        fu: { 'A new symptom': ['How long has it been going on?', 'e.g. three days, since Sunday…'], 'A medication side effect': ['Which medication?', 'Name it as it appears on the bottle'] } },
+      refill: { title: 'Which prescription?', hint: 'One request per medication keeps the pharmacy team fast.',
+        opts: ['A medication I take daily', 'Something I ran out of', 'A new pharmacy', 'A 90-day supply'],
+        fu: { 'A medication I take daily': ['Medication name and dose', 'e.g. metformin 500 mg'], 'Something I ran out of': ['Medication name and dose', 'e.g. sertraline 50 mg'], 'A new pharmacy': ['Which pharmacy, and where?', 'e.g. Walgreens on Pratt St'], 'A 90-day supply': ['Medication name and dose', 'e.g. lisinopril 10 mg'] } },
+      billing: { title: 'What can we sort out?', hint: 'Have the statement handy if you have it — you can attach it later.',
+        opts: ['A charge I do not recognize', 'Insurance or coverage', 'Set up a payment plan', 'Request a cost estimate'],
+        fu: { 'A charge I do not recognize': ['Statement date or number, if you have it', 'Optional'], 'Request a cost estimate': ['Which service?', 'e.g. vascular ultrasound'] } },
+      scheduling: { title: 'What would you like to do?', hint: 'Tell us the days that work and we will do the hunting.',
+        opts: ['Book a new visit', 'Move an appointment', 'Cancel an appointment', 'Join the cancellation list'],
+        fu: { 'Book a new visit': ['Which program, and what days work?', 'e.g. Flow, Tuesday or Thursday mornings'], 'Move an appointment': ['Which appointment, and when suits you?', 'e.g. Aug 12 with Dr. Cruz'], 'Join the cancellation list': ['Which program, and how soon can you come?', 'e.g. Mind & Mood, any weekday'] } }
+    };
+  }
+
+  FLAGS() {
+    return ['Chest pain, pressure, or trouble breathing', 'Weakness or numbness on one side, or trouble speaking', 'Thoughts of harming myself or someone else', 'Heavy bleeding, fainting, or a fever over 103°', 'None of these'];
+  }
+
+  toggleFlag(f) {
+    let flags = this.state.flags.slice();
+    if (f === 'None of these') flags = flags.includes(f) ? [] : [f];
+    else {
+      flags = flags.filter(x => x !== 'None of these');
+      flags = flags.includes(f) ? flags.filter(x => x !== f) : flags.concat([f]);
+    }
+    this.setState({ flags });
+  }
+
+  renderVals() {
+    const s = this.state;
+    const programs = this.PROGRAMS();
+    const anns = this.ANNOUNCEMENTS();
+    const cats = this.CATEGORIES();
+    const cat = cats.find(c => c.id === s.cat);
+    const branchAll = this.BRANCH();
+    const branch = s.cat ? branchAll[s.cat] : null;
+    const fu = branch && s.branch ? branch.fu[s.branch] : null;
+    const anyFlag = s.flags.length > 0 && !s.flags.includes('None of these');
+    const stepper = s.mode === 'stepper';
+    const pill = (on) => on
+      ? { bg: 'var(--bg-elevated)', fg: 'var(--fg-strong)' }
+      : { bg: 'transparent', fg: 'var(--fg-muted)' };
+
+    const prog = programs.find(p => p.id === s.progId) || programs[0];
+    const ann = anns.find(a => a.id === s.annId) || anns[0];
+    const pinnedRaw = anns.find(a => a.pinned);
+
+    const openProgram = (id) => () => { this.setState({ progId: id, view: 'program' }); window.scrollTo(0, 0); };
+    const openAnn = (id) => () => { this.setState({ annId: id, view: 'news' }); window.scrollTo(0, 0); };
+    const startTriage = (catId) => () => { this.setState({ view: 'triage', done: false, step: catId ? 1 : 0, cat: catId || null, branch: null, followUp: '', flags: [], files: [] }); window.scrollTo(0, 0); };
+
+    return {
+      isHub: s.view === 'hub', isTriage: s.view === 'triage', isProgram: s.view === 'program', isNews: s.view === 'news',
+      goHub: () => this.go('hub'),
+      refPrograms: this.refPrograms, refNews: this.refNews, refChannels: this.refChannels,
+      goPrograms: () => this.scrollToRef(this.refPrograms),
+      goNews: () => this.scrollToRef(this.refNews),
+      goTriage: startTriage(null),
+      toggleAuth: () => this.setState({ signedIn: !s.signedIn }),
+      authLabel: s.signedIn ? 'Signed in' : 'Signed out',
+
+      heroEyebrow: s.signedIn ? 'Thursday, July 31' : 'Welcome to BHW',
+      heroTitle: s.signedIn ? 'Good morning, Amaris.' : 'One place to reach your care team.',
+      heroBody: s.signedIn
+        ? 'Everything from the office lives here — messages, results, refills and the programs caring for you. Nothing is waiting on you today.'
+        : 'Send a question, request a refill, book a visit, or read what is new at BHW. Sign in to see your own results and appointments.',
+      panelTitle: s.signedIn ? 'Waiting for you' : 'Start here',
+      panelRows: s.signedIn ? [
+        { title: 'Flow results are ready', meta: 'Vascular study · read Tuesday', tint: 'var(--accent-2)', cta: 'View', action: openProgram('flow') },
+        { title: 'Refill: metformin 500 mg', meta: '9 days left · auto-renew off', tint: 'var(--accent)', cta: 'Renew', action: startTriage('refill') },
+        { title: 'Dr. Okafor · Aug 12, 4:30 pm', meta: 'Mind & Mood · telehealth', tint: 'var(--accent-3)', cta: 'Change', action: startTriage('scheduling') }
+      ] : [
+        { title: 'Ask a question', meta: 'Routed to the right team', tint: 'var(--accent)', cta: 'Open', action: startTriage(null) },
+        { title: 'Become a patient', meta: 'New-patient intake, 5 minutes', tint: 'var(--accent-2)', cta: 'Start', action: startTriage('scheduling') },
+        { title: 'Sign in', meta: 'Results, visits, messages', tint: 'var(--accent-3)', cta: 'Sign in', action: () => this.setState({ signedIn: true }) }
+      ],
+
+      channels: [
+        { mark: '✎', title: 'Triage form', body: 'Tell us what is going on and we route it to the right person.', meta: 'Answer in 1 business day', tint: 'var(--accent)', quiet: 'var(--accent-quiet)', action: startTriage(null) },
+        { mark: '☎', title: 'Call the office', body: '(410) 555-0142 — a person, not a phone tree.', meta: 'Mon–Fri, 8 am – 5 pm', tint: 'var(--accent-2)', quiet: 'var(--accent-2-quiet)', action: () => { window.location.href = 'tel:+14105550142'; } },
+        { mark: '✆', title: 'Text us', body: 'Short questions, appointment changes, quick confirmations.', meta: 'Reply within hours', tint: 'var(--accent-3)', quiet: 'var(--accent-3-quiet)', action: startTriage(null) },
+        { mark: '℞', title: 'Refill request', body: 'Renew a prescription or move it to a new pharmacy.', meta: 'Filled in 2 business days', tint: 'var(--accent)', quiet: 'var(--accent-quiet)', action: startTriage('refill') },
+        { mark: '⌘', title: 'Book or change a visit', body: 'In person or telehealth, across all four programs.', meta: 'Same-day response', tint: 'var(--accent-2)', quiet: 'var(--accent-2-quiet)', action: startTriage('scheduling') },
+        { mark: '☾', title: 'After hours', body: 'Evenings, weekends and holidays — a BHW clinician is on call.', meta: 'Call and press 1', tint: 'var(--brand-clay)', quiet: 'var(--warning-bg)', action: () => { window.location.href = 'tel:+14105550142'; } }
+      ],
+
+      pinned: pinnedRaw ? { date: pinnedRaw.date, title: pinnedRaw.title, dek: pinnedRaw.dek, open: openAnn(pinnedRaw.id) } : null,
+
+      cardsStone: s.cardStyle === 'stone', cardsEditorial: s.cardStyle === 'editorial', cardsMinimal: s.cardStyle === 'minimal',
+      cardStyles: [['stone', 'Stone'], ['editorial', 'Editorial'], ['minimal', 'List']].map(([id, label]) => {
+        const p = pill(s.cardStyle === id); return { label, bg: p.bg, fg: p.fg, action: () => this.set('cardStyle', id) };
+      }),
+      newsFeed: s.newsStyle === 'feed', newsCards: s.newsStyle === 'cards',
+      newsStyles: [['feed', 'Feed'], ['cards', 'Cards']].map(([id, label]) => {
+        const p = pill(s.newsStyle === id); return { label, bg: p.bg, fg: p.fg, action: () => this.set('newsStyle', id) };
+      }),
+
+      programs: programs.map(p => Object.assign({}, p, { open: openProgram(p.id) })),
+      prog: prog,
+      otherPrograms: programs.filter(p => p.id !== prog.id).map(p => ({ name: p.name, tint: p.tint, open: openProgram(p.id) })),
+      askAboutProgram: startTriage('clinical'),
+      announcements: anns.map(a => Object.assign({}, a, { open: openAnn(a.id) })),
+      ann: ann,
+
+      hours: [{ day: 'Monday – Thursday', time: '8:00 am – 5:00 pm' }, { day: 'Friday', time: '8:00 am – 3:00 pm' }, { day: 'Saturday', time: 'Flow testing only, 9 – 1' }, { day: 'Sunday', time: 'Closed · on-call by phone' }],
+      forms: [{ name: 'New patient intake', meta: 'PDF · 4 pages' }, { name: 'Records release (HIPAA)', meta: 'PDF · 2 pages' }, { name: 'ADHD self-report packet', meta: 'PDF · CharmEd Minds' }, { name: 'Financial assistance application', meta: 'PDF · 3 pages' }],
+      team: [{ initials: 'AJ', name: 'Dr. Adaeze Johnson', role: 'Internal Medicine', veil: 'var(--accent-quiet)' }, { initials: 'TC', name: 'Dr. Tomas Cruz', role: 'Vascular Medicine', veil: 'var(--accent-2-quiet)' }, { initials: 'NP', name: 'Dr. Nia Palmer', role: 'Neuropsychology', veil: 'var(--warning-bg)' }, { initials: 'LO', name: 'Dr. Leah Okafor', role: 'Psychiatry', veil: 'var(--accent-3-quiet)' }],
+      faqs: [
+        ['How fast will someone answer my message?', 'Clinical questions get a reply within one business day, usually the same afternoon. Refills and billing take up to two. Scheduling is same-day. If something changes for the worse while you wait, call us.'],
+        ['Can I use Care Connect for an emergency?', 'No. Messages are not monitored overnight. For chest pain, trouble breathing, stroke symptoms or thoughts of self-harm, call 911. For urgent but not emergency needs after hours, call the office and press 1.'],
+        ['Who actually reads what I send?', 'A triage nurse reads clinical notes and routes them to your clinician. Refills go to the pharmacy team, billing to patient accounts. Everything lands in your chart either way.'],
+        ['Do I need an appointment to switch programs?', 'Usually not. Ask your primary clinician and they can walk you over to Flow, CharmEd Minds or Mind & Mood internally — no outside referral, no starting your story from scratch.'],
+        ['Can family members message on my behalf?', 'Yes, with a signed release on file. Ask the front desk for the proxy access form, or download the HIPAA release from this page.']
+      ].map(([q, a], i) => ({ q, a, open: s.faq === i, sign: s.faq === i ? '−' : '+', toggle: () => this.set('faq', s.faq === i ? -1 : i) })),
+
+      isStepper: stepper,
+      formModes: [['stepper', 'Step by step'], ['single', 'One page']].map(([id, label]) => {
+        const p = pill(s.mode === id); return { label, bg: p.bg, fg: p.fg, action: () => this.setState({ mode: id, step: 0 }) };
+      }),
+      steps: ['Topic', 'Details', 'Safety', 'Your note'].map((label, i) => ({
+        label, bar: i <= s.step ? 'var(--accent)' : 'var(--border-strong)', fg: i <= s.step ? 'var(--fg-strong)' : 'var(--fg-subtle)'
+      })),
+
+      secCategory: stepper ? s.step === 0 : true,
+      secBranch: (stepper ? s.step === 1 : true) && !!branch,
+      secUrgency: stepper ? s.step === 2 : true,
+      secDetails: stepper ? s.step === 3 : true,
+      notDone: !s.done, isDone: s.done,
+
+      categories: cats.map(c => ({
+        label: c.label, hint: c.hint,
+        bg: s.cat === c.id ? 'var(--accent-quiet)' : 'var(--bg)',
+        bd: s.cat === c.id ? 'var(--accent)' : 'var(--border-strong)',
+        pick: () => this.setState({ cat: c.id, branch: null, followUp: '', step: stepper ? 1 : s.step })
+      })),
+      branchTitle: branch ? branch.title : '',
+      branchHint: branch ? branch.hint : '',
+      branchOptions: branch ? branch.opts.map(o => ({
+        label: o,
+        bg: s.branch === o ? 'var(--accent-quiet)' : 'var(--bg)',
+        fg: s.branch === o ? 'var(--accent-quiet-fg)' : 'var(--fg)',
+        bd: s.branch === o ? 'var(--accent)' : 'var(--border-strong)',
+        pick: () => this.setState({ branch: o, followUp: '' })
+      })) : [],
+      showFollowUp: !!fu,
+      followUpQ: fu ? fu[0] : '',
+      followUpPh: fu ? fu[1] : '',
+      setFollowUp: (e) => this.set('followUp', e.target.value),
+
+      flags: this.FLAGS().map(f => {
+        const on = s.flags.includes(f);
+        const danger = on && f !== 'None of these';
+        return {
+          label: f, mark: on ? '✓' : '',
+          bg: danger ? 'var(--danger-bg)' : (on ? 'var(--accent-quiet)' : 'var(--bg)'),
+          bd: danger ? 'var(--danger)' : (on ? 'var(--accent)' : 'var(--border-strong)'),
+          box: on ? (danger ? 'var(--danger)' : 'var(--accent)') : 'transparent',
+          toggle: () => this.toggleFlag(f)
+        };
+      }),
+      anyFlag,
+
+      setDetail: (e) => this.set('detail', e.target.value),
+      addFile: () => this.setState({ files: s.files.concat([{ name: 'photo-' + (s.files.length + 1) + '.jpg' }]) }),
+      files: s.files.map((f, i) => ({ name: f.name, remove: () => this.setState({ files: s.files.filter((_, j) => j !== i) }) })),
+
+      showBack: stepper && s.step > 0,
+      showNext: stepper && s.step < 3,
+      showSubmit: !stepper || s.step === 3,
+      nextOpacity: (s.step === 0 && !s.cat) ? 0.45 : 1,
+      submitOpacity: s.cat ? 1 : 0.45,
+      nextStep: () => { if (s.step === 0 && !s.cat) return; this.setState({ step: Math.min(3, s.step + 1) }); },
+      prevStep: () => this.setState({ step: Math.max(0, s.step - 1) }),
+      submit: () => { if (!s.cat) return; this.setState({ done: true }); window.scrollTo(0, 0); },
+      resetForm: () => this.setState({ done: false, step: 0, cat: null, branch: null, followUp: '', flags: [], detail: '', files: [] }),
+      etaHint: cat ? 'Expected reply: ' + cat.eta + ' · goes to ' + cat.team : 'Pick a topic to see how fast we answer.',
+
+      ticketId: 'CC-4821',
+      doneBody: cat
+        ? (anyFlag
+          ? 'Your note is flagged for immediate review, and a nurse will call you rather than message back. If anything worsens in the meantime, call 911.'
+          : 'Your note went to ' + cat.team.toLowerCase() + '. Expect a reply within ' + cat.eta.toLowerCase() + '. We will text you the moment it lands.')
+        : '',
+      receipt: cat ? [
+        { k: 'Topic', v: cat.label },
+        { k: 'Detail', v: s.branch || '—' },
+        { k: 'Goes to', v: cat.team },
+        { k: 'Expected reply', v: cat.eta },
+        { k: 'Attachments', v: s.files.length ? s.files.length + ' file(s)' : 'None' }
+      ] : []
+    };
+  }
+}
+
+</script>
+</body>
+</html>

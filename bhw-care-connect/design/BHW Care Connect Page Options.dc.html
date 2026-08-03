@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="design_doc_mode" content="canvas">
+<link rel="stylesheet" href="tokens/fonts.css">
+<link rel="stylesheet" href="tokens/tokens.css">
+<style>
+body{margin:0;background:var(--bg-sunken)}
+a{color:var(--link);text-underline-offset:.15em}
+a:hover{color:var(--link-hover)}
+button{font-family:inherit}
+input,textarea{font-family:inherit}
+:where(a,button,input,textarea,[tabindex]):focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+</style>
+</helmet>
+
+<section style="font-family:var(--font-sans);color:var(--fg);background:var(--bg-sunken);padding:56px 56px 96px;display:flex;flex-direction:column;gap:28px">
+
+  <div style="display:flex;flex-direction:column;gap:6px;max-width:70ch">
+    <p style="margin:0;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--brand-clay)">Turn 1 · three directions</p>
+    <h1 style="margin:0;font-family:var(--font-display);font-weight:500;font-size:var(--text-2xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">Care Connect, three ways in</h1>
+    <p style="margin:0;font-size:var(--text-sm);color:var(--fg-muted);text-wrap:pretty">All for a patient who already knows us and wants to get something done — message the team, find a resource, or get into the portal. Same content, different order of operations. Reference them as <a href="#1a">1a</a>, <a href="#1b">1b</a>, <a href="#1c">1c</a>.</p>
+  </div>
+
+  <div style="display:flex;gap:44px;align-items:flex-start;flex-wrap:nowrap;width:max-content">
+
+    <!-- ============ 1a · FRONT DESK ============ -->
+    <div id="1a" style="width:880px;flex:0 0 880px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="font-size:var(--text-xs);font-weight:700;letter-spacing:.1em;padding:5px 12px;border-radius:var(--radius-pill);background:var(--accent-quiet);color:var(--accent-quiet-fg)">1a</span>
+        <span style="font-family:var(--font-display);font-size:var(--text-lg);color:var(--fg-strong)">The Front Desk</span>
+        <span style="font-size:var(--text-sm);color:var(--fg-muted)">Tasks first. Six doors, plain labels, response times up front.</span>
+      </div>
+
+      <div style="border-radius:var(--radius-xl);border:1px solid var(--border);background:var(--bg);box-shadow:var(--shadow-lg);overflow:hidden">
+        <div style="display:flex;align-items:center;gap:12px;padding:14px 26px;border-bottom:1px solid var(--divider);background:var(--bg-elevated)">
+          <span style="width:26px;height:26px;border-radius:var(--radius-pill);background-image:var(--opal-stone);box-shadow:var(--edge-gold)"></span>
+          <span style="font-family:var(--font-display);font-size:var(--text-base);color:var(--fg-strong)">BHW Care Connect</span>
+          <span style="margin-left:auto;display:flex;gap:8px;align-items:center">
+            <span style="font-size:var(--text-sm);font-weight:600;color:var(--fg-muted)">Hours</span>
+            <span style="font-size:var(--text-sm);font-weight:600;color:var(--fg-muted)">Programs</span>
+            <span style="font-size:var(--text-sm);font-weight:600;padding:8px 16px;border-radius:var(--radius-pill);border:1px solid var(--border-strong);color:var(--fg-strong)">Patient portal</span>
+          </span>
+        </div>
+
+        <div style="padding:44px 46px 20px">
+          <p style="margin:0 0 10px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Open now · replies today until 4:30</p>
+          <h2 style="margin:0 0 10px;font-family:var(--font-display);font-weight:500;font-size:var(--text-3xl);line-height:1.1;letter-spacing:var(--tracking-tight);color:var(--fg-strong)">You're in the right place.</h2>
+          <p style="margin:0;font-size:var(--text-md);color:var(--fg);max-width:52ch;text-wrap:pretty">One page for everything you'd normally have to hunt for. Pick the thing you came here to do.</p>
+          <p style="margin:8px 0 0;font-family:var(--font-script);font-size:var(--text-lg);color:var(--brand-clay)">and yes, you can finally delete those seven bookmarks</p>
+        </div>
+
+        <div style="padding:24px 46px 8px;display:grid;gap:14px;grid-template-columns:1fr 1fr">
+          <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);display:flex;gap:14px">
+            <span style="flex:0 0 34px;height:34px;border-radius:var(--radius-pill);display:grid;place-items:center;font-family:var(--font-display);background:var(--accent-quiet);color:var(--accent-quiet-fg)">M</span>
+            <div>
+              <p style="margin:0;font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">Message my care team</p>
+              <p style="margin:3px 0 0;font-size:var(--text-sm);color:var(--fg-muted);text-wrap:pretty">Clinical questions, side effects, anything that needs a person.</p>
+              <p style="margin:8px 0 0;font-size:var(--text-2xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--fg-subtle)">Reply in 1 business day</p>
+            </div>
+          </div>
+          <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);display:flex;gap:14px">
+            <span style="flex:0 0 34px;height:34px;border-radius:var(--radius-pill);display:grid;place-items:center;font-family:var(--font-display);background:var(--accent-2-quiet);color:var(--accent-2-quiet-fg)">R</span>
+            <div>
+              <p style="margin:0;font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">Refill a prescription</p>
+              <p style="margin:3px 0 0;font-size:var(--text-sm);color:var(--fg-muted);text-wrap:pretty">Tell us the medication and pharmacy — we'll handle the rest.</p>
+              <p style="margin:8px 0 0;font-size:var(--text-2xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--fg-subtle)">Sent within 2 business days</p>
+            </div>
+          </div>
+          <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);display:flex;gap:14px">
+            <span style="flex:0 0 34px;height:34px;border-radius:var(--radius-pill);display:grid;place-items:center;font-family:var(--font-display);background:var(--accent-3-quiet);color:var(--accent-3-quiet-fg)">B</span>
+            <div>
+              <p style="margin:0;font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">Book or move a visit</p>
+              <p style="margin:3px 0 0;font-size:var(--text-sm);color:var(--fg-muted);text-wrap:pretty">Openings for the next four weeks, including telehealth.</p>
+              <p style="margin:8px 0 0;font-size:var(--text-2xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--fg-subtle)">Instant confirmation</p>
+            </div>
+          </div>
+          <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);display:flex;gap:14px">
+            <span style="flex:0 0 34px;height:34px;border-radius:var(--radius-pill);display:grid;place-items:center;font-family:var(--font-display);background:var(--gold-quiet);color:var(--c-gold-600)">$</span>
+            <div>
+              <p style="margin:0;font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">Ask about a bill</p>
+              <p style="margin:3px 0 0;font-size:var(--text-sm);color:var(--fg-muted);text-wrap:pretty">Statements, insurance, payment plans. No judgment, ever.</p>
+              <p style="margin:8px 0 0;font-size:var(--text-2xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--fg-subtle)">Reply in 2 business days</p>
+            </div>
+          </div>
+          <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);display:flex;gap:14px">
+            <span style="flex:0 0 34px;height:34px;border-radius:var(--radius-pill);display:grid;place-items:center;font-family:var(--font-display);background:var(--bg-muted);color:var(--fg-strong)">P</span>
+            <div>
+              <p style="margin:0;font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">Get into the patient portal</p>
+              <p style="margin:3px 0 0;font-size:var(--text-sm);color:var(--fg-muted);text-wrap:pretty">Locked out, never set it up, or the code never arrived.</p>
+              <p style="margin:8px 0 0;font-size:var(--text-2xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--fg-subtle)">Usually fixed same day</p>
+            </div>
+          </div>
+          <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;box-shadow:var(--shadow-sm);display:flex;gap:14px">
+            <span style="flex:0 0 34px;height:34px;border-radius:var(--radius-pill);display:grid;place-items:center;font-family:var(--font-display);background:var(--danger-bg);color:var(--danger)">!</span>
+            <div>
+              <p style="margin:0;font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">Something urgent, after hours</p>
+              <p style="margin:3px 0 0;font-size:var(--text-sm);color:var(--fg-muted);text-wrap:pretty">What counts as urgent, and exactly who to call when it is.</p>
+              <p style="margin:8px 0 0;font-size:var(--text-2xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--fg-subtle)">On-call clinician, 24/7</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="padding:22px 46px 0;display:grid;gap:14px;grid-template-columns:1fr 1fr">
+          <div style="border-radius:var(--radius-lg);background-image:var(--opal-stone);box-shadow:var(--edge-gold);padding:24px">
+            <p style="margin:0 0 6px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Patient portal</p>
+            <p style="margin:0 0 4px;font-family:var(--font-display);font-size:var(--text-lg);color:var(--fg-strong)">Records, results, statements</p>
+            <p style="margin:0 0 16px;font-size:var(--text-sm);color:var(--fg);text-wrap:pretty">Forgot the password? Genuinely everyone does. Reset takes about a minute.</p>
+            <div style="display:flex;gap:10px;flex-wrap:wrap">
+              <span style="font-size:var(--text-sm);font-weight:600;padding:11px 20px;border-radius:var(--radius-pill);background:var(--accent);color:var(--accent-fg);box-shadow:var(--shadow-sm)">Sign in</span>
+              <span style="font-size:var(--text-sm);font-weight:600;padding:11px 20px;border-radius:var(--radius-pill);border:1px solid var(--border-strong);color:var(--fg-strong)">Reset password</span>
+            </div>
+          </div>
+          <div style="border-radius:var(--radius-lg);border:1px solid var(--border);background:var(--bg-elevated);padding:24px;display:flex;flex-direction:column;gap:2px">
+            <p style="margin:0 0 10px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Grab and go</p>
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--divider)"><span style="font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">New patient &amp; intake forms</span><span style="font-size:var(--text-sm);color:var(--link);font-weight:600">Open</span></div>
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--divider)"><span style="font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">Release of records request</span><span style="font-size:var(--text-sm);color:var(--link);font-weight:600">Open</span></div>
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--divider)"><span style="font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">Our four programs</span><span style="font-size:var(--text-sm);color:var(--link);font-weight:600">Browse</span></div>
+            <div style="display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--divider)"><span style="font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">Sliding-scale &amp; insurance</span><span style="font-size:var(--text-sm);color:var(--link);font-weight:600">Read</span></div>
+          </div>
+        </div>
+
+        <div style="margin:26px 46px 0;padding:16px 20px;border-radius:var(--radius-md);background:var(--danger-bg);display:flex;gap:14px">
+          <span style="width:3px;align-self:stretch;border-radius:var(--radius-pill);background:var(--danger)"></span>
+          <p style="margin:0;font-size:var(--text-sm);color:var(--fg-strong)"><strong style="font-weight:600">Emergency? Call 911.</strong> After hours and it can't wait, call (410) 555-0142 and press 1 — that pages the on-call clinician, not a voicemail box.</p>
+        </div>
+
+        <div style="margin-top:26px;padding:20px 46px 30px;border-top:1px solid var(--divider);display:flex;gap:32px;flex-wrap:wrap;font-size:var(--text-sm);color:var(--fg-muted)">
+          <span><strong style="color:var(--fg-strong);font-weight:600">Mon–Thu</strong> 8:30–5:00 · <strong style="color:var(--fg-strong);font-weight:600">Fri</strong> 8:30–1:00</span>
+          <span>(410) 555-0142</span>
+          <span>1100 Wicomico St, Suite 400, Baltimore MD</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 1b · JUST ASK ============ -->
+    <div id="1b" style="width:880px;flex:0 0 880px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="font-size:var(--text-xs);font-weight:700;letter-spacing:.1em;padding:5px 12px;border-radius:var(--radius-pill);background:var(--accent-3-quiet);color:var(--accent-3-quiet-fg)">1b</span>
+        <span style="font-family:var(--font-display);font-size:var(--text-lg);color:var(--fg-strong)">Just Ask</span>
+        <span style="font-size:var(--text-sm);color:var(--fg-muted)">One question box up top; the page sorts out who it goes to.</span>
+      </div>
+
+      <div style="border-radius:var(--radius-xl);border:1px solid var(--border);background:var(--bg);box-shadow:var(--shadow-lg);overflow:hidden">
+        <div style="background-image:var(--opal-stone);padding:20px 40px 52px;box-shadow:var(--edge-gold)">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:44px">
+            <span style="width:26px;height:26px;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--bg-elevated) 70%,transparent);box-shadow:var(--edge-gold)"></span>
+            <span style="font-family:var(--font-display);font-size:var(--text-base);color:var(--fg-strong)">BHW Care Connect</span>
+            <span style="margin-left:auto;font-size:var(--text-sm);font-weight:600;padding:8px 16px;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--bg-elevated) 78%,transparent);color:var(--fg-strong)">Patient portal</span>
+          </div>
+          <p style="margin:0 0 12px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Hi Renée — good to see you</p>
+          <h2 style="margin:0 0 12px;font-family:var(--font-display);font-weight:500;font-size:var(--text-4xl);line-height:1.05;letter-spacing:var(--tracking-tight);color:var(--fg-strong)">What's going on today?</h2>
+          <p style="margin:0 0 22px;font-family:var(--font-serif);font-size:var(--text-md);line-height:var(--leading-relaxed);color:var(--fg);max-width:50ch;text-wrap:pretty">Say it however it comes out. You don't have to know which department it belongs to — that's our job, and we're weirdly good at it.</p>
+          <div style="display:flex;gap:10px;align-items:center;background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:var(--radius-pill);padding:8px 8px 8px 22px;max-width:640px;box-shadow:var(--shadow-sm)">
+            <span style="flex:1;font-size:var(--text-md);color:var(--fg-subtle)">e.g. "my sertraline runs out Friday"</span>
+            <span style="font-size:var(--text-sm);font-weight:600;padding:12px 24px;border-radius:var(--radius-pill);background:var(--accent);color:var(--accent-fg)">Send it</span>
+          </div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+            <span style="font-size:var(--text-sm);font-weight:600;padding:8px 16px;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--bg-elevated) 80%,transparent);color:var(--fg-strong)">Refill</span>
+            <span style="font-size:var(--text-sm);font-weight:600;padding:8px 16px;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--bg-elevated) 80%,transparent);color:var(--fg-strong)">A side effect worries me</span>
+            <span style="font-size:var(--text-sm);font-weight:600;padding:8px 16px;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--bg-elevated) 80%,transparent);color:var(--fg-strong)">Move my appointment</span>
+            <span style="font-size:var(--text-sm);font-weight:600;padding:8px 16px;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--bg-elevated) 80%,transparent);color:var(--fg-strong)">A bill I don't understand</span>
+            <span style="font-size:var(--text-sm);font-weight:600;padding:8px 16px;border-radius:var(--radius-pill);background:color-mix(in srgb,var(--bg-elevated) 80%,transparent);color:var(--fg-strong)">Portal won't let me in</span>
+          </div>
+          <p style="margin:18px 0 0;font-size:var(--text-sm);color:var(--fg-muted)">A person on your care team reads every message. Back within one business day — same day if you mark it urgent.</p>
+        </div>
+
+        <div style="padding:38px 40px 0;display:grid;gap:16px;grid-template-columns:repeat(3,1fr)">
+          <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;background:var(--bg-elevated)">
+            <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Rather talk</p>
+            <p style="margin:0 0 4px;font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">(410) 555-0142</p>
+            <p style="margin:0;font-size:var(--text-sm);color:var(--fg-muted)">Front desk, 8:30–4:30. Hold music is unfortunately jazz.</p>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;background:var(--bg-elevated)">
+            <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Rather text</p>
+            <p style="margin:0 0 4px;font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">Text 410-555-0188</p>
+            <p style="margin:0;font-size:var(--text-sm);color:var(--fg-muted)">Scheduling and quick logistics. Not for clinical questions.</p>
+          </div>
+          <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;background:var(--bg-elevated)">
+            <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Rather do it yourself</p>
+            <p style="margin:0 0 4px;font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">Patient portal</p>
+            <p style="margin:0;font-size:var(--text-sm);color:var(--fg-muted)">Results, records, statements, and password resets.</p>
+          </div>
+        </div>
+
+        <div style="padding:40px 40px 0">
+          <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">While you're here</p>
+          <h3 style="margin:0 0 18px;font-family:var(--font-display);font-weight:500;font-size:var(--text-xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">The four programs your care might live in</h3>
+          <div style="display:flex;flex-direction:column">
+            <div style="display:flex;gap:20px;align-items:baseline;padding:16px 0;border-top:1px solid var(--divider)">
+              <span style="flex:0 0 170px;font-family:var(--font-display);font-size:var(--text-md);color:var(--accent-3)">Mind &amp; Mood</span>
+              <span style="flex:1;font-family:var(--font-serif);font-size:var(--text-base);line-height:var(--leading-relaxed);color:var(--fg)">Psychiatry and medication management for depression, anxiety, ADHD and bipolar care.</span>
+              <span style="font-size:var(--text-sm);font-weight:600;color:var(--link)">Visit</span>
+            </div>
+            <div style="display:flex;gap:20px;align-items:baseline;padding:16px 0;border-top:1px solid var(--divider)">
+              <span style="flex:0 0 170px;font-family:var(--font-display);font-size:var(--text-md);color:var(--accent-2)">CharmEd Minds</span>
+              <span style="flex:1;font-family:var(--font-serif);font-size:var(--text-base);line-height:var(--leading-relaxed);color:var(--fg)">Therapy and skills groups run by Baltimore clinicians who know the city.</span>
+              <span style="font-size:var(--text-sm);font-weight:600;color:var(--link)">Visit</span>
+            </div>
+            <div style="display:flex;gap:20px;align-items:baseline;padding:16px 0;border-top:1px solid var(--divider)">
+              <span style="flex:0 0 170px;font-family:var(--font-display);font-size:var(--text-md);color:var(--accent)">Flow</span>
+              <span style="flex:1;font-family:var(--font-serif);font-size:var(--text-base);line-height:var(--leading-relaxed);color:var(--fg)">Weight, metabolic and hormone care, without the lecture.</span>
+              <span style="font-size:var(--text-sm);font-weight:600;color:var(--link)">Visit</span>
+            </div>
+            <div style="display:flex;gap:20px;align-items:baseline;padding:16px 0;border-top:1px solid var(--divider);border-bottom:1px solid var(--divider)">
+              <span style="flex:0 0 170px;font-family:var(--font-display);font-size:var(--text-md);color:var(--brand-clay)">Primary Care</span>
+              <span style="flex:1;font-family:var(--font-serif);font-size:var(--text-base);line-height:var(--leading-relaxed);color:var(--fg)">Annual visits, sick visits, labs and referrals — your medical home base.</span>
+              <span style="font-size:var(--text-sm);font-weight:600;color:var(--link)">Visit</span>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin:34px 40px 0;padding:16px 20px;border-radius:var(--radius-md);background:var(--danger-bg);display:flex;gap:14px">
+          <span style="width:3px;align-self:stretch;border-radius:var(--radius-pill);background:var(--danger)"></span>
+          <p style="margin:0;font-size:var(--text-sm);color:var(--fg-strong)"><strong style="font-weight:600">Crisis or emergency:</strong> call 911, or 988 for the Suicide &amp; Crisis Lifeline. After hours, (410) 555-0142 then press 1 pages the on-call clinician.</p>
+        </div>
+
+        <div style="margin-top:26px;padding:20px 40px 30px;border-top:1px solid var(--divider);display:flex;gap:32px;flex-wrap:wrap;font-size:var(--text-sm);color:var(--fg-muted)">
+          <span><strong style="color:var(--fg-strong);font-weight:600">Mon–Thu</strong> 8:30–5:00 · <strong style="color:var(--fg-strong);font-weight:600">Fri</strong> 8:30–1:00</span>
+          <span>1100 Wicomico St, Suite 400, Baltimore MD</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ============ 1c · YOUR CARE, AT A GLANCE ============ -->
+    <div id="1c" style="width:880px;flex:0 0 880px;display:flex;flex-direction:column;gap:14px">
+      <div style="display:flex;align-items:baseline;gap:12px">
+        <span style="font-size:var(--text-xs);font-weight:700;letter-spacing:.1em;padding:5px 12px;border-radius:var(--radius-pill);background:var(--accent-2-quiet);color:var(--accent-2-quiet-fg)">1c</span>
+        <span style="font-family:var(--font-display);font-size:var(--text-lg);color:var(--fg-strong)">At a Glance</span>
+        <span style="font-size:var(--text-sm);color:var(--fg-muted)">Signed-in first: open items on top, portal and team in the rail.</span>
+      </div>
+
+      <div style="border-radius:var(--radius-xl);border:1px solid var(--border);background:var(--bg);box-shadow:var(--shadow-lg);overflow:hidden">
+        <div style="background-color:var(--c-boulder-900);background-image:radial-gradient(58% 78% at 20% 24%,rgba(96,158,180,.34),transparent 62%),radial-gradient(54% 74% at 82% 20%,rgba(142,114,168,.30),transparent 62%),radial-gradient(64% 82% at 74% 86%,rgba(104,150,120,.30),transparent 62%);padding:18px 36px 34px;color:var(--c-cream-100)">
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:30px">
+            <span style="width:26px;height:26px;border-radius:var(--radius-pill);background-image:var(--opal-stone);box-shadow:var(--edge-gold)"></span>
+            <span style="font-family:var(--font-display);font-size:var(--text-base);color:var(--c-porcelain-50)">BHW Care Connect</span>
+            <span style="margin-left:auto;display:flex;align-items:center;gap:10px">
+              <span style="font-size:var(--text-sm);color:rgba(233,227,214,.72)">Renée W.</span>
+              <span style="width:30px;height:30px;border-radius:var(--radius-pill);display:grid;place-items:center;font-size:var(--text-sm);font-weight:600;background:rgba(233,227,214,.16);color:var(--c-porcelain-50)">RW</span>
+            </span>
+          </div>
+          <p style="margin:0 0 8px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--c-gold-300)">Thursday · the office is open until 5:00</p>
+          <h2 style="margin:0 0 6px;font-family:var(--font-display);font-weight:500;font-size:var(--text-3xl);line-height:1.1;letter-spacing:var(--tracking-tight);color:var(--c-porcelain-50)">Morning, Renée. Three things are moving.</h2>
+          <p style="margin:0;font-size:var(--text-base);color:rgba(233,227,214,.78);max-width:52ch;text-wrap:pretty">Nothing needs you urgently — but here's where everything stands.</p>
+        </div>
+
+        <div style="display:grid;gap:20px;grid-template-columns:1.55fr 1fr;padding:28px 36px 0;align-items:start">
+          <div style="display:flex;flex-direction:column;gap:20px">
+            <div style="border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg-elevated);box-shadow:var(--shadow-sm);overflow:hidden">
+              <div style="padding:16px 20px;border-bottom:1px solid var(--divider);display:flex;align-items:baseline;gap:10px">
+                <span style="font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Your open items</span>
+                <span style="margin-left:auto;font-size:var(--text-xs);font-weight:600;color:var(--fg-subtle)">3</span>
+              </div>
+              <div style="display:flex;gap:14px;padding:18px 20px;border-bottom:1px solid var(--divider)">
+                <span style="flex:0 0 8px;height:8px;margin-top:7px;border-radius:50%;background:var(--accent)"></span>
+                <div style="flex:1">
+                  <p style="margin:0;font-size:var(--text-base);font-weight:600;color:var(--fg-strong)">Refill request — sertraline 50mg</p>
+                  <p style="margin:3px 0 0;font-size:var(--text-sm);color:var(--fg-muted)">Received Tuesday. Sent to CVS Light St. once Dr. Okafor signs off.</p>
+                </div>
+                <span style="flex:none;align-self:center;font-size:var(--text-2xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;padding:6px 12px;border-radius:var(--radius-pill);background:var(--success-bg);color:var(--success)">In progress</span>
+              </div>
+              <div style="display:flex;gap:14px;padding:18px 20px;border-bottom:1px solid var(--divider)">
+                <span style="flex:0 0 8px;height:8px;margin-top:7px;border-radius:50%;background:var(--warning)"></span>
+                <div style="flex:1">
+                  <p style="margin:0;font-size:var(--text-base);font-weight:600;color:var(--fg-strong)">Intake update form</p>
+                  <p style="margin:3px 0 0;font-size:var(--text-sm);color:var(--fg-muted)">Two minutes, mostly checkboxes. Due before your Aug 12 visit.</p>
+                </div>
+                <span style="flex:none;align-self:center;font-size:var(--text-sm);font-weight:600;padding:9px 16px;border-radius:var(--radius-pill);background:var(--accent);color:var(--accent-fg)">Fill out</span>
+              </div>
+              <div style="display:flex;gap:14px;padding:18px 20px">
+                <span style="flex:0 0 8px;height:8px;margin-top:7px;border-radius:50%;background:var(--accent-2)"></span>
+                <div style="flex:1">
+                  <p style="margin:0;font-size:var(--text-base);font-weight:600;color:var(--fg-strong)">Next visit — Wed Aug 12, 10:15am</p>
+                  <p style="margin:3px 0 0;font-size:var(--text-sm);color:var(--fg-muted)">Telehealth with Dr. Amara Okafor · Mind &amp; Mood</p>
+                </div>
+                <span style="flex:none;align-self:center;font-size:var(--text-sm);font-weight:600;color:var(--link)">Reschedule</span>
+              </div>
+            </div>
+
+            <div>
+              <p style="margin:0 0 12px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Start something new</p>
+              <div style="display:grid;gap:12px;grid-template-columns:1fr 1fr">
+                <div style="border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-elevated);padding:16px 18px">
+                  <p style="margin:0;font-size:var(--text-base);font-weight:600;color:var(--fg-strong)">Message my team</p>
+                  <p style="margin:3px 0 0;font-size:var(--text-sm);color:var(--fg-muted)">Reply in 1 business day</p>
+                </div>
+                <div style="border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-elevated);padding:16px 18px">
+                  <p style="margin:0;font-size:var(--text-base);font-weight:600;color:var(--fg-strong)">Request a refill</p>
+                  <p style="margin:3px 0 0;font-size:var(--text-sm);color:var(--fg-muted)">2 business days</p>
+                </div>
+                <div style="border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-elevated);padding:16px 18px">
+                  <p style="margin:0;font-size:var(--text-base);font-weight:600;color:var(--fg-strong)">Book a visit</p>
+                  <p style="margin:3px 0 0;font-size:var(--text-sm);color:var(--fg-muted)">See openings</p>
+                </div>
+                <div style="border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-elevated);padding:16px 18px">
+                  <p style="margin:0;font-size:var(--text-base);font-weight:600;color:var(--fg-strong)">Ask about a bill</p>
+                  <p style="margin:3px 0 0;font-size:var(--text-sm);color:var(--fg-muted)">Billing team, 2 days</p>
+                </div>
+              </div>
+            </div>
+
+            <div style="border:1px dashed var(--border-strong);border-radius:var(--radius-md);padding:16px 18px;background:var(--bg-sunken)">
+              <p style="margin:0;font-size:var(--text-sm);color:var(--fg-muted)">No unread messages. Enjoy the silence — we'll ping you the second there's news.</p>
+            </div>
+          </div>
+
+          <div style="display:flex;flex-direction:column;gap:16px">
+            <div style="border-radius:var(--radius-lg);background-image:var(--opal-stone);box-shadow:var(--edge-gold);padding:20px">
+              <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Patient portal</p>
+              <p style="margin:0 0 12px;font-size:var(--text-sm);color:var(--fg);text-wrap:pretty">Labs, records, statements. You're already signed in here.</p>
+              <span style="display:inline-block;font-size:var(--text-sm);font-weight:600;padding:10px 18px;border-radius:var(--radius-pill);background:var(--accent);color:var(--accent-fg)">Open portal</span>
+            </div>
+
+            <div style="border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg-elevated);padding:20px">
+              <p style="margin:0 0 12px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Your care team</p>
+              <div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--divider)">
+                <span style="width:32px;height:32px;border-radius:var(--radius-pill);display:grid;place-items:center;font-size:var(--text-xs);font-weight:600;background:var(--accent-3-quiet);color:var(--accent-3-quiet-fg)">AO</span>
+                <span><span style="display:block;font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">Dr. Amara Okafor</span><span style="display:block;font-size:var(--text-xs);color:var(--fg-muted)">Psychiatry · Mind &amp; Mood</span></span>
+              </div>
+              <div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--divider)">
+                <span style="width:32px;height:32px;border-radius:var(--radius-pill);display:grid;place-items:center;font-size:var(--text-xs);font-weight:600;background:var(--accent-2-quiet);color:var(--accent-2-quiet-fg)">JD</span>
+                <span><span style="display:block;font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">Joelle Danner, LCSW</span><span style="display:block;font-size:var(--text-xs);color:var(--fg-muted)">Therapy · CharmEd Minds</span></span>
+              </div>
+              <div style="display:flex;gap:12px;align-items:center;padding:10px 0;border-top:1px solid var(--divider)">
+                <span style="width:32px;height:32px;border-radius:var(--radius-pill);display:grid;place-items:center;font-size:var(--text-xs);font-weight:600;background:var(--accent-quiet);color:var(--accent-quiet-fg)">MR</span>
+                <span><span style="display:block;font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">Marcus Reyes</span><span style="display:block;font-size:var(--text-xs);color:var(--fg-muted)">Care coordinator</span></span>
+              </div>
+            </div>
+
+            <div style="border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg-elevated);padding:20px">
+              <p style="margin:0 0 8px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Office</p>
+              <p style="margin:0 0 2px;font-size:var(--text-sm);color:var(--fg)">Mon–Thu 8:30–5:00 · Fri 8:30–1:00</p>
+              <p style="margin:0 0 2px;font-size:var(--text-sm);color:var(--fg)">(410) 555-0142</p>
+              <p style="margin:0;font-size:var(--text-sm);color:var(--fg-muted)">1100 Wicomico St, Suite 400</p>
+            </div>
+
+            <div style="border-radius:var(--radius-lg);background:var(--danger-bg);padding:18px 20px">
+              <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--danger)">If it can't wait</p>
+              <p style="margin:0;font-size:var(--text-sm);color:var(--fg-strong)">Emergency: 911. Crisis: 988. After hours: (410) 555-0142, press 1 — a clinician gets paged.</p>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top:30px;padding:18px 36px 28px;border-top:1px solid var(--divider);display:flex;gap:26px;flex-wrap:wrap;font-size:var(--text-sm);color:var(--fg-muted)">
+          <span>Forms</span><span>Programs</span><span>Announcements</span><span>Records request</span><span>Insurance &amp; sliding scale</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;theme&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;light&quot;,&quot;dark&quot;],&quot;default&quot;:&quot;light&quot;,&quot;tsType&quot;:&quot;'light' | 'dark'&quot;}}">
+class Component extends DCLogic {
+  componentDidMount() { this.applyTheme(); }
+  componentDidUpdate() { this.applyTheme(); }
+  applyTheme() {
+    const t = this.props.theme || 'light';
+    document.documentElement.setAttribute('data-theme', t);
+  }
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

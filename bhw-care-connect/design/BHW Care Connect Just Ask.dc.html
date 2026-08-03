@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="stylesheet" href="tokens/fonts.css">
+<link rel="stylesheet" href="tokens/tokens.css">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@500;600&display=swap">
+<style>
+body{margin:0;background:var(--bg)}
+a{color:var(--link);text-underline-offset:.15em}
+a:hover{color:var(--link-hover)}
+button{font-family:inherit}
+input,textarea{font-family:inherit}
+:where(a,button,input,textarea,[tabindex]):focus-visible{outline:2px solid var(--ring);outline-offset:2px}
+</style>
+</helmet>
+
+<div style="background:var(--bg);color:var(--fg);font-family:var(--font-sans);font-size:var(--text-base);line-height:var(--leading-normal);min-height:100vh;-webkit-font-smoothing:antialiased">
+
+  <header style="position:sticky;top:0;z-index:200;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(14px);border-bottom:1px solid var(--divider)">
+    <div style="max-width:var(--container-lg);margin:0 auto;padding:12px 24px;display:flex;align-items:center;gap:16px">
+      <button onClick="{{ goHub }}" style="position:relative;display:flex;align-items:center;background:none;border:0;padding:6px 4px 6px 30px;cursor:pointer">
+        <span style="position:absolute;left:-14px;top:50%;transform:translateY(-50%);width:106px;height:53px;overflow:hidden;opacity:.5;pointer-events:none">
+          <img src="assets/bhw-circles.svg" alt="" style="position:absolute;left:-2.4px;top:-7px;width:122px;height:61px;display:block" />
+        </span>
+        <span style="position:relative;font-family:var(--font-display);font-size:var(--text-md);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">BHW Care Connect</span>
+      </button>
+      <nav style="margin-left:auto;display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <button onClick="{{ goHub }}" style="background:none;border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;color:var(--fg-muted);padding:8px 12px;border-radius:var(--radius-pill)" style-hover="color:var(--fg-strong);background:var(--bg-muted)">Home</button>
+        <button onClick="{{ goResources }}" style="background:none;border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;color:var(--fg-muted);padding:8px 12px;border-radius:var(--radius-pill)" style-hover="color:var(--fg-strong);background:var(--bg-muted)">Resources</button>
+        <button style="background:none;border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;color:var(--fg-muted);padding:8px 12px;border-radius:var(--radius-pill)" style-hover="color:var(--fg-strong);background:var(--bg-muted)">Health Blueprint</button>
+        <button onClick="{{ focusAsk }}" style="background:var(--accent);color:var(--accent-fg);border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;padding:9px 18px;border-radius:var(--radius-pill);box-shadow:var(--shadow-sm)" style-hover="background:var(--accent-hover)">Ask us</button>
+        <button onClick="{{ toggleTheme }}" title="{{ themeLabel }}" style="margin-left:4px;display:flex;align-items:center;gap:8px;white-space:nowrap;background:var(--bg-muted);border:1px solid var(--border);cursor:pointer;font-size:var(--text-xs);font-weight:600;color:var(--fg-muted);padding:8px 12px;border-radius:var(--radius-pill)" style-hover="color:var(--fg-strong);border-color:var(--border-strong)">
+          <span style="width:12px;height:12px;border-radius:50%;background-image:var(--opal-stone);box-shadow:var(--edge-gold)"></span>{{ themeLabel }}
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <sc-if value="{{ isHub }}" hint-placeholder-val="{{ true }}">
+  <main style="max-width:var(--container-lg);margin:0 auto;padding:0 24px 96px">
+
+    <section style="margin-top:26px;border-radius:var(--radius-xl);border:1px solid var(--border);background:var(--bg-elevated);box-shadow:var(--shadow-sm),var(--edge-gold);padding:clamp(26px,4vw,44px);display:grid;gap:32px;grid-template-columns:minmax(300px,1.15fr) minmax(280px,1fr);align-items:center">
+      <div>
+        <img src="assets/bhw-lockup.png" alt="BHW Medical Group — Healthcare Excellence, together" style="display:block;width:min(280px,100%);height:auto;margin:0 0 22px -14px" />
+        <span style="display:inline-flex;align-items:center;gap:8px;margin-bottom:18px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--success);background:var(--success-bg);padding:6px 12px;border-radius:var(--radius-pill)">Open now · until 5:00</span>
+        <h1 style="margin:0 0 10px;font-family:var(--font-display);font-weight:500;font-size:clamp(2.4rem,6vw,var(--text-5xl));line-height:1.02;letter-spacing:var(--tracking-tight);color:var(--fg-strong)">BHW Care&nbsp;Connect</h1>
+        <p style="margin:0 0 8px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--brand-clay)">Baltimore Healthcare &amp; Wellness</p>
+        <p style="margin:0;font-size:var(--text-md);color:var(--fg);max-width:44ch;text-wrap:pretty">Your one page for reaching your care team, finding a resource, or opening your Health Blueprint.</p>
+      </div>
+      <div style="border-radius:var(--radius-lg);padding:20px 22px;display:flex;flex-direction:column;gap:2px;background: {{ news_bg }};border: {{ news_border }};box-shadow: {{ news_shadow }}">
+        <div style="display:flex;align-items:center;gap:9px;padding-bottom:12px">
+          <span style="width:7px;height:7px;border-radius:50%;background:var(--warning)"></span>
+          <p style="margin:0;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">From the office · updated Jul 30</p>
+        </div>
+        <sc-for list="{{ news }}" as="n" hint-placeholder-count="3">
+          <div style="padding:14px 0;border-top:1px solid var(--border)">
+            <div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap">
+              <p style="margin:0;font-size:var(--text-2xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;color: {{ n.tint }}">{{ n.tag }}</p>
+              <p style="margin:0;font-size:var(--text-2xs);color:var(--fg-subtle)">{{ n.date }}</p>
+            </div>
+            <p style="margin:5px 0 0;font-family:var(--font-display);font-size:var(--text-md);line-height:1.25;color:var(--fg-strong)">{{ n.title }}</p>
+            <p style="margin:4px 0 0;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg);text-wrap:pretty">{{ n.body }}</p>
+          </div>
+        </sc-for>
+        <p style="margin:0;padding-top:12px;border-top:1px solid var(--border);font-size:var(--text-sm);font-weight:600;color:var(--fg-strong);text-decoration:underline;cursor:pointer">Older announcements</p>
+      </div>
+    </section>
+
+    <section ref="{{ askRef }}" style="margin-top:24px;border-radius:var(--radius-xl);background-image:var(--opal-stone);box-shadow:var(--shadow-md),var(--edge-gold);padding:clamp(28px,5vw,52px)">
+      <p style="margin:0 0 4px;font-family:'Dancing Script',var(--font-script),cursive;font-weight:600;font-size:clamp(1.9rem,4vw,3rem);line-height:1;color:var(--brand-clay)">Good to see you</p>
+      <h2 style="margin:0 0 12px;font-family:var(--font-display);font-weight:500;font-size:clamp(2rem,5vw,var(--text-4xl));line-height:1.05;letter-spacing:var(--tracking-tight);color:var(--fg-strong)">What's going on today?</h2>
+      <p style="margin:0 0 24px;font-family:var(--font-serif);font-size:var(--text-md);line-height:var(--leading-relaxed);color:var(--fg);max-width:52ch;text-wrap:pretty">Say it however it comes out. You don't have to know which department it belongs to — that's our job, and we're weirdly good at it.</p>
+      <div style="display:flex;gap:10px;align-items:center;background:var(--bg-elevated);border:1px solid var(--border-strong);border-radius:var(--radius-pill);padding:8px 8px 8px 22px;max-width:660px;box-shadow:var(--shadow-sm)">
+        <input value="{{ askText }}" onChange="{{ setAsk }}" placeholder="e.g. &quot;my sertraline runs out Friday&quot;" style="flex:1;min-width:0;border:0;outline:none;background:transparent;font-size:var(--text-md);color:var(--fg-strong);padding:6px 0" />
+        <button style="flex:none;border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;padding:12px 24px;border-radius:var(--radius-pill);background:var(--accent);color:var(--accent-fg)" style-hover="background:var(--accent-hover)">Send it</button>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-top:16px">
+        <sc-for list="{{ chips }}" as="chip" hint-placeholder-count="5">
+          <button onClick="{{ chip.pick }}" style="border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;padding:8px 16px;border-radius:var(--radius-pill);color:var(--fg-strong);background: {{ chip.bg }}" style-hover="background:var(--bg-elevated)">{{ chip.label }}</button>
+        </sc-for>
+      </div>
+      <div style="margin-top:20px;display:flex;align-items:center;gap:12px;flex-wrap:wrap;padding:12px 16px;border-radius:var(--radius-pill);background:var(--bg-elevated);border:1px solid var(--border);max-width:660px">
+        <span style="width:8px;height:8px;border-radius:50%;flex:none;background: {{ route.tint }}"></span>
+        <p style="margin:0;font-size:var(--text-sm);color:var(--fg)"><strong style="font-weight:600;color:var(--fg-strong)">{{ route.readout }}</strong> {{ route.hint }}</p>
+        <p style="margin:0 0 0 auto;font-size:var(--text-2xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--fg-subtle)">{{ route.sla }}</p>
+      </div>
+    </section>
+
+    <section style="margin-top:16px;border-radius:var(--radius-xl);border:1px solid var(--border);background:var(--bg-elevated);box-shadow:var(--shadow-sm);overflow:hidden">
+      <div style="padding:22px 26px;border-bottom:1px solid var(--divider);display:flex;gap:16px;align-items:center;flex-wrap:wrap;background: {{ route.quiet }}">
+        <div style="flex:1;min-width:240px">
+          <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">A few quick questions</p>
+          <p style="margin:0;font-family:var(--font-display);font-size:var(--text-xl);line-height:1.2;letter-spacing:var(--tracking-tight);color:var(--fg-strong)">{{ route.formTitle }}</p>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <sc-for list="{{ routeTabs }}" as="t" hint-placeholder-count="6">
+            <button onClick="{{ t.pick }}" style="cursor:pointer;font-size:var(--text-xs);font-weight:600;padding:7px 13px;border-radius:var(--radius-pill);background: {{ t.bg }};color: {{ t.fg }};border: {{ t.ring }}">{{ t.label }}</button>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="padding:26px;display:grid;gap:22px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+        <sc-for list="{{ fields }}" as="f" hint-placeholder-count="4">
+          <div style="display:flex;flex-direction:column;gap:8px;grid-column: {{ f.span }}">
+            <label style="font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">{{ f.label }}</label>
+            <sc-if value="{{ f.isChips }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;gap:8px;flex-wrap:wrap">
+                <sc-for list="{{ f.options }}" as="o" hint-placeholder-count="3">
+                  <button onClick="{{ o.pick }}" style="cursor:pointer;font-size:var(--text-sm);font-weight:600;padding:9px 16px;border-radius:var(--radius-pill);background: {{ o.bg }};color: {{ o.fg }};border: {{ o.ring }}">{{ o.label }}</button>
+                </sc-for>
+              </div>
+            </sc-if>
+            <sc-if value="{{ f.isText }}" hint-placeholder-val="{{ true }}">
+              <input value="{{ f.value }}" onChange="{{ f.set }}" placeholder="{{ f.placeholder }}" style="border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);padding:11px 14px;font-size:var(--text-sm);color:var(--fg-strong);outline:none" />
+            </sc-if>
+            <sc-if value="{{ f.isArea }}" hint-placeholder-val="{{ false }}">
+              <textarea value="{{ f.value }}" onChange="{{ f.set }}" placeholder="{{ f.placeholder }}" rows="3" style="border:1px solid var(--border-strong);border-radius:var(--radius-sm);background:var(--bg);padding:11px 14px;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg-strong);outline:none;resize:vertical"></textarea>
+            </sc-if>
+            <sc-if value="{{ f.help }}" hint-placeholder-val="{{ false }}">
+              <p style="margin:0;font-size:var(--text-xs);color:var(--fg-subtle);text-wrap:pretty">{{ f.help }}</p>
+            </sc-if>
+          </div>
+        </sc-for>
+      </div>
+
+      <sc-if value="{{ route.safety }}" hint-placeholder-val="{{ false }}">
+        <div style="margin:0 26px 22px;padding:14px 18px;border-radius:var(--radius-md);background:var(--danger-bg);display:flex;gap:12px">
+          <span style="width:3px;align-self:stretch;border-radius:var(--radius-pill);background:var(--danger)"></span>
+          <p style="margin:0;font-size:var(--text-sm);color:var(--fg-strong)">{{ route.safety }}</p>
+        </div>
+      </sc-if>
+
+      <div style="padding:20px 26px;border-top:1px solid var(--divider);display:flex;gap:16px;align-items:center;flex-wrap:wrap;background:var(--bg-muted)">
+        <button onClick="{{ submit }}" style="border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;padding:13px 26px;border-radius:var(--radius-pill);background:var(--accent);color:var(--accent-fg);box-shadow:var(--shadow-sm)" style-hover="background:var(--accent-hover)">{{ submitLabel }}</button>
+        <p style="margin:0;font-size:var(--text-sm);color:var(--fg-muted);max-width:52ch;text-wrap:pretty">{{ submitNote }}</p>
+        <p style="margin:0 0 0 auto;display:flex;align-items:center;gap:7px;font-size:var(--text-2xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--fg-subtle)">
+          <span style="width:6px;height:6px;border-radius:50%;background:var(--success)"></span>Secure · Care team only
+        </p>
+      </div>
+
+      <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+        <div style="padding:26px;border-top:1px solid var(--divider);background: {{ route.quiet }}">
+          <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">While you wait</p>
+          <p style="margin:0 0 18px;font-family:var(--font-display);font-size:var(--text-xl);line-height:1.2;letter-spacing:var(--tracking-tight);color:var(--fg-strong)">Three things that often sort this out before we even reply</p>
+          <div style="display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+            <sc-for list="{{ selfHelp }}" as="h" hint-placeholder-count="3">
+              <div style="background:var(--bg-elevated);border:1px solid var(--border);border-radius:var(--radius-md);padding:18px 20px">
+                <p style="margin:0 0 6px;font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">{{ h.title }}</p>
+                <p style="margin:0;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg-muted);text-wrap:pretty">{{ h.body }}</p>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+      </sc-if>
+    </section>
+
+    <section style="margin-top:64px">
+      <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px">
+        <div>
+          <p style="margin:0 0 6px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Our programs</p>
+          <h3 style="margin:0;font-family:var(--font-display);font-weight:500;font-size:var(--text-2xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">The four programs your care might live in</h3>
+        </div>
+        <p style="margin:0 0 4px auto;font-size:var(--text-sm);color:var(--fg-muted)">Tap a card to see what happens at a first visit.</p>
+      </div>
+      <div style="display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(250px,1fr))">
+        <sc-for list="{{ programs }}" as="p" hint-placeholder-count="4">
+          <div style="perspective:1400px;height:330px">
+            <button onClick="{{ p.flip }}" style="all:unset;display:block;width:100%;height:100%;cursor:pointer;position:relative;transform-style:preserve-3d;transition:transform 620ms var(--ease-out);transform: {{ p.spin }}">
+              <span style="position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;border:1px solid var(--border);border-radius:var(--radius-lg);box-shadow:var(--shadow-sm),var(--edge-gold);padding:26px;display:flex;flex-direction:column;gap:10px;text-align:left;background-color: {{ p.veil }};background-image: {{ p.iris }}">
+                <span aria-hidden="true" style="position:absolute;right:-40px;bottom:-40px;width:250px;height:220px;pointer-events:none;background: {{ p.wash }}"></span>
+                <span aria-hidden="true" style="position:absolute;right:-22px;bottom:-6px;width:200px;height:180px;opacity:.42;pointer-events:none;background-repeat:no-repeat;background-position:right center;background-size:contain;filter: {{ p.frontFilter }};background-image: {{ p.logoBg }}"></span>
+                <span style="position:relative;font-family:var(--font-display);font-size:var(--text-lg);opacity:.55;color: {{ p.tint }}">{{ p.num }}</span>
+                <span style="position:relative;font-family:var(--font-display);font-size:var(--text-xl);line-height:1.15;letter-spacing:var(--tracking-tight);color:var(--fg-strong)">{{ p.name }}</span>
+                <span style="position:relative;font-family:var(--font-serif);font-size:var(--text-base);line-height:var(--leading-relaxed);color:var(--fg);text-wrap:pretty">{{ p.blurb }}</span>
+                <span style="position:relative;margin-top:auto;display:flex;align-items:center;gap:8px;font-size:var(--text-2xs);letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Flip for details
+                  <span style="width:18px;height:18px;border-radius:50%;display:grid;place-items:center;font-size:10px;border:1px solid var(--border-strong)">↻</span>
+                </span>
+              </span>
+              <span style="position:absolute;inset:0;overflow:hidden;backface-visibility:hidden;transform:rotateY(180deg);border-radius:var(--radius-lg);box-shadow:var(--shadow-md);padding:26px;display:flex;flex-direction:column;gap:12px;text-align:left;color:var(--c-cream-100);background: {{ p.back }}">
+                <span aria-hidden="true" style="position:absolute;left:-22px;top:26px;width:160px;height:140px;opacity:.13;pointer-events:none;transform:scaleX(-1);background-repeat:no-repeat;background-position:right center;background-size:contain;filter: {{ p.backFilter }};background-image: {{ p.logoBg }}"></span>
+                <span style="position:relative;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color: {{ p.backTint }}">{{ p.name }}</span>
+                <span style="position:relative;display:flex;flex-direction:column;gap:3px">
+                  <span style="font-size:var(--text-2xs);letter-spacing:.08em;text-transform:uppercase;font-weight:600;opacity:.6">Who it's for</span>
+                  <span style="font-size:var(--text-sm);line-height:var(--leading-normal)">{{ p.who }}</span>
+                </span>
+                <span style="position:relative;display:flex;flex-direction:column;gap:3px">
+                  <span style="font-size:var(--text-2xs);letter-spacing:.08em;text-transform:uppercase;font-weight:600;opacity:.6">Your first visit</span>
+                  <span style="font-size:var(--text-sm);line-height:var(--leading-normal)">{{ p.first }}</span>
+                </span>
+                <span style="position:relative;margin-top:auto;font-size:var(--text-sm);font-weight:600;color:var(--c-gold-300);text-decoration:underline">Open the program page →</span>
+              </span>
+            </button>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="margin-top:60px;border-radius:var(--radius-xl);background-image:var(--opal-stone);box-shadow:var(--shadow-md),var(--edge-gold);padding:clamp(24px,4vw,38px);display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));align-items:center">
+      <div>
+        <p style="margin:0 0 2px;font-family:'Dancing Script',var(--font-script),cursive;font-weight:600;font-size:clamp(1.7rem,3.4vw,2.5rem);line-height:1;color:var(--brand-clay)">Ask NP Am</p>
+        <h3 style="margin:0 0 10px;font-family:var(--font-display);font-weight:500;font-size:var(--text-xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">Community help, handouts, and the picks she stands behind</h3>
+        <p style="margin:0 0 18px;font-size:var(--text-base);color:var(--fg-muted);max-width:48ch;text-wrap:pretty">Baltimore resources, education PDFs, and the products and services NP Am actually recommends — sorted by body system, discount codes included.</p>
+        <button onClick="{{ goResources }}" style="background:var(--accent);color:var(--accent-fg);border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;padding:12px 22px;border-radius:var(--radius-pill);box-shadow:var(--shadow-sm)" style-hover="background:var(--accent-hover)">Open the resource library</button>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:2px">
+        <div style="display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--divider)"><span style="font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">Ask NP Am recommendations</span><span style="font-size:var(--text-sm);color:var(--fg-muted)">32 picks</span></div>
+        <div style="display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--divider)"><span style="font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">Education handouts (PDF)</span><span style="font-size:var(--text-sm);color:var(--fg-muted)">18 files</span></div>
+        <div style="display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--divider)"><span style="font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">Baltimore community resources</span><span style="font-size:var(--text-sm);color:var(--fg-muted)">Food, housing, crisis</span></div>
+        <div style="display:flex;justify-content:space-between;gap:12px;padding:11px 0;border-top:1px solid var(--divider);border-bottom:1px solid var(--divider)"><span style="font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">Insurance &amp; sliding scale</span><span style="font-size:var(--text-sm);color:var(--fg-muted)">How it works</span></div>
+      </div>
+    </section>
+
+    <div style="margin-top:40px;padding:16px 20px;border-radius:var(--radius-md);background:var(--danger-bg);display:flex;gap:14px">
+      <span style="width:3px;align-self:stretch;border-radius:var(--radius-pill);background:var(--danger)"></span>
+      <p style="margin:0;font-size:var(--text-sm);color:var(--fg-strong)"><strong style="font-weight:600">Crisis or emergency:</strong> call 911, or 988 for the Suicide &amp; Crisis Lifeline. After hours, call <a href="tel:+14437625343">443.762.5343</a> and press 1 — that pages the on-call clinician, not a voicemail box.</p>
+    </div>
+
+
+    <section style="margin-top:40px">
+      <p style="margin:0 0 6px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Where to go</p>
+      <h3 style="margin:0 0 6px;font-family:var(--font-display);font-weight:500;font-size:var(--text-2xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">ER or urgent care?</h3>
+      <p style="margin:0 0 20px;font-size:var(--text-base);color:var(--fg-muted);max-width:56ch;text-wrap:pretty">When you can’t wait for us and you’re not sure which door to walk through. When in doubt, choose the ER.</p>
+      <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+        <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;background:var(--bg-elevated);border-top:3px solid var(--danger)">
+          <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--danger)">Emergency room · call 911</p>
+          <h4 style="margin:0 0 4px;font-family:var(--font-display);font-weight:500;font-size:var(--text-xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">Go now, don’t drive yourself</h4>
+          <p style="margin:0 0 16px;font-size:var(--text-sm);color:var(--fg-muted)">Anything that could threaten life, limb, or eyesight.</p>
+          <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px">
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--danger)"></span><span>Chest pain or pressure, or pain spreading to the arm, jaw or back</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--danger)"></span><span>Face drooping, arm weakness, slurred speech — note the time and call 911</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--danger)"></span><span>Trouble breathing, or breathing that keeps getting worse</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--danger)"></span><span>Bleeding that won’t stop with 10 minutes of firm pressure</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--danger)"></span><span>A head injury with confusion, vomiting, or a blackout</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--danger)"></span><span>Sudden severe abdominal pain, or vomiting blood</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--danger)"></span><span>A seizure, or a fainting spell you can’t explain</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--danger)"></span><span>Thoughts of harming yourself with a plan or the means to act</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--danger)"></span><span>Severe allergic reaction — swelling of the lips or throat, hives with wheezing</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--danger)"></span><span>An overdose or a poisoning, including a medication mix-up</span></li>
+          </ul>
+        </div>
+        <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:24px;background:var(--bg-elevated);border-top:3px solid var(--accent-2)">
+          <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--accent-2)">Urgent care · walk in</p>
+          <h4 style="margin:0 0 4px;font-family:var(--font-display);font-weight:500;font-size:var(--text-xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">Needs today, not an emergency</h4>
+          <p style="margin:0 0 16px;font-size:var(--text-sm);color:var(--fg-muted)">Send us a note afterward so it lands in your chart.</p>
+          <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px">
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent-2)"></span><span>Fever, cough, sore throat, or an ear or sinus infection</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent-2)"></span><span>Burning with urination or a suspected UTI</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent-2)"></span><span>A cut that may need stitches but isn’t bleeding heavily</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent-2)"></span><span>A sprain, a simple fracture, or a joint you can still move</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent-2)"></span><span>Rashes, insect bites, or a minor burn</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent-2)"></span><span>Vomiting or diarrhea when you can still keep sips down</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent-2)"></span><span>Pink eye or a mild eye irritation</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent-2)"></span><span>An asthma flare that improves with your inhaler</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent-2)"></span><span>A tick bite, or a wound that needs cleaning</span></li>
+            <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);line-height:var(--leading-normal);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--accent-2)"></span><span>A work or school note you need the same day</span></li>
+          </ul>
+        </div>
+      </div>
+      <p style="margin:16px 0 0;font-size:var(--text-sm);color:var(--fg-muted);text-wrap:pretty">Still unsure? Call 443.762.5343 during office hours, or press 1 after hours to reach the on-call clinician.</p>
+    </section>
+
+
+    <section style="margin-top:40px;border-radius:var(--radius-xl);background-image:var(--opal-stone);box-shadow:var(--shadow-md),var(--edge-gold);padding:clamp(24px,4vw,38px);display:grid;gap:28px;grid-template-columns:repeat(auto-fit,minmax(280px,1fr))">
+      <div>
+        <p style="margin:0 0 6px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">After a hospital or urgent care visit</p>
+        <h3 style="margin:0 0 10px;font-family:var(--font-display);font-weight:500;font-size:var(--text-2xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">Tell us you were seen</h3>
+        <p style="margin:0 0 14px;font-family:var(--font-serif);font-size:var(--text-md);line-height:var(--leading-relaxed);color:var(--fg);max-width:48ch;text-wrap:pretty">Records don’t always reach us, and when they do it can take a week. A two-line heads-up lets us pull your discharge paperwork, restart or stop the right medications, and get you a follow-up before anything unravels.</p>
+        <ul style="margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px">
+          <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--brand-clay)"></span><span>Best within 48 hours of going home — sooner if you were admitted.</span></li>
+          <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--brand-clay)"></span><span>Bring or photograph your discharge summary and any new prescriptions.</span></li>
+          <li style="display:flex;gap:10px;align-items:flex-start;font-size:var(--text-sm);color:var(--fg)"><span aria-hidden="true" style="flex:none;margin-top:7px;width:5px;height:5px;border-radius:50%;background:var(--brand-clay)"></span><span>Most insurers cover a transition-of-care visit at no cost to you.</span></li>
+        </ul>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg-elevated);padding:22px;display:flex;flex-direction:column;gap:16px">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:var(--text-2xs);letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Where were you seen?</span>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ visitPlaces }}" as="o" hint-placeholder-count="4">
+              <button onClick="{{ o.pick }}" style="cursor:pointer;font-size:var(--text-sm);padding:8px 14px;border-radius:var(--radius-pill);border: {{ o.ring }};background: {{ o.bg }};color: {{ o.fg }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:var(--text-2xs);letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--fg-muted)">When?</span>
+          <div style="display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ visitWhens }}" as="o" hint-placeholder-count="4">
+              <button onClick="{{ o.pick }}" style="cursor:pointer;font-size:var(--text-sm);padding:8px 14px;border-radius:var(--radius-pill);border: {{ o.ring }};background: {{ o.bg }};color: {{ o.fg }}">{{ o.label }}</button>
+            </sc-for>
+          </div>
+        </div>
+        <label style="display:flex;flex-direction:column;gap:8px">
+          <span style="font-size:var(--text-2xs);letter-spacing:.08em;text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Which hospital or clinic, and what for?</span>
+          <textarea value="{{ visitNote }}" onChange="{{ setVisitNote }}" rows="3" placeholder="Sinai ER for chest pain, sent home with a new inhaler" style="font-family:inherit;font-size:var(--text-sm);color:var(--fg-strong);background:var(--bg);border:1px solid var(--border-strong);border-radius:var(--radius-md);padding:10px 12px;resize:vertical"></textarea>
+        </label>
+        <button onClick="{{ sendVisit }}" style="background:var(--accent);color:var(--accent-fg);border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;padding:12px 22px;border-radius:var(--radius-pill);box-shadow:var(--shadow-sm)" style-hover="background:var(--accent-hover)">{{ visitLabel }}</button>
+        <p style="margin:0;font-size:var(--text-xs);color:var(--fg-muted);text-wrap:pretty">{{ visitNoteLine }}</p>
+      </div>
+    </section>
+
+    <section style="margin-top:40px;display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(240px,1fr))">
+      <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;background:var(--bg-elevated)">
+        <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Rather talk</p>
+        <p style="margin:0 0 4px;font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">443.762.5343</p>
+        <p style="margin:0;font-size:var(--text-sm);color:var(--fg-muted)">Front desk, 8:30–4:30. Fax 833.258.3941.</p>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;background:var(--bg-elevated)">
+        <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Rather text</p>
+        <p style="margin:0 0 4px;font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">Text 443.762.5343</p>
+      </div>
+      <div style="border:1px solid var(--border);border-radius:var(--radius-lg);padding:20px;background:var(--bg-elevated)">
+        <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Rather look it up yourself</p>
+        <p style="margin:0 0 4px;font-size:var(--text-md);font-weight:600;color:var(--fg-strong)">Health Blueprint</p>
+      </div>
+    </section>
+
+    <div style="margin-top:28px;padding-top:20px;border-top:1px solid var(--divider);display:flex;gap:32px;flex-wrap:wrap;font-size:var(--text-sm);color:var(--fg-muted)">
+      <span><strong style="color:var(--fg-strong);font-weight:600">Mon–Thu</strong> 8:30–5:00 · <strong style="color:var(--fg-strong);font-weight:600">Fri</strong> 8:30–1:00</span>
+      <span>2131 Maryland Ave, Baltimore, MD 21218</span>
+    </div>
+  </main>
+  </sc-if>
+
+  <sc-if value="{{ isResources }}" hint-placeholder-val="{{ false }}">
+  <main style="max-width:var(--container-lg);margin:0 auto;padding:0 24px 96px">
+
+    <div style="margin-top:26px">
+      <button onClick="{{ goHub }}" style="background:none;border:0;cursor:pointer;font-size:var(--text-sm);font-weight:600;color:var(--fg-muted);padding:0">← Back to Care Connect</button>
+    </div>
+
+    <section style="margin-top:18px;border-radius:var(--radius-xl);background-image:var(--opal-stone);box-shadow:var(--shadow-md),var(--edge-gold);padding:clamp(26px,4vw,44px)">
+      <p style="margin:0 0 10px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Resource library</p>
+      <h1 style="margin:0 0 12px;font-family:var(--font-display);font-weight:500;font-size:clamp(2rem,5vw,var(--text-3xl));line-height:1.08;letter-spacing:var(--tracking-tight);color:var(--fg-strong)">Everything we'd otherwise write on the back of a card</h1>
+      <p style="margin:0;font-family:var(--font-serif);font-size:var(--text-md);line-height:var(--leading-relaxed);color:var(--fg);max-width:56ch;text-wrap:pretty">Community help in Baltimore, handouts you can print, and NP Am's own shortlist of brands, products and services — organized by the part of you it's for.</p>
+    </section>
+
+    <section style="margin-top:56px">
+      <div style="display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:6px">
+        <div>
+          <p style="margin:0 0 2px;font-family:'Dancing Script',var(--font-script),cursive;font-weight:600;font-size:clamp(1.7rem,3.4vw,2.5rem);line-height:1;color:var(--brand-clay)">Ask NP Am</p>
+          <h2 style="margin:0;font-family:var(--font-display);font-weight:500;font-size:var(--text-2xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">Point at what's bothering you.</h2>
+        </div>
+        <p style="margin:0 0 4px auto;font-size:var(--text-sm);color:var(--fg-muted);max-width:34ch;text-wrap:pretty">Pick a spot on the diagram and NP Am's picks for that system come up.</p>
+      </div>
+
+      <div style="margin-top:22px;display:grid;gap:24px;grid-template-columns:minmax(300px,380px) minmax(320px,1fr);align-items:start">
+
+        <div style="border:1px solid var(--border);border-radius:var(--radius-xl);background:var(--bg-elevated);box-shadow:var(--shadow-sm);padding:22px 20px;position:relative">
+          <p style="margin:0 0 6px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Body map</p>
+          <div style="position:relative;height:520px;display:grid;place-items:center">
+            <svg viewBox="0 0 120 300" width="150" height="440" aria-hidden="true" style="display:block;overflow:visible">
+              <g fill="var(--bg-muted)" stroke="var(--border-strong)" stroke-width="1">
+                <circle cx="60" cy="26" r="19" />
+                <rect x="52" y="45" width="16" height="11" rx="5" />
+                <path d="M38 58 q22 -8 44 0 l6 62 q-28 8 -56 0 z" />
+                <path d="M38 60 l-16 12 -8 56 q6 4 11 0 l7 -48 12 -10 z" />
+                <path d="M82 60 l16 12 8 56 q-6 4 -11 0 l-7 -48 -12 -10 z" />
+                <path d="M42 120 q18 6 36 0 l4 34 q-22 6 -44 0 z" />
+                <path d="M44 154 l-2 70 3 60 q7 3 12 0 l-1 -60 4 -66 z" />
+                <path d="M76 154 l2 70 -3 60 q-7 3 -12 0 l1 -60 -4 -66 z" />
+              </g>
+            </svg>
+            <sc-for list="{{ regions }}" as="r" hint-placeholder-count="7">
+              <button onClick="{{ r.pick }}" style="position:absolute;max-width:min(180px,52%);display:flex;align-items:center;gap:7px;cursor:pointer;border-radius:var(--radius-pill);padding:6px 12px;font-size:var(--text-xs);font-weight:600;line-height:1.25;text-align:left;box-shadow:var(--shadow-sm);left: {{ r.left }};right: {{ r.right }};top: {{ r.y }};transform: {{ r.tf }};background: {{ r.bg }};color: {{ r.fg }};border: {{ r.ring }}">
+                <span style="width:7px;height:7px;border-radius:50%;background: {{ r.dot }}"></span>{{ r.label }}
+              </button>
+            </sc-for>
+          </div>
+          <p style="margin:10px 0 0;font-size:var(--text-xs);color:var(--fg-subtle);text-wrap:pretty">Placeholder figure — drop in the real illustration when you have it.</p>
+        </div>
+
+        <div style="border:1px solid var(--border);border-radius:var(--radius-xl);background:var(--bg-elevated);box-shadow:var(--shadow-sm);overflow:hidden">
+          <div style="padding:22px 24px;border-bottom:1px solid var(--divider);background: {{ active.quiet }}">
+            <p style="margin:0 0 4px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">{{ active.system }}</p>
+            <h3 style="margin:0 0 6px;font-family:var(--font-display);font-weight:500;font-size:var(--text-xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">{{ active.label }}</h3>
+            <p style="margin:0;font-size:var(--text-sm);color:var(--fg);max-width:56ch;text-wrap:pretty">{{ active.note }}</p>
+          </div>
+          <sc-for list="{{ active.items }}" as="it" hint-placeholder-count="4">
+            <div style="padding:20px 24px;border-bottom:1px solid var(--divider);display:flex;gap:16px;align-items:flex-start">
+              <span style="flex:0 0 42px;height:42px;border-radius:var(--radius-sm);display:grid;place-items:center;font-family:var(--font-display);font-size:var(--text-base);background:var(--bg-muted);color:var(--fg-strong)">{{ it.mark }}</span>
+              <div style="flex:1;min-width:0">
+                <div style="display:flex;gap:10px;align-items:baseline;flex-wrap:wrap">
+                  <p style="margin:0;font-size:var(--text-base);font-weight:600;color:var(--fg-strong)">{{ it.product }}</p>
+                  <p style="margin:0;font-size:var(--text-xs);letter-spacing:.06em;text-transform:uppercase;font-weight:600;color:var(--fg-subtle)">{{ it.brand }} · {{ it.kind }}</p>
+                </div>
+                <p style="margin:5px 0 0;font-size:var(--text-sm);color:var(--fg-muted);text-wrap:pretty">{{ it.why }}</p>
+                <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-top:10px">
+                  <sc-if value="{{ showCodes }}" hint-placeholder-val="{{ true }}">
+                    <span style="font-size:var(--text-xs);font-weight:700;letter-spacing:.1em;padding:6px 12px;border-radius:var(--radius-sm);background:var(--gold-quiet);color:var(--c-gold-600);border:1px dashed var(--gold)">{{ it.code }}</span>
+                  </sc-if>
+                  <span style="font-size:var(--text-sm);font-weight:600;color:var(--link)">Visit →</span>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+          <p style="margin:0;padding:16px 24px;font-size:var(--text-xs);color:var(--fg-subtle);text-wrap:pretty">Some links are affiliate or discount partnerships. They never change what we recommend, and nothing here replaces your clinician's advice.</p>
+        </div>
+      </div>
+    </section>
+
+    <section style="margin-top:64px">
+      <p style="margin:0 0 6px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Education library</p>
+      <h2 style="margin:0 0 20px;font-family:var(--font-display);font-weight:500;font-size:var(--text-2xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">Handouts worth printing</h2>
+      <div style="display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(300px,1fr))">
+        <sc-for list="{{ handouts }}" as="h" hint-placeholder-count="6">
+          <div style="display:flex;gap:14px;align-items:center;border:1px solid var(--border);border-radius:var(--radius-md);background:var(--bg-elevated);padding:16px 18px">
+            <span style="flex:0 0 36px;height:36px;border-radius:var(--radius-xs);display:grid;place-items:center;font-size:var(--text-2xs);font-weight:700;letter-spacing:.06em;background:var(--danger-bg);color:var(--danger)">PDF</span>
+            <div style="flex:1;min-width:0">
+              <p style="margin:0;font-size:var(--text-sm);font-weight:600;color:var(--fg-strong)">{{ h.title }}</p>
+              <p style="margin:2px 0 0;font-size:var(--text-xs);color:var(--fg-muted)">{{ h.topic }} · {{ h.pages }}</p>
+            </div>
+            <span style="flex:none;font-size:var(--text-sm);font-weight:600;color:var(--link)">Download</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <section style="margin-top:64px">
+      <p style="margin:0 0 6px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Community resources</p>
+      <h2 style="margin:0 0 20px;font-family:var(--font-display);font-weight:500;font-size:var(--text-2xl);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">Baltimore help beyond our four walls</h2>
+      <div style="display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))">
+        <sc-for list="{{ community }}" as="c" hint-placeholder-count="6">
+          <div style="border:1px solid var(--border);border-radius:var(--radius-lg);background:var(--bg-elevated);padding:22px;display:flex;flex-direction:column;gap:8px;box-shadow:var(--shadow-sm)">
+            <span style="font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color: {{ c.tint }}">{{ c.tag }}</span>
+            <p style="margin:0;font-family:var(--font-display);font-size:var(--text-lg);line-height:1.2;color:var(--fg-strong)">{{ c.name }}</p>
+            <p style="margin:0;font-size:var(--text-sm);color:var(--fg-muted);text-wrap:pretty">{{ c.body }}</p>
+            <p style="margin:auto 0 0;padding-top:10px;font-size:var(--text-sm);font-weight:600;color:var(--link)">{{ c.cta }}</p>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+
+    <div style="margin-top:48px;padding:16px 20px;border-radius:var(--radius-md);background:var(--danger-bg);display:flex;gap:14px">
+      <span style="width:3px;align-self:stretch;border-radius:var(--radius-pill);background:var(--danger)"></span>
+      <p style="margin:0;font-size:var(--text-sm);color:var(--fg-strong)"><strong style="font-weight:600">Crisis or emergency:</strong> call 911, or 988 for the Suicide &amp; Crisis Lifeline. Baltimore Crisis Response: (410) 433-5175.</p>
+    </div>
+  </main>
+  </sc-if>
+
+  <footer style="margin-top:24px;border-top:1px solid var(--divider);background:var(--bg-muted)">
+    <div style="max-width:var(--container-lg);margin:0 auto;padding:44px 24px 0;display:grid;gap:28px 36px;grid-template-columns:repeat(auto-fit,minmax(160px,1fr))">
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <p style="margin:0 0 2px;font-family:var(--font-display);font-weight:500;font-size:var(--text-lg);letter-spacing:var(--tracking-tight);color:var(--fg-strong)">BHW Medical Group</p>
+        <p style="margin:0;font-size:var(--text-sm);line-height:var(--leading-relaxed);color:var(--fg-muted)">2131 Maryland Ave<br />Baltimore, MD 21218</p>
+        <p style="margin:0;font-size:var(--text-sm);color:var(--fg-muted)">Phone 443.762.5343<br />Fax 833.258.3941</p>
+        <p style="margin:0;font-size:var(--text-sm);color:var(--fg-muted)">Mon–Thu 8:30–5:00 · Fri 8:30–1:00</p>
+      </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <p style="margin:0 0 2px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Care</p>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Primary Care</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Mind &amp; Mood</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">CharmEd Minds</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Flow</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Meet the care team</a>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:10px">
+          <p style="margin:0 0 2px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Patients</p>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Personal Health Blueprint</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">New patient forms</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Billing &amp; insurance</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Good Faith Estimate</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Request your records</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Resource library</a>
+        </div>
+        <div style="grid-column:span 2;display:grid;gap:10px 24px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));align-content:start">
+          <p style="grid-column:1 / -1;margin:0 0 2px;font-size:var(--text-2xs);letter-spacing:var(--tracking-eyebrow);text-transform:uppercase;font-weight:600;color:var(--fg-muted)">Legal</p>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Privacy Policy</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Notice of Privacy Practices (HIPAA)</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Terms of Use</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Accessibility Statement</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Nondiscrimination &amp; Language Assistance</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Patient Rights &amp; Responsibilities</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Affiliate disclosure</a>
+          <a href="#" style="font-size:var(--text-sm);color:var(--fg);text-decoration:none" style-hover="color:var(--fg-strong);text-decoration:underline">Cookie preferences</a>
+        </div>
+    </div>
+    <div style="max-width:var(--container-lg);margin:0 auto;padding:28px 24px 0">
+      <p style="margin:0;font-size:var(--text-xs);line-height:var(--leading-relaxed);color:var(--fg-subtle);text-wrap:pretty">This site is for communication with established BHW patients. Nothing here is medical advice, and messages sent through it are not monitored around the clock — in an emergency call 911, or 988 for the Suicide &amp; Crisis Lifeline. Language assistance and auxiliary aids are available free of charge; ask the front desk or call 443.762.5343.</p>
+      <div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--divider);display:flex;gap:20px;flex-wrap:wrap;align-items:center;justify-content:space-between">
+        <span style="font-size:var(--text-xs);color:var(--fg-subtle)">© 2026 Baltimore Healthcare &amp; Wellness / BHW Medical Group. All rights reserved.</span>
+        <span style="font-size:var(--text-xs);color:var(--fg-subtle)">Discrimination is against the law. Se habla español.</span>
+      </div>
+    </div>
+    <img src="assets/skyline-tagline.png" alt="" aria-hidden="true" style="display:block;margin-top:20px;width:100%;height:auto" />
+  </footer>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1280},&quot;announcementStyle&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;sage&quot;,&quot;violet&quot;,&quot;card&quot;,&quot;stone&quot;,&quot;gold&quot;,&quot;blue&quot;],&quot;default&quot;:&quot;sage&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Announcements&quot;},&quot;showAffiliateCodes&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Resources&quot;}}">
+const TINTS = {
+  mind:    { tint: 'var(--accent-3)',   quiet: 'var(--accent-3-quiet)' },
+  thyroid: { tint: 'var(--accent-2)',   quiet: 'var(--accent-2-quiet)' },
+  heart:   { tint: 'var(--danger)',     quiet: 'var(--danger-bg)' },
+  gut:     { tint: 'var(--accent)',     quiet: 'var(--accent-quiet)' },
+  metab:   { tint: 'var(--brand-clay)', quiet: 'var(--gold-quiet)' },
+  skin:    { tint: 'var(--c-rose-400)', quiet: 'var(--bg-muted)' },
+  joints:  { tint: 'var(--accent-2)',   quiet: 'var(--accent-2-quiet)' }
+};
+
+const REGIONS = [
+  { key:'mind', label:'Mind & sleep', system:'Neuro · behavioral health', side:'top', y:'6%',
+    note:'Sleep, focus, mood support that plays nicely with psychiatric medication. Always run supplements past your prescriber first.',
+    items:[
+      { mark:'M', product:'Magnesium Glycinate', brand:'Thorne', kind:'Supplement', why:'The one I suggest for sleep onset and muscle tension — gentler on the gut than citrate.', code:'CODE: BHWAM10' },
+      { mark:'L', product:'Sunrise alarm clock', brand:'Hatch', kind:'Device', why:'For winter mornings and anyone whose phone alarm has become the enemy.', code:'CODE: BHW15' },
+      { mark:'C', product:'CBT-I for insomnia', brand:'Insomnia Coach (local)', kind:'Service', why:'Six sessions, better evidence than any sleep supplement. Telehealth statewide.', code:'Patients: waived intake fee' },
+      { mark:'B', product:'Why We Sleep', brand:'Matthew Walker', kind:'Book', why:'Read one chapter before you buy anything else on this list.', code:'Free at Enoch Pratt' }
+    ]},
+  { key:'thyroid', label:'Thyroid & hormones', system:'Endocrine', side:'right', y:'18%',
+    note:'Thyroid, perimenopause and testosterone questions. Labs first, products second — bring these to your next visit.',
+    items:[
+      { mark:'S', product:'Selenium 200mcg', brand:'Pure Encapsulations', kind:'Supplement', why:'Modest support for Hashimoto\u2019s antibodies. Only if your labs point that way.', code:'CODE: BHWAM10' },
+      { mark:'H', product:'Perimenopause tracker', brand:'Balance', kind:'App', why:'Bring the exported symptom log to your visit — it changes the conversation.', code:'Free tier is enough' },
+      { mark:'P', product:'Pelvic floor PT', brand:'Charm City Pelvic Health', kind:'Service', why:'For pain, leaking, or postpartum recovery. Referral not required in MD.', code:'Say BHW sent you' }
+    ]},
+  { key:'heart', label:'Heart & blood pressure', system:'Cardiovascular', side:'left', y:'28%',
+    note:'Home monitoring beats one reading in our hallway. Cuff first, everything else after.',
+    items:[
+      { mark:'B', product:'Upper-arm BP monitor 5-series', brand:'Omron', kind:'Device', why:'Validated, cuff not wrist. Bring it in and we\u2019ll calibrate against ours.', code:'CODE: BHWHEART' },
+      { mark:'O', product:'Omega-3 (EPA/DHA)', brand:'Nordic Naturals', kind:'Supplement', why:'For triglycerides, at real doses. Skip if you\u2019re on a blood thinner without asking.', code:'CODE: BHWAM10' },
+      { mark:'W', product:'Walk-with-a-Doc Druid Hill', brand:'BHW + Parks & People', kind:'Program', why:'Second Saturday of the month, 9am, all paces. I\u2019m usually at the back talking.', code:'Free' }
+    ]},
+  { key:'gut', label:'Gut & digestion', system:'GI', side:'right', y:'42%',
+    note:'Reflux, bloating, IBS. Fiber and food order do more than most bottles.',
+    items:[
+      { mark:'S', product:'DS-01 Daily Synbiotic', brand:'Seed', kind:'Supplement', why:'The probiotic I bother recommending. Give it eight weeks or don\u2019t bother.', code:'CODE: BHWAM25' },
+      { mark:'F', product:'Psyllium husk', brand:'Konsyl', kind:'Supplement', why:'Unglamorous, cheap, works. Start at half a scoop or you\u2019ll hate me.', code:'No code needed' },
+      { mark:'L', product:'Low-FODMAP reset', brand:'Monash University app', kind:'App', why:'Use it for six weeks with a plan, not forever. Pair with our dietitian.', code:'Handout below' }
+    ]},
+  { key:'metab', label:'Metabolic & weight', system:'Metabolic · Flow program', side:'left', y:'50%',
+    note:'Companions to Flow program care — GLP-1 support, protein, strength. No detoxes, ever.',
+    items:[
+      { mark:'C', product:'Continuous glucose monitor', brand:'Stelo by Dexcom', kind:'Device', why:'Two weeks of data tells us more than a fasting glucose. No prescription needed.', code:'CODE: BHWFLOW' },
+      { mark:'P', product:'Unflavored whey isolate', brand:'Bulk Supplements', kind:'Nutrition', why:'On a GLP-1, protein is the whole ballgame. Cheapest gram-for-gram I\u2019ve found.', code:'CODE: BHWAM10' },
+      { mark:'S', product:'Small-group strength training', brand:'Charm City Strength', kind:'Service', why:'Keeps muscle while weight comes off. Coaches know GLP-1 patients.', code:'First month 50% off' }
+    ]},
+  { key:'skin', label:'Skin & hair', system:'Dermatologic', side:'right', y:'64%',
+    note:'The short list. Sunscreen you\u2019ll actually reapply beats the perfect one you won\u2019t.',
+    items:[
+      { mark:'S', product:'Clear Mineral SPF 40', brand:'EltaMD UV', kind:'Skincare', why:'Doesn\u2019t sting, doesn\u2019t ghost, works on acne-prone skin.', code:'CODE: BHWSKIN' },
+      { mark:'R', product:'Adapalene 0.1%', brand:'Differin', kind:'OTC treatment', why:'Retinoid without the markup. Twice weekly to start, moisturizer on top.', code:'Drugstore, ~$13' },
+      { mark:'M', product:'Minoxidil 5% foam', brand:'Rogaine', kind:'OTC treatment', why:'For thinning at the part line. Six months before you judge it.', code:'Generic is identical' }
+    ]},
+  { key:'joints', label:'Joints & mobility', system:'Musculoskeletal', side:'left', y:'82%',
+    note:'Knees, back, plantar fasciitis. Motion is the medicine; these make motion tolerable.',
+    items:[
+      { mark:'P', product:'Physical therapy, direct access', brand:'Union Memorial PT', kind:'Service', why:'You can self-refer in Maryland. Go before you Google.', code:'BHW patients seen in 1 week' },
+      { mark:'I', product:'Hinged knee sleeve', brand:'Bauerfeind GenuTrain', kind:'Device', why:'Worth the money if stairs are the problem. Get sized.', code:'CODE: BHWMOVE' },
+      { mark:'T', product:'Topical diclofenac gel', brand:'Voltaren', kind:'OTC treatment', why:'Real anti-inflammatory, skips the stomach. Four times a day, actually.', code:'OTC, no code' }
+    ]}
+];
+
+const IRIS = {
+  clay:   'radial-gradient(88% 70% at 12% 8%, rgba(178,124,84,.16), transparent 62%), radial-gradient(80% 66% at 92% 22%, rgba(140,164,178,.20), transparent 64%), radial-gradient(96% 80% at 74% 100%, rgba(150,168,138,.18), transparent 66%)',
+  violet: 'radial-gradient(88% 70% at 10% 6%, rgba(142,114,168,.20), transparent 62%), radial-gradient(78% 64% at 94% 26%, rgba(140,164,178,.18), transparent 64%), radial-gradient(96% 80% at 70% 100%, rgba(196,164,132,.16), transparent 66%)',
+  blue:   'radial-gradient(88% 70% at 12% 8%, rgba(96,158,180,.20), transparent 62%), radial-gradient(80% 66% at 92% 24%, rgba(150,168,138,.18), transparent 64%), radial-gradient(96% 80% at 72% 100%, rgba(178,124,84,.14), transparent 66%)',
+  sage:   'radial-gradient(88% 70% at 10% 8%, rgba(150,168,138,.22), transparent 62%), radial-gradient(78% 64% at 94% 22%, rgba(142,114,168,.16), transparent 64%), radial-gradient(96% 80% at 74% 100%, rgba(96,158,180,.18), transparent 66%)'
+};
+
+const LIGHT_SURFACE = {
+  wash: 'radial-gradient(60% 60% at 68% 70%, rgba(255,255,255,.82), rgba(255,255,255,.42) 55%, transparent 78%)',
+  glow: 'drop-shadow(0 0 26px rgba(255,255,255,.95)) drop-shadow(0 0 10px rgba(255,255,255,.9))'
+};
+const DARK_SURFACE = {
+  wash: 'radial-gradient(60% 60% at 68% 70%, rgba(12,10,8,.55), rgba(12,10,8,.26) 55%, transparent 78%)',
+  glow: 'grayscale(1) brightness(2.6) drop-shadow(0 0 22px rgba(0,0,0,.55))'
+};
+
+const PROGRAMS = [
+  { key:'pc', num:'01', name:'Primary Care', tint:'var(--brand-clay)', veil:'var(--gold-quiet)', iris:IRIS.clay, back:'var(--c-stone-850)', backTint:'var(--c-terracotta-300)', logo:'assets/logo-primary-care.png',
+    blurb:'Annual visits, sick visits, labs and referrals — your medical home base.',
+    who:'Anyone who wants one clinician who knows the whole picture and coordinates the rest.',
+    first:'A full physical, medication review, screenings you\u2019re due for, and same-day labs downstairs.' },
+  { key:'mm', num:'02', name:'Mind & Mood', tint:'var(--accent-3)', veil:'var(--accent-3-quiet)', iris:IRIS.violet, back:'var(--c-lavender-800)', backTint:'var(--c-lavender-400)', logo:'assets/logo-mind-mood.png',
+    blurb:'Psychiatry and medication management for depression, anxiety, ADHD and bipolar care.',
+    who:'Adults who want medication managed carefully — including anyone tapering, switching, or starting for the first time.',
+    first:'60 minutes, mostly listening. History, current meds, labs if needed, and a plan you agreed to before you leave.' },
+  { key:'cm', num:'03', name:'CharmEd Minds', tint:'var(--accent-2)', veil:'var(--accent-2-quiet)', iris:IRIS.blue, back:'var(--c-blue-800)', backTint:'var(--c-blue-400)', logo:'assets/logo-charmed-minds.png',
+    blurb:'Therapy and skills groups run by Baltimore clinicians who know the city.',
+    who:'Anyone looking for talk therapy, DBT-style skills, or a group that doesn\u2019t feel like a waiting room.',
+    first:'A 20-minute match call first, then a 50-minute intake with the therapist you were matched to.' },
+  { key:'fl', num:'04', name:'Flow', tint:'var(--accent)', veil:'var(--accent-quiet)', iris:IRIS.sage, back:'var(--c-sage-800)', backTint:'var(--c-sage-400)', logo:'assets/logo-flow.png',
+    blurb:'Weight, metabolic and hormone care, without the lecture.',
+    who:'Patients working on weight, insulin resistance, PCOS or fatigue — GLP-1 medications included when they fit.',
+    first:'Labs, body composition, a food-and-life history, and honest talk about what you actually want to change.' }
+];
+
+const CHIPS = ['Refill', 'A side effect worries me', 'Move my appointment', 'A bill I don\u2019t understand', 'Blueprint won\u2019t let me in'];
+
+const HANDOUTS = [
+  { title:'Starting an SSRI: the first six weeks', topic:'Mind & Mood', pages:'2 pages' },
+  { title:'GLP-1 medications: side effects and what helps', topic:'Flow', pages:'3 pages' },
+  { title:'Home blood pressure log', topic:'Primary Care', pages:'1 page' },
+  { title:'Low-FODMAP starter guide', topic:'Gut', pages:'4 pages' },
+  { title:'Sleep reset in 14 days', topic:'Mind & Mood', pages:'2 pages' },
+  { title:'Perimenopause symptom tracker', topic:'Hormones', pages:'1 page' }
+];
+
+const COMMUNITY = [
+  { tag:'Crisis', tint:'var(--danger)', name:'Baltimore Crisis Response', body:'24/7 phone and mobile crisis team, (410) 433-5175. They come to you.', cta:'Call or read more' },
+  { tag:'Food', tint:'var(--accent)', name:'Maryland Food Bank finder', body:'Pantries and hot meals by ZIP code, updated weekly.', cta:'Find food near you' },
+  { tag:'Housing', tint:'var(--accent-2)', name:'Baltimore City Housing Help', body:'Rent assistance, eviction prevention, and utility grants.', cta:'See what you qualify for' },
+  { tag:'Transport', tint:'var(--accent-3)', name:'Rides to appointments', body:'MTA Mobility and our own patient ride fund for visits over 2 miles.', cta:'Ask the front desk' },
+  { tag:'Recovery', tint:'var(--brand-clay)', name:'Substance use support', body:'Same-week MAT access and local peer recovery groups.', cta:'See options' },
+  { tag:'Insurance', tint:'var(--fg-muted)', name:'Maryland Health Connection', body:'Enrollment help, Medicaid checks, and our sliding-scale application.', cta:'Get enrolled' }
+];
+
+const NEWS = [
+  { tag:'Hours', tint:'var(--warning)', date:'Jul 30', title:'Friday hours move to 8:30–1:00 starting August 7',
+    body:'Friday afternoons become telehealth-only. Existing appointments are unaffected — we\u2019ll call if anything shifts.' },
+  { tag:'Blueprint', tint:'var(--accent)', date:'Jul 22', title:'Lab results now post to your Health Blueprint in 24 hours',
+    body:'You may see a result before we\u2019ve reviewed it. If something looks alarming, message us before you spiral — that\u2019s what we\u2019re for.' },
+  { tag:'Staff', tint:'var(--accent-3)', date:'Jul 14', title:'Welcome Dana Reyes, LCSW-C to CharmEd Minds',
+    body:'Now taking new therapy patients, Tuesdays through Fridays, in person and virtual.' }
+];
+
+const INTAKE = [
+  { id:'name', label:'Your full name', type:'text', placeholder:'As it appears on your chart' },
+  { id:'dob', label:'Date of birth', type:'text', placeholder:'MM / DD / YYYY' },
+  { id:'blueprint', label:'Do you have access to your Personal Health Blueprint?', type:'chips', span:'1 / -1',
+    options:['Yes, I\u2019m in','I have one, can\u2019t get in','I don\u2019t have one yet','Not sure what that is'] }
+];
+
+const SELF_HELP = {
+  refill: [
+    ['Check your Blueprint first', 'Refills already sent show under Medications → Recent activity. Pharmacies often have it before they tell you.'],
+    ['Out today?', 'Most pharmacies can give a 3-day emergency supply on a lapsed maintenance med. Ask at the counter while we process this.'],
+    ['Controlled medications', 'Stimulants and benzodiazepines can\u2019t be phoned in early — these need a visit if you\u2019re outside the window.']
+  ],
+  clinical: [
+    ['Get worse fast? Don\u2019t wait on us', 'Chest pain, trouble breathing, a spreading rash, or thoughts of harming yourself: 911 or 988, now.'],
+    ['Write down the pattern', 'Time of day, what you\u2019d eaten, what you\u2019d taken. Two days of notes changes what we can do for you.'],
+    ['Side effect in the first two weeks', 'Many settle. Don\u2019t stop a psychiatric medication cold — message us and we\u2019ll adjust together.']
+  ],
+  scheduling: [
+    ['Open slots live in your Blueprint', 'Appointments → Schedule shows real availability, including cancellations, before we can call you back.'],
+    ['Need sooner than what\u2019s listed?', 'We hold two same-week slots for established patients. Say so in the box above and we\u2019ll look.'],
+    ['Running late', 'Under 10 minutes we\u2019ll usually still see you. Call the front desk rather than guessing.']
+  ],
+  billing: [
+    ['Statements are in your Blueprint', 'Billing → Statements has the itemized version, which is usually clearer than the mailed one.'],
+    ['Insurance still processing?', 'Claims can take 30–45 days. A balance that looks wrong this month is often just early.'],
+    ['Cost is the problem', 'Ask about our sliding scale. It exists, it\u2019s not a hassle, and nobody judges you for using it.']
+  ],
+  portal: [
+    ['Try the reset link once more', 'The code expires in 15 minutes and lands in spam more often than it should.'],
+    ['Use the email we have on file', 'Not a newer one. If you\u2019ve changed it, tell us above and we\u2019ll update the account.'],
+    ['Never set one up?', 'We\u2019ll send a fresh invite today — it takes about four minutes on a phone.']
+  ],
+  general: [
+    ['Forms and records', 'Most records requests are self-serve in your Blueprint under Documents.'],
+    ['Program questions', 'The four program cards on this page cover who each one is for and what a first visit looks like.'],
+    ['Still not sure who to ask?', 'That\u2019s fine — send it. Routing it is our job, not yours.']
+  ]
+};
+
+const REACH = ['Health Blueprint message', 'Phone call', 'Text'];
+
+const ROUTES = [
+  { key:'refill', label:'Refill', tint:'var(--accent)', quiet:'var(--accent-quiet)', sla:'By next business day',
+    words:['refill','refil','out of','runs out','ran out','pharmacy','prescription','rx','script','renew','pills','dose left'],
+    readout:'Refill request.', hint:'Goes to the prescribing clinician\u2019s refill queue.',
+    formTitle:'Let\u2019s get the refill moving',
+    fields:[
+      { id:'med', label:'Which medication?', type:'text', placeholder:'Name and strength if you know it' },
+      { id:'pharmacy', label:'Pharmacy', type:'text', placeholder:'CVS Fort Ave, Giant Canton…' },
+      { id:'left', label:'How many days do you have left?', type:'chips', options:['None','1–3 days','About a week','More than a week'] },
+      { id:'notes', label:'Anything we should know?', type:'area', span:'1 / -1', placeholder:'Dose changed, side effects, insurance switched…' }
+    ]},
+  { key:'clinical', label:'Symptom or side effect', tint:'var(--accent-3)', quiet:'var(--accent-3-quiet)', sla:'Reviewed same day',
+    words:['side effect','symptom','pain','dizzy','nausea','rash','sleep','anxious','anxiety','depressed','worse','tired','headache','bleeding','swelling','sick','fever'],
+    readout:'Clinical question.', hint:'A clinician reads this one, not the front desk.',
+    formTitle:'Tell us what your body is doing',
+    safety:'If this is chest pain, trouble breathing, a severe reaction, or thoughts of harming yourself — stop here and call 911 or 988. Don\u2019t wait on a message.',
+    fields:[
+      { id:'what', label:'What are you noticing?', type:'area', span:'1 / -1', placeholder:'In your own words — no medical vocabulary required' },
+      { id:'since', label:'Since when?', type:'chips', options:['Today','A few days','A couple of weeks','Longer'] },
+      { id:'sev', label:'How bad is it right now?', type:'chips', options:['Annoying','Hard to ignore','Scaring me'] },
+      { id:'med', label:'Started or changed any medication recently?', type:'text', placeholder:'Name and when it changed' }
+    ]},
+  { key:'scheduling', label:'Appointment', tint:'var(--accent-2)', quiet:'var(--accent-2-quiet)', sla:'Front desk, same day',
+    words:['appointment','appt','schedule','reschedule','cancel','move my','book','visit','come in','earlier','sooner'],
+    readout:'Scheduling.', hint:'Front desk will find you a slot.',
+    formTitle:'When would you like to be seen?',
+    fields:[
+      { id:'kind', label:'What kind of visit?', type:'chips', options:['New concern','Follow-up','Annual physical','Therapy','Not sure'] },
+      { id:'mode', label:'In person or telehealth?', type:'chips', options:['In person','Telehealth','Either'] },
+      { id:'when', label:'Days and times that work', type:'text', span:'1 / -1', placeholder:'Mornings before 10, or any Thursday…' }
+    ]},
+  { key:'billing', label:'Billing', tint:'var(--brand-clay)', quiet:'var(--gold-quiet)', sla:'2 business days',
+    words:['bill','billing','charge','charged','invoice','statement','insurance','copay','co-pay','deductible','cost','price','owe','claim'],
+    readout:'Billing question.', hint:'Goes to our billing coordinator, not your clinician.',
+    formTitle:'Let\u2019s look at the bill with you',
+    fields:[
+      { id:'date', label:'Date of the visit or statement', type:'text', placeholder:'Roughly is fine' },
+      { id:'amount', label:'Amount in question', type:'text', placeholder:'$' },
+      { id:'what', label:'What doesn\u2019t look right?', type:'area', span:'1 / -1', placeholder:'Charged twice, insurance not applied, never got a statement…' }
+    ]},
+  { key:'portal', label:'Blueprint access', tint:'var(--accent-2)', quiet:'var(--accent-2-quiet)', sla:'Usually fixed same day',
+    words:['blueprint','portal','login','log in','password','locked out','can\u2019t get in','cant get in','sign in','reset','code never','account','username'],
+    readout:'Health Blueprint access.', hint:'We can reset it from our side in a few minutes.',
+    formTitle:'Let\u2019s get you back into your Blueprint',
+    fields:[
+      { id:'stuck', label:'Where does it get stuck?', type:'chips', options:['Password won\u2019t work','Never got the code','No account yet','Locked out'] },
+      { id:'email', label:'Email on the account', type:'text', placeholder:'The one you think we have' },
+      { id:'device', label:'Phone or computer?', type:'chips', options:['Phone','Computer','Both'] }
+    ]},
+  { key:'general', label:'Something else', tint:'var(--fg-muted)', quiet:'var(--bg-muted)', sla:'One business day',
+    words:[],
+    readout:'We\u2019ll route it.', hint:'Start typing and we\u2019ll aim it at the right person.',
+    formTitle:'Tell us who you are and what you need',
+    fields:[
+      { id:'what', label:'What do you need?', type:'area', span:'1 / -1', placeholder:'Records request, form to fill out, a question about a program…' },
+      { id:'who', label:'Anyone here you\u2019ve already talked to?', type:'text', placeholder:'Name, if you remember it' }
+    ]}
+];
+
+function detectRoute(text) {
+  const t = (text || '').toLowerCase();
+  if (!t.trim()) return null;
+  let best = null, score = 0;
+  for (const r of ROUTES) {
+    const n = r.words.filter(w => t.includes(w)).length;
+    if (n > score) { score = n; best = r; }
+  }
+  return best;
+}
+
+class Component extends DCLogic {
+  state = { page: 'hub', region: 'mind', flipped: {}, ask: '', theme: 'light',
+            pinnedRoute: null, answers: {}, reach: 'Health Blueprint message', sent: false };
+
+  componentDidMount() {
+    let saved = null;
+    try { saved = localStorage.getItem('bhw-cc-theme'); } catch (e) {}
+    const t = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', t);
+    this.setState({ theme: t });
+  }
+
+  renderVals() {
+    const st = this.state;
+    const dark = st.theme === 'dark';
+    const NEWS_SKIN = ({
+      gold:  { bg:'var(--warning-bg)', border:'1px solid transparent', shadow:'none' },
+      sage:  { bg:'var(--accent-quiet)', border:'1px solid var(--accent-tint)', shadow:'var(--shadow-sm)' },
+      violet:{ bg:'var(--accent-3-quiet)', border:'1px solid var(--accent-3-tint)', shadow:'var(--shadow-sm)' },
+      blue:  { bg:'var(--accent-2-quiet)', border:'1px solid var(--accent-2-tint)', shadow:'none' },
+      card:  { bg:'var(--bg-elevated)', border:'1px solid var(--border)', shadow:'var(--shadow-sm), var(--edge-gold)' },
+      stone: { bg:'var(--opal-stone)', border:'1px solid var(--border)', shadow:'var(--shadow-sm), var(--edge-gold)' }
+    })[this.props.announcementStyle || 'sage'];
+    const active = REGIONS.find(r => r.key === st.region) || REGIONS[0];
+    const route = (st.pinnedRoute && ROUTES.find(r => r.key === st.pinnedRoute))
+      || detectRoute(st.ask)
+      || ROUTES[ROUTES.length - 1];
+    return {
+      isHub: st.page === 'hub',
+      isResources: st.page === 'resources',
+      goHub: () => { this.setState({ page: 'hub' }); window.scrollTo(0, 0); },
+      goResources: () => { this.setState({ page: 'resources' }); window.scrollTo(0, 0); },
+      showCodes: this.props.showAffiliateCodes !== false,
+      themeLabel: st.theme === 'dark' ? 'Switch to Light Opal' : 'Switch to Dark Opal',
+      toggleTheme: () => {
+        const t = st.theme === 'dark' ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', t);
+        try { localStorage.setItem('bhw-cc-theme', t); } catch (e) {}
+        this.setState({ theme: t });
+      },
+      focusAsk: () => {
+        this.setState({ page: 'hub' });
+        setTimeout(() => { if (this.askEl) window.scrollTo({ top: this.askEl.offsetTop - 90, behavior: 'smooth' }); }, 60);
+      },
+      askRef: el => { this.askEl = el; },
+      askText: st.ask,
+      setAsk: e => this.setState({ ask: e.target.value, pinnedRoute: null, sent: false }),
+      chips: CHIPS.map(label => ({
+        label,
+        bg: 'color-mix(in srgb, var(--bg-elevated) 80%, transparent)',
+        pick: () => this.setState({ ask: label, pinnedRoute: null, sent: false })
+      })),
+      route: route,
+      routeTabs: ROUTES.map(r => {
+        const on = r.key === route.key;
+        return { label: r.label,
+          bg: on ? 'var(--fg-strong)' : 'transparent',
+          fg: on ? 'var(--bg-elevated)' : 'var(--fg-muted)',
+          ring: on ? '1px solid var(--fg-strong)' : '1px solid var(--border-strong)',
+          pick: () => this.setState({ pinnedRoute: r.key, sent: false }) };
+      }),
+      fields: INTAKE.concat(route.fields).map(f => {
+        const val = (st.answers[route.key] || {})[f.id] || '';
+        const setVal = v => this.setState(s => ({
+          answers: Object.assign({}, s.answers, {
+            [route.key]: Object.assign({}, s.answers[route.key], { [f.id]: v })
+          }), sent: false
+        }));
+        return {
+          label: f.label, help: f.help || '', span: f.span || 'auto',
+          isChips: f.type === 'chips', isText: f.type === 'text', isArea: f.type === 'area',
+          value: val, placeholder: f.placeholder || '',
+          set: e => setVal(e.target.value),
+          options: (f.options || []).map(o => ({
+            label: o,
+            bg: val === o ? 'var(--fg-strong)' : 'var(--bg)',
+            fg: val === o ? 'var(--bg-elevated)' : 'var(--fg-strong)',
+            ring: val === o ? '1px solid var(--fg-strong)' : '1px solid var(--border-strong)',
+            pick: () => setVal(val === o ? '' : o)
+          }))
+        };
+      }),
+      submitLabel: st.sent ? 'Sent — you\u2019re in the queue' : 'Send to my care team',
+      submitNote: st.sent
+        ? 'You\u2019re in the queue as BHW-2481. We\u2019ll answer in your Health Blueprint inbox.'
+        : 'A real person on your care team claims this, and nothing sits unread.',
+      submit: () => this.setState({ sent: true }),
+      sent: st.sent,
+      selfHelp: (SELF_HELP[route.key] || []).map(x => ({ title: x[0], body: x[1] })),
+      visitPlaces: ['Emergency room','Urgent care','Admitted to hospital','Another office'].map(o => ({
+        label: o,
+        bg: st.visitPlace === o ? 'var(--fg-strong)' : 'var(--bg)',
+        fg: st.visitPlace === o ? 'var(--bg-elevated)' : 'var(--fg-strong)',
+        ring: st.visitPlace === o ? '1px solid var(--fg-strong)' : '1px solid var(--border-strong)',
+        pick: () => this.setState({ visitPlace: st.visitPlace === o ? '' : o, visitSent: false })
+      })),
+      visitWhens: ['Today','Yesterday','This week','Longer ago'].map(o => ({
+        label: o,
+        bg: st.visitWhen === o ? 'var(--fg-strong)' : 'var(--bg)',
+        fg: st.visitWhen === o ? 'var(--bg-elevated)' : 'var(--fg-strong)',
+        ring: st.visitWhen === o ? '1px solid var(--fg-strong)' : '1px solid var(--border-strong)',
+        pick: () => this.setState({ visitWhen: st.visitWhen === o ? '' : o, visitSent: false })
+      })),
+      visitNote: st.visitNote || '',
+      setVisitNote: e => this.setState({ visitNote: e.target.value, visitSent: false }),
+      visitLabel: st.visitSent ? 'Got it — thank you' : 'Let my care team know',
+      visitNoteLine: st.visitSent
+        ? 'A nurse will request your records and call about a follow-up, usually the next business day.'
+        : 'Goes straight to the transition-of-care nurse. For anything urgent right now, call 443.762.5343.',
+      sendVisit: () => this.setState({ visitSent: true }),
+      programs: PROGRAMS.map(p => Object.assign({}, p, {
+        logoBg: p.logo ? 'url(' + p.logo + ')' : 'none',
+        wash: dark ? DARK_SURFACE.wash : LIGHT_SURFACE.wash,
+        frontFilter: dark ? DARK_SURFACE.glow : LIGHT_SURFACE.glow,
+        backFilter: DARK_SURFACE.glow,
+        spin: st.flipped[p.key] ? 'rotateY(180deg)' : 'rotateY(0deg)',
+        flip: () => this.setState(s => ({ flipped: Object.assign({}, s.flipped, { [p.key]: !s.flipped[p.key] }) }))
+      })),
+      regions: REGIONS.map(r => {
+        const on = r.key === st.region;
+        const t = TINTS[r.key];
+        const side = r.side || 'left';
+        return {
+          label: r.label, y: r.y,
+          left: side === 'right' ? 'auto' : (side === 'top' ? '50%' : '0px'),
+          right: side === 'right' ? '0px' : 'auto',
+          tf: side === 'top' ? 'translate(-50%,-50%)' : 'translateY(-50%)',
+          bg: on ? 'var(--fg-strong)' : 'var(--bg-elevated)',
+          fg: on ? 'var(--bg-elevated)' : 'var(--fg-strong)',
+          ring: on ? '1px solid var(--fg-strong)' : '1px solid var(--border-strong)',
+          dot: t.tint,
+          pick: () => this.setState({ region: r.key })
+        };
+      }),
+      active: Object.assign({}, active, { quiet: TINTS[active.key].quiet }),
+      news: NEWS,
+      news_bg: NEWS_SKIN.bg,
+      news_border: NEWS_SKIN.border,
+      news_shadow: NEWS_SKIN.shadow,
+      handouts: HANDOUTS,
+      community: COMMUNITY
+    };
+  }
+}
+</script>
+</body>
+</html>
