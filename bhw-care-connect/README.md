@@ -103,17 +103,24 @@ and it must not be logged to an error tracker or an analytics tool.
 
 Also still open, carried over from the design handoff:
 
-- **Program pages, Health Blueprint and footer are wired to the BHWcrewOS
-  _deploy preview_** (`src/data/externalLinks.ts`), which is per-PR and
-  ephemeral — swap `PATIENT_SITE` there for the production host before launch.
-  Mind & Mood, CharmEd Minds, Flow and the Blueprint (portal login) all point at
-  their pages. **Primary Care's page ships inside this app** at
-  `public/bhw-primarycare-patient-mockup.html` (a self-contained static page in
-  the "Opal & Ironstone" style) and is served from Care Connect's own origin;
-  move it to the BHWcrewOS host if you'd rather all four programs share a domain.
-  Still open: the "Older announcements" archive (`Masthead`), "Meet the care
-  team", and the New patient forms / Billing / Good Faith Estimate / Request
-  records / Legal footer links — all still `#`.
+- **Patient destinations are wired in `src/data/externalLinks.ts`.** Two kinds:
+  - *On the BHWcrewOS site* (Mind & Mood, CharmEd Minds, Flow) — pointed at a
+    Netlify **deploy preview**, which is per-PR and ephemeral. Swap `PATIENT_SITE`
+    for the production host before launch.
+  - *Shipped inside this app* (`public/`, self-contained "Opal & Ironstone" pages):
+    - **New Patient** (`bhw-new-patient-mockup.html`) — the public, pre-visit
+      landing for Primary Care, with an intake questionnaire and document upload.
+      **No sign-in.** It's where the Primary Care card and the footer's "New
+      patient forms" link now go. The intake form and uploads are **UI only** —
+      nothing submits or stores. Real submission is PHI and must post to a
+      BAA-covered service (see `src/lib/submit.ts`).
+    - **Personal Health Blueprint** (`bhw-blueprint-portal-mockup.html`) — the
+      **signed-in** dashboard: measurement tiles, trend charts, and
+      subjective/objective care goals. It's where every Blueprint link points
+      (`CONTACT.blueprintUrl`). It's a static preview — no real auth or data.
+  - Still open: the "Older announcements" archive (`Masthead`), "Meet the care
+    team", and the Billing / Good Faith Estimate / Request records / Legal footer
+    links — all still `#`.
 - NP Am's actual recommendation list. What's in `src/data/resources.ts` is
   placeholder copy written in her voice; every partner code is invented.
 - The real body illustration. The current figure is the placeholder SVG from the

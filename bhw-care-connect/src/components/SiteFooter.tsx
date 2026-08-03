@@ -1,5 +1,6 @@
 import { skylineTagline } from '../assets'
 import { CONTACT } from '../data/contact'
+import { EXTERNAL_LINKS } from '../data/externalLinks'
 import { PROGRAMS } from '../data/programs'
 import styles from './SiteFooter.module.css'
 
@@ -11,7 +12,7 @@ const CARE_LINKS = [
 
 const PATIENT_LINKS = [
   { label: 'Personal Health Blueprint', href: CONTACT.blueprintUrl },
-  { label: 'New patient forms', href: '#' },
+  { label: 'New patient forms', href: EXTERNAL_LINKS.newPatient },
   { label: 'Billing & insurance', href: '#' },
   { label: 'Good Faith Estimate', href: '#' },
   { label: 'Request your records', href: '#' },

@@ -66,7 +66,8 @@ export const PROGRAMS: Program[] = [
     who: 'Anyone who wants one clinician who knows the whole picture and coordinates the rest.',
     first:
       'A full physical, medication review, screenings you’re due for, and same-day labs downstairs.',
-    href: EXTERNAL_LINKS.primaryCare,
+    // Primary Care's "program page" is the public New Patient landing (intake + upload).
+    href: EXTERNAL_LINKS.newPatient,
   },
   {
     key: 'mm',
