@@ -1,3 +1,5 @@
+import { EXTERNAL_LINKS } from './externalLinks'
+
 /**
  * Every place the practice's real-world details appear. Change them here.
  */
@@ -19,7 +21,7 @@ export const CONTACT = {
   baltimoreCrisisResponse: '(410) 433-5175',
   /**
    * The Personal Health Blueprint — never call it a patient portal.
-   * Placeholder until the BHWcrewOS destination is wired up.
+   * Points at the BHWcrewOS portal login (phone or email). See externalLinks.ts.
    */
-  blueprintUrl: '#',
+  blueprintUrl: EXTERNAL_LINKS.patientPortal,
 } as const

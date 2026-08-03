@@ -103,9 +103,14 @@ and it must not be logged to an error tracker or an analytics tool.
 
 Also still open, carried over from the design handoff:
 
-- Real destinations for the four program pages, the Health Blueprint, the footer
-  links and the "Older announcements" archive — all currently `#`
-  (`CONTACT.blueprintUrl`, `Program.href`, `SiteFooter`, `Masthead`).
+- **Program pages, Health Blueprint and footer are wired to the BHWcrewOS
+  _deploy preview_** (`src/data/externalLinks.ts`), which is per-PR and
+  ephemeral — swap `PATIENT_SITE` there for the production host before launch.
+  Mind & Mood, CharmEd Minds, Flow and the Blueprint (portal login) all point at
+  their pages; **Primary Care has no page yet** and stays `#`. Still open: the
+  "Older announcements" archive (`Masthead`), "Meet the care team", and the New
+  patient forms / Billing / Good Faith Estimate / Request records / Legal footer
+  links — all still `#`.
 - NP Am's actual recommendation list. What's in `src/data/resources.ts` is
   placeholder copy written in her voice; every partner code is invented.
 - The real body illustration. The current figure is the placeholder SVG from the

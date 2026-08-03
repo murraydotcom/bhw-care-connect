@@ -1,4 +1,5 @@
 import { logoCharmedMinds, logoFlow, logoMindMood, logoPrimaryCare } from '../assets'
+import { EXTERNAL_LINKS } from './externalLinks'
 
 /**
  * The four programs, in the order the practice asked for:
@@ -65,6 +66,7 @@ export const PROGRAMS: Program[] = [
     who: 'Anyone who wants one clinician who knows the whole picture and coordinates the rest.',
     first:
       'A full physical, medication review, screenings you’re due for, and same-day labs downstairs.',
+    // No BHWcrewOS Primary Care page provided yet — still a placeholder.
     href: '#',
   },
   {
@@ -82,7 +84,7 @@ export const PROGRAMS: Program[] = [
     who: 'Adults who want medication managed carefully — including anyone tapering, switching, or starting for the first time.',
     first:
       '60 minutes, mostly listening. History, current meds, labs if needed, and a plan you agreed to before you leave.',
-    href: '#',
+    href: EXTERNAL_LINKS.mindMood,
   },
   {
     key: 'cm',
@@ -98,7 +100,7 @@ export const PROGRAMS: Program[] = [
     who: 'Anyone looking for talk therapy, DBT-style skills, or a group that doesn’t feel like a waiting room.',
     first:
       'A 20-minute match call first, then a 50-minute intake with the therapist you were matched to.',
-    href: '#',
+    href: EXTERNAL_LINKS.charmedMinds,
   },
   {
     key: 'fl',
@@ -114,6 +116,6 @@ export const PROGRAMS: Program[] = [
     who: 'Patients working on weight, insulin resistance, PCOS or fatigue — GLP-1 medications included when they fit.',
     first:
       'Labs, body composition, a food-and-life history, and honest talk about what you actually want to change.',
-    href: '#',
+    href: EXTERNAL_LINKS.flow,
   },
 ]

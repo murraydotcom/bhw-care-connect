@@ -1,15 +1,20 @@
 import { skylineTagline } from '../assets'
 import { CONTACT } from '../data/contact'
+import { PROGRAMS } from '../data/programs'
 import styles from './SiteFooter.module.css'
 
-const CARE_LINKS = ['Primary Care', 'Mind & Mood', 'CharmEd Minds', 'Flow', 'Meet the care team']
+/** Program links reuse the same destinations as the program cards. */
+const CARE_LINKS = [
+  ...PROGRAMS.map((program) => ({ label: program.name, href: program.href })),
+  { label: 'Meet the care team', href: '#' },
+]
 
 const PATIENT_LINKS = [
-  'Personal Health Blueprint',
-  'New patient forms',
-  'Billing & insurance',
-  'Good Faith Estimate',
-  'Request your records',
+  { label: 'Personal Health Blueprint', href: CONTACT.blueprintUrl },
+  { label: 'New patient forms', href: '#' },
+  { label: 'Billing & insurance', href: '#' },
+  { label: 'Good Faith Estimate', href: '#' },
+  { label: 'Request your records', href: '#' },
 ]
 
 const LEGAL_LINKS = [
@@ -48,8 +53,8 @@ export function SiteFooter({ onOpenResources }: SiteFooterProps) {
 
         <div className={styles.column}>
           <p className={styles.columnHead}>Care</p>
-          {CARE_LINKS.map((label) => (
-            <a className={styles.link} href="#" key={label}>
+          {CARE_LINKS.map(({ label, href }) => (
+            <a className={styles.link} href={href} key={label}>
               {label}
             </a>
           ))}
@@ -57,8 +62,8 @@ export function SiteFooter({ onOpenResources }: SiteFooterProps) {
 
         <div className={styles.column}>
           <p className={styles.columnHead}>Patients</p>
-          {PATIENT_LINKS.map((label) => (
-            <a className={styles.link} href="#" key={label}>
+          {PATIENT_LINKS.map(({ label, href }) => (
+            <a className={styles.link} href={href} key={label}>
               {label}
             </a>
           ))}
