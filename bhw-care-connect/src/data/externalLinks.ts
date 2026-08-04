@@ -19,40 +19,51 @@ const PATIENT_SITE = 'https://deploy-preview-3--bhwcrewos.netlify.app'
 /** Pages served from this app's own `public/` folder. */
 const IN_APP = (file: string) => `${import.meta.env.BASE_URL}${file}`
 
+/**
+ * The full set of patient-facing destinations — the single place they're all
+ * registered so nothing is missed. The journey:
+ *
+ *   Care Connect hub (public)
+ *     → Patient Portal login (phone / email)
+ *       → Patient profile (signed-in home)
+ *         → per program: Program page  +  Individualized plan (that program's Blueprint)
+ *
+ *   New patients: hub → New Patient page (public intake, no sign-in).
+ */
 export const EXTERNAL_LINKS = {
-  /** Care Connect hub + reviews section on the BHWcrewOS site. */
+  // ── Public (BHWcrewOS) ──────────────────────────────────────────────
+  /** Care Connect hub + reviews section. */
   hub: PATIENT_SITE,
-  /**
-   * Program pages on BHWcrewOS, each with its own review card. These live
-   * **behind sign-in** — a patient reaches them from their Blueprint profile,
-   * NOT from the public hub. The hub's program cards route to `patientPortal`;
-   * these URLs are linked from the Blueprint dashboard's "Your programs" section.
-   */
+  /** Patient Portal — the sign-in page (log in by phone or email). After a real
+   *  login this would hand off to `patientProfile` below. */
+  patientPortalLogin: `${PATIENT_SITE}/bhw-patient-portal-mockup.html`,
+
+  // ── Program pages (BHWcrewOS), each with its review card ─────────────
+  /** Reached from a patient's profile, and linked beside each program's plan. */
   charmedMinds: `${PATIENT_SITE}/bhw-charmed-patient-mockup.html`,
   mindMood: `${PATIENT_SITE}/bhw-mindmood-patient-mockup.html`,
   flow: `${PATIENT_SITE}/bhw-flow-patient-mockup.html`,
 
-  /**
-   * New Patient page — the public, pre-visit landing for Primary Care with the
-   * intake questionnaire and document upload. **No sign-in.** Ships in this app
-   * (`public/bhw-new-patient-mockup.html`); move it to the BHWcrewOS host and
-   * swap for `${PATIENT_SITE}/…` if you'd rather it live beside the others.
-   */
+  // ── In-app pages (this repo's public/ folder) ───────────────────────
+  /** Public, pre-visit New Patient landing — intake questionnaire + upload. No sign-in. */
   newPatient: IN_APP('bhw-new-patient-mockup.html'),
 
   /**
-   * The **signed-in patient home** — the tiled landing after sign-in (check-in,
-   * care team, medications, next visit, notifications … and the care plan). This
-   * is where sign-in, the hub's program cards, and every Blueprint link land.
-   * Ships in this app (`public/bhw-patient-home-mockup.html`).
+   * The **signed-in patient profile** — the page a patient lands on after
+   * sign-in. Lists demographics, care team, allergies, medications, supplements,
+   * recommended nutrition & movement, next visit, special notifications, the
+   * daily check-in, and the programs they're enrolled in. Sign-in, the hub's
+   * program cards and every Blueprint link resolve here.
    */
+  patientProfile: IN_APP('bhw-patient-home-mockup.html'),
+  /** Back-compat alias — same destination as `patientProfile`. */
   patientPortal: IN_APP('bhw-patient-home-mockup.html'),
 
   /**
-   * The **Personal Health Blueprint = the care plan** — goals, measurements,
-   * trends and the recommendations behind them. It sits *under* the home (the
-   * home's "Personal Health Blueprint" tile opens it), not at the top level.
-   * Ships in this app (`public/bhw-blueprint-portal-mockup.html`).
+   * A program's **individualized plan** — the Personal Health Blueprint made for
+   * one program (goals, measurements, trends, recommendations). Opened from the
+   * profile's "Individualized plan" link box beside each program. One shared page
+   * for now; split into a per-program file when each program's plan diverges.
    */
   carePlan: IN_APP('bhw-blueprint-portal-mockup.html'),
 } as const
