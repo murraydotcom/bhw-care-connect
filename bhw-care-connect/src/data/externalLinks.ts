@@ -41,11 +41,18 @@ export const EXTERNAL_LINKS = {
   newPatient: IN_APP('bhw-new-patient-mockup.html'),
 
   /**
-   * Personal Health Blueprint — the **signed-in** patient dashboard
-   * (measurements, trends, and subjective/objective goals). Never call it a
-   * "patient portal". Ships in this app (`public/bhw-blueprint-portal-mockup.html`).
-   * The BHWcrewOS version is at `${PATIENT_SITE}/bhw-patient-portal-mockup.html`
-   * if you'd rather point back to it.
+   * The **signed-in patient home** — the tiled landing after sign-in (check-in,
+   * care team, medications, next visit, notifications … and the care plan). This
+   * is where sign-in, the hub's program cards, and every Blueprint link land.
+   * Ships in this app (`public/bhw-patient-home-mockup.html`).
    */
-  patientPortal: IN_APP('bhw-blueprint-portal-mockup.html'),
+  patientPortal: IN_APP('bhw-patient-home-mockup.html'),
+
+  /**
+   * The **Personal Health Blueprint = the care plan** — goals, measurements,
+   * trends and the recommendations behind them. It sits *under* the home (the
+   * home's "Personal Health Blueprint" tile opens it), not at the top level.
+   * Ships in this app (`public/bhw-blueprint-portal-mockup.html`).
+   */
+  carePlan: IN_APP('bhw-blueprint-portal-mockup.html'),
 } as const
