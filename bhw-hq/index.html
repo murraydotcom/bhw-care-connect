@@ -237,11 +237,7 @@
     font-size: clamp(2.6rem, 6.6vw, 4.7rem); line-height: 1.06; margin: 0 0 22px;
     letter-spacing: -.02em; text-wrap: balance;
   }
-  .hero h1 .grad {
-    background: linear-gradient(115deg, var(--accent), var(--teal) 92%);
-    -webkit-background-clip: text; background-clip: text; color: transparent;
-    font-style: italic;
-  }
+  .hero h1 .grad { color: var(--accent); }
   .hero p.lede {
     max-width: 54ch; margin: 0 auto; font-family: var(--read);
     font-size: clamp(1.04rem, 1.5vw, 1.2rem); line-height: 1.7;
@@ -338,10 +334,10 @@
     border: 1px solid var(--panel-line);
   }
   .band-card .tl {
-    font-family: var(--serif); font-style: italic; font-weight: 500;
+    font-family: var(--serif); font-weight: 500;
     font-size: clamp(1.4rem, 3.4vw, 2.3rem); margin: 0; letter-spacing: -.015em; text-wrap: balance;
   }
-  .band-card .tl b { color: var(--accent); font-style: normal; }
+  .band-card .tl b { color: var(--accent); font-weight: 500; }
   .band-card .sub { margin: 12px 0 0; color: var(--ink-soft); font-size: 13.5px; letter-spacing: .04em; }
 
   /* ---------- Family strip ---------- */
