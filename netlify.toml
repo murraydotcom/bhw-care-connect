@@ -1,0 +1,23 @@
+[build]
+  command = "cd app && npm ci && npm run build && cd .. && node build-merge.mjs"
+  publish = "app/dist"
+  functions = "netlify/functions"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# BHW Care Connect — the public, patient-facing site. Employee tools
+# (BHW HQ / crewOS) live in the separate bhwcrewos repo and deploy; this
+# site links to none of them by design.
+#
+#   /                                → Care Connect hub (app/ React build)
+#   /bhw-patient-portal-mockup.html  → Personal Health Blueprint
+#   /bhw-charmed-patient-mockup.html → CharmEd program page
+#   /bhw-flow-patient-mockup.html    → Flow program page
+#   /bhw-mindmood-patient-mockup.html→ Mind & Mood program page
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "SAMEORIGIN"
+    Referrer-Policy = "no-referrer"

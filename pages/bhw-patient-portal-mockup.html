@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>BHW Patient Portal — Design Prototype</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,300;0,400;0,500;0,600;1,400;1,500&family=Montserrat:wght@300;400;500;600;700&family=Lora:ital@0;1&family=Caveat:wght@500;600&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   BHW family — shared tokens (inherited from BHW Integrative)
+   ============================================================ */
+:root{
+  --bhw-deep-obsidian:#0F141A; --bhw-ink-navy:#162433; --bhw-charcoal:#2A3038;
+  --bhw-mineral-taupe:#6B665E; --bhw-sea-glass:#5FA9A6; --bhw-deep-teal-vein:#266D7A;
+  --bhw-opal-mist:#DCE3EA; --bhw-lavender-opal:#92889B; --bhw-rose-opal:#C9A0A0;
+  --bhw-pale-gold-light:#E8C98A; --bhw-bronze-clay:#8C5A3C; --bhw-pyrite-gold:#C4A038;
+  --bhw-limestone:#EDE5D8; --bhw-warm-ivory:#F7F3EA;
+  --opal-glow:#5FE3D6;
+
+  --bg:var(--bhw-warm-ivory); --bg-warm:var(--bhw-limestone); --bg-muted:var(--bhw-opal-mist);
+  --fg:var(--bhw-ink-navy); --fg-strong:var(--bhw-deep-obsidian); --fg-muted:var(--bhw-mineral-taupe);
+  --fg-on-dark:var(--bhw-warm-ivory);
+  --accent:var(--bhw-bronze-clay); --accent-gold:var(--bhw-pyrite-gold);
+  --accent-soft:var(--bhw-sea-glass); --accent-deep:var(--bhw-deep-teal-vein);
+  --border:rgba(22,36,51,0.12); --border-on-dark:rgba(247,243,234,0.16);
+
+  --font-sans:'Montserrat',ui-sans-serif,system-ui,sans-serif;
+  --font-serif:'Playfair Display',Georgia,serif;
+  --font-lora:'Lora',Georgia,serif;
+  --font-script:'Caveat',cursive;
+  --ease-out:cubic-bezier(0.16,1,0.3,1);
+  --shadow-sm:0 2px 6px rgba(15,20,26,0.08);
+  --shadow-md:0 8px 20px -8px rgba(15,20,26,0.18);
+  --shadow-lg:0 20px 40px -16px rgba(15,20,26,0.28);
+}
+*,*::before,*::after{box-sizing:border-box;}
+html,body{margin:0;padding:0;}
+body{font-family:var(--font-sans); background:var(--bg); color:var(--fg);
+  -webkit-font-smoothing:antialiased; font-size:16px; line-height:1.55;}
+a{color:inherit;}
+button{font-family:inherit;}
+:focus-visible{outline:2px solid var(--accent-deep); outline-offset:2px;}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important; transition:none!important;}
+}
+
+.eyebrow{font-size:10.5px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--fg-muted); margin:0;}
+.eyebrow--gold{color:var(--accent-gold);}
+h1,h2,h3,h4{margin:0; color:var(--fg-strong); text-wrap:balance;}
+
+/* ============================================================
+   PROTOTYPE BANNER
+   ============================================================ */
+.proto-banner{background:var(--bhw-ink-navy); color:rgba(247,243,234,0.85);
+  font-size:10.5px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase;
+  text-align:center; padding:7px 16px;}
+.proto-banner b{color:var(--bhw-pale-gold-light); font-weight:600;}
+
+/* ============================================================
+   LOGIN VIEW — dark mineral, opal glow
+   ============================================================ */
+#view-login{min-height:calc(100vh - 30px); background:#0B1418; position:relative;
+  display:flex; align-items:center; justify-content:center; padding:48px 20px; overflow:hidden;}
+#view-login::before{content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(70% 80% at 75% 30%, rgba(44,167,166,0.22), transparent 55%),
+             radial-gradient(50% 70% at 20% 90%, rgba(232,162,74,0.10), transparent 60%),
+             linear-gradient(180deg,#0E1B22 0%, #0A1316 100%);}
+.login-card{position:relative; z-index:2; width:100%; max-width:440px;}
+.login-lockup{display:flex; align-items:center; gap:12px; margin-bottom:34px;}
+.login-mark{width:38px; height:38px; border-radius:50%; flex-shrink:0;
+  background:radial-gradient(circle at 38% 35%, var(--opal-glow) 0%, var(--bhw-sea-glass) 38%, #C8A6E0 66%, #E8A24A 100%);
+  box-shadow:0 0 24px rgba(95,227,214,0.5);}
+.login-wm{display:flex; flex-direction:column; gap:3px; line-height:1;}
+.login-wm span:first-child{font-size:19px; font-weight:300; letter-spacing:0.04em; color:var(--bhw-warm-ivory);}
+.login-wm span:last-child{font-size:8.5px; font-weight:600; letter-spacing:0.24em; text-transform:uppercase; color:rgba(247,243,234,0.6);}
+.login-card h1{font-family:var(--font-serif); font-weight:300; font-size:clamp(38px,7vw,52px);
+  line-height:1.02; letter-spacing:-0.02em; color:var(--bhw-warm-ivory);}
+.login-card h1 em{font-style:italic; font-weight:300;
+  background:linear-gradient(105deg,#2CA7A6 0%,#5FE3D6 40%,#C8A6E0 65%,#E8A24A 92%);
+  -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent;}
+.login-sub{font-size:14px; line-height:1.7; color:rgba(247,243,234,0.72); margin:20px 0 34px; max-width:360px;}
+.login-field{display:flex; flex-direction:column; gap:7px; margin-bottom:18px;}
+.login-field label{font-size:10px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:rgba(247,243,234,0.55);}
+.login-field input{font-family:var(--font-sans); font-size:15px; padding:14px 16px;
+  background:rgba(247,243,234,0.06); border:1px solid rgba(247,243,234,0.18);
+  border-radius:9px; color:var(--bhw-warm-ivory); outline:none; width:100%;}
+.login-field input::placeholder{color:rgba(247,243,234,0.35);}
+.login-field input:focus{border-color:var(--opal-glow); box-shadow:0 0 0 3px rgba(95,227,214,0.14);}
+.login-btn{display:flex; width:100%; justify-content:center; align-items:center; gap:10px;
+  background:var(--bhw-pyrite-gold); color:var(--bhw-deep-obsidian);
+  padding:15px 24px; border-radius:8px; border:0; cursor:pointer;
+  font-size:11px; font-weight:700; letter-spacing:0.22em; text-transform:uppercase;
+  transition:all 220ms var(--ease-out); margin-top:8px;}
+.login-btn:hover{background:var(--bhw-warm-ivory); transform:translateY(-1px);}
+.login-fine{font-size:11.5px; color:rgba(247,243,234,0.45); margin-top:22px; line-height:1.65;}
+.login-fine a{color:rgba(247,243,234,0.7); text-decoration:underline;}
+.login-status{font-size:12.5px; color:var(--opal-glow); margin-top:16px; min-height:1.1em; line-height:1.55;}
+.signout{font-family:var(--font-sans); font-size:10px; font-weight:600; letter-spacing:0.12em; text-transform:uppercase; color:var(--bhw-mineral-taupe); background:none; border:1px solid rgba(22,36,51,0.14); border-radius:999px; padding:5px 11px; cursor:pointer; margin-left:14px;}
+.signout:hover{border-color:var(--bhw-ink-navy); color:var(--bhw-ink-navy);}
+
+/* ============================================================
+   APP SHELL
+   ============================================================ */
+#view-app{display:none;}
+.bhw-header{position:sticky; top:0; z-index:50; background:var(--bg-warm); border-bottom:1px solid var(--border);}
+.bhw-header__inner{max-width:1080px; margin:0 auto; padding:13px 20px;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;}
+.bhw-header__lockup{display:flex; align-items:center; gap:10px; text-decoration:none;}
+.header-mark{width:28px; height:28px; border-radius:50%;
+  background:radial-gradient(circle at 38% 35%, var(--opal-glow) 0%, var(--bhw-sea-glass) 38%, #C8A6E0 66%, #E8A24A 100%);}
+.bhw-header__wm{display:flex; flex-direction:column; gap:2px; line-height:1;}
+.bhw-header__wm span:first-child{font-size:16px; font-weight:300; letter-spacing:0.04em; color:var(--fg-strong);}
+.bhw-header__wm span:last-child{font-size:7.5px; font-weight:600; letter-spacing:0.22em; text-transform:uppercase; color:var(--fg-muted);}
+.header-portal-tag{font-size:10.5px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase;
+  color:var(--accent); padding-left:14px; margin-left:4px; border-left:1px solid var(--border);}
+.patient-chip{display:flex; align-items:center; gap:9px;}
+.patient-chip .avatar{width:32px; height:32px; border-radius:50%; background:var(--accent-deep);
+  color:#fff; display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:600; letter-spacing:0.04em;}
+.patient-chip .pname{font-size:12.5px; font-weight:600; color:var(--fg-strong);}
+.patient-chip .pid{font-size:10px; color:var(--fg-muted); letter-spacing:0.06em;}
+@media (max-width:560px){ .patient-chip .pmeta{display:none;} .header-portal-tag{display:none;} }
+.who-select{font-family:var(--font-sans); font-size:12.5px; font-weight:600; color:var(--fg-strong); background:var(--bg-elevated,#fffdf9); border:1px solid var(--border); border-radius:8px; padding:7px 10px; cursor:pointer; max-width:190px;}
+.guardian-banner{background:color-mix(in srgb, var(--accent-deep,#266D7A) 12%, #fff); border-bottom:1px solid var(--border); color:var(--fg,#2A3A40); font-size:12.5px; padding:9px 22px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+.guardian-banner[hidden]{display:none;}
+.guardian-banner b{font-weight:700;}
+.guardian-banner .gb-note{color:var(--warn,#b07a55); font-weight:600;}
+.guardian-banner .gb-note.ok{color:var(--ok,#6f8f6a);}
+.meds-list{display:flex; flex-direction:column;}
+.med-row{display:flex; align-items:baseline; gap:10px; padding:11px 2px; border-bottom:1px solid var(--border);}
+.med-row:last-child{border-bottom:0;}
+.med-row .m-name{font-weight:700; color:var(--fg-strong); font-size:14px;}
+.med-row .m-dose{color:var(--fg-muted); font-size:12.5px;}
+.med-row .m-sched{color:var(--fg); opacity:.82; font-size:12.5px; flex:1; min-width:150px;}
+.med-row .m-status{font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:99px; background:rgba(111,143,106,.16); color:#4d6f48; white-space:nowrap;}
+.med-row .m-status.held{background:rgba(176,122,85,.18); color:#8f5c3d;}
+.meds-empty{font-size:12.5px; color:var(--fg-muted); margin:0;}
+@media(max-width:560px){.med-row{flex-wrap:wrap; gap:4px 10px;}}
+.profile-card[hidden]{display:none;}
+.profile-head{display:flex; justify-content:space-between; align-items:flex-start; gap:12px;}
+.profile-name{font-family:var(--font-serif); font-size:21px; color:var(--fg-strong);}
+.profile-sub{font-size:12.5px; color:var(--fg-muted); margin-top:3px; letter-spacing:.02em;}
+.profile-page{font-size:12px; font-weight:700; color:var(--accent-deep); white-space:nowrap; text-decoration:none;}
+.profile-page:hover{text-decoration:underline;}
+.profile-programs{display:flex; flex-wrap:wrap; gap:6px; margin-top:12px;}
+.pf-chip{font-size:11px; font-weight:700; letter-spacing:.04em; padding:3px 10px; border-radius:99px; background:rgba(38,109,122,.12); color:#266D7A;}
+.profile-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:13px 22px; margin-top:16px;}
+.pf-label{font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-muted);}
+.pf-value{font-size:13.5px; color:var(--fg-strong); margin-top:2px; line-height:1.4;}
+
+/* tabs */
+.portal-tabs{position:sticky; top:55px; z-index:40; background:var(--bg);
+  border-bottom:1px solid var(--border);}
+.portal-tabs__inner{max-width:1080px; margin:0 auto; padding:10px 20px;
+  display:flex; gap:6px; overflow-x:auto; scrollbar-width:none;}
+.portal-tabs__inner::-webkit-scrollbar{display:none;}
+.ptab{background:transparent; border:1px solid transparent; padding:9px 18px; border-radius:999px;
+  font-size:11.5px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase;
+  color:var(--fg-muted); cursor:pointer; white-space:nowrap; transition:all 200ms;}
+.ptab:hover{color:var(--fg-strong);}
+.ptab.active{background:var(--fg-strong); color:var(--bg); border-color:var(--fg-strong);}
+
+.wrap{max-width:1080px; margin:0 auto; padding:34px 20px 90px;}
+.pane{display:none;}
+.pane.active{display:block; animation:fadein 320ms var(--ease-out);}
+@keyframes fadein{from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:none;}}
+
+/* ============================================================
+   CARDS + SHARED
+   ============================================================ */
+.card{background:#F4EFE5; border:1px solid var(--border); border-radius:14px;
+  padding:26px; box-shadow:var(--shadow-sm);}
+.card-dark{background:var(--bhw-ink-navy); color:var(--fg-on-dark); border:1px solid var(--border-on-dark);}
+.btn{display:inline-flex; align-items:center; gap:9px; font-weight:600; font-size:11px;
+  letter-spacing:0.14em; text-transform:uppercase; padding:12px 20px; border-radius:999px;
+  border:1px solid transparent; cursor:pointer; text-decoration:none; transition:all 220ms var(--ease-out); white-space:nowrap;}
+.btn--gold{background:var(--bhw-pyrite-gold); color:var(--bhw-deep-obsidian);}
+.btn--gold:hover{filter:brightness(1.06); transform:translateY(-1px);}
+.btn--ghost{background:transparent; color:var(--fg); border-color:rgba(22,36,51,0.24);}
+.btn--ghost:hover{border-color:var(--accent); color:var(--accent);}
+.btn--ghost-dark{background:transparent; color:var(--fg-on-dark); border-color:rgba(247,243,234,0.32);}
+.btn--ghost-dark:hover{border-color:var(--fg-on-dark);}
+
+/* ============================================================
+   HOME PANE
+   ============================================================ */
+.home-greet h2{font-family:var(--font-serif); font-weight:300; letter-spacing:-0.02em;
+  font-size:clamp(32px,6vw,46px); line-height:1.06;}
+.home-greet h2 em{font-style:italic; color:var(--accent-deep);}
+.home-greet p{font-size:14.5px; color:var(--fg-muted); margin:12px 0 0; max-width:520px; line-height:1.7;}
+
+/* the vein — signature progress element */
+.vein-card{margin-top:28px; position:relative; overflow:hidden;}
+.vein-card::before{content:""; position:absolute; inset:0; pointer-events:none;
+  background:radial-gradient(60% 90% at 85% 20%, rgba(95,227,214,0.10), transparent 60%);}
+.vein-head{display:flex; justify-content:space-between; align-items:baseline; gap:16px; flex-wrap:wrap; margin-bottom:22px;}
+.vein-head .big{font-family:var(--font-serif); font-weight:300; font-size:26px; color:var(--fg-on-dark); letter-spacing:-0.01em;}
+.vein-head .big em{font-style:italic; color:var(--bhw-pale-gold-light);}
+.vein-track{position:relative; height:10px; border-radius:999px; background:rgba(247,243,234,0.10);}
+.vein-fill{position:absolute; inset:0 auto 0 0; width:0%; border-radius:999px;
+  background:linear-gradient(90deg,var(--bhw-deep-teal-vein) 0%, var(--opal-glow) 55%, var(--bhw-pale-gold-light) 100%);
+  box-shadow:0 0 14px rgba(95,227,214,0.55); transition:width 900ms var(--ease-out);}
+.vein-marks{display:flex; justify-content:space-between; margin-top:10px;}
+.vein-marks span{font-size:9.5px; font-weight:600; letter-spacing:0.14em; color:rgba(247,243,234,0.5); text-transform:uppercase;}
+.vein-note{font-family:var(--font-lora); font-style:italic; font-size:13.5px;
+  color:rgba(247,243,234,0.75); margin:20px 0 0;}
+
+.home-grid{display:grid; grid-template-columns:1.35fr 1fr; gap:18px; margin-top:18px;}
+@media (max-width:820px){ .home-grid{grid-template-columns:1fr;} }
+.week-card .task{display:flex; gap:13px; align-items:flex-start; padding:13px 0; border-bottom:1px solid var(--border);}
+.week-card .task:last-child{border-bottom:0;}
+.task input[type=checkbox]{width:19px; height:19px; margin-top:1px; accent-color:var(--bhw-deep-teal-vein); cursor:pointer; flex-shrink:0;}
+.task .t-name{font-size:14px; font-weight:500; color:var(--fg-strong);}
+.task .t-sub{font-size:12.5px; color:var(--fg-muted); margin-top:2px; line-height:1.5;}
+.quick{display:flex; flex-direction:column; gap:12px;}
+.quick a{display:flex; align-items:center; justify-content:space-between; gap:14px;
+  background:var(--bg); border:1px solid var(--border); border-radius:12px;
+  padding:16px 18px; text-decoration:none; transition:all 200ms var(--ease-out);}
+.quick a:hover{border-color:var(--accent); box-shadow:var(--shadow-md); transform:translateY(-1px);}
+.quick .q-name{font-size:13.5px; font-weight:600; color:var(--fg-strong);}
+.quick .q-sub{font-size:11.5px; color:var(--fg-muted); margin-top:2px;}
+.quick .q-arrow{color:var(--accent); font-size:15px;}
+
+/* ============================================================
+   CARE PLAN PANE — 12-week vein
+   ============================================================ */
+.plan-head{margin-bottom:26px;}
+.plan-head h2{font-family:var(--font-serif); font-weight:300; font-size:clamp(28px,5vw,40px); letter-spacing:-0.02em;}
+.plan-head h2 em{font-style:italic; color:var(--accent-deep);}
+.plan-head p{font-size:13.5px; color:var(--fg-muted); max-width:560px; line-height:1.7; margin:10px 0 0;}
+.weeks{display:flex; flex-direction:column; gap:10px;}
+.week{background:#F4EFE5; border:1px solid var(--border); border-radius:13px; overflow:hidden;}
+.week-btn{display:flex; width:100%; align-items:center; gap:16px; padding:17px 20px;
+  background:transparent; border:0; cursor:pointer; text-align:left;}
+.week-dot{width:34px; height:34px; border-radius:50%; flex-shrink:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:600; border:1px solid var(--border); color:var(--fg-muted); background:var(--bg);}
+.week.done .week-dot{background:var(--bhw-deep-teal-vein); border-color:var(--bhw-deep-teal-vein); color:#fff;}
+.week.current .week-dot{background:var(--bhw-pyrite-gold); border-color:var(--bhw-pyrite-gold); color:var(--bhw-deep-obsidian); box-shadow:0 0 0 4px rgba(196,160,56,0.18);}
+.week .w-title{font-size:14.5px; font-weight:600; color:var(--fg-strong);}
+.week .w-sub{font-size:11.5px; color:var(--fg-muted); margin-top:2px; letter-spacing:0.04em;}
+.week .w-state{margin-left:auto; font-size:10px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--fg-muted); flex-shrink:0;}
+.week.done .w-state{color:var(--bhw-deep-teal-vein);}
+.week.current .w-state{color:var(--bhw-bronze-clay);}
+.week.locked{opacity:0.62;}
+.week.locked .week-btn{cursor:default;}
+.week-body{display:none; padding:2px 22px 24px 70px; border-top:1px dashed var(--border);}
+@media (max-width:560px){ .week-body{padding-left:22px;} }
+.week.open .week-body{display:block;}
+.week-body .goal{font-family:var(--font-lora); font-style:italic; font-size:14.5px; color:var(--fg); margin:16px 0 14px; line-height:1.6;}
+.provider-note{display:flex; gap:12px; margin-top:18px; padding:15px 17px; background:var(--bg);
+  border-left:3px solid var(--bhw-pale-gold-light); border-radius:0 10px 10px 0;}
+.provider-note .pn-label{font-size:9.5px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:var(--accent); margin-bottom:5px;}
+.provider-note p{font-size:13px; line-height:1.65; margin:0; color:var(--fg);}
+.provider-note .sig{font-family:var(--font-script); font-size:19px; color:var(--accent); margin-top:6px;}
+
+/* ============================================================
+   NUTRITION PANE
+   ============================================================ */
+.nutri-grid{display:grid; grid-template-columns:1fr 1fr; gap:18px; margin-top:22px;}
+@media (max-width:820px){ .nutri-grid{grid-template-columns:1fr;} }
+.rhythm{display:flex; flex-direction:column; gap:0;}
+.rhythm .r-item{display:flex; gap:15px; padding:14px 0; border-bottom:1px solid var(--border);}
+.rhythm .r-item:last-child{border-bottom:0;}
+.rhythm .r-time{font-size:10px; font-weight:600; letter-spacing:0.14em; text-transform:uppercase; color:var(--accent-deep); width:74px; flex-shrink:0; padding-top:3px;}
+.rhythm .r-name{font-size:14px; font-weight:500; color:var(--fg-strong);}
+.rhythm .r-sub{font-size:12.5px; color:var(--fg-muted); line-height:1.55; margin-top:2px;}
+.focus-pills{display:flex; flex-wrap:wrap; gap:8px; margin-top:14px;}
+.fpill{font-size:11.5px; font-weight:600; letter-spacing:0.08em; padding:7px 14px;
+  border-radius:999px; background:var(--bg); border:1px solid var(--border); color:var(--fg);}
+.section-label{display:flex; gap:12px; align-items:center; margin:0 0 16px;}
+.section-label .dot{width:8px; height:8px; border-radius:999px; background:var(--accent-soft); box-shadow:0 0 8px rgba(95,169,166,0.6);}
+.section-label .txt{font-size:10.5px; font-weight:600; letter-spacing:0.2em; text-transform:uppercase; color:var(--fg-muted);}
+.section-label .line{flex:1; height:1px; background:linear-gradient(90deg,rgba(196,160,56,0.5),transparent);}
+
+/* ============================================================
+   MESSAGES PANE
+   ============================================================ */
+.msg{display:flex; margin:14px 0;}
+.msg--me{justify-content:flex-end;}
+.msg-bubble{max-width:78%; padding:14px 17px; border-radius:14px; box-shadow:var(--shadow-sm);}
+.msg--team .msg-bubble{background:var(--bg); border:1px solid var(--border); border-top-left-radius:4px;}
+.msg--me .msg-bubble{background:var(--bhw-ink-navy); color:var(--fg-on-dark); border-top-right-radius:4px;}
+.msg-who{font-size:9.5px; font-weight:600; letter-spacing:0.16em; text-transform:uppercase; color:var(--fg-muted); margin-bottom:6px;}
+.msg--me .msg-who{color:rgba(247,243,234,0.55);}
+.msg-bubble p{font-size:13.5px; line-height:1.65; margin:0;}
+.msg-compose{display:flex; gap:10px; align-items:flex-end; margin-top:22px; padding-top:20px; border-top:1px dashed var(--border);}
+.msg-compose textarea{flex:1; font-family:var(--font-sans); font-size:14px; padding:13px 15px;
+  background:var(--bg); border:1px solid var(--border); border-radius:11px; color:var(--fg);
+  outline:none; resize:none;}
+.msg-compose textarea:focus{border-color:var(--accent-deep); box-shadow:0 0 0 3px rgba(38,109,122,0.14);}
+.msg-fine{font-size:11px; color:var(--fg-muted); margin:14px 0 0; letter-spacing:0.03em;}
+
+/* ---- Care plan depth blocks ---- */
+.cp-block{margin:22px 0; padding:18px 20px; background:var(--bg); border:1px solid var(--border); border-radius:12px;}
+.cp-label{font-size:9.5px; font-weight:700; letter-spacing:0.2em; text-transform:uppercase; color:var(--accent-deep); margin-bottom:10px;}
+.cp-block p{font-size:13.5px; line-height:1.7; color:var(--fg); margin:8px 0;}
+.lab-row{display:flex; justify-content:space-between; align-items:baseline; gap:12px; margin-top:10px;}
+.lab-name{font-size:13.5px; font-weight:600; color:var(--fg-strong);}
+.lab-val{font-size:12px; font-weight:600; letter-spacing:0.06em; padding:3px 10px; border-radius:999px;}
+.lab-val--low{background:rgba(201,160,160,0.25); color:#8C4A3C;}
+.supp{padding:13px 0; border-bottom:1px dashed var(--border);}
+.supp:last-child{border-bottom:0; padding-bottom:0;}
+.supp-name{font-size:14px; font-weight:600; color:var(--fg-strong);}
+.supp-how{font-size:12.5px; color:var(--fg); margin-top:3px; line-height:1.55;}
+.supp-why{font-size:12px; color:var(--fg-muted); margin-top:3px; font-style:italic; line-height:1.55;}
+
+/* ---- Program brand overrides (demo) ---- */
+.brand-mindmood{
+  --bg:#F7F1E8; --bg-warm:#EFE3D8; --fg:#4B3558; --fg-strong:#3A2944; --fg-muted:#7E6B84;
+  --accent:#4B3558; --accent-deep:#4B3558; --accent-soft:#C9B3CF; --accent-gold:#E7C95B;
+  --border:rgba(75,53,88,0.14);
+}
+.brand-charmed{
+  --bg:#FAF7F2; --bg-warm:#E9E2D6; --fg:#0B1228; --fg-strong:#0B1228; --fg-muted:#5A6070;
+  --accent:#114766; --accent-deep:#2CA7A6; --accent-soft:#B7A4F7; --accent-gold:#F2B134;
+  --border:rgba(11,18,40,0.12);
+}
+.demo-bar{background:var(--bhw-limestone); border-bottom:1px solid rgba(22,36,51,0.1);
+  display:flex; align-items:center; justify-content:center; gap:8px; padding:7px 14px; flex-wrap:wrap;}
+.demo-bar .d-label{font-size:9.5px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--bhw-mineral-taupe);}
+.demo-bar button{font-size:10px; font-weight:600; letter-spacing:0.1em; text-transform:uppercase;
+  padding:5px 12px; border-radius:999px; border:1px solid rgba(22,36,51,0.2); background:transparent;
+  color:var(--bhw-ink-navy); cursor:pointer;}
+.demo-bar button.active{background:var(--bhw-ink-navy); color:var(--bhw-warm-ivory); border-color:var(--bhw-ink-navy);}
+
+.portal-foot{border-top:1px solid var(--border); margin-top:70px; padding-top:22px;
+  display:flex; justify-content:space-between; gap:18px; flex-wrap:wrap;
+  font-size:11px; color:var(--fg-muted); letter-spacing:0.05em;}
+
+/* ============================================================
+   HEALTH BLUEPRINT — five-pillar tracker (Cronometer-style).
+   Built on the portal's accent vars. Demo data only.
+   ============================================================ */
+.blueprint{margin:2px 0 40px;}
+.bp-head{max-width:640px; margin-bottom:22px;}
+.bp-head h2{font-family:var(--font-serif); font-weight:400; font-size:26px; color:var(--fg-strong); margin:8px 0 8px; letter-spacing:-0.01em; line-height:1.2;}
+.bp-head p{font-size:13.5px; color:var(--fg-muted); line-height:1.65; margin:0;}
+.bp-grid{display:grid; grid-template-columns:repeat(auto-fit,minmax(256px,1fr)); gap:16px;}
+.bp-card{background:#fff; border:1px solid var(--border); border-radius:16px; padding:22px; display:flex; flex-direction:column; position:relative; overflow:hidden; box-shadow:var(--shadow-sm);}
+.bp-card::before{content:""; position:absolute; left:0; top:0; width:100%; height:3px; background:var(--dom, var(--accent));}
+.bp-card__top{display:flex; align-items:center; gap:12px; margin-bottom:15px;}
+.bp-ico{width:40px; height:40px; border-radius:11px; display:grid; place-items:center; font-size:19px; flex-shrink:0; color:var(--dom, var(--accent)); background:color-mix(in srgb, var(--dom, var(--accent)) 16%, transparent);}
+.bp-dom{font-size:15px; font-weight:700; color:var(--fg-strong); line-height:1.1;}
+.bp-tag{font-size:9.5px; font-weight:700; letter-spacing:0.14em; text-transform:uppercase; color:var(--dom, var(--accent)); margin-top:4px;}
+.bp-rx{background:var(--bg-warm); border-radius:11px; padding:13px 14px; margin-bottom:15px;}
+.bp-rx__label{font-size:9px; font-weight:700; letter-spacing:0.18em; text-transform:uppercase; color:var(--fg-muted); margin-bottom:5px; display:flex; align-items:center; gap:6px;}
+.bp-rx__label::before{content:"⬆"; font-size:9px; color:var(--dom, var(--accent));}
+.bp-rx p{font-size:12.5px; color:var(--fg); line-height:1.55; margin:0;}
+.bp-rx p strong{color:var(--fg-strong); font-weight:600;}
+.bp-prog{margin-bottom:14px;}
+.bp-prog__row{display:flex; justify-content:space-between; align-items:baseline; font-size:11.5px; color:var(--fg-muted); margin-bottom:8px;}
+.bp-prog__row strong{font-size:12.5px; color:var(--fg-strong); font-weight:700;}
+.bp-dots{display:flex; gap:5px;}
+.bp-dots span{flex:1; height:8px; border-radius:3px; background:var(--border);}
+.bp-dots span.on{background:var(--dom, var(--accent));}
+.bp-dots span.half{background:color-mix(in srgb, var(--dom, var(--accent)) 45%, var(--border));}
+.bp-metric{display:flex; align-items:flex-end; gap:8px; margin-bottom:16px;}
+.bp-metric .n{font-family:var(--font-sans); font-weight:300; font-size:29px; line-height:1; color:var(--fg-strong); letter-spacing:-0.02em;}
+.bp-metric .u{font-size:11px; color:var(--fg-muted); padding-bottom:3px;}
+.bp-metric .ch{font-size:11px; font-weight:600; color:var(--dom, var(--accent)); padding-bottom:4px; margin-left:auto;}
+.bp-log{margin-top:auto; align-self:flex-start; background:transparent; color:var(--dom, var(--accent)); border:1px solid color-mix(in srgb, var(--dom, var(--accent)) 40%, transparent); padding:9px 16px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:0.08em; cursor:pointer; font-family:var(--font-sans); transition:all 180ms;}
+.bp-log:hover{background:var(--dom, var(--accent)); color:#fff;}
+.bp-link{display:inline-flex; align-items:center; gap:6px; margin-top:2px; font-size:12px; font-weight:600; color:var(--dom, var(--accent)); background:none; border:0; cursor:pointer; font-family:var(--font-sans); padding:0;}
+@media(max-width:560px){.bp-grid{grid-template-columns:1fr;}}
+
+/* The Health Blueprint — dashboard hero, 12-week timeline, trends, diary */
+.bp-hero{display:flex; gap:28px; align-items:center; background:linear-gradient(150deg,#14232E 0%,#266D7A 130%); color:#fff; border-radius:18px; padding:26px 30px; margin-bottom:8px; flex-wrap:wrap;}
+.bp-hero__ring{position:relative; width:118px; height:118px; flex-shrink:0;}
+.bp-hero__ring svg{width:118px; height:118px; transform:rotate(-90deg);}
+.bp-hero__ring .pct{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+.bp-hero__ring .pct b{font-size:28px; font-weight:300; letter-spacing:-0.02em;}
+.bp-hero__ring .pct span{font-size:8.5px; letter-spacing:0.16em; text-transform:uppercase; opacity:0.82; margin-top:2px;}
+.bp-hero__body{flex:1; min-width:250px;}
+.bp-hero__meta{font-size:10.5px; letter-spacing:0.18em; text-transform:uppercase; color:var(--bhw-pale-gold-light); font-weight:600;}
+.bp-hero__body h3{color:#fff; font-family:var(--font-serif); font-weight:400; font-size:23px; margin:6px 0 16px;}
+.bp-weeks{display:flex; gap:4px; margin-bottom:14px;}
+.bp-week{flex:1; height:28px; border-radius:5px; background:rgba(255,255,255,0.12); display:flex; align-items:center; justify-content:center; font-size:9.5px; color:rgba(255,255,255,0.6); font-weight:600;}
+.bp-week.done{background:rgba(255,255,255,0.34); color:#fff;}
+.bp-week.now{background:var(--bhw-pale-gold-light); color:#14232E; box-shadow:0 0 0 2px rgba(232,201,138,0.35);}
+.bp-hero__note{font-size:12.5px; line-height:1.6; color:rgba(255,255,255,0.82); margin:0;}
+.bp-sech{display:flex; align-items:center; gap:12px; margin:30px 0 14px;}
+.bp-sech .t{font-size:11px; font-weight:700; letter-spacing:0.16em; text-transform:uppercase; color:var(--fg-muted); white-space:nowrap;}
+.bp-sech .line{flex:1; height:1px; background:var(--border);}
+.bp-trends__row{display:grid; grid-template-columns:120px 1fr 96px; gap:16px; align-items:center; padding:12px 0; border-bottom:1px solid var(--border);}
+.bp-trends__row:last-child{border-bottom:0;}
+.bp-trends__nm{font-size:13px; font-weight:600; color:var(--fg-strong); display:flex; align-items:center; gap:8px;}
+.bp-trends__nm i{width:10px; height:10px; border-radius:3px; flex:none;}
+.bp-trends__row .spark{width:100%; height:38px; display:block;}
+.bp-trends__delta{font-size:12px; font-weight:700; text-align:right;}
+.bp-trends__delta span{display:block; font-size:10px; font-weight:500; color:var(--fg-muted);}
+@media(max-width:560px){.bp-trends__row{grid-template-columns:90px 1fr 70px; gap:10px;}}
+.bp-today .drow{display:flex; align-items:center; gap:13px; padding:13px 0; border-bottom:1px solid var(--border);}
+.bp-today .drow:last-child{border-bottom:0;}
+.bp-today .di{width:36px; height:36px; border-radius:10px; display:grid; place-items:center; font-size:17px; flex:none; color:var(--dom, var(--accent)); background:color-mix(in srgb, var(--dom, var(--accent)) 16%, transparent);}
+.bp-today .dn{flex:1;}
+.bp-today .dn b{font-size:13.5px; font-weight:600; color:var(--fg-strong);}
+.bp-today .dn span{display:block; font-size:11.5px; color:var(--fg-muted); margin-top:1px;}
+.bp-today .dlog{border:1px solid var(--border); background:#fff; border-radius:999px; padding:8px 15px; font-size:11px; font-weight:700; letter-spacing:0.06em; cursor:pointer; color:var(--fg); font-family:var(--font-sans); flex:none;}
+.bp-today .dlog.done{background:var(--dom, var(--accent)); border-color:transparent; color:#fff;}
+/* ===== Blueprint tools (functional, Cronometer-style) ===== */
+.tools-grid{display:grid; grid-template-columns:1fr 1fr; gap:16px;}
+.tool{background:#fff; border:1px solid var(--border); border-radius:12px; padding:18px 18px 16px; box-shadow:var(--shadow-sm);}
+.tool--wide{grid-column:1 / -1;}
+.tool--soon{opacity:0.72;}
+.tool__hd{display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:14px;}
+.tool__hd h4{margin:0; font-family:var(--font-sans); font-size:14px; font-weight:700; color:var(--fg-strong);}
+.tool__meta{font-size:11px; color:var(--fg-muted); letter-spacing:0.04em;}
+.tool select,.tool input{font-family:var(--font-sans); font-size:13px; color:var(--fg); background:#fff; border:1px solid var(--border); border-radius:8px; padding:8px 10px;}
+.tool label{display:block; font-size:11px; font-weight:700; letter-spacing:0.08em; text-transform:uppercase; color:var(--fg-muted); margin:0 0 5px;}
+.btn{font-family:var(--font-sans); font-size:12.5px; font-weight:700; border:1px solid var(--border); background:#fff; color:var(--fg); border-radius:99px; padding:9px 16px; cursor:pointer;}
+.btn:hover{border-color:var(--accent);}
+.btn--go{background:var(--accent); border-color:var(--accent); color:#fff;}
+.btn:disabled{opacity:0.45; cursor:not-allowed;}
+.ft{display:flex; gap:20px; align-items:center; flex-wrap:wrap;}
+.ft__ring{position:relative; width:120px; height:120px; flex-shrink:0;}
+.ft__ring svg{width:120px; height:120px; transform:rotate(-90deg);}
+.ft__read{position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+.ft__read b{font-family:var(--font-sans); font-size:18px; font-weight:700; color:var(--fg-strong); font-variant-numeric:tabular-nums;}
+.ft__read span{font-size:10px; color:var(--fg-muted); letter-spacing:0.03em; margin-top:2px; text-align:center; max-width:96px;}
+.ft__ctrl{flex:1; min-width:180px;}
+.ft__btns{display:flex; gap:8px; margin:10px 0;}
+.ft__sched{font-size:11.5px; color:var(--fg-muted); display:flex; align-items:center; gap:6px; flex-wrap:wrap;}
+.ft__sched input{padding:5px 8px;}
+.ft__hist{margin-top:14px; border-top:1px solid var(--border); padding-top:8px; display:flex; flex-direction:column;}
+.ft__hrow{display:flex; align-items:center; gap:10px; font-size:12.5px; padding:5px 0;}
+.ft__hrow span{color:var(--fg-muted); width:82px;}
+.ft__hrow b{font-variant-numeric:tabular-nums; color:var(--fg);}
+.ft__hrow i{margin-left:auto; font-style:normal; font-size:11px; color:#5AA469;}
+.bio,.macro{width:100%; border-collapse:collapse;}
+.bio th,.macro th{text-align:left; font-size:10px; letter-spacing:0.09em; text-transform:uppercase; color:var(--fg-muted); font-weight:700; padding:7px 8px; border-bottom:1px solid var(--border);}
+.bio td,.macro td{padding:9px 8px; border-bottom:1px solid rgba(22,36,51,0.06); font-size:13px; color:var(--fg);}
+.bio tr:last-child td,.macro tr:last-child td{border-bottom:0;}
+.bio td:first-child,.macro td:first-child{font-weight:600; color:var(--fg-strong);}
+.macro td+td{font-variant-numeric:tabular-nums;}
+.up{color:#5AA469; font-weight:700;} .dn{color:#266D7A; font-weight:700;} td.ok{color:var(--fg-muted);}
+.bio__add{display:flex; gap:8px; margin-top:12px;}
+.bio__add input{flex:1; min-width:0;}
+.chart{width:100%; height:auto; display:block; border:1px solid var(--border); border-radius:8px; background:#fff;}
+#chLine{stroke:var(--accent);}
+.chart__x{display:flex; justify-content:space-between; font-size:10.5px; color:var(--fg-muted); margin-top:6px;}
+.chart__cap{font-size:12px; color:var(--fg-muted); margin:10px 0 0;}
+.tool__note{font-size:11.5px; color:var(--fg-muted); margin:12px 0 0; line-height:1.5;}
+.macro tr.train td:first-child::after{content:" · training"; font-weight:400; font-size:10px; color:var(--accent); letter-spacing:0;}
+@media(max-width:560px){.tools-grid{grid-template-columns:1fr;}}
+/* ===== Today screen ===== */
+.clin-banner{display:flex; align-items:center; gap:14px; background:#fff; border:1px solid var(--border); border-left:4px solid var(--accent); border-radius:12px; padding:14px 16px; margin:0 0 20px;}
+.clin-banner .clin-avatar{width:40px; height:40px; border-radius:50%; background:var(--accent); color:#fff; display:flex; align-items:center; justify-content:center; font-weight:700; font-size:14px; flex-shrink:0; font-family:var(--font-sans);}
+.clin-banner p{margin:0; font-size:13px; color:var(--fg); line-height:1.5;}
+.clin-banner .btn{margin-left:auto; white-space:nowrap; flex-shrink:0;}
+.today__hd{display:flex; align-items:baseline; gap:12px; margin:0 0 14px;}
+.today__hd h3{margin:0; font-family:var(--font-serif); font-size:22px; color:var(--fg-strong);}
+.today__meta{font-size:12px; color:var(--fg-muted); letter-spacing:0.02em;}
+.prio{display:flex; gap:14px; background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px; margin-bottom:12px; box-shadow:var(--shadow-sm); transition:opacity .2s;}
+.prio__check{flex-shrink:0; width:26px; height:26px; border-radius:50%; border:2px solid var(--border); background:#fff; cursor:pointer; margin-top:2px; position:relative;}
+.prio__check:hover{border-color:var(--accent);}
+.prio.done{opacity:.62;}
+.prio.done .prio__check{background:#5AA469; border-color:#5AA469;}
+.prio.done .prio__check::after{content:"✓"; color:#fff; position:absolute; inset:0; display:flex; align-items:center; justify-content:center; font-size:15px; font-weight:700;}
+.prio.done .prio__name{text-decoration:line-through;}
+.prio__body{flex:1; min-width:0;}
+.prio__top{display:flex; align-items:center; gap:10px; margin-bottom:3px;}
+.prio__time{font-size:12px; font-weight:700; color:var(--fg-muted); font-variant-numeric:tabular-nums;}
+.prio__tier{font-size:10px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:2px 8px; border-radius:99px; color:#fff;}
+.tier--focus{background:#8C5A3C;} .tier--build{background:#266D7A;} .tier--maintain{background:#5AA469;} .tier--watch{background:#92889B;}
+.prio__name{font-family:var(--font-sans); font-size:15.5px; font-weight:700; color:var(--fg-strong);}
+.prio__why{font-size:13px; color:var(--fg); opacity:.85; margin-top:3px; line-height:1.45;}
+.prio__msg{font-size:12.5px; color:#5AA469; font-weight:700; margin-top:6px; display:none;}
+.prio.done .prio__msg{display:block;}
+.prio__acts{display:flex; gap:16px; margin-top:10px;}
+.link{background:none; border:0; padding:0; font-family:var(--font-sans); font-size:12.5px; font-weight:700; color:var(--accent-deep); cursor:pointer;}
+.link:hover{text-decoration:underline;}
+.trouble,.learn{margin-top:12px; border-top:1px solid var(--border); padding-top:12px;}
+.trouble__lead{font-size:12.5px; color:var(--fg-muted); margin:0 0 8px;}
+.trouble__chips{display:flex; flex-wrap:wrap; gap:7px;}
+.chip{font-family:var(--font-sans); font-size:12px; border:1px solid var(--border); background:var(--bg); border-radius:99px; padding:6px 12px; cursor:pointer; color:var(--fg);}
+.chip:hover,.chip.sel{border-color:var(--accent); background:#fff;}
+.trouble__resp{font-size:13px; color:var(--fg); margin-top:10px; line-height:1.5; display:none; background:var(--bg); border-radius:8px;}
+.trouble__resp.show{display:block; padding:11px 13px;}
+.learn__q{font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase; color:var(--fg-muted); margin:10px 0 3px;}
+.learn p{margin:0 0 4px; font-size:13px; color:var(--fg); line-height:1.5;}
+.learn .tb{background:var(--bg); border-radius:8px; padding:10px 12px; margin-top:10px; font-size:13px;}
+.also{margin-top:8px; border:1px solid var(--border); border-radius:12px; background:#fff; padding:0 16px;}
+.also summary{cursor:pointer; padding:15px 0; font-weight:700; font-size:14px; color:var(--fg-strong); list-style:none;}
+.also summary::-webkit-details-marker{display:none;}
+.also summary span{font-weight:400; color:var(--fg-muted); font-size:12.5px;}
+.also .prio{box-shadow:none; border:0; border-top:1px solid var(--border); border-radius:0; margin:0; padding:14px 0;}
+.tiers{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:14px;}
+.tier{background:#fff; border:1px solid var(--border); border-radius:12px; padding:14px;}
+.tier__hd{font-size:11px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; color:#fff; padding:4px 10px; border-radius:99px; display:inline-block; margin-bottom:10px;}
+.tier ul{margin:0; padding:0; list-style:none;}
+.tier li{font-size:12.5px; color:var(--fg); font-weight:600; padding:7px 0; border-bottom:1px solid rgba(22,36,51,0.06); line-height:1.35;}
+.tier li:last-child{border-bottom:0;}
+.tier li span{display:block; font-size:11px; font-weight:400; color:var(--fg-muted); margin-top:1px;}
+@media(max-width:760px){.tiers{grid-template-columns:1fr 1fr;}}
+@media(max-width:560px){.tiers{grid-template-columns:1fr;} .clin-banner{flex-wrap:wrap;} .clin-banner .btn{margin-left:0;}}
+/* ===== Check-in ===== */
+.checkin{background:#fff; border:1px solid var(--border); border-radius:14px; padding:18px; box-shadow:var(--shadow-sm); margin-bottom:20px;}
+.ci-hd{display:flex; align-items:baseline; justify-content:space-between; gap:10px; margin-bottom:4px;}
+.ci-hd h3{margin:0; font-family:var(--font-serif); font-size:19px; color:var(--fg-strong);}
+.ci-hd span{font-size:11.5px; color:var(--fg-muted);}
+.ci-scan{display:flex; align-items:center; gap:14px; border:1.5px dashed var(--border); border-radius:12px; padding:14px 16px; cursor:pointer; background:var(--bg); margin-top:14px;}
+.ci-scan:hover{border-color:var(--accent);}
+.ci-scan__ico{width:44px; height:44px; border-radius:10px; background:color-mix(in srgb, var(--accent) 14%, #fff); color:var(--accent); display:grid; place-items:center; flex-shrink:0;}
+.ci-scan__t{flex:1;} .ci-scan__t b{font-size:14px; color:var(--fg-strong); display:block;} .ci-scan__t i{font-style:normal; font-size:12px; color:var(--fg-muted);}
+.ci-scan__go{font-size:12px; font-weight:700; color:var(--accent-deep); white-space:nowrap;}
+.ci-shot{display:flex; align-items:center; gap:12px; margin-top:10px; font-size:12.5px; color:#5AA469; font-weight:700;}
+.ci-shot img{width:52px; height:52px; object-fit:cover; border-radius:9px; border:1px solid var(--border);}
+.ci-shot[hidden]{display:none;}
+.ci-q{margin-top:16px; display:flex; flex-direction:column; gap:13px;}
+.ci-row{display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap;}
+.ci-lbl{font-size:13px; font-weight:700; color:var(--fg-strong);}
+.ci-lbl em{font-style:normal; font-weight:400; color:var(--fg-muted); font-size:11.5px;}
+.ci-opts{display:flex; gap:7px; flex-wrap:wrap;}
+.ci-opts button{font-family:var(--font-sans); font-size:12px; border:1px solid var(--border); background:var(--bg); border-radius:99px; padding:6px 13px; cursor:pointer; color:var(--fg);}
+.ci-opts button:hover{border-color:var(--accent);}
+.ci-opts button.sel{background:var(--accent); border-color:var(--accent); color:#fff;}
+.ci-save{margin-top:16px;}
+.ci-done{margin-top:10px; font-size:12.5px; font-weight:700; color:#5AA469;}
+/* fuel fill-ups */
+.fuel-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-top:12px;}
+.fuel{text-align:center;}
+.fuel__vessel{position:relative; width:66px; height:92px; margin:4px auto 10px; border:2px solid var(--fc); border-radius:9px 9px 16px 16px; overflow:hidden; background:color-mix(in srgb, var(--fc) 7%, #fff);}
+.fuel__fill{position:absolute; left:0; right:0; bottom:0; height:0; background:color-mix(in srgb, var(--fc) 42%, #fff); border-top:2px solid var(--fc); transition:height .35s var(--ease-out);}
+.fuel__name{font-size:12.5px; font-weight:700; color:var(--fg-strong);}
+.fuel__val{font-size:11.5px; color:var(--fg-muted); margin-top:2px; font-variant-numeric:tabular-nums;}
+.fuel__ctrl{display:flex; justify-content:center; gap:8px; margin-top:9px;}
+.fuel__ctrl button{width:28px; height:28px; border-radius:50%; border:1px solid var(--border); background:#fff; font-size:15px; font-weight:700; cursor:pointer; color:var(--fg); line-height:1;}
+.fuel__ctrl button:hover{border-color:var(--fc); color:var(--fc);}
+/* divided plate */
+.fuel-layout{display:flex; gap:24px; align-items:center; flex-wrap:wrap; margin-top:12px;}
+.plate{flex-shrink:0; width:180px; height:180px;}
+.plate svg{width:100%; height:100%; display:block;}
+.plate-rim{fill:#fff; stroke:var(--border); stroke-width:5;}
+.plate-legend{flex:1; min-width:210px; display:flex; flex-direction:column; gap:13px;}
+.pl-item{display:flex; gap:11px; align-items:flex-start;}
+.pl-dot{width:12px; height:12px; border-radius:3px; margin-top:3px; flex-shrink:0;}
+.pl-b{font-size:13px; font-weight:700; color:var(--fg-strong);}
+.pl-b span{font-weight:400; color:var(--fg-muted); font-size:11.5px;}
+.pl-foods{font-size:11.5px; color:var(--fg-muted); margin-top:2px; line-height:1.45;}
+.pl-val{font-weight:400; color:var(--fg-muted); font-size:11.5px; font-variant-numeric:tabular-nums;}
+.pl-ctrl{display:inline-flex; gap:6px; margin-top:7px;}
+.pl-ctrl button{width:26px; height:26px; border-radius:50%; border:1px solid var(--border); background:#fff; font-size:15px; font-weight:700; cursor:pointer; color:var(--fg); line-height:1;}
+.pl-ctrl button:hover{border-color:var(--accent); color:var(--accent);}
+.water{flex-shrink:0; text-align:center;}
+@media(max-width:560px){.fuel-layout{gap:16px; justify-content:center;}}
+/* Open Food Facts search */
+.off-bar{display:flex; gap:8px;}
+.off-bar input{flex:1; min-width:0; font-family:var(--font-sans); font-size:13px; border:1px solid var(--border); border-radius:8px; padding:9px 11px; background:#fff; color:var(--fg);}
+.off-status{font-size:12px; color:var(--fg-muted); margin-top:11px;}
+.off-results{display:flex; flex-direction:column; gap:8px; margin-top:8px;}
+.off-item{display:flex; align-items:center; gap:12px; border:1px solid var(--border); border-radius:10px; padding:10px 12px;}
+.off-item__b{flex:1; min-width:0;}
+.off-item__n{font-size:13px; font-weight:700; color:var(--fg-strong); overflow:hidden; text-overflow:ellipsis; white-space:nowrap;}
+.off-item__m{font-size:11.5px; color:var(--fg-muted); margin-top:2px;}
+.off-item .btn{white-space:nowrap; padding:7px 13px; font-size:12px; flex-shrink:0;}
+.off-cam{margin-top:10px;}
+.off-cam[hidden]{display:none;}
+.off-cam video{width:100%; max-width:340px; border-radius:10px; background:#000; display:block;}
+.off-cam__bar{display:flex; align-items:center; gap:12px; margin-top:8px; font-size:12px; color:var(--fg-muted);}
+/* foods to fill gaps */
+.gaps{display:flex; flex-direction:column; gap:12px; margin-top:6px;}
+.gap{border:1px solid var(--border); border-radius:12px; padding:14px 16px; background:#fff;}
+.gap__hd{display:flex; align-items:center; gap:10px; margin-bottom:9px; flex-wrap:wrap;}
+.gap__tag{font-size:11px; font-weight:700; padding:3px 10px; border-radius:99px; color:#fff;}
+.gap__lvl{font-size:11.5px; color:var(--fg-muted);}
+.gap__foods{display:flex; flex-wrap:wrap; gap:7px;}
+.food{font-size:12px; border:1px solid var(--border); background:var(--bg); border-radius:99px; padding:5px 11px; color:var(--fg);}
+.gap__why{font-size:11.5px; color:var(--fg-muted); margin:9px 0 0; line-height:1.5;}
+@media(max-width:560px){.fuel-grid{grid-template-columns:1fr 1fr;}}
+</style>
+</head>
+<body>
+
+<div class="proto-banner"><b>Design prototype</b> · demo data only · no real patient information</div>
+<div class="demo-bar" id="demoBar" style="display:none;">
+  <span class="d-label">Demo — view as program:</span>
+  <button class="active" onclick="setProgram('bhw',this)">BHW Medical</button>
+  <button onclick="setProgram('mindmood',this)">Mind &amp; Mood</button>
+  <button onclick="setProgram('charmed',this)">CharmEd Minds</button>
+</div>
+
+<!-- ================= LOGIN ================= -->
+<section id="view-login" aria-label="Sign in">
+  <div class="login-card">
+    <div class="login-lockup">
+      <div class="login-mark" aria-hidden="true"></div>
+      <div class="login-wm"><span>BHW</span><span>Medical Group</span></div>
+    </div>
+    <h1>Your care,<br><em>in one place.</em></h1>
+    <p class="login-sub">Sign in to see your care plan, this week's focus, and your nutrition plan — built for you by your BHW care team.</p>
+    <div class="login-field">
+      <label for="f-email" id="f-idlabel">Email</label>
+      <input id="f-email" type="email" placeholder="you@email.com" autocomplete="email">
+    </div>
+    <button type="button" id="idToggle" onclick="toggleLoginMode()"
+      style="background:none;border:none;padding:2px 0 4px;color:var(--accent,#80abbd);font:inherit;font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:underline;align-self:flex-start">No email? Use your phone number →</button>
+    <div class="login-field" id="codeField" style="display:none;">
+      <label for="f-code">One-time code</label>
+      <input id="f-code" inputmode="numeric" maxlength="6" placeholder="6-digit code" autocomplete="one-time-code">
+    </div>
+    <button class="login-btn" id="loginBtn" onclick="loginStep()">Email me a code →</button>
+    <div class="login-status" id="loginStatus" role="status" aria-live="polite"></div>
+    <p class="login-fine" id="loginFine">Passwordless sign-in — we email you a 6-digit code, no password to remember. Code not arriving? Call the office at 443.762.5343.</p>
+  </div>
+</section>
+
+<!-- ================= APP ================= -->
+<div id="view-app">
+
+  <header class="bhw-header">
+    <div class="bhw-header__inner">
+      <a href="#" class="bhw-header__lockup" onclick="return false;">
+        <div class="header-mark" aria-hidden="true"></div>
+        <div class="bhw-header__wm"><span>BHW</span><span>Medical Group</span></div>
+        <span class="header-portal-tag">Patient Portal</span>
+      </a>
+      <div class="patient-chip">
+        <div class="pmeta" id="whoMeta" style="text-align:right;">
+          <div class="pname" id="whoName">Jordan T.</div>
+          <div class="pid" id="whoSub">Demo patient</div>
+        </div>
+        <select id="whoSelect" class="who-select" onchange="switchWho(this.value)" style="display:none;" aria-label="Whose Blueprint to view"></select>
+        <div class="avatar" id="whoAvatar">JT</div>
+        <button class="signout" type="button" onclick="signOut()">Sign out</button>
+      </div>
+    </div>
+  </header>
+  <div class="guardian-banner" id="guardianBanner" hidden></div>
+
+  <nav class="portal-tabs" aria-label="Portal sections">
+    <div class="portal-tabs__inner">
+      <button class="ptab active" data-pane="home" onclick="go('home',this)">Today</button>
+      <button class="ptab" data-pane="checkin" onclick="go('checkin',this)">Check in</button>
+      <button class="ptab" data-pane="plan" onclick="go('plan',this)">Care plan</button>
+      <button class="ptab" data-pane="blueprint" onclick="go('blueprint',this)">Blueprint</button>
+      <button class="ptab" data-pane="nutrition" onclick="go('nutrition',this)">Nutrition</button>
+      <button class="ptab" data-pane="messages" onclick="go('messages',this)">Messages</button>
+    </div>
+  </nav>
+
+  <main class="wrap">
+
+    <!-- ========== HOME ========== -->
+    <section class="pane active" id="pane-home">
+      <div class="home-greet">
+        <h2>Good morning, <em>Jordan.</em></h2>
+        <p>Three things today — that's it. The rest of your plan can wait for its turn.</p>
+      </div>
+
+      <div class="clin-banner">
+        <div class="clin-avatar">AM</div>
+        <p><strong>This plan was built for you by Amaris &amp; your BHW care team.</strong> They read your check-ins each week and adjust as your labs and your life change — what you log here goes straight to them.</p>
+        <button class="btn" type="button" onclick="document.querySelector('[data-pane=messages]').click(); return false;">Message the team</button>
+      </div>
+
+      <div class="card profile-card" id="profileCard" hidden>
+        <div class="profile-head">
+          <div>
+            <div class="profile-name" id="pf-name">—</div>
+            <div class="profile-sub" id="pf-sub"></div>
+          </div>
+          <a class="profile-page" id="pf-page" href="#" target="_blank" rel="noopener" hidden>Open my full page →</a>
+        </div>
+        <div class="profile-programs" id="pf-programs"></div>
+        <div class="profile-grid" id="pf-grid"></div>
+      </div>
+
+      <div class="checkin">
+        <div class="ci-hd"><h3>Today's check-in</h3><span>Under a minute · goes to your care team</span></div>
+        <label class="ci-scan">
+          <input type="file" accept="image/*" capture="environment" hidden>
+          <span class="ci-scan__ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span>
+          <span class="ci-scan__t"><b>Snap your plate</b><i>Photo your meal — we'll break down the nutrients</i></span>
+          <span class="ci-scan__go">Open camera →</span>
+        </label>
+        <div class="ci-shot" hidden><img alt="Your meal"><span>Got it — sent to your care team to break down.</span></div>
+        <div class="ci-q">
+          <div class="ci-row"><span class="ci-lbl">How was your sleep?</span><div class="ci-opts" data-q="sleep"><button type="button" data-v="Rough">Rough</button><button type="button" data-v="OK">OK</button><button type="button" data-v="Good">Good</button><button type="button" data-v="Great">Great</button></div></div>
+          <div class="ci-row"><span class="ci-lbl">Took your vitamins? <em>iron · vitamin D</em></span><div class="ci-opts" data-q="vitamins"><button type="button" data-v="Yes">Yes</button><button type="button" data-v="Not yet">Not yet</button></div></div>
+          <div class="ci-row"><span class="ci-lbl">Moved your body?</span><div class="ci-opts" data-q="exercise"><button type="button" data-v="Not yet">Not yet</button><button type="button" data-v="10 min">10 min</button><button type="button" data-v="20 min">20 min</button><button type="button" data-v="30+ min">30+</button></div></div>
+          <div class="ci-row"><span class="ci-lbl">Time connecting off-screen?</span><div class="ci-opts" data-q="social"><button type="button" data-v="None">None</button><button type="button" data-v="A little">A little</button><button type="button" data-v="Real time">Real time</button></div></div>
+        </div>
+        <button class="btn btn--go ci-save" type="button">Save today's check-in</button>
+        <div class="ci-done" hidden>Saved — thank you. Your care team sees this.</div>
+      </div>
+
+      <div class="card card-dark vein-card">
+        <div class="vein-head">
+          <div class="big">Week 3 <em>of 12</em></div>
+          <div style="font-size:11px; font-weight:600; letter-spacing:0.18em; text-transform:uppercase; color:rgba(247,243,234,0.6);" id="programLabel">Care plan · Restore &amp; Rebuild</div>
+        </div>
+        <div class="vein-track"><div class="vein-fill" id="veinFill"></div></div>
+        <div class="vein-marks"><span>Start</span><span>Week 6</span><span>Week 12</span></div>
+        <p class="vein-note">"Light moves through stone where the veins meet." — two weeks complete, and the pattern is already forming.</p>
+      </div>
+
+      <!-- ===== TODAY ===== -->
+      <div class="today__hd"><h3>Today</h3><span class="today__meta">Wednesday · Week 3 of 12</span></div>
+
+      <article class="prio">
+        <button class="prio__check" type="button" aria-label="Mark done" onclick="markDone(this)"></button>
+        <div class="prio__body">
+          <div class="prio__top"><span class="prio__time">8:00 AM</span><span class="prio__tier tier--focus">Focus now</span></div>
+          <div class="prio__name">Take your iron with breakfast</div>
+          <div class="prio__why">Iron is how your blood carries oxygen — it's what lifts the afternoon fog.</div>
+          <div class="prio__msg">Nice — that's one. Your team will see it.</div>
+          <div class="prio__acts">
+            <button class="link" type="button" onclick="toggleTrouble(this)">Having trouble?</button>
+            <button class="link" type="button" onclick="toggleLearn(this)">Learn more</button>
+          </div>
+          <div class="trouble" hidden>
+            <p class="trouble__lead">No judgment — what got in the way?</p>
+            <div class="trouble__chips">
+              <button class="chip" type="button" data-b="forgot" onclick="pickBarrier(this)">Forgot</button>
+              <button class="chip" type="button" data-b="side" onclick="pickBarrier(this)">Side effect</button>
+              <button class="chip" type="button" data-b="cost" onclick="pickBarrier(this)">Cost</button>
+              <button class="chip" type="button" data-b="understand" onclick="pickBarrier(this)">Didn't understand</button>
+              <button class="chip" type="button" data-b="tired" onclick="pickBarrier(this)">Too tired</button>
+              <button class="chip" type="button" data-b="schedule" onclick="pickBarrier(this)">Schedule changed</button>
+              <button class="chip" type="button" data-b="disagree" onclick="pickBarrier(this)">Not sure I agree</button>
+              <button class="chip" type="button" data-b="other" onclick="pickBarrier(this)">Other</button>
+            </div>
+            <div class="trouble__resp"></div>
+          </div>
+          <div class="learn" hidden>
+            <div class="learn__q">Why it matters</div>
+            <p>Your ferritin (iron stores) is low. Iron helps your blood carry oxygen to every tissue, including your brain — low stores show up as afternoon fatigue and foggy focus.</p>
+            <div class="learn__q">What to do</div>
+            <p>One capsule with breakfast and a glass of orange juice. Keep it about an hour apart from coffee or calcium.</p>
+            <div class="learn__q">Common problem</div>
+            <p>Coffee first thing blocks absorption — food and juice first, coffee after.</p>
+            <div class="learn__q">When to contact us</div>
+            <p>Darker stools are normal and expected. Call the office for severe stomach pain, vomiting, or blood in your stool.</p>
+            <div class="tb"><strong>Quick check:</strong> which drink helps your body absorb iron — coffee or orange juice? <em>(Orange juice — the vitamin C helps.)</em></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="prio">
+        <button class="prio__check" type="button" aria-label="Mark done" onclick="markDone(this)"></button>
+        <div class="prio__body">
+          <div class="prio__top"><span class="prio__time">6:30 PM</span><span class="prio__tier tier--focus">Focus now</span></div>
+          <div class="prio__name">Walk 10 minutes after dinner</div>
+          <div class="prio__why">A short walk after your biggest meal blunts the glucose spike that deepens the evening slump.</div>
+          <div class="prio__msg">Done — five of your walking days had lower post-dinner glucose.</div>
+          <div class="prio__acts">
+            <button class="link" type="button" onclick="toggleTrouble(this)">Having trouble?</button>
+            <button class="link" type="button" onclick="toggleLearn(this)">Learn more</button>
+          </div>
+          <div class="trouble" hidden>
+            <p class="trouble__lead">No judgment — what got in the way?</p>
+            <div class="trouble__chips">
+              <button class="chip" type="button" data-b="forgot" onclick="pickBarrier(this)">Forgot</button>
+              <button class="chip" type="button" data-b="tired" onclick="pickBarrier(this)">Too tired</button>
+              <button class="chip" type="button" data-b="schedule" onclick="pickBarrier(this)">No time</button>
+              <button class="chip" type="button" data-b="weather" onclick="pickBarrier(this)">Weather</button>
+              <button class="chip" type="button" data-b="other" onclick="pickBarrier(this)">Other</button>
+            </div>
+            <div class="trouble__resp"></div>
+          </div>
+          <div class="learn" hidden>
+            <div class="learn__q">Why it matters</div>
+            <p>Muscles pull glucose out of your blood while they work — even a gentle 10 minutes after eating flattens the spike that leaves you drained an hour later.</p>
+            <div class="learn__q">What to do</div>
+            <p>Any easy pace, indoors or out. It doesn't have to be brisk — steady and after the meal is what counts.</p>
+            <div class="learn__q">Backup plan</div>
+            <p>Can't get out? Ten minutes of tidying, stairs, or marching in place works too. Done beats perfect.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="prio">
+        <button class="prio__check" type="button" aria-label="Mark done" onclick="markDone(this)"></button>
+        <div class="prio__body">
+          <div class="prio__top"><span class="prio__time">7:30 PM</span><span class="prio__tier tier--watch">Watching</span></div>
+          <div class="prio__name">Check your blood pressure before 8 PM</div>
+          <div class="prio__why">A few evening readings this week let your team see the pattern — nothing to change yet, just the data.</div>
+          <div class="prio__msg">Logged — thank you. Readings sync to your care team automatically.</div>
+          <div class="prio__acts">
+            <button class="link" type="button" onclick="toggleTrouble(this)">Having trouble?</button>
+            <button class="link" type="button" onclick="toggleLearn(this)">Learn more</button>
+          </div>
+          <div class="trouble" hidden>
+            <p class="trouble__lead">No judgment — what got in the way?</p>
+            <div class="trouble__chips">
+              <button class="chip" type="button" data-b="forgot" onclick="pickBarrier(this)">Forgot</button>
+              <button class="chip" type="button" data-b="device" onclick="pickBarrier(this)">No cuff / device issue</button>
+              <button class="chip" type="button" data-b="understand" onclick="pickBarrier(this)">Not sure how</button>
+              <button class="chip" type="button" data-b="other" onclick="pickBarrier(this)">Other</button>
+            </div>
+            <div class="trouble__resp"></div>
+          </div>
+          <div class="learn" hidden>
+            <div class="learn__q">Why it matters</div>
+            <p>Single readings bounce around; a week of them shows the real trend. Your team is watching whether evenings run high — that's the pattern worth catching early.</p>
+            <div class="learn__q">How to do it</div>
+            <p>Sit for five minutes first, feet flat, arm supported at heart height. Take it before your evening walk, not right after.</p>
+            <div class="learn__q">When to contact us</div>
+            <p>Log the number even if it's high — that's what we want to see. Seek urgent help for a reading over 180/120 with chest pain, trouble breathing, or vision changes.</p>
+          </div>
+        </div>
+      </article>
+
+      <!-- secondary, collapsed -->
+      <details class="also">
+        <summary>Also today <span>· 2 more, no rush</span></summary>
+        <article class="prio">
+          <button class="prio__check" type="button" aria-label="Mark done" onclick="markDone(this)"></button>
+          <div class="prio__body">
+            <div class="prio__top"><span class="prio__time">Morning</span><span class="prio__tier tier--build">Building next</span></div>
+            <div class="prio__name">Protein anchor before caffeine</div>
+            <div class="prio__why">25–30g within an hour of waking — it steadies energy and helps the iron land.</div>
+            <div class="prio__msg">Nice — that's one.</div>
+          </div>
+        </article>
+        <article class="prio">
+          <button class="prio__check" type="button" aria-label="Mark done" onclick="markDone(this)"></button>
+          <div class="prio__body">
+            <div class="prio__top"><span class="prio__time">~3:00 PM</span><span class="prio__tier tier--maintain">Maintaining</span></div>
+            <div class="prio__name">3-minute wind-down at the afternoon dip</div>
+            <div class="prio__why">Box breathing or a short walk beats reaching for caffeine.</div>
+            <div class="prio__msg">Done.</div>
+          </div>
+        </article>
+      </details>
+
+      <!-- ===== plan tiers ===== -->
+      <div class="bp-sech"><span class="t">Your plan, sorted by what matters now</span><span class="line"></span></div>
+      <div class="tiers">
+        <div class="tier">
+          <div class="tier__hd tier--focus">Focus now</div>
+          <ul>
+            <li>Iron repletion<span>Every other morning, with vitamin C</span></li>
+            <li>Walks after meals<span>Blunt the post-meal glucose spike</span></li>
+          </ul>
+        </div>
+        <div class="tier">
+          <div class="tier__hd tier--build">Building next</div>
+          <ul>
+            <li>Morning protein anchor<span>Becoming automatic this week</span></li>
+            <li>10:30pm sleep window<span>Where the rebuilding happens</span></li>
+          </ul>
+        </div>
+        <div class="tier">
+          <div class="tier__hd tier--maintain">Maintaining</div>
+          <ul>
+            <li>Afternoon wind-down<span>Holding steady — keep it up</span></li>
+            <li>Hydration<span>On target</span></li>
+          </ul>
+        </div>
+        <div class="tier">
+          <div class="tier__hd tier--watch">Watching</div>
+          <ul>
+            <li>Evening blood pressure<span>Collecting a week of readings</span></li>
+            <li>Weight &amp; energy trend<span>Improving — no action needed</span></li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== CARE PLAN ========== -->
+    <section class="pane" id="pane-plan">
+      <div class="plan-head">
+        <h2>Your care plan, <em>week by week.</em></h2>
+        <p>Each week opens on Monday. Finished weeks stay open so you can look back at how far you've come.</p>
+      </div>
+      <div class="weeks">
+
+        <div class="week done open">
+          <button class="week-btn" onclick="toggleWeek(this)">
+            <span class="week-dot">✓</span>
+            <span><span class="w-title">Week 1 — Foundation</span><br><span class="w-sub">Completed June 29</span></span>
+            <span class="w-state">Complete</span>
+          </button>
+          <div class="week-body">
+            <p class="goal">"We start by watching, not changing — a full week of noticing your energy, meals, and sleep."</p>
+          </div>
+        </div>
+
+        <div class="week done">
+          <button class="week-btn" onclick="toggleWeek(this)">
+            <span class="week-dot">✓</span>
+            <span><span class="w-title">Week 2 — Rhythm</span><br><span class="w-sub">Completed July 6</span></span>
+            <span class="w-state">Complete</span>
+          </button>
+          <div class="week-body">
+            <p class="goal">"Anchoring wake time, first meal, and a consistent sleep window."</p>
+          </div>
+        </div>
+
+        <div class="week current open">
+          <button class="week-btn" onclick="toggleWeek(this)">
+            <span class="week-dot">3</span>
+            <span><span class="w-title">Week 3 — Restore &amp; Rebuild</span><br><span class="w-sub">July 13 – July 19</span></span>
+            <span class="w-state">This week</span>
+          </button>
+          <div class="week-body">
+            <p class="goal">"This week is about giving your body the raw material it's been asking for — protein early, movement after meals, and a protected sleep window."</p>
+
+            <div class="cp-block">
+              <div class="cp-label">Your labs, explained</div>
+              <div class="lab-row"><span class="lab-name">Ferritin</span><span class="lab-val lab-val--low">18 ng/mL · low</span></div>
+              <p>Ferritin is your body's iron storage. Yours is running low — which matters because iron is how your blood carries oxygen to every tissue, including your brain. Low storage often shows up exactly the way you described it: afternoon fatigue, foggy focus, feeling winded on stairs.</p>
+              <div class="lab-row"><span class="lab-name">Vitamin D</span><span class="lab-val lab-val--low">24 ng/mL · insufficient</span></div>
+              <p>Vitamin D acts more like a hormone than a vitamin — it's involved in mood, immune function, and how your muscles recover.</p>
+            </div>
+
+            <div class="cp-block">
+              <div class="cp-label">The physiology</div>
+              <p>When iron storage is low, your cells make energy less efficiently — think of it as your engine running on fewer cylinders. Your body compensates by borrowing from stress hormones, which is why the crash comes in the afternoon when that borrowed energy runs out. This week's plan is built to stop the borrowing and start the rebuilding.</p>
+            </div>
+
+            <div class="cp-block">
+              <div class="cp-label">How your lifestyle connects</div>
+              <p>Coffee before food blocks iron absorption — that's why the protein anchor comes first. The post-meal walks blunt the glucose spike that deepens the 3pm dip. And the sleep window is when the actual rebuilding happens; iron repletion without sleep is pouring water into a cracked cup.</p>
+            </div>
+
+            <div class="cp-block">
+              <div class="cp-label">Your supplements</div>
+              <div class="supp">
+                <div class="supp-name">Iron bisglycinate · 25 mg</div>
+                <div class="supp-how">Every other morning, with vitamin C (or orange slices), away from coffee by 1 hour.</div>
+                <div class="supp-why">Why: gentler on your stomach than iron sulfate; every-other-day dosing actually absorbs better.</div>
+              </div>
+              <div class="supp">
+                <div class="supp-name">Vitamin D3 · 2,000 IU</div>
+                <div class="supp-how">Daily, with your largest meal — it needs fat to absorb.</div>
+                <div class="supp-why">Why: rebuilding to the 40–60 range where energy and mood support live.</div>
+              </div>
+            </div>
+
+            <div class="cp-block">
+              <div class="cp-label">This week's actions</div>
+            <div class="task">
+              <input type="checkbox" id="w3a" checked><label for="w3a">
+                <div class="t-name">Morning protein anchor</div>
+                <div class="t-sub">25–30g within an hour of waking.</div>
+              </label>
+            </div>
+            <div class="task">
+              <input type="checkbox" id="w3b"><label for="w3b">
+                <div class="t-name">Two 20-minute walks</div>
+                <div class="t-sub">After your largest meals.</div>
+              </label>
+            </div>
+            <div class="task">
+              <input type="checkbox" id="w3c"><label for="w3c">
+                <div class="t-name">Sleep window: 10:30pm</div>
+                <div class="t-sub">Screens down 30 minutes before.</div>
+              </label>
+            </div>
+            </div>
+            <div class="provider-note">
+              <div>
+                <div class="pn-label">From your care team</div>
+                <p>Your week 2 notes showed your energy dipping around 3pm — this week's walk timing is aimed right at that. Don't aim for perfect; aim for four days out of seven.</p>
+                <div class="sig">— your BHW care team</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="week locked">
+          <button class="week-btn" tabindex="-1">
+            <span class="week-dot">4</span>
+            <span><span class="w-title">Week 4 — Nourish</span><br><span class="w-sub">Opens Monday, July 20</span></span>
+            <span class="w-state">Locked</span>
+          </button>
+        </div>
+        <div class="week locked">
+          <button class="week-btn" tabindex="-1">
+            <span class="week-dot">5</span>
+            <span><span class="w-title">Week 5 — Move</span><br><span class="w-sub">Opens July 27</span></span>
+            <span class="w-state">Locked</span>
+          </button>
+        </div>
+        <div class="week locked">
+          <button class="week-btn" tabindex="-1">
+            <span class="week-dot">6</span>
+            <span><span class="w-title">Week 6 — Midpoint review</span><br><span class="w-sub">Opens August 3 · includes a visit with your provider</span></span>
+            <span class="w-state">Locked</span>
+          </button>
+        </div>
+        <div class="week locked">
+          <button class="week-btn" tabindex="-1">
+            <span class="week-dot">7–12</span>
+            <span><span class="w-title">Weeks 7 through 12</span><br><span class="w-sub">Deepen, sustain, and graduate — unlocked as you go</span></span>
+            <span class="w-state">Locked</span>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ========== NUTRITION ========== -->
+    <section class="pane" id="pane-nutrition">
+      <div class="plan-head">
+        <h2>Your nutrition plan — <em>phase two.</em></h2>
+        <p>Built around your labs and your week 2 check-in. This phase runs alongside weeks 3–6 of your care plan.</p>
+      </div>
+      <div class="nutri-grid">
+        <div class="card">
+          <div class="section-label"><span class="dot"></span><span class="txt">Your daily rhythm</span><span class="line"></span></div>
+          <div class="rhythm">
+            <div class="r-item"><span class="r-time">Morning</span><span><span class="r-name">Protein-first breakfast</span><br><span class="r-sub">Eggs, Greek yogurt, or a smoothie with protein — before coffee.</span></span></div>
+            <div class="r-item"><span class="r-time">Midday</span><span><span class="r-name">Build-a-plate lunch</span><br><span class="r-sub">Half vegetables, a palm of protein, a fist of slow carbs.</span></span></div>
+            <div class="r-item"><span class="r-time">Evening</span><span><span class="r-name">Earlier, lighter dinner</span><br><span class="r-sub">Aim to finish 3 hours before your sleep window.</span></span></div>
+            <div class="r-item"><span class="r-time">All day</span><span><span class="r-name">Water anchor</span><br><span class="r-sub">A full glass before each meal — thirst often reads as fatigue.</span></span></div>
+          </div>
+        </div>
+        <div>
+          <div class="card" style="margin-bottom:18px;">
+            <div class="section-label"><span class="dot"></span><span class="txt">This week's focus foods</span><span class="line"></span></div>
+            <div class="focus-pills">
+              <span class="fpill">Leafy greens</span><span class="fpill">Salmon &amp; sardines</span>
+              <span class="fpill">Lentils</span><span class="fpill">Berries</span>
+              <span class="fpill">Pumpkin seeds</span><span class="fpill">Olive oil</span>
+            </div>
+            <p style="font-size:12.5px; color:var(--fg-muted); line-height:1.65; margin:16px 0 0;">These target the patterns your care team saw in your labs. Swap freely within the list — the pattern matters more than any single food.</p>
+          </div>
+          <div class="card card-dark">
+            <p style="font-family:var(--font-lora); font-style:italic; font-size:14.5px; line-height:1.7; margin:0; color:rgba(247,243,234,0.88);">"Nothing here is a rule. It's a direction. A week where you hit most of it, most days, is a very good week."</p>
+            <div style="font-family:var(--font-script); font-size:20px; color:var(--bhw-pale-gold-light); margin-top:12px;">— your BHW care team</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== BLUEPRINT ========== -->
+    <section class="pane" id="pane-blueprint">
+      <div class="plan-head">
+        <h2>The Health Blueprint, <em>your 12-week plan.</em></h2>
+        <p>Your whole-person plan across five pillars — recommended by your care team, tracked by you. This is the same picture your provider sees.</p>
+      </div>
+
+      <!-- hero: overall progress + 12-week timeline -->
+      <div class="bp-hero">
+        <div class="bp-hero__ring">
+          <svg viewBox="0 0 118 118" aria-hidden="true">
+            <circle cx="59" cy="59" r="52" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="10"></circle>
+            <circle cx="59" cy="59" r="52" fill="none" stroke="#E8C98A" stroke-width="10" stroke-linecap="round" stroke-dasharray="255 72"></circle>
+          </svg>
+          <div class="pct"><b>78%</b><span>on plan</span></div>
+        </div>
+        <div class="bp-hero__body">
+          <div class="bp-hero__meta">12-week Health Blueprint · Restore &amp; Rebuild</div>
+          <h3>Week 3 of 12 — the pattern is forming.</h3>
+          <div class="bp-weeks">
+            <span class="bp-week done">1</span><span class="bp-week done">2</span><span class="bp-week now">3</span><span class="bp-week">4</span><span class="bp-week">5</span><span class="bp-week">6</span><span class="bp-week">7</span><span class="bp-week">8</span><span class="bp-week">9</span><span class="bp-week">10</span><span class="bp-week">11</span><span class="bp-week">12</span>
+          </div>
+          <p class="bp-hero__note">Two weeks complete. Your plan runs a full 12 weeks across all five pillars — finished weeks stay open so you can see how far you've come.</p>
+        </div>
+      </div>
+
+      <!-- medications -->
+      <div class="bp-sech"><span class="t">Medications</span><span class="line"></span></div>
+      <div class="card">
+        <div class="meds-list" id="medsList"><p class="meds-empty">Loading medications…</p></div>
+      </div>
+
+      <!-- this week's targets -->
+      <div class="bp-sech"><span class="t">This week's targets</span><span class="line"></span></div>
+      <section class="blueprint">
+        <div class="bp-grid">
+
+          <article class="bp-card" style="--dom:#8C5A3C;">
+            <div class="bp-card__top"><span class="bp-ico"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M152,192h56v12a28,28,0,0,1-56,0ZM48,180a28,28,0,0,0,56,0V168H48ZM76,24c-24.52,0-51.46,80-25.26,112h50.52C127.46,104,100.52,24,76,24ZM205.26,160c26.2-32-.74-112-25.26-112s-51.46,80-25.26,112Z" opacity="0.2"/><path d="M208.06,184H152a8,8,0,0,0-8,8v12a36,36,0,0,0,72.05,0V192A8,8,0,0,0,208.06,184Zm-8,20a20,20,0,0,1-40,0v-4h40ZM104,160h-56a8,8,0,0,0-8,8v12A36,36,0,0,0,112,180V168A8,8,0,0,0,104,160Zm-8,20a20,20,0,0,1-40,0v-4H96ZM76,16C64.36,16,53.07,26.31,44.2,45c-13.93,29.38-18.56,73,.29,96a8,8,0,0,0,6.2,2.93h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C98.85,26.31,87.57,16,76,16ZM97.15,128H54.78c-11.4-18.1-7.21-52.7,3.89-76.11C65.14,38.22,72.17,32,76,32s10.82,6.22,17.3,19.89C104.36,75.3,108.55,109.9,97.15,128Zm57.61,40h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C202.93,50.31,191.64,40,180,40s-22.89,10.31-31.77,29c-13.93,29.38-18.56,73,.29,96A8,8,0,0,0,154.76,168Zm8-92.11C169.22,62.22,176.25,56,180,56s10.81,6.22,17.29,19.89c11.1,23.41,15.29,58,3.89,76.11H158.85C147.45,133.9,151.64,99.3,162.74,75.89Z"/></svg></span><div><div class="bp-dom">Exercise</div><div class="bp-tag">On track</div></div></div>
+            <div class="bp-rx"><div class="bp-rx__label">Your care team recommends</div><p><strong>Two 20-minute walks after your largest meals</strong> — they blunt the glucose spike that deepens the 3pm dip.</p></div>
+            <div class="bp-prog"><div class="bp-prog__row"><span>This week</span><strong>4 / 7 days</strong></div><div class="bp-dots"><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span></span><span></span></div></div>
+            <div class="bp-metric"><span class="n">4</span><span class="u">days moved</span><span class="ch">↑ 1 vs last wk</span></div>
+            <button class="bp-log" type="button">Log movement</button>
+          </article>
+
+          <article class="bp-card" style="--dom:#7C6BD6;">
+            <div class="bp-card__top"><span class="bp-ico"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M227.89,147.89A96,96,0,1,1,108.11,28.11,96.09,96.09,0,0,0,227.89,147.89Z" opacity="0.2"/><path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"/></svg></span><div><div class="bp-dom">Sleep</div><div class="bp-tag">Protected</div></div></div>
+            <div class="bp-rx"><div class="bp-rx__label">Your care team recommends</div><p>A <strong>10:30pm sleep window</strong>, screens down 30 minutes before. Iron repletion without sleep is pouring water into a cracked cup.</p></div>
+            <div class="bp-prog"><div class="bp-prog__row"><span>On-time window</span><strong>5 / 7 nights</strong></div><div class="bp-dots"><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span></div></div>
+            <div class="bp-metric"><span class="n">7h 05m</span><span class="u">avg sleep</span><span class="ch">↑ improving</span></div>
+            <button class="bp-log" type="button">Log sleep</button>
+          </article>
+
+          <article class="bp-card" style="--dom:#266D7A;">
+            <div class="bp-card__top"><span class="bp-ico"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M168,144a40,40,0,1,1-40-40A40,40,0,0,1,168,144ZM64,56A32,32,0,1,0,96,88,32,32,0,0,0,64,56Zm128,0a32,32,0,1,0,32,32A32,32,0,0,0,192,56Z" opacity="0.2"/><path d="M244.8,150.4a8,8,0,0,1-11.2-1.6A51.6,51.6,0,0,0,192,128a8,8,0,0,1,0-16,24,24,0,1,0-23.24-30,8,8,0,1,1-15.5-4A40,40,0,1,1,219,117.51a67.94,67.94,0,0,1,27.43,21.68A8,8,0,0,1,244.8,150.4ZM190.92,212a8,8,0,1,1-13.85,8,57,57,0,0,0-98.15,0,8,8,0,1,1-13.84-8,72.06,72.06,0,0,1,33.74-29.92,48,48,0,1,1,58.36,0A72.06,72.06,0,0,1,190.92,212ZM128,176a32,32,0,1,0-32-32A32,32,0,0,0,128,176ZM72,120a8,8,0,0,0-8-8A24,24,0,1,1,87.24,82a8,8,0,1,0,15.5-4A40,40,0,1,0,37,117.51,67.94,67.94,0,0,0,9.6,139.19a8,8,0,1,0,12.8,9.61A51.6,51.6,0,0,1,64,128,8,8,0,0,0,72,120Z"/></svg></span><div><div class="bp-dom">Social</div><div class="bp-tag">Room to grow</div></div></div>
+            <div class="bp-rx"><div class="bp-rx__label">Your care team recommends</div><p>One <strong>real connection this week that isn't a screen</strong> — a walk with a friend ties two pillars together.</p></div>
+            <div class="bp-prog"><div class="bp-prog__row"><span>This week</span><strong>1 / 2 planned</strong></div><div class="bp-dots"><span></span><span class="on"></span><span></span><span></span><span class="half"></span><span></span><span></span></div></div>
+            <div class="bp-metric"><span class="n">1</span><span class="u">connection</span><span class="ch">keep going</span></div>
+            <button class="bp-log" type="button">Log a connection</button>
+          </article>
+
+          <article class="bp-card" style="--dom:#5FA9A6;">
+            <div class="bp-card__top"><span class="bp-ico"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M128,32a96,96,0,1,0,96,96A96,96,0,0,0,128,32Zm16,112L80,176l32-64,64-32Z" opacity="0.2"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216ZM172.42,72.84l-64,32a8.05,8.05,0,0,0-3.58,3.58l-32,64A8,8,0,0,0,80,184a8.1,8.1,0,0,0,3.58-.84l64-32a8.05,8.05,0,0,0,3.58-3.58l32-64a8,8,0,0,0-10.74-10.74ZM138,138,97.89,158.11,118,118l40.15-20.07Z"/></svg></span><div><div class="bp-dom">Coping</div><div class="bp-tag">Steady</div></div></div>
+            <div class="bp-rx"><div class="bp-rx__label">Your care team recommends</div><p>A <strong>3-minute wind-down before the afternoon dip</strong> — box breathing or a short walk beats reaching for caffeine.</p></div>
+            <div class="bp-prog"><div class="bp-prog__row"><span>Check-ins</span><strong>5 / 7 days</strong></div><div class="bp-dots"><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span><span class="on"></span><span></span></div></div>
+            <div class="bp-metric"><span class="n">5</span><span class="u">check-ins</span><span class="ch">steady</span></div>
+            <button class="bp-log" type="button">Coping check-in</button>
+          </article>
+
+          <article class="bp-card" style="--dom:#5AA469;">
+            <div class="bp-card__top"><span class="bp-ico"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M224,112a96,96,0,0,1-56,87.3V208a8,8,0,0,1-8,8H96a8,8,0,0,1-8-8v-8.7A96,96,0,0,1,32,112Z" opacity="0.2"/><path d="M224,104h-8.37a88,88,0,0,0-175.26,0H32a8,8,0,0,0-8,8,104.35,104.35,0,0,0,56,92.28V208a16,16,0,0,0,16,16h64a16,16,0,0,0,16-16v-3.72A104.35,104.35,0,0,0,232,112,8,8,0,0,0,224,104ZM173.48,56.23q2.75,2.25,5.27,4.75a87.92,87.92,0,0,0-49.15,43H100.1A72.26,72.26,0,0,1,168,56C169.83,56,171.66,56.09,173.48,56.23Zm15.91,18.2A71.45,71.45,0,0,1,199.54,104H148.12A71.84,71.84,0,0,1,189.39,74.43ZM128,40a71.87,71.87,0,0,1,19,2.57A88.36,88.36,0,0,0,83.33,104H56.46A72.08,72.08,0,0,1,128,40Zm36.66,152A8,8,0,0,0,160,199.3V208H96v-8.7A8,8,0,0,0,91.34,192a88.29,88.29,0,0,1-51-72H215.63A88.29,88.29,0,0,1,164.66,192Z"/></svg></span><div><div class="bp-dom">Nutrition</div><div class="bp-tag">On track</div></div></div>
+            <div class="bp-rx"><div class="bp-rx__label">Your care team recommends</div><p><strong>Morning protein anchor, 25–30g before caffeine</strong>, plus leafy greens, salmon, and lentils from your focus list.</p></div>
+            <div class="bp-prog"><div class="bp-prog__row"><span>Fueled mornings</span><strong>6 / 7 days</strong></div><div class="bp-dots"><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span class="on"></span><span></span><span class="on"></span></div></div>
+            <div class="bp-metric"><span class="n">6</span><span class="u">fueled AMs</span><span class="ch">steady</span></div>
+            <button class="bp-link" type="button" onclick="document.querySelector('[data-pane=nutrition]').click(); return false;">See your full nutrition plan →</button>
+          </article>
+
+        </div>
+      </section>
+
+      <!-- 12-week trends -->
+      <div class="bp-sech"><span class="t">Your 12-week trends</span><span class="line"></span></div>
+      <div class="card">
+        <div class="bp-trends">
+          <div class="bp-trends__row">
+            <div class="bp-trends__nm"><i style="background:#8C5A3C"></i>Exercise</div>
+            <svg class="spark" viewBox="0 0 240 40" preserveAspectRatio="none"><polyline points="0,26 20,25 40,23 60,24 80,21 100,20 120,20 140,18 160,18 180,19 200,16 220,16" fill="none" stroke="#8C5A3C" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="bp-trends__delta" style="color:#8C5A3C;">▲ 32<span>vs week 1</span></div>
+          </div>
+          <div class="bp-trends__row">
+            <div class="bp-trends__nm"><i style="background:#7C6BD6"></i>Sleep</div>
+            <svg class="spark" viewBox="0 0 240 40" preserveAspectRatio="none"><polyline points="0,21 20,20 40,20 60,19 80,18 100,18 120,17 140,16 160,16 180,16 200,15 220,14" fill="none" stroke="#7C6BD6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="bp-trends__delta" style="color:#7C6BD6;">▲ 21<span>vs week 1</span></div>
+          </div>
+          <div class="bp-trends__row">
+            <div class="bp-trends__nm"><i style="background:#266D7A"></i>Social</div>
+            <svg class="spark" viewBox="0 0 240 40" preserveAspectRatio="none"><polyline points="0,30 20,28 40,26 60,27 80,26 100,25 120,25 140,23 160,24 180,22 200,21 220,21" fill="none" stroke="#266D7A" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="bp-trends__delta" style="color:#266D7A;">▲ 27<span>vs week 1</span></div>
+          </div>
+          <div class="bp-trends__row">
+            <div class="bp-trends__nm"><i style="background:#5FA9A6"></i>Coping</div>
+            <svg class="spark" viewBox="0 0 240 40" preserveAspectRatio="none"><polyline points="0,23 20,22 40,21 60,20 80,20 100,19 120,19 140,18 160,17 180,18 200,16 220,16" fill="none" stroke="#5FA9A6" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="bp-trends__delta" style="color:#5FA9A6;">▲ 21<span>vs week 1</span></div>
+          </div>
+          <div class="bp-trends__row">
+            <div class="bp-trends__nm"><i style="background:#5AA469"></i>Nutrition</div>
+            <svg class="spark" viewBox="0 0 240 40" preserveAspectRatio="none"><polyline points="0,20 20,19 40,18 60,17 80,16 100,16 120,15 140,15 160,14 180,13 200,13 220,12" fill="none" stroke="#5AA469" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div class="bp-trends__delta" style="color:#5AA469;">▲ 22<span>vs week 1</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- recommended plate -->
+      <div class="bp-sech"><span class="t">Your recommended plate</span><span class="line"></span></div>
+      <div class="card">
+        <p style="font-size:12.5px; color:var(--fg-muted); margin:0 0 4px;">The balance your care team set — aim for roughly this split at each meal. Log what you actually eat on the <b>Check in</b> tab, where today's plate fills in against this target.</p>
+        <div class="fuel-layout">
+          <div class="plate-card" data-mode="reference">
+            <div class="plate">
+              <svg viewBox="0 0 200 200" aria-label="Recommended plate by macronutrient">
+                <circle cx="100" cy="100" r="94" class="plate-rim"></circle>
+                <circle cx="100" cy="100" r="78" fill="#fff" stroke="rgba(22,36,51,0.08)" stroke-width="1"></circle>
+                <g class="p-target"></g><g class="p-fill"></g><g class="p-icons"></g>
+              </svg>
+            </div>
+            <div class="plate-legend"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- today's log -->
+      <div class="bp-sech"><span class="t">Today's log</span><span class="line"></span></div>
+      <div class="card bp-today">
+        <div class="drow" style="--dom:#8C5A3C;"><div class="di"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M152,192h56v12a28,28,0,0,1-56,0ZM48,180a28,28,0,0,0,56,0V168H48ZM76,24c-24.52,0-51.46,80-25.26,112h50.52C127.46,104,100.52,24,76,24ZM205.26,160c26.2-32-.74-112-25.26-112s-51.46,80-25.26,112Z" opacity="0.2"/><path d="M208.06,184H152a8,8,0,0,0-8,8v12a36,36,0,0,0,72.05,0V192A8,8,0,0,0,208.06,184Zm-8,20a20,20,0,0,1-40,0v-4h40ZM104,160h-56a8,8,0,0,0-8,8v12A36,36,0,0,0,112,180V168A8,8,0,0,0,104,160Zm-8,20a20,20,0,0,1-40,0v-4H96ZM76,16C64.36,16,53.07,26.31,44.2,45c-13.93,29.38-18.56,73,.29,96a8,8,0,0,0,6.2,2.93h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C98.85,26.31,87.57,16,76,16ZM97.15,128H54.78c-11.4-18.1-7.21-52.7,3.89-76.11C65.14,38.22,72.17,32,76,32s10.82,6.22,17.3,19.89C104.36,75.3,108.55,109.9,97.15,128Zm57.61,40h50.55a8,8,0,0,0,6.2-2.93c18.85-23,14.22-66.65.29-96C202.93,50.31,191.64,40,180,40s-22.89,10.31-31.77,29c-13.93,29.38-18.56,73,.29,96A8,8,0,0,0,154.76,168Zm8-92.11C169.22,62.22,176.25,56,180,56s10.81,6.22,17.29,19.89c11.1,23.41,15.29,58,3.89,76.11H158.85C147.45,133.9,151.64,99.3,162.74,75.89Z"/></svg></div><div class="dn"><b>Exercise</b><span>Two 20-minute walks after your largest meals</span></div><button class="dlog" type="button">Log</button></div>
+        <div class="drow" style="--dom:#7C6BD6;"><div class="di"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M227.89,147.89A96,96,0,1,1,108.11,28.11,96.09,96.09,0,0,0,227.89,147.89Z" opacity="0.2"/><path d="M233.54,142.23a8,8,0,0,0-8-2,88.08,88.08,0,0,1-109.8-109.8,8,8,0,0,0-10-10,104.84,104.84,0,0,0-52.91,37A104,104,0,0,0,136,224a103.09,103.09,0,0,0,62.52-20.88,104.84,104.84,0,0,0,37-52.91A8,8,0,0,0,233.54,142.23ZM188.9,190.34A88,88,0,0,1,65.66,67.11a89,89,0,0,1,31.4-26A106,106,0,0,0,96,56,104.11,104.11,0,0,0,200,160a106,106,0,0,0,14.92-1.06A89,89,0,0,1,188.9,190.34Z"/></svg></div><div class="dn"><b>Sleep</b><span>10:30pm window · screens down 30 minutes before</span></div><button class="dlog" type="button">Log</button></div>
+        <div class="drow" style="--dom:#266D7A;"><div class="di"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M168,144a40,40,0,1,1-40-40A40,40,0,0,1,168,144ZM64,56A32,32,0,1,0,96,88,32,32,0,0,0,64,56Zm128,0a32,32,0,1,0,32,32A32,32,0,0,0,192,56Z" opacity="0.2"/><path d="M244.8,150.4a8,8,0,0,1-11.2-1.6A51.6,51.6,0,0,0,192,128a8,8,0,0,1,0-16,24,24,0,1,0-23.24-30,8,8,0,1,1-15.5-4A40,40,0,1,1,219,117.51a67.94,67.94,0,0,1,27.43,21.68A8,8,0,0,1,244.8,150.4ZM190.92,212a8,8,0,1,1-13.85,8,57,57,0,0,0-98.15,0,8,8,0,1,1-13.84-8,72.06,72.06,0,0,1,33.74-29.92,48,48,0,1,1,58.36,0A72.06,72.06,0,0,1,190.92,212ZM128,176a32,32,0,1,0-32-32A32,32,0,0,0,128,176ZM72,120a8,8,0,0,0-8-8A24,24,0,1,1,87.24,82a8,8,0,1,0,15.5-4A40,40,0,1,0,37,117.51,67.94,67.94,0,0,0,9.6,139.19a8,8,0,1,0,12.8,9.61A51.6,51.6,0,0,1,64,128,8,8,0,0,0,72,120Z"/></svg></div><div class="dn"><b>Social</b><span>One real connection today that isn't a screen</span></div><button class="dlog" type="button">Log</button></div>
+        <div class="drow" style="--dom:#5FA9A6;"><div class="di"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M128,32a96,96,0,1,0,96,96A96,96,0,0,0,128,32Zm16,112L80,176l32-64,64-32Z" opacity="0.2"/><path d="M128,24A104,104,0,1,0,232,128,104.11,104.11,0,0,0,128,24Zm0,192a88,88,0,1,1,88-88A88.1,88.1,0,0,1,128,216ZM172.42,72.84l-64,32a8.05,8.05,0,0,0-3.58,3.58l-32,64A8,8,0,0,0,80,184a8.1,8.1,0,0,0,3.58-.84l64-32a8.05,8.05,0,0,0,3.58-3.58l32-64a8,8,0,0,0-10.74-10.74ZM138,138,97.89,158.11,118,118l40.15-20.07Z"/></svg></div><div class="dn"><b>Coping</b><span>3-minute wind-down before the afternoon dip</span></div><button class="dlog done" type="button">✓ Done</button></div>
+        <div class="drow" style="--dom:#5AA469;"><div class="di"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 256 256" fill="currentColor"><path d="M224,112a96,96,0,0,1-56,87.3V208a8,8,0,0,1-8,8H96a8,8,0,0,1-8-8v-8.7A96,96,0,0,1,32,112Z" opacity="0.2"/><path d="M224,104h-8.37a88,88,0,0,0-175.26,0H32a8,8,0,0,0-8,8,104.35,104.35,0,0,0,56,92.28V208a16,16,0,0,0,16,16h64a16,16,0,0,0,16-16v-3.72A104.35,104.35,0,0,0,232,112,8,8,0,0,0,224,104ZM173.48,56.23q2.75,2.25,5.27,4.75a87.92,87.92,0,0,0-49.15,43H100.1A72.26,72.26,0,0,1,168,56C169.83,56,171.66,56.09,173.48,56.23Zm15.91,18.2A71.45,71.45,0,0,1,199.54,104H148.12A71.84,71.84,0,0,1,189.39,74.43ZM128,40a71.87,71.87,0,0,1,19,2.57A88.36,88.36,0,0,0,83.33,104H56.46A72.08,72.08,0,0,1,128,40Zm36.66,152A8,8,0,0,0,160,199.3V208H96v-8.7A8,8,0,0,0,91.34,192a88.29,88.29,0,0,1-51-72H215.63A88.29,88.29,0,0,1,164.66,192Z"/></svg></div><div class="dn"><b>Nutrition</b><span>Morning protein anchor, 25–30g before caffeine</span></div><button class="dlog done" type="button">✓ Done</button></div>
+      </div>
+
+      <!-- ===== tools for progress ===== -->
+      <div class="bp-sech"><span class="t">Tools for progress</span><span class="line"></span></div>
+      <div class="tools-grid">
+
+        <!-- Fasting timer -->
+        <div class="tool">
+          <div class="tool__hd"><h4>Fasting timer</h4><span class="tool__meta">metabolic reset</span></div>
+          <div class="ft">
+            <div class="ft__ring">
+              <svg viewBox="0 0 120 120" aria-hidden="true">
+                <circle cx="60" cy="60" r="52" fill="none" stroke="var(--border)" stroke-width="9"></circle>
+                <circle id="ftArc" cx="60" cy="60" r="52" fill="none" stroke="#8C5A3C" stroke-width="9" stroke-linecap="round" stroke-dasharray="0 400"></circle>
+              </svg>
+              <div class="ft__read"><b id="ftElapsed">00:00:00</b><span id="ftState">Not fasting</span></div>
+            </div>
+            <div class="ft__ctrl">
+              <label for="ftProto">Protocol</label>
+              <select id="ftProto"><option>16:8 — 16h fast</option><option>18:6 — 18h fast</option><option>20:4 — 20h fast</option><option>24h — full day</option></select>
+              <div class="ft__btns">
+                <button id="ftStart" class="btn btn--go" type="button">Start fast</button>
+                <button id="ftStop" class="btn" type="button" disabled>End fast</button>
+              </div>
+              <div class="ft__sched"><span>Auto-start</span><input id="ftSched" type="time" value="20:00"><span>daily</span></div>
+            </div>
+          </div>
+          <div class="ft__hist">
+            <div class="ft__hrow"><span>Yesterday</span><b>16h 12m</b><i>goal met</i></div>
+            <div class="ft__hrow"><span>Tue</span><b>15h 40m</b><i>goal met</i></div>
+            <div class="ft__hrow"><span>Mon</span><b>13h 05m</b><i style="color:var(--fg-muted)">short</i></div>
+          </div>
+        </div>
+
+        <!-- Custom biometrics -->
+        <div class="tool">
+          <div class="tool__hd"><h4>Custom biometrics</h4><span class="tool__meta">your markers</span></div>
+          <table class="bio">
+            <thead><tr><th>Marker</th><th>Latest</th><th>Change</th><th>Target</th></tr></thead>
+            <tbody>
+              <tr><td>Weight</td><td>168 lb</td><td class="dn">▼ 3.2</td><td>160 lb</td></tr>
+              <tr><td>Resting HR</td><td>62 bpm</td><td class="dn">▼ 4</td><td>&lt; 65</td></tr>
+              <tr><td>Blood pressure</td><td>118/76</td><td class="ok">stable</td><td>&lt; 120/80</td></tr>
+              <tr><td>Fasting glucose</td><td>94 mg/dL</td><td class="dn">▼ 7</td><td>&lt; 100</td></tr>
+              <tr><td>HRV (rMSSD)</td><td>48 ms</td><td class="up">▲ 6</td><td>rising</td></tr>
+              <tr><td>Ferritin</td><td>34 ng/mL</td><td class="up">▲ 9</td><td>50–150</td></tr>
+            </tbody>
+            <tbody id="bioAdded"></tbody>
+          </table>
+          <div class="bio__add">
+            <input id="bioName" type="text" placeholder="New marker (e.g. migraine days)">
+            <input id="bioVal" type="text" placeholder="Value">
+            <button class="btn" id="bioAdd" type="button">Add</button>
+          </div>
+        </div>
+
+        <!-- Custom chart -->
+        <div class="tool tool--wide">
+          <div class="tool__hd"><h4>Custom chart <span class="tool__meta" style="font-weight:400">· vitamins &amp; minerals from your Blueprint</span></h4>
+            <select id="chMetric">
+              <option value="ferritin">Ferritin (iron stores)</option>
+              <option value="vitd">Vitamin D</option>
+              <option value="b12">Vitamin B12</option>
+              <option value="magnesium">Magnesium</option>
+            </select>
+          </div>
+          <svg id="chSvg" class="chart" viewBox="0 0 640 200">
+            <line x1="0" y1="50" x2="640" y2="50" stroke="rgba(22,36,51,0.06)"></line>
+            <line x1="0" y1="100" x2="640" y2="100" stroke="rgba(22,36,51,0.06)"></line>
+            <line x1="0" y1="150" x2="640" y2="150" stroke="rgba(22,36,51,0.06)"></line>
+            <polyline id="chLine" fill="none" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" points=""></polyline>
+            <g id="chDots"></g>
+          </svg>
+          <div class="chart__x"><span>Wk 1</span><span>Wk 3</span><span>Wk 6</span><span>Wk 9</span><span>Wk 12</span></div>
+          <p class="chart__cap" id="chCap"></p>
+        </div>
+
+        <p class="tool__note" style="grid-column:1/-1; margin-top:0;">Logging your meals, water, and how you feel lives on the <b>Check in</b> tab — your intake fills up against the targets in your care plan, and suggested foods are matched to the nutrients your Blueprint is rebuilding.</p>
+
+      </div>
+    </section>
+
+    <!-- ========== CHECK IN ========== -->
+    <section class="pane" id="pane-checkin">
+      <div class="plan-head">
+        <h2>Check in, <em>in under a minute.</em></h2>
+        <p>A few taps and a photo of your plate — only what changes your care. Everything here goes straight to your BHW team.</p>
+      </div>
+
+      <div class="checkin">
+        <div class="ci-hd"><h3>Today's check-in</h3><span>Under a minute · goes to your care team</span></div>
+        <label class="ci-scan">
+          <input type="file" accept="image/*" capture="environment" hidden>
+          <span class="ci-scan__ico"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3"/></svg></span>
+          <span class="ci-scan__t"><b>Snap your plate</b><i>Photo your meal — we'll break down the nutrients and fill in your intake below</i></span>
+          <span class="ci-scan__go">Open camera →</span>
+        </label>
+        <div class="ci-shot" hidden><img alt="Your meal"><span>Got it — sent to your care team to break down.</span></div>
+        <div class="ci-q">
+          <div class="ci-row"><span class="ci-lbl">How was your sleep?</span><div class="ci-opts" data-q="sleep"><button type="button" data-v="Rough">Rough</button><button type="button" data-v="OK">OK</button><button type="button" data-v="Good">Good</button><button type="button" data-v="Great">Great</button></div></div>
+          <div class="ci-row"><span class="ci-lbl">Took your vitamins? <em>iron · vitamin D</em></span><div class="ci-opts" data-q="vitamins"><button type="button" data-v="Yes">Yes</button><button type="button" data-v="Not yet">Not yet</button></div></div>
+          <div class="ci-row"><span class="ci-lbl">Moved your body?</span><div class="ci-opts" data-q="exercise"><button type="button" data-v="Not yet">Not yet</button><button type="button" data-v="10 min">10 min</button><button type="button" data-v="20 min">20 min</button><button type="button" data-v="30+ min">30+</button></div></div>
+          <div class="ci-row"><span class="ci-lbl">Time connecting off-screen?</span><div class="ci-opts" data-q="social"><button type="button" data-v="None">None</button><button type="button" data-v="A little">A little</button><button type="button" data-v="Real time">Real time</button></div></div>
+        </div>
+        <button class="btn btn--go ci-save" type="button">Save today's check-in</button>
+        <div class="ci-done" hidden>Saved — thank you. Your care team sees this.</div>
+      </div>
+
+      <div class="bp-sech"><span class="t">Today's fuel</span><span class="line"></span></div>
+      <div class="card">
+        <p style="font-size:12.5px; color:var(--fg-muted); margin:0 0 4px;">Your plate <b>today</b> — tap <b>+</b> as you eat and each section shades in toward your care team's target. Snap your plate above and we'll fill it in for you. Your recommended split lives on the Blueprint tab. Log water on the right.</p>
+        <div class="fuel-layout">
+          <div class="plate-card" data-mode="intake">
+            <div class="plate">
+              <svg viewBox="0 0 200 200" aria-label="Today's plate">
+                <circle cx="100" cy="100" r="94" class="plate-rim"></circle>
+                <circle cx="100" cy="100" r="78" fill="#fff" stroke="rgba(22,36,51,0.08)" stroke-width="1"></circle>
+                <g class="p-target"></g><g class="p-fill"></g><g class="p-icons"></g>
+              </svg>
+            </div>
+            <div class="plate-legend"></div>
+          </div>
+          <div class="water fuel" data-cur="3" data-target="8" data-step="1" data-unit="cups" style="--fc:#4f8fbf">
+            <div class="fuel__vessel"><div class="fuel__fill"></div></div>
+            <div class="fuel__name">Water</div><div class="fuel__val"></div>
+            <div class="fuel__ctrl"><button type="button" class="fuel__minus" aria-label="less">–</button><button type="button" class="fuel__plus" aria-label="more">+</button></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="bp-sech"><span class="t">Log a food</span><span class="line"></span></div>
+      <div class="card">
+        <p class="tool__note" style="margin-top:0">Search a real food or enter a barcode — nutrition facts come from <b>Open Food Facts</b>, a free open database — and add straight to today's plate above. (Photographing a home-cooked plate still needs image recognition; this covers packaged and searchable foods.)</p>
+        <div class="off-bar">
+          <input id="offQ" type="text" placeholder="Search a food — e.g. greek yogurt, oatmeal, black beans">
+          <button class="btn btn--go" id="offGo" type="button">Search</button>
+        </div>
+        <div class="off-bar" style="margin-top:8px;">
+          <input id="offCode" type="text" inputmode="numeric" placeholder="…or type / scan a barcode">
+          <button class="btn" id="offCodeGo" type="button">Look up</button>
+          <button class="btn btn--go" id="offScan" type="button">📷 Scan</button>
+        </div>
+        <div class="off-cam" id="offCam" hidden>
+          <video id="offVideo" playsinline muted></video>
+          <div class="off-cam__bar"><span id="offCamHint">Point your camera at a barcode…</span><button class="btn" id="offCamStop" type="button">Stop</button></div>
+        </div>
+        <div class="off-status" id="offStatus"></div>
+        <div class="off-results" id="offResults"></div>
+      </div>
+
+      <div class="bp-sech"><span class="t">Foods to fill your gaps</span><span class="line"></span></div>
+      <div class="card">
+        <p style="font-size:12.5px; color:var(--fg-muted); margin:0 0 12px;">Matched to the labs your Blueprint is rebuilding and the supplements you were prescribed — easy foods that do the same work.</p>
+        <div class="gaps">
+          <div class="gap">
+            <div class="gap__hd"><span class="gap__tag" style="background:#a85846">Iron · ferritin</span><span class="gap__lvl">Low (18 ng/mL) · rebuilding</span></div>
+            <div class="gap__foods"><span class="food">Lentils</span><span class="food">Spinach</span><span class="food">Lean red meat</span><span class="food">Pumpkin seeds</span><span class="food">Fortified oats</span></div>
+            <p class="gap__why">Pairs with your <b>iron bisglycinate</b>. Add a vitamin-C food (peppers, citrus, strawberries) to the same meal to boost absorption — and keep coffee an hour away.</p>
+          </div>
+          <div class="gap">
+            <div class="gap__hd"><span class="gap__tag" style="background:#C4A038">Vitamin D</span><span class="gap__lvl">Insufficient (24 ng/mL)</span></div>
+            <div class="gap__foods"><span class="food">Salmon</span><span class="food">Sardines</span><span class="food">Egg yolks</span><span class="food">Fortified milk</span><span class="food">15 min sun</span></div>
+            <p class="gap__why">Alongside your <b>D3 2,000 IU</b> — take it with a meal that has some fat so it absorbs.</p>
+          </div>
+          <div class="gap">
+            <div class="gap__hd"><span class="gap__tag" style="background:#5AA469">Magnesium</span><span class="gap__lvl">Low-normal · supports sleep</span></div>
+            <div class="gap__foods"><span class="food">Almonds</span><span class="food">Black beans</span><span class="food">Dark chocolate</span><span class="food">Avocado</span><span class="food">Pumpkin seeds</span></div>
+            <p class="gap__why">Helps the 10:30pm sleep window and softens the afternoon dip.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ========== MESSAGES ========== -->
+    <section class="pane" id="pane-messages">
+      <div class="plan-head">
+        <h2>Messages, <em>right here.</em></h2>
+        <p>Write to your care team without leaving your portal. Replies usually come within one business day — we'll text you when there's something new, and the message itself stays safely behind your login.</p>
+      </div>
+
+      <div class="msg-thread card">
+        <div class="section-label"><span class="dot"></span><span class="txt">Conversation with your care team</span><span class="line"></span></div>
+
+        <div class="msg msg--team">
+          <div class="msg-bubble">
+            <div class="msg-who">BHW Care Team · Tue 9:14 AM</div>
+            <p>Good morning Jordan — saw your week 2 check-in. Nice consistency on the sleep window. How are the afternoon walks feeling so far?</p>
+          </div>
+        </div>
+
+        <div class="msg msg--me">
+          <div class="msg-bubble">
+            <div class="msg-who">You · Tue 12:40 PM</div>
+            <p>Honestly better than I expected. The 3pm slump is smaller on walk days. Question — does the protein anchor have to be before coffee?</p>
+          </div>
+        </div>
+
+        <div class="msg msg--team">
+          <div class="msg-bubble">
+            <div class="msg-who">BHW Care Team · Tue 2:05 PM</div>
+            <p>That's exactly what we hoped you'd notice. And yes — before is the goal, but "with" beats "without." Don't let perfect get in the way of done.</p>
+          </div>
+        </div>
+
+        <div class="msg-compose">
+          <textarea rows="2" placeholder="Write a message to your care team…" aria-label="Write a message"></textarea>
+          <button class="btn btn--gold" onclick="return false;">Send</button>
+        </div>
+        <p class="msg-fine">Not for emergencies. If this is urgent, call 911, or reach the after-hours line at 443.438.6437.</p>
+      </div>
+
+      <!-- ===== Rate your care ===== -->
+      <div class="review-card card" style="margin-top:18px">
+        <div class="section-label"><span class="dot"></span><span class="txt">How is your care going?</span><span class="line"></span></div>
+        <div id="rv-form">
+          <p style="margin:0 0 12px;color:var(--ink-soft,#5b6b76);font-size:.9rem">We read every rating and comment — it's how we keep getting better for you. If we've earned it, you can share it on Google in one tap.</p>
+          <div id="rv-stars" role="group" aria-label="Your rating" style="display:flex;gap:4px;margin-bottom:12px">
+            <button type="button" data-n="1" aria-label="1 star" style="background:none;border:0;cursor:pointer;font-size:34px;line-height:1;padding:2px;color:#cfc7ba">☆</button>
+            <button type="button" data-n="2" aria-label="2 stars" style="background:none;border:0;cursor:pointer;font-size:34px;line-height:1;padding:2px;color:#cfc7ba">☆</button>
+            <button type="button" data-n="3" aria-label="3 stars" style="background:none;border:0;cursor:pointer;font-size:34px;line-height:1;padding:2px;color:#cfc7ba">☆</button>
+            <button type="button" data-n="4" aria-label="4 stars" style="background:none;border:0;cursor:pointer;font-size:34px;line-height:1;padding:2px;color:#cfc7ba">☆</button>
+            <button type="button" data-n="5" aria-label="5 stars" style="background:none;border:0;cursor:pointer;font-size:34px;line-height:1;padding:2px;color:#cfc7ba">☆</button>
+          </div>
+          <textarea id="rv-comment" rows="3" placeholder="What stood out? (optional)" aria-label="Your comment" style="width:100%;font:inherit;font-size:.9rem;padding:10px 12px;border:1px solid var(--line,#e6e0d8);border-radius:10px;background:var(--linen,#f7f5f2);resize:vertical;margin-bottom:12px"></textarea>
+          <button class="btn btn--gold" id="rv-send" type="button">Share with the team</button>
+          <p class="rv-status" id="rv-status" role="status" style="margin:10px 0 0;font-size:.78rem;color:var(--ink-soft,#5b6b76);min-height:1em"></p>
+        </div>
+        <div id="rv-thanks" hidden>
+          <h3 style="margin:0 0 8px;font-size:1.1rem">Thank you — we've got it.</h3>
+          <p id="rv-thanks-line" style="margin:0 0 14px;color:var(--ink-soft,#5b6b76);font-size:.9rem"></p>
+          <a id="rv-google" href="#" target="_blank" rel="noopener noreferrer" style="display:inline-flex;align-items:center;gap:10px;text-decoration:none;background:#22303a;color:#fff;font-weight:700;font-size:.85rem;padding:12px 20px;border-radius:24px"><span style="font-weight:800;font-size:1rem" aria-hidden="true">G</span>Leave a Google review</a>
+        </div>
+      </div>
+    </section>
+
+    <footer class="portal-foot">
+      <div>© 2026 BHW Medical Group · Baltimore, MD</div>
+      <div>Design prototype · demo data only</div>
+    </footer>
+  </main>
+</div>
+
+<script>
+var PROGRAMS = {
+  bhw:      {cls:'', label:'Care plan · Restore &amp; Rebuild', title:'Your care plan, <em>week by week.</em>'},
+  mindmood: {cls:'brand-mindmood', label:'The 12-Week Pathway to the Sunrise', title:'Your Pathway, <em>week by week.</em>'},
+  charmed:  {cls:'brand-charmed', label:'CharmEd Minds · Executive Function Program', title:'Your program, <em>week by week.</em>'}
+};
+function setProgram(key, btn){
+  document.body.classList.remove('brand-mindmood','brand-charmed');
+  if(PROGRAMS[key].cls) document.body.classList.add(PROGRAMS[key].cls);
+  document.getElementById('programLabel').innerHTML = PROGRAMS[key].label;
+  document.querySelector('#pane-plan .plan-head h2').innerHTML = PROGRAMS[key].title;
+  document.querySelectorAll('.demo-bar button').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+}
+function enterApp(){
+  document.getElementById('view-login').style.display='none';
+  document.getElementById('view-app').style.display='block';
+  document.getElementById('demoBar').style.display='flex';
+  window.scrollTo(0,0);
+  requestAnimationFrame(function(){
+    setTimeout(function(){ document.getElementById('veinFill').style.width='21%'; }, 150);
+  });
+  try{ var f=JSON.parse(sessionStorage.getItem('bhw_pt_family')||'null'); if(f) applyFamily(f); }catch(e){}
+}
+
+/* ===== Guardian / dependent profile switcher ===== */
+var PEOPLE=[];
+function _initials(n){ var w=String(n||'').trim().split(/\s+/); return (((w[0]||'')[0]||'')+((w[1]||'')[0]||'')).toUpperCase(); }
+function applyFamily(fam){
+  if(!fam||!fam.patient) return;
+  var self=fam.patient, deps=fam.dependents||[];
+  PEOPLE=[Object.assign({}, self, {self:true, sub:'You'})]
+    .concat(deps.map(function(d){ return Object.assign({}, d, {self:false, sub:(d.relationship||'Dependent')+(d.age!=null?(' · age '+d.age):'')}); }));
+  var em=document.querySelector('#pane-home .home-greet h2 em');
+  if(em && PEOPLE[0]){ em.textContent=(String(PEOPLE[0].name||'').trim().split(/\s+/)[0]||'there')+'.'; }
+  var sel=document.getElementById('whoSelect'), meta=document.getElementById('whoMeta');
+  if(deps.length){
+    sel.innerHTML=PEOPLE.map(function(p,i){ return '<option value="'+i+'">'+(p.self?('You · '+p.name):p.name)+'</option>'; }).join('');
+    sel.style.display=''; if(meta) meta.style.display='none';
+  } else {
+    sel.style.display='none'; if(meta) meta.style.display='';
+  }
+  switchWho(0);
+}
+function switchWho(i){
+  i=+i||0; var p=PEOPLE[i]; if(!p) return;
+  document.getElementById('whoName').textContent=p.name;
+  document.getElementById('whoSub').textContent=p.sub;
+  document.getElementById('whoAvatar').textContent=_initials(p.name)||'·';
+  var sel=document.getElementById('whoSelect'); if(sel) sel.value=String(i);
+  fetchMeds(p);
+  renderProfile(p);
+  var b=document.getElementById('guardianBanner');
+  if(p.self){ b.hidden=true; b.innerHTML=''; return; }
+  var note, cls='gb-note ok';
+  if(p.age!=null && p.age>=12 && p.age<18){ note='Some sections are limited for teen confidentiality (Maryland).'; cls='gb-note'; }
+  else if(p.age!=null && p.age<12){ note='Full guardian access.'; }
+  else { note='Guardian access.'; }
+  b.innerHTML='<span>Viewing <b>'+p.name+'</b>’s Health Blueprint as guardian.</span><span class="'+cls+'">'+note+'</span>';
+  b.hidden=false;
+}
+function medEsc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function renderMeds(meds){
+  var list=document.getElementById('medsList'); if(!list) return;
+  if(!meds||!meds.length){ list.innerHTML='<p class="meds-empty">No medications on file.</p>'; return; }
+  list.innerHTML=meds.map(function(m){
+    var st=m.status||'Active', cls=(st.toLowerCase()==='held')?'m-status held':'m-status';
+    return '<div class="med-row"><span class="m-name">'+medEsc(m.name||'Medication')+'</span>'+
+      (m.dose?'<span class="m-dose">'+medEsc(m.dose)+'</span>':'')+
+      '<span class="m-sched">'+medEsc(m.schedule||'')+'</span>'+
+      '<span class="'+cls+'">'+medEsc(st)+'</span></div>';
+  }).join('');
+}
+function fetchMeds(person){
+  /* Meds travel with the family payload from patient-auth (Master List snapshot
+     or the structured Medications DB), so render straight from the person. */
+  renderMeds((person && person.meds) || []);
+}
+function renderProfile(p){
+  var card=document.getElementById('profileCard'); if(!card||!p) return;
+  card.hidden=false;
+  document.getElementById('pf-name').textContent=p.name||'—';
+  var sub=[]; if(p.age!=null) sub.push(p.age+' yrs'); if(p.gender) sub.push(p.gender); if(p.mrn) sub.push('MRN '+p.mrn);
+  document.getElementById('pf-sub').textContent=sub.join('  ·  ');
+  var pg=document.getElementById('pf-page');
+  if(p.patientPage){ pg.href=p.patientPage; pg.hidden=false; } else { pg.hidden=true; }
+  document.getElementById('pf-programs').innerHTML=(p.programs||[]).map(function(x){ return '<span class="pf-chip">'+medEsc(x)+'</span>'; }).join('');
+  var fields=[];
+  if(p.payer) fields.push(['Insurance', p.payer + (p.medicaidMco?(' · '+p.medicaidMco):'')]);
+  if(p.allergies) fields.push(['Allergies', p.allergies]);
+  if(p.chronicCount!=null && p.chronicCount!=='') fields.push(['Chronic conditions', String(p.chronicCount)]);
+  if(p.bhRisk) fields.push(['BH risk tier', p.bhRisk]);
+  if(p.lastVisit) fields.push(['Last visit', p.lastVisit]);
+  if(p.nextVisit) fields.push(['Next visit', p.nextVisit]);
+  document.getElementById('pf-grid').innerHTML=fields.map(function(f){ return '<div><div class="pf-label">'+f[0]+'</div><div class="pf-value">'+medEsc(f[1])+'</div></div>'; }).join('');
+}
+
+/* ===== Passwordless patient sign-in (Stytch email OR SMS OTP via /patient-auth) ===== */
+var _ptAuth = { methodId:null, sent:false, mode:'email' };
+/* Toggle between email and phone for patients who don't have an email. */
+function toggleLoginMode(){
+  if(_ptAuth.sent) return; // don't switch mid-flow
+  _ptAuth.mode = _ptAuth.mode==='email' ? 'phone' : 'email';
+  var inp=document.getElementById('f-email'), lab=document.getElementById('f-idlabel'),
+      tog=document.getElementById('idToggle'), btn=document.getElementById('loginBtn'),
+      fine=document.getElementById('loginFine');
+  if(_ptAuth.mode==='phone'){
+    lab.textContent='Mobile number';
+    inp.type='tel'; inp.placeholder='(410) 555-0123'; inp.setAttribute('autocomplete','tel'); inp.value='';
+    tog.textContent='Have an email? Use that instead →';
+    btn.textContent='Text me a code →';
+    fine.textContent='Passwordless sign-in — we text you a 6-digit code, no password to remember. Message and data rates may apply. Code not arriving? Call the office at 443.762.5343.';
+  }else{
+    lab.textContent='Email';
+    inp.type='email'; inp.placeholder='you@email.com'; inp.setAttribute('autocomplete','email'); inp.value='';
+    tog.textContent='No email? Use your phone number →';
+    btn.textContent='Email me a code →';
+    fine.textContent='Passwordless sign-in — we email you a 6-digit code, no password to remember. Code not arriving? Call the office at 443.762.5343.';
+  }
+  inp.focus();
+}
+async function loginStep(){
+  var btn=document.getElementById('loginBtn'), st=document.getElementById('loginStatus');
+  var isPhone=_ptAuth.mode==='phone';
+  var idVal=(document.getElementById('f-email').value||'').trim();
+  var payloadId=isPhone ? {phone:idVal} : {email:idVal};
+  if(!_ptAuth.sent){
+    if(isPhone){
+      if(idVal.replace(/\D/g,'').length<10){ st.textContent='Enter a valid mobile number.'; return; }
+    }else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(idVal)){ st.textContent='Enter a valid email.'; return; }
+    btn.disabled=true; st.textContent='Sending your code…';
+    try{
+      var res=await fetch('/.netlify/functions/patient-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({action:'send'},payloadId))});
+      var d=await res.json();
+      if(!res.ok){ st.textContent=d.error||'Could not send the code — try again.'; btn.disabled=false; return; }
+      _ptAuth.methodId=d.methodId||null; _ptAuth.sent=true;
+      document.getElementById('idToggle').style.display='none';
+      document.getElementById('codeField').style.display='flex';
+      document.getElementById('f-code').focus();
+      btn.textContent='Enter your space →'; btn.disabled=false;
+      st.textContent=d.demo ? 'Demo mode — enter any 6 digits to continue.'
+        : (isPhone ? ('We texted a 6-digit code to '+idVal+'.') : ('We emailed a 6-digit code to '+idVal+'.'));
+    }catch(e){ st.textContent='Network error — try again.'; btn.disabled=false; }
+    return;
+  }
+  var code=(document.getElementById('f-code').value||'').trim();
+  if(!/^\d{6}$/.test(code)){ st.textContent='Enter the 6-digit code.'; return; }
+  btn.disabled=true; st.textContent='Checking…';
+  try{
+    var res=await fetch('/.netlify/functions/patient-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({action:'verify',methodId:_ptAuth.methodId,code:code},payloadId))});
+    var d=await res.json();
+    if(!res.ok || !d.ok){ st.textContent=d.error||'That code didn’t match.'; btn.disabled=false; return; }
+    if(d.token){ try{ sessionStorage.setItem('bhw_pt_session', d.token); }catch(e){} }
+    try{ sessionStorage.setItem('bhw_pt_family', JSON.stringify({patient:d.patient||{name:idVal}, dependents:d.dependents||[]})); }catch(e){}
+    enterApp();
+  }catch(e){ st.textContent='Network error — try again.'; btn.disabled=false; }
+}
+function signOut(){
+  try{ sessionStorage.removeItem('bhw_pt_session'); }catch(e){}
+  location.reload();
+}
+/* Enter submits from either field; resume an unexpired session on load. */
+['f-email','f-code'].forEach(function(id){
+  var el=document.getElementById(id);
+  if(el) el.addEventListener('keydown',function(e){ if(e.key==='Enter'){ e.preventDefault(); loginStep(); } });
+});
+(function(){
+  try{
+    var t=sessionStorage.getItem('bhw_pt_session');
+    if(!t) return;
+    var p=JSON.parse(atob(t.split('.')[0].replace(/-/g,'+').replace(/_/g,'/')));
+    if(p && p.exp && Date.now()<p.exp) enterApp();
+  }catch(e){}
+})();
+function go(pane, btn){
+  document.querySelectorAll('.ptab').forEach(function(b){ b.classList.remove('active'); });
+  btn.classList.add('active');
+  document.querySelectorAll('.pane').forEach(function(p){ p.classList.remove('active'); });
+  document.getElementById('pane-'+pane).classList.add('active');
+  window.scrollTo({top:0});
+  if(pane==='home'){ setTimeout(function(){ document.getElementById('veinFill').style.width='21%'; },100); }
+}
+function toggleWeek(btn){
+  var wk = btn.closest('.week');
+  if(wk.classList.contains('locked')) return;
+  wk.classList.toggle('open');
+}
+
+/* ===== Rate your care (Patient Reviews) ===== */
+(function(){
+  var box=document.getElementById('rv-stars'); if(!box) return;
+  var rating=0;
+  function paint(n){
+    box.querySelectorAll('button').forEach(function(b){
+      var on = (+b.dataset.n)<=n;
+      b.textContent = on?'★':'☆';
+      b.style.color = on?'#c9a227':'#cfc7ba';
+    });
+  }
+  box.querySelectorAll('button').forEach(function(b){
+    b.addEventListener('mouseenter',function(){ paint(+b.dataset.n); });
+    b.addEventListener('click',function(){ rating=+b.dataset.n; paint(rating); document.getElementById('rv-status').textContent=''; });
+  });
+  box.addEventListener('mouseleave',function(){ paint(rating); });
+
+  var send=document.getElementById('rv-send');
+  send.addEventListener('click', async function(){
+    var comment=(document.getElementById('rv-comment').value||'').trim();
+    var st=document.getElementById('rv-status');
+    if(!rating && !comment){ st.textContent='Tap a star or write a line first.'; return; }
+    send.disabled=true; st.textContent='Sending…';
+    var me=null, token=null;
+    try{ me=JSON.parse(sessionStorage.getItem('bhw_pt_family')||'null'); }catch(e){}
+    try{ token=sessionStorage.getItem('bhw_pt_session'); }catch(e){}
+    var payload={ rating:rating, comment:comment, source:'Patient Portal' };
+    if(me && me.patient){ payload.name=me.patient.name||''; if(me.patient.id && token){ payload.patientId=me.patient.id; payload.token=token; } }
+    var googleUrl='https://share.google/cQNnl8gbsXqKB7oGM', reviewId=null;
+    try{
+      var res=await fetch('/.netlify/functions/submit-review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+      var d=await res.json();
+      if(!res.ok){ st.textContent=d.error||'Could not save — try again.'; send.disabled=false; return; }
+      if(d.googleUrl) googleUrl=d.googleUrl; reviewId=d.reviewId||null;
+    }catch(e){ /* offline demo — still show the thank-you + Google link */ }
+    // thank-you state (Google offered to everyone; low ratings get a follow-up note)
+    document.getElementById('rv-form').hidden=true;
+    var line=document.getElementById('rv-thanks-line');
+    line.textContent = (rating>0 && rating<=3)
+      ? 'A member of the team will look at your note and reach out if it needs a follow-up. You can still share feedback on Google if you’d like:'
+      : 'A few words on Google helps another Baltimore family find care they can trust.';
+    var g=document.getElementById('rv-google'); g.href=googleUrl;
+    g.addEventListener('click',function(){ if(reviewId){ try{ fetch('/.netlify/functions/submit-review',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:'routed',id:reviewId}),keepalive:true}); }catch(e){} } });
+    document.getElementById('rv-thanks').hidden=false;
+  });
+})();
+</script>
+<script>
+/* ===== Blueprint tools ===== */
+(function(){
+  /* Fasting timer */
+  var timer=null, startTs=null, goalH=16, R=52, CIRC=2*Math.PI*R;
+  var proto=document.getElementById('ftProto');
+  function pad(n){return String(n).padStart(2,'0');}
+  function fmt(ms){var s=Math.max(0,Math.floor(ms/1000));return pad(Math.floor(s/3600))+':'+pad(Math.floor(s%3600/60))+':'+pad(s%60);}
+  function tick(){
+    var el=Date.now()-startTs;
+    document.getElementById('ftElapsed').textContent=fmt(el);
+    var frac=Math.min(el/(goalH*3600000),1);
+    document.getElementById('ftArc').setAttribute('stroke-dasharray',(frac*CIRC).toFixed(1)+' '+CIRC.toFixed(1));
+    document.getElementById('ftState').textContent=frac>=1?('Goal reached — '+goalH+'h'):('Fasting · goal '+goalH+'h');
+  }
+  var sBtn=document.getElementById('ftStart'), eBtn=document.getElementById('ftStop');
+  if(sBtn){
+    sBtn.onclick=function(){goalH=[16,18,20,24][proto.selectedIndex]||16; startTs=Date.now(); sBtn.disabled=true; eBtn.disabled=false; tick(); timer=setInterval(tick,1000);};
+    eBtn.onclick=function(){if(timer){clearInterval(timer);timer=null;} eBtn.disabled=true; sBtn.disabled=false; document.getElementById('ftState').textContent='Fast ended · logged';};
+  }
+
+  /* Custom biometrics — add row */
+  var bAdd=document.getElementById('bioAdd');
+  if(bAdd){bAdd.onclick=function(){
+    var n=document.getElementById('bioName'), v=document.getElementById('bioVal');
+    var nm=n.value.trim(); if(!nm){n.focus();return;}
+    var esc=function(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;');};
+    var tr=document.createElement('tr');
+    tr.innerHTML='<td>'+esc(nm)+'</td><td>'+(esc(v.value.trim())||'—')+'</td><td class="ok">new</td><td>—</td>';
+    document.getElementById('bioAdded').appendChild(tr);
+    n.value=''; v.value=''; n.focus();
+  };}
+
+  /* Custom chart */
+  var CH={
+    ferritin:{u:'ng/mL', label:'Ferritin (iron stores)', data:[18,20,22,24,25,27,29,31,33,36,39,42]},
+    vitd:{u:'ng/mL', label:'Vitamin D', data:[24,25,26,27,28,30,31,32,34,35,37,39]},
+    b12:{u:'pg/mL', label:'Vitamin B12', data:[310,320,335,350,365,385,405,430,455,480,500,520]},
+    magnesium:{u:'mg/dL', label:'Magnesium', data:[1.7,1.7,1.8,1.8,1.85,1.9,1.9,1.95,2.0,2.0,2.05,2.1]}
+  };
+  var SVGNS='http://www.w3.org/2000/svg';
+  function drawChart(key){
+    var c=CH[key], d=c.data, n=d.length;
+    var min=Math.min.apply(null,d), max=Math.max.apply(null,d), pad=(max-min)*0.18||1, lo=min-pad, hi=max+pad;
+    var X=function(i){return (i/(n-1))*620+10;}, Y=function(v){return 180-((v-lo)/(hi-lo))*160;};
+    var pts=d.map(function(v,i){return X(i).toFixed(1)+','+Y(v).toFixed(1);}).join(' ');
+    document.getElementById('chLine').setAttribute('points',pts);
+    var g=document.getElementById('chDots'); g.innerHTML='';
+    d.forEach(function(v,i){var el=document.createElementNS(SVGNS,'circle');el.setAttribute('cx',X(i).toFixed(1));el.setAttribute('cy',Y(v).toFixed(1));el.setAttribute('r','3');el.setAttribute('fill','#fff');el.setAttribute('stroke','#8C5A3C');el.setAttribute('stroke-width','2');g.appendChild(el);});
+    document.getElementById('chCap').textContent=c.label+': '+d[0]+' → '+d[n-1]+' '+c.u+' over 12 weeks';
+  }
+  var m=document.getElementById('chMetric');
+  if(m){m.onchange=function(){drawChart(this.value);}; drawChart('ferritin');}
+
+  /* Check-in cards (scanner, quick questions) */
+  document.querySelectorAll('.checkin').forEach(function(ci){
+    var inp=ci.querySelector('.ci-scan input');
+    if(inp) inp.addEventListener('change',function(){
+      var f=inp.files&&inp.files[0]; if(!f) return;
+      var shot=ci.querySelector('.ci-shot'); if(!shot) return;
+      var img=shot.querySelector('img'); if(img) img.src=URL.createObjectURL(f);
+      shot.hidden=false;
+    });
+    ci.querySelectorAll('.ci-opts').forEach(function(g){
+      g.querySelectorAll('button').forEach(function(b){
+        b.addEventListener('click',function(){
+          g.querySelectorAll('button').forEach(function(x){x.classList.remove('sel');});
+          b.classList.add('sel');
+        });
+      });
+    });
+    var save=ci.querySelector('.ci-save');
+    if(save) save.addEventListener('click',function(){ var d=ci.querySelector('.ci-done'); if(d) d.hidden=false; });
+  });
+
+  /* Fuel fill-ups */
+  document.querySelectorAll('.fuel').forEach(function(fl){
+    var cur=+fl.dataset.cur, tgt=+fl.dataset.target, step=+fl.dataset.step, unit=fl.dataset.unit;
+    var fill=fl.querySelector('.fuel__fill'), val=fl.querySelector('.fuel__val');
+    function render(){ var pct=Math.max(0,Math.min(100,Math.round(cur/tgt*100))); fill.style.height=pct+'%'; val.textContent=cur+' / '+tgt+' '+unit; }
+    fl.querySelector('.fuel__minus').addEventListener('click',function(){ cur=Math.max(0,cur-step); render(); });
+    fl.querySelector('.fuel__plus').addEventListener('click',function(){ cur=cur+step; render(); });
+    render();
+  });
+
+  /* Plates — reference (target split) + intake (fills toward target), with food icons */
+  (function(){
+    var FISH='M168,76a12,12,0,1,1-12-12A12,12,0,0,1,168,76Zm42,79.08c-15.08,20.84-37.53,34.88-66.7,41.74-20.08,4.72-43.54,6-70.12,3.93q2.4,17.82,6.72,37.54a8,8,0,0,1-6.1,9.52,7.81,7.81,0,0,1-1.72.19,8,8,0,0,1-7.81-6.29q-4.89-22.36-7.41-42.62-20.22-2.51-42.58-7.41a8,8,0,0,1,3.43-15.63q19.7,4.32,37.5,6.73c-2.09-26.56-.78-50,3.93-70.06C66,83.55,80.05,61.1,100.88,46,115,35.76,140.14,23.64,179.27,24c21.19.21,40.83,4.33,43.81,6.08a8,8,0,0,1,2.83,2.83c1.75,3,5.87,22.59,6.08,43.78C232.21,98.31,228.57,129.44,210,155.08Zm2.43-111.52a175.75,175.75,0,0,0-39.22-3.51c-24.34.64-44.71,6.49-60.76,17.39a96,96,0,0,0,86.09,86.1c10.91-16,16.76-36.42,17.4-60.76A175.82,175.82,0,0,0,212.44,43.56Z';
+    var GRAINS='M208,56a87.52,87.52,0,0,0-31.84,6c-14.32-29.7-43.25-44.46-44.57-45.13a8,8,0,0,0-7.16,0C123.1,17.51,94.17,32.27,79.85,62A87.52,87.52,0,0,0,48,56a8,8,0,0,0-8,8v80a88.12,88.12,0,0,0,75.48,87.1,4,4,0,0,0,4.52-4V176.27a8.18,8.18,0,0,1,7.47-8.25,8,8,0,0,1,8.53,8v51.14a4,4,0,0,0,4.52,4A88.12,88.12,0,0,0,216,144V64A8,8,0,0,0,208,56Zm-88,93.46a88,88,0,0,0-64-37.09V72.44A72.1,72.1,0,0,1,120,144Zm8-42.1A88.61,88.61,0,0,0,94.16,69.11c9.21-19.21,26.4-31.33,33.84-35.9,7.45,4.58,24.63,16.7,33.84,35.9A88.61,88.61,0,0,0,128,107.36Zm72,5a88,88,0,0,0-64,37.09V144a72.1,72.1,0,0,1,64-71.56Z';
+    var AVO='M211,130.66,181.2,46.47a56,56,0,0,0-106-1.14h0l-29.51,83.5A88,88,0,1,0,211,130.66ZM128,200a40,40,0,1,1,40-40A40,40,0,0,1,128,200Z';
+    var NS='http://www.w3.org/2000/svg', cx=100, cy=100, R=74;
+    function wedge(a1,a2,r){
+      var x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1),x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+      var large=(a2-a1)>Math.PI?1:0;
+      return 'M'+cx+','+cy+' L'+x1.toFixed(2)+','+y1.toFixed(2)+' A'+r+','+r+' 0 '+large+' 1 '+x2.toFixed(2)+','+y2.toFixed(2)+' Z';
+    }
+    document.querySelectorAll('.plate-card').forEach(function(card){
+      var mode=card.dataset.mode;
+      var macros=[
+        {name:'Protein', pct:32, target:140, unit:'g', step:10, color:'#b0603f', foods:'Salmon · eggs · chicken · lentils', icon:FISH, cur:mode==='intake'?45:140},
+        {name:'Whole carbs', pct:37, target:160, unit:'g', step:15, color:'#5AA469', foods:'Oats · sweet potato · quinoa · beans', icon:GRAINS, cur:mode==='intake'?60:160},
+        {name:'Healthy fats', pct:31, target:60, unit:'g', step:5, color:'#C4A038', foods:'Avocado · olive oil · nuts · seeds', icon:AVO, cur:mode==='intake'?20:60}
+      ];
+      var gT=card.querySelector('.p-target'), gF=card.querySelector('.p-fill'), gI=card.querySelector('.p-icons'), leg=card.querySelector('.plate-legend');
+      var ang=-Math.PI/2;
+      macros.forEach(function(m){ m.a1=ang; m.a2=ang+(m.pct/100)*2*Math.PI; m.mid=(m.a1+m.a2)/2; ang=m.a2; });
+      macros.forEach(function(m){
+        var p=document.createElementNS(NS,'path'); p.setAttribute('d',wedge(m.a1,m.a2,R));
+        p.setAttribute('fill',m.color); p.setAttribute('fill-opacity','0.15'); p.setAttribute('stroke','#fff'); p.setAttribute('stroke-width','2.5');
+        gT.appendChild(p);
+        var s=20/256, ix=cx+52*Math.cos(m.mid)-10, iy=cy+52*Math.sin(m.mid)-10;
+        var g=document.createElementNS(NS,'g'); g.setAttribute('transform','translate('+ix.toFixed(1)+','+iy.toFixed(1)+') scale('+s.toFixed(4)+')');
+        var ip=document.createElementNS(NS,'path'); ip.setAttribute('fill',m.color); ip.setAttribute('d',m.icon);
+        g.appendChild(ip); gI.appendChild(g);
+      });
+      function drawFill(){
+        gF.innerHTML='';
+        macros.forEach(function(m){
+          var frac=Math.max(0,Math.min(1,m.cur/m.target)); if(frac<=0) return;
+          var p=document.createElementNS(NS,'path'); p.setAttribute('d',wedge(m.a1,m.a2,R*frac));
+          p.setAttribute('fill',m.color); p.setAttribute('fill-opacity','0.85'); p.setAttribute('stroke','#fff'); p.setAttribute('stroke-width','2');
+          gF.appendChild(p);
+        });
+      }
+      function drawLegend(){
+        leg.innerHTML=macros.map(function(m,i){
+          if(mode==='reference'){
+            return '<div class="pl-item"><span class="pl-dot" style="background:'+m.color+'"></span><div><div class="pl-b">'+m.name+' <span>· '+m.pct+'% · '+m.target+m.unit+'/day</span></div><div class="pl-foods">'+m.foods+'</div></div></div>';
+          }
+          return '<div class="pl-item"><span class="pl-dot" style="background:'+m.color+'"></span><div><div class="pl-b">'+m.name+' <span class="pl-val">· '+m.cur+' / '+m.target+m.unit+'</span></div><div class="pl-foods">'+m.foods+'</div><div class="pl-ctrl" data-i="'+i+'"><button type="button" data-d="-1" aria-label="less">–</button><button type="button" data-d="1" aria-label="more">+</button></div></div></div>';
+        }).join('');
+        if(mode==='intake'){
+          leg.querySelectorAll('.pl-ctrl').forEach(function(c){
+            var i=+c.dataset.i;
+            c.querySelectorAll('button').forEach(function(b){
+              b.addEventListener('click',function(){ macros[i].cur=Math.max(0,macros[i].cur+(+b.dataset.d)*macros[i].step); drawFill(); drawLegend(); });
+            });
+          });
+        }
+      }
+      drawFill(); drawLegend();
+      if(mode==='intake'){
+        window.__plateAdd=function(p,c,f){
+          macros[0].cur=Math.max(0,macros[0].cur+Math.round(p||0));
+          macros[1].cur=Math.max(0,macros[1].cur+Math.round(c||0));
+          macros[2].cur=Math.max(0,macros[2].cur+Math.round(f||0));
+          drawFill(); drawLegend();
+        };
+      }
+    });
+  })();
+})();
+
+/* ===== Today screen — one-tap, barriers, just-in-time learn ===== */
+function markDone(btn){ btn.closest('.prio').classList.toggle('done'); }
+function _closePanels(body,keep){
+  ['.trouble','.learn'].forEach(function(sel){ var el=body.querySelector(sel); if(el&&sel!==keep){el.hidden=true;} });
+}
+function toggleTrouble(btn){ var b=btn.closest('.prio__body'), t=b.querySelector('.trouble'); _closePanels(b,'.trouble'); t.hidden=!t.hidden; }
+function toggleLearn(btn){ var b=btn.closest('.prio__body'), l=b.querySelector('.learn'); _closePanels(b,'.learn'); l.hidden=!l.hidden; }
+var BARRIERS={
+  forgot:"No problem — forgetting is the most common one. Want a reminder 30 minutes earlier tomorrow?",
+  side:"Thanks for telling us. I'm sending this to your care team for a quick review — you'll hear back before your next dose.",
+  cost:"Got it — I'll flag this for the team. There may be a lower-cost option or a way we can help.",
+  understand:"Here's the short version — tap “Learn more” for the full picture. Want someone to call and walk you through it?",
+  tired:"Let's shrink it. Even a 5-minute version counts today — done beats perfect.",
+  schedule:"Life moves. Pick a time that actually fits and we'll move the reminder there.",
+  weather:"Fair. Ten minutes indoors — stairs, tidying, or marching in place — does the same job.",
+  device:"No cuff handy? We can help you get one, or check it at your next visit. I'll note it for the team.",
+  disagree:"That's fair, and worth a real conversation. I'll open a note so you and your care team can talk it through.",
+  other:"Tell us what got in the way and we'll adjust the plan around it — you can message the team anytime."
+};
+function pickBarrier(chip){
+  var wrap=chip.closest('.trouble');
+  wrap.querySelectorAll('.chip').forEach(function(c){c.classList.remove('sel');});
+  chip.classList.add('sel');
+  var resp=wrap.querySelector('.trouble__resp');
+  resp.textContent=BARRIERS[chip.getAttribute('data-b')]||BARRIERS.other;
+  resp.classList.add('show');
+}
+</script>
+<script>
+/* ===== Open Food Facts — real food search + barcode lookup ===== */
+(function(){
+  var q=document.getElementById('offQ'); if(!q) return;
+  var status=document.getElementById('offStatus'), results=document.getElementById('offResults');
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function num(n){ return (n==null||isNaN(n))?0:Math.round(n*10)/10; }
+  function row(p){
+    var nu=p.nutriments||{};
+    var pr=num(nu.proteins_100g), cb=num(nu.carbohydrates_100g), ft=num(nu.fat_100g);
+    var name=(p.product_name||'Unnamed food').trim();
+    var brand=(p.brands||'').split(',')[0].trim();
+    var el=document.createElement('div'); el.className='off-item';
+    el.innerHTML='<div class="off-item__b"><div class="off-item__n">'+esc(name)+(brand?' · <span style="font-weight:400;color:var(--fg-muted)">'+esc(brand)+'</span>':'')+'</div><div class="off-item__m">per 100g · '+pr+'g protein · '+cb+'g carbs · '+ft+'g fat</div></div>';
+    var b=document.createElement('button'); b.className='btn'; b.type='button'; b.textContent='Add 100g';
+    b.onclick=function(){ if(window.__plateAdd){ window.__plateAdd(pr,cb,ft); b.textContent='Added ✓'; b.disabled=true; } };
+    el.appendChild(b); return el;
+  }
+  async function search(){
+    var term=q.value.trim(); if(!term) return;
+    status.textContent='Searching Open Food Facts…'; results.innerHTML='';
+    try{
+      var url='https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(term)+'&search_simple=1&action=process&json=1&page_size=8&fields=product_name,brands,nutriments';
+      var r=await fetch(url); var d=await r.json();
+      var ps=(d.products||[]).filter(function(p){ return p.product_name && p.nutriments; });
+      if(!ps.length){ status.textContent='No matches — try a simpler term.'; return; }
+      status.textContent=ps.length+' results · tap Add to fill today’s plate';
+      ps.slice(0,8).forEach(function(p){ results.appendChild(row(p)); });
+    }catch(e){ status.textContent='Couldn’t reach the food database right now — check your connection and try again.'; }
+  }
+  async function lookup(){
+    var code=(document.getElementById('offCode').value||'').trim(); if(!code) return;
+    status.textContent='Looking up barcode…'; results.innerHTML='';
+    try{
+      var url='https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields=product_name,brands,nutriments';
+      var r=await fetch(url); var d=await r.json();
+      if(d.status!==1 || !d.product){ status.textContent='No product found for that barcode.'; return; }
+      status.textContent='Found it · tap Add to fill today’s plate'; results.appendChild(row(d.product));
+    }catch(e){ status.textContent='Couldn’t reach the food database right now — check your connection and try again.'; }
+  }
+  document.getElementById('offGo').onclick=search;
+  q.addEventListener('keydown',function(e){ if(e.key==='Enter') search(); });
+  document.getElementById('offCodeGo').onclick=lookup;
+
+  /* live camera barcode scan — native BarcodeDetector, graceful fallback */
+  var scanBtn=document.getElementById('offScan'), cam=document.getElementById('offCam'),
+      video=document.getElementById('offVideo'), stopBtn=document.getElementById('offCamStop'),
+      hint=document.getElementById('offCamHint');
+  var stream=null, detector=null, scanning=false, raf=null;
+  function stopCam(){ scanning=false; if(raf) cancelAnimationFrame(raf); if(stream){ stream.getTracks().forEach(function(t){t.stop();}); stream=null; } if(cam) cam.hidden=true; }
+  async function startCam(){
+    if(!('BarcodeDetector' in window)){ status.textContent='Live scanning isn’t supported on this browser — type the barcode instead.'; return; }
+    try{ detector=new window.BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128']}); }
+    catch(e){ status.textContent='Live scanning isn’t available here — type the barcode instead.'; return; }
+    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); }
+    catch(e){ status.textContent='Camera unavailable or permission denied — type the barcode instead.'; return; }
+    cam.hidden=false; video.srcObject=stream;
+    try{ await video.play(); }catch(e){}
+    scanning=true; hint.textContent='Point your camera at a barcode…'; status.textContent='';
+    (function loop(){
+      if(!scanning) return;
+      detector.detect(video).then(function(codes){
+        if(codes && codes.length){ var val=codes[0].rawValue||''; stopCam(); document.getElementById('offCode').value=val; lookup(); }
+        else { raf=requestAnimationFrame(loop); }
+      }).catch(function(){ raf=requestAnimationFrame(loop); });
+    })();
+  }
+  if(scanBtn) scanBtn.onclick=startCam;
+  if(stopBtn) stopBtn.onclick=stopCam;
+})();
+</script>
+</body>
+</html>
