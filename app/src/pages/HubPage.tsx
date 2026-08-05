@@ -5,6 +5,8 @@ import { ErOrUrgentCare } from '../components/ErOrUrgentCare'
 import { HubResources } from '../components/HubResources'
 import { JustAsk } from '../components/JustAsk'
 import { Masthead } from '../components/Masthead'
+import { NewPatients } from '../components/NewPatients'
+import { PortalCallout } from '../components/PortalCallout'
 import { ProgramCards } from '../components/ProgramCards'
 import { ResourcesPromo } from '../components/ResourcesPromo'
 import { ShareYourExperience } from '../components/ShareYourExperience'
@@ -27,9 +29,11 @@ export function HubPage({ triage, theme, askRef, onOpenResources }: HubPageProps
   return (
     <main className="page" id="main">
       <Masthead announcements={announcements} />
+      <PortalCallout />
       <JustAsk triage={triage} sectionRef={askRef} />
       <TriageForm triage={triage} />
       <ProgramCards theme={theme} />
+      <NewPatients />
       <HubResources resources={resources} />
       <ResourcesPromo onOpenResources={onOpenResources} />
       <CrisisStrip variant="hub" />

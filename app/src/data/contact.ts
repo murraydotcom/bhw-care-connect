@@ -18,8 +18,10 @@ export const CONTACT = {
   crisisLine: '988',
   baltimoreCrisisResponse: '(410) 433-5175',
   /**
-   * The Personal Health Blueprint — never call it a patient portal.
-   * A patient destination page served alongside the Care Connect hub.
+   * The Patient Care Portal — patients sign in here, then land on their
+   * profile, care plan, and programs. The Personal Health Blueprint is what
+   * they see inside once signed in. Same page, two doors.
    */
+  portalUrl: 'bhw-patient-portal-mockup.html',
   blueprintUrl: 'bhw-patient-portal-mockup.html',
 } as const

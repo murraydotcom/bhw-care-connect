@@ -39,12 +39,12 @@ export function Header({ page, onNavigate, onAskUs, themeLabel, onToggleTheme }:
           >
             Resources
           </button>
-          <a className={styles.navLink} href={CONTACT.blueprintUrl}>
-            Health Blueprint
-          </a>
           <button type="button" className={styles.cta} onClick={onAskUs}>
             Ask us
           </button>
+          <a className={styles.portal} href={CONTACT.portalUrl}>
+            Patient Portal <span aria-hidden="true">→</span>
+          </a>
           <button
             type="button"
             className={styles.themeToggle}

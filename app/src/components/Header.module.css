@@ -104,6 +104,29 @@
   background: var(--accent-hover);
 }
 
+/* Patient Portal — the returning-patient door. Outlined accent pill so it
+   reads as prominent without competing with the solid "Ask us" CTA. */
+.portal {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent);
+  background: var(--accent-quiet);
+  border: 1px solid var(--border-accent);
+  padding: 8px 16px;
+  border-radius: var(--radius-pill);
+}
+
+.portal:hover {
+  color: var(--accent-fg);
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
 .themeToggle {
   margin-left: 4px;
   display: flex;
