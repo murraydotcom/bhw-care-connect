@@ -1,0 +1,354 @@
+.backRow {
+  margin: 8px 0 4px;
+}
+
+.back {
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--fg-muted);
+  padding: 8px 0;
+}
+
+.back:hover {
+  color: var(--fg-strong);
+}
+
+/* Hero */
+.hero {
+  margin-top: 8px;
+  max-width: 64ch;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  font-size: var(--text-xs);
+  font-weight: 700;
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+  color: var(--brand-clay);
+}
+
+.heroTitle {
+  margin: 0 0 14px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--text-4xl);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-strong);
+}
+
+.heroBody {
+  margin: 0 0 22px;
+  font-size: var(--text-lg);
+  color: var(--fg-muted);
+  text-wrap: pretty;
+}
+
+.heroActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.cta {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  background: var(--accent);
+  color: var(--accent-fg);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  padding: 12px 22px;
+  border-radius: var(--radius-pill);
+  box-shadow: var(--shadow-sm);
+}
+
+.cta:hover {
+  background: var(--accent-hover);
+}
+
+.ctaGhost {
+  display: inline-flex;
+  align-items: center;
+  text-decoration: none;
+  color: var(--accent);
+  background: var(--accent-quiet);
+  border: 1px solid var(--border-accent);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  padding: 12px 22px;
+  border-radius: var(--radius-pill);
+}
+
+.ctaGhost:hover {
+  color: var(--accent-fg);
+  background: var(--accent);
+}
+
+/* Section scaffolding */
+.block {
+  margin-top: 48px;
+}
+
+.h2 {
+  margin: 0 0 18px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--text-xl);
+  letter-spacing: var(--tracking-tight);
+  color: var(--fg-strong);
+}
+
+/* Steps */
+.steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.step {
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
+  padding: 22px;
+}
+
+.num {
+  font-family: var(--font-display);
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.stepTitle {
+  margin: 6px 0 8px;
+  font-family: var(--font-display);
+  font-weight: 500;
+  font-size: var(--text-lg);
+  color: var(--fg-strong);
+}
+
+.stepBody {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+  line-height: var(--leading-relaxed);
+  text-wrap: pretty;
+}
+
+/* Two-up panels */
+.twoUp {
+  margin-top: 22px;
+  display: grid;
+  gap: 22px;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+}
+
+.panel {
+  margin-top: 22px;
+  border-radius: var(--radius-lg);
+  background: var(--bg-elevated);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-xs);
+  padding: clamp(20px, 3vw, 28px);
+}
+
+.twoUp .panel {
+  margin-top: 0;
+}
+
+/* Checklist (what to bring / plans) */
+.checkList,
+.plans {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 10px 20px;
+}
+
+.plans {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.checkItem,
+.plan {
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+  font-size: var(--text-sm);
+  color: var(--fg);
+}
+
+.check {
+  flex: none;
+  margin-top: 1px;
+  color: var(--success);
+  font-weight: 700;
+}
+
+/* Prep list */
+.prepList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.prepItem {
+  position: relative;
+  padding-left: 18px;
+  font-size: var(--text-sm);
+  color: var(--fg);
+  line-height: var(--leading-relaxed);
+}
+
+.prepItem::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 8px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* Forms */
+.formsHead,
+.insHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 6px 20px;
+  margin-bottom: 16px;
+}
+
+.formsHead .h2,
+.insHead .h2 {
+  margin: 0;
+}
+
+.note {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+  max-width: 46ch;
+}
+
+.forms {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.form {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 0;
+  border-top: 1px solid var(--divider);
+}
+
+.form:last-child {
+  border-bottom: 1px solid var(--divider);
+}
+
+.formText {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.formLabel {
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--fg-strong);
+}
+
+.formNote {
+  font-size: var(--text-xs);
+  color: var(--fg-muted);
+}
+
+.formLink {
+  flex: none;
+  text-decoration: none;
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--accent);
+}
+
+.formSoon {
+  flex: none;
+  font-size: var(--text-xs);
+  font-weight: 600;
+  color: var(--fg-subtle);
+  background: var(--bg-muted);
+  padding: 5px 11px;
+  border-radius: var(--radius-pill);
+  white-space: nowrap;
+}
+
+/* Insurance / sliding-fee */
+.notAccepted {
+  margin: 16px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid var(--divider);
+  font-size: var(--text-sm);
+  color: var(--fg-muted);
+}
+
+.notAccepted strong {
+  color: var(--fg-strong);
+}
+
+.sliding {
+  margin-top: 16px;
+  border-radius: var(--radius-md);
+  background: var(--accent-quiet);
+  padding: 16px 18px;
+}
+
+.slidingTitle {
+  margin: 0 0 6px;
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: var(--accent-quiet-fg);
+}
+
+.slidingBody {
+  margin: 0;
+  font-size: var(--text-sm);
+  color: var(--fg);
+  line-height: var(--leading-relaxed);
+  text-wrap: pretty;
+}
+
+.slidingBody strong {
+  color: var(--fg-strong);
+}
+
+.link {
+  color: var(--link);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.link:hover {
+  color: var(--link-hover);
+}

@@ -12,7 +12,7 @@ const CARE_LINKS: { label: string; href: string }[] = [
 
 const PATIENT_LINKS: { label: string; href: string }[] = [
   { label: 'Personal Health Blueprint', href: CONTACT.blueprintUrl },
-  { label: 'New patient forms', href: '#' },
+  { label: 'New patient forms', href: '#/new-patients' },
   { label: 'Billing & insurance', href: '#' },
   { label: 'Good Faith Estimate', href: '#' },
   { label: 'Request your records', href: '#' },

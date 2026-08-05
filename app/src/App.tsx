@@ -3,6 +3,7 @@ import { Header } from './components/Header'
 import { SiteFooter } from './components/SiteFooter'
 import { useTriage } from './components/useTriage'
 import { HubPage } from './pages/HubPage'
+import { NewPatientsPage } from './pages/NewPatientsPage'
 import { ResourcesPage } from './pages/ResourcesPage'
 import { useHashRoute } from './lib/useHashRoute'
 import { useTheme } from './lib/useTheme'
@@ -48,6 +49,8 @@ export default function App() {
           askRef={askRef}
           onOpenResources={openResources}
         />
+      ) : page === 'new-patients' ? (
+        <NewPatientsPage onBack={() => navigate('hub')} />
       ) : (
         <ResourcesPage onBack={() => navigate('hub')} />
       )}

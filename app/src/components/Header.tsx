@@ -39,6 +39,14 @@ export function Header({ page, onNavigate, onAskUs, themeLabel, onToggleTheme }:
           >
             Resources
           </button>
+          <button
+            type="button"
+            className={styles.navLink}
+            aria-current={page === 'new-patients' ? 'page' : undefined}
+            onClick={() => onNavigate('new-patients')}
+          >
+            New Patients
+          </button>
           <button type="button" className={styles.cta} onClick={onAskUs}>
             Ask us
           </button>
