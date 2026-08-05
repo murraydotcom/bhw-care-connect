@@ -569,6 +569,23 @@ h1,h2,h3,h4{margin:0; color:var(--fg-strong); text-wrap:balance;}
 .food{font-size:12px; border:1px solid var(--border); background:var(--bg); border-radius:99px; padding:5px 11px; color:var(--fg);}
 .gap__why{font-size:11.5px; color:var(--fg-muted); margin:9px 0 0; line-height:1.5;}
 @media(max-width:560px){.fuel-grid{grid-template-columns:1fr 1fr;}}
+/* ---- Care Connect–style program cards (portal) ---- */
+.cc-programs{margin-top:22px;}
+.cc-programs__hd{display:flex; align-items:baseline; justify-content:space-between; gap:12px; flex-wrap:wrap; margin-bottom:14px;}
+.cc-programs__hd h3{font-family:var(--font-serif); font-weight:500; font-size:20px; color:var(--fg-strong); margin:0;}
+.cc-programs__hd span{font-size:12px; color:var(--fg-muted);}
+.cc-grid{display:grid; gap:14px; grid-template-columns:repeat(auto-fit,minmax(220px,1fr));}
+.cc-card{position:relative; overflow:hidden; border-radius:16px; padding:22px; min-height:186px;
+  display:flex; flex-direction:column; gap:8px; text-decoration:none; color:var(--fg-strong);
+  background-color:var(--cc-veil,#FBF8F2); background-image:var(--cc-iris);
+  border:1px solid var(--border); box-shadow:var(--shadow-sm), inset 0 0 0 1px rgba(196,160,56,0.14);
+  transition:transform .18s var(--ease-out), box-shadow .18s var(--ease-out);}
+.cc-card:hover{transform:translateY(-2px); box-shadow:var(--shadow-md), inset 0 0 0 1px rgba(196,160,56,0.26);}
+.cc-card__num{font-family:var(--font-serif); font-size:26px; font-weight:600; line-height:1; color:var(--cc-tint,var(--accent));}
+.cc-card__name{font-family:var(--font-serif); font-size:19px; font-weight:500; color:var(--fg-strong);}
+.cc-card__blurb{font-size:12.5px; line-height:1.55; color:var(--fg-muted); flex:1;}
+.cc-card__go{margin-top:4px; font-size:12px; font-weight:700; letter-spacing:0.02em; color:var(--cc-tint,var(--accent));}
+@media (prefers-reduced-motion:reduce){.cc-card{transition:none;}}
 </style>
 </head>
 <body>
@@ -666,6 +683,44 @@ h1,h2,h3,h4{margin:0; color:var(--fg-strong); text-wrap:balance;}
         <div class="profile-programs" id="pf-programs"></div>
         <div class="profile-grid" id="pf-grid"></div>
       </div>
+
+      <!-- Care Connect–style program cards -->
+      <section class="cc-programs" aria-labelledby="cc-programs-title">
+        <div class="cc-programs__hd">
+          <h3 id="cc-programs-title">Your programs</h3>
+          <span>The care BHW offers — open a program page</span>
+        </div>
+        <div class="cc-grid">
+          <a class="cc-card" href="bhw-patient-portal-mockup.html"
+             style="--cc-veil:#F7F0E8; --cc-tint:#8C5A3C; --cc-iris:radial-gradient(88% 70% at 12% 8%, rgba(178,124,84,.16), transparent 62%), radial-gradient(80% 66% at 92% 22%, rgba(140,164,178,.20), transparent 64%), radial-gradient(96% 80% at 74% 100%, rgba(150,168,138,.18), transparent 66%);">
+            <span class="cc-card__num">01</span>
+            <span class="cc-card__name">Primary Care</span>
+            <span class="cc-card__blurb">Annual visits, sick visits, labs and referrals — your medical home base.</span>
+            <span class="cc-card__go">Open the program page →</span>
+          </a>
+          <a class="cc-card" href="bhw-mindmood-patient-mockup.html"
+             style="--cc-veil:#F1EEF5; --cc-tint:#7E6A96; --cc-iris:radial-gradient(88% 70% at 10% 6%, rgba(142,114,168,.20), transparent 62%), radial-gradient(78% 64% at 94% 26%, rgba(140,164,178,.18), transparent 64%), radial-gradient(96% 80% at 70% 100%, rgba(196,164,132,.16), transparent 66%);">
+            <span class="cc-card__num">02</span>
+            <span class="cc-card__name">Mind &amp; Mood</span>
+            <span class="cc-card__blurb">Psychiatry and medication management for depression, anxiety, ADHD and bipolar care.</span>
+            <span class="cc-card__go">Open the program page →</span>
+          </a>
+          <a class="cc-card" href="bhw-charmed-patient-mockup.html"
+             style="--cc-veil:#ECF2F4; --cc-tint:#3E7E9A; --cc-iris:radial-gradient(88% 70% at 12% 8%, rgba(96,158,180,.20), transparent 62%), radial-gradient(80% 66% at 92% 24%, rgba(150,168,138,.18), transparent 64%), radial-gradient(96% 80% at 72% 100%, rgba(178,124,84,.14), transparent 66%);">
+            <span class="cc-card__num">03</span>
+            <span class="cc-card__name">CharmEd Minds</span>
+            <span class="cc-card__blurb">Therapy and skills groups run by Baltimore clinicians who know the city.</span>
+            <span class="cc-card__go">Open the program page →</span>
+          </a>
+          <a class="cc-card" href="bhw-flow-patient-mockup.html"
+             style="--cc-veil:#EFF3EC; --cc-tint:#6E8F5C; --cc-iris:radial-gradient(88% 70% at 10% 8%, rgba(150,168,138,.22), transparent 62%), radial-gradient(78% 64% at 94% 22%, rgba(142,114,168,.16), transparent 64%), radial-gradient(96% 80% at 74% 100%, rgba(96,158,180,.18), transparent 66%);">
+            <span class="cc-card__num">04</span>
+            <span class="cc-card__name">Flow</span>
+            <span class="cc-card__blurb">Weight, metabolic and hormone care, without the lecture.</span>
+            <span class="cc-card__go">Open the program page →</span>
+          </a>
+        </div>
+      </section>
 
       <div class="checkin">
         <div class="ci-hd"><h3>Today's check-in</h3><span>Under a minute · goes to your care team</span></div>

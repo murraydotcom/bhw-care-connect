@@ -2,9 +2,10 @@ import { CONTACT } from '../data/contact'
 import styles from './NewPatients.module.css'
 
 /**
- * New-patient onramp. PLACEHOLDER COPY — confirm the real details (plans
- * accepted, sliding-scale policy, what to bring) with the practice before
- * this goes live.
+ * New-patient onramp. The step copy is a friendly summary; the insurance list
+ * below is the practice's real accepted-plans sheet. Sliding-fee wording
+ * follows HRSA's Sliding Fee Discount Program (income + household size against
+ * the Federal Poverty Guidelines; no one turned away for inability to pay).
  */
 const STEPS = [
   {
@@ -15,7 +16,7 @@ const STEPS = [
   {
     num: '02',
     title: 'Insurance & coverage',
-    body: 'We accept most major insurance plans, and a sliding-scale option is available if you’re paying out of pocket. Ask us and we’ll check your coverage before your visit.',
+    body: 'Bring your insurance card and we’ll verify your plan before your visit. See the plans we accept below — and if you’re paying out of pocket, ask about our sliding-fee discount.',
   },
   {
     num: '03',
@@ -23,6 +24,24 @@ const STEPS = [
     body: 'Bring a photo ID, your insurance card, and a list of your current medications. Plan for about an hour so we can get the full picture.',
   },
 ] as const
+
+/** From the practice's "We accept the following insurance plans" sheet. */
+const PLANS_ACCEPTED = [
+  'Maryland Medicaid',
+  'Maryland Medicare',
+  'UnitedHealthcare — Community Health Plan',
+  'UnitedHealthcare — Commercial',
+  'CareFirst — Commercial (BlueCross BlueShield)',
+  'CareFirst — Community Health Plan & Medicare Advantage',
+  'Humana',
+  'Alterwood Advantage',
+  'Aetna Medicare Advantage',
+  'Maryland Physicians Care',
+  'Cigna Healthcare',
+] as const
+
+/** Plans the practice does not accept — listed so new patients aren't surprised. */
+const PLANS_NOT_ACCEPTED = ['Wellpoint', 'Aetna Better Health', 'Priority Partners'] as const
 
 export function NewPatients() {
   return (
@@ -49,6 +68,44 @@ export function NewPatients() {
           </li>
         ))}
       </ol>
+
+      <div className={styles.insurance}>
+        <div className={styles.insHead}>
+          <h4 className={styles.insTitle}>Insurance we accept</h4>
+          <p className={styles.insNote}>
+            Not sure about your plan?{' '}
+            <a className={styles.link} href={CONTACT.phoneHref}>
+              Call {CONTACT.phone}
+            </a>{' '}
+            and we&rsquo;ll check before your visit.
+          </p>
+        </div>
+
+        <ul className={styles.plans}>
+          {PLANS_ACCEPTED.map((plan) => (
+            <li className={styles.plan} key={plan}>
+              <span className={styles.check} aria-hidden="true">
+                ✓
+              </span>
+              {plan}
+            </li>
+          ))}
+        </ul>
+
+        <p className={styles.notAccepted}>
+          <strong>Not accepted:</strong> {PLANS_NOT_ACCEPTED.join(' · ')}
+        </p>
+
+        <div className={styles.sliding}>
+          <h4 className={styles.slidingTitle}>Paying out of pocket? Sliding-fee discount</h4>
+          <p className={styles.slidingBody}>
+            We offer a sliding-fee discount based on your household size and income, following
+            the federal poverty guidelines — a reduced or nominal charge for those who qualify.{' '}
+            <strong>No one is turned away for inability to pay.</strong> Ask the front desk to
+            see if you qualify and to request an application.
+          </p>
+        </div>
+      </div>
 
       <p className={styles.foot}>
         Questions before you start?{' '}
