@@ -132,7 +132,42 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 .promo .ico{width:44px;height:44px;border-radius:12px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:21px;box-shadow:var(--sh-sm)}
 .promo .tx b{font-size:13px;font-weight:640}.promo .tx p{font-size:11px;color:var(--ink-soft)}
 .promo .go{margin-left:auto;background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;border:0;border-radius:999px;padding:11px 18px;font-weight:640;font-size:12px;cursor:pointer;box-shadow:0 12px 20px -12px rgba(74,138,135,.8)}
-@media(max-width:1120px){.stagegrid{grid-template-columns:1fr}.stage{border-right:0;border-bottom:1px solid var(--line-2);min-height:440px}.acts,.kac{grid-template-columns:1fr}.kac .col+.col{border-left:0;border-top:1px solid var(--line-2)}}
+@media(max-width:1120px){.stagegrid{grid-template-columns:1fr}.stage{border-right:0;border-bottom:1px solid var(--line-2);min-height:440px}.acts,.kac,.bodycomp{grid-template-columns:1fr 1fr}.kac .col+.col{border-left:0;border-top:1px solid var(--line-2)}}
+/* ——— matrix-driven labs ——— */
+.recheck{display:flex;align-items:center;gap:12px;padding:13px 16px;background:linear-gradient(120deg,rgba(198,90,82,.10),rgba(255,254,251,.6));border:1px solid var(--line)}
+.recheck .ic{width:34px;height:34px;border-radius:9px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:17px}
+.recheck b{font-size:12.5px;font-weight:640}.recheck p{font-size:10.5px;color:var(--ink-soft)}
+.recheck .due{margin-left:auto;text-align:right}.recheck .due .n{font-family:'Nunito';font-weight:700;font-size:15px;color:var(--teal-ink)}.recheck .due .l{font-size:9.5px;color:var(--ink-mute)}
+.panlab{font-size:9.5px;font-weight:640;letter-spacing:.09em;text-transform:uppercase;color:var(--teal-deep)}
+.bodycomp{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.bc{background:var(--soft);border:1px solid var(--line);border-radius:12px;padding:11px 12px}
+.bc .l{font-size:10px;color:var(--ink-mute)}
+.bc .n{font-family:'Nunito';font-weight:700;font-size:20px;line-height:1.15}.bc .n small{font-size:10px;color:var(--ink-mute);font-weight:600}
+.bc .s{font-size:9.5px;font-weight:640;margin-top:1px}
+.lbl{width:100%;border-collapse:collapse}
+.lbl th{text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-mute);font-weight:640;padding:0 8px 7px}
+.lbl td{padding:7px 8px;border-top:1px solid var(--line-2);vertical-align:middle}
+.lbl .mk{font-weight:640;font-size:12px}.lbl .mk small{display:block;color:var(--ink-mute);font-weight:400;font-size:9.5px}
+.lbl .vl{font-weight:800;font-size:12.5px}
+.lbl .rgc{width:58px}.lbl .nr{font-size:10px;color:var(--ink-mute);white-space:nowrap}
+.rgbar{height:5px;border-radius:99px;background:var(--soft-2);position:relative}
+.rgbar .band{position:absolute;top:0;height:5px;border-radius:99px;background:var(--ok-q)}
+.rgbar i{position:absolute;top:-2px;width:7px;height:9px;border-radius:3px;transform:translateX(-50%)}
+.d-ok{background:var(--ok)}.d-w{background:var(--gold)}.d-a{background:var(--alert)}
+.tier{font-size:8px;font-weight:700;color:var(--teal-deep);background:var(--teal-quiet);border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:middle}
+.sublab{font-size:9px;font-weight:700;letter-spacing:.03em;color:var(--teal-deep);background:var(--teal-quiet);border-radius:6px;padding:3px 9px;display:inline-block}
+.lbl tr.sub td{padding:12px 8px 4px;border-top:0}
+.brow{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px dashed var(--line)}
+.brow:first-child{border-top:0}
+.brow .bd{width:7px;height:7px;border-radius:50%;background:var(--ink-mute);margin-top:5px;flex:none}
+.brow.on .bd{background:var(--ok)}
+.brow .x b{font-size:12px;font-weight:640}.brow .x small{color:var(--ink-mute);font-size:10.5px;display:block}
+.brow .cond{margin-left:auto;align-self:center;font-size:9px;font-weight:700;color:var(--ink-mute);background:var(--soft);border:1px dashed var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.brow .cond.ok{color:var(--ok);border-style:solid;border-color:var(--ok-q);background:var(--ok-q)}
+.progs{display:flex;gap:3px;margin-left:6px;background:var(--soft);border-radius:999px;padding:4px}
+.progs button{border:0;background:none;font-family:inherit;font-size:12px;font-weight:560;color:var(--ink-soft);padding:8px 14px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.progs button.on{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;box-shadow:0 8px 15px -8px rgba(30,55,50,.4)}
+.progs .lab{align-self:center;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);padding:0 8px 0 4px}
 </style>
 </head>
 <body>
@@ -158,7 +193,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
     <!-- HEADER -->
     <div class="hdr">
       <div class="hd-logo"><div><b>BHW Care Connect</b><span>Your health, in one place</span></div></div>
-      <nav class="tabs"><a class="on" href="#">Dashboard</a><a href="#">Records</a><a href="#">Pharmacy</a><a href="#">Messages</a></nav>
+      <div class="progs"><span class="lab">Programs</span><button class="on">Primary Care</button><button class="on">Mind &amp; Mood</button><button>CharmEd</button><button class="on">Flow</button></div>
       <div class="hd-r">
         <div class="srch">⌕ Search your record</div>
         <div class="ic">↺</div>
@@ -202,29 +237,58 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
           </div>
         </div>
 
+        <!-- recheck box -->
+        <div class="card recheck">
+          <div class="ic">🕑</div>
+          <div><b>Next recheck due</b><p>NMR + CRP/Fibrinogen/Homocysteine/Lp(a) panel: q3–6 mo while titrating · Lp(a): once (done Aug 2026)</p></div>
+          <div class="due"><div class="n">Nov 2026</div><div class="l">in ~12 weeks</div></div>
+        </div>
+
+        <!-- testing map link -->
+        <a class="card promo" href="bhw-cardio-tests.html" style="text-decoration:none;color:inherit">
+          <div class="ico">🫀</div>
+          <div class="tx"><b>Cardiovascular testing map</b><p>EKG · echo · CAC score · stress test · carotid ultrasound &amp; the vessel tests we run for your heart</p></div>
+          <span class="go">Open map ›</span>
+        </a>
+
+        <!-- FROM YOUR PHYSICAL PANEL (universal 21 · CV subset) -->
         <div class="card pad">
-          <div class="card-h"><h3>Key Areas of Concern</h3><span class="exp">⤢</span></div>
-          <div class="kac">
-            <div class="col">
-              <div class="top"><span>Blood pressure</span><span class="ar">›</span></div>
-              <div class="sc">71<small> /100</small></div><div class="flags">2 flags</div>
-              <div class="kbar"><i style="width:71%;background:linear-gradient(90deg,#ebd9a6,#d1a84e)"></i></div>
-              <div class="st s">— Watching</div>
-            </div>
-            <div class="col">
-              <div class="top"><span>Cholesterol / lipids</span><span class="ar">›</span></div>
-              <div class="sc">48<small> /100</small></div><div class="flags">4 flags</div>
-              <div class="kbar"><i style="width:48%;background:linear-gradient(90deg,#e0b3a2,#b06450)"></i></div>
-              <div class="st c">▾ Needs care</div>
-            </div>
-            <div class="col">
-              <div class="top"><span>Rhythm &amp; structure</span><span class="ar">›</span></div>
-              <div class="sc">88<small> /100</small></div><div class="flags">1 flag</div>
-              <div class="kbar"><i style="width:88%;background:linear-gradient(90deg,#bcd6b6,#6f8f6a)"></i></div>
-              <div class="st o">▲ On track</div>
-            </div>
+          <div class="card-h"><h3>From your Physical panel</h3><span class="panlab">Universal 21 · CV subset</span></div>
+          <div class="bodycomp">
+            <div class="bc"><div class="l">Weight</div><div class="n">165<small> lb</small></div><div class="s mut">at rooming</div></div>
+            <div class="bc"><div class="l">BMI</div><div class="n">27.5</div><div class="s" style="color:#a97e28">— Overweight</div></div>
+            <div class="bc"><div class="l">Waist</div><div class="n">36<small> in</small></div><div class="s" style="color:#a97e28">— ≥35 in</div></div>
+            <div class="bc"><div class="l">Waist‑to‑hip</div><div class="n">0.86</div><div class="s" style="color:var(--alert)">▾ ≥0.85</div></div>
           </div>
-          <div class="ctext" style="font-size:11.5px;color:var(--ink-soft);margin-top:12px">Lipids flagged: <b>LDL 138 · ApoB 108 · Lp(a) 142 · triglycerides 188</b>. Deeper vascular detail lives on your <b>Flow</b> page.</div>
+          <table class="lbl">
+            <thead><tr><th>Marker</th><th>Value</th><th class="rgc">Range</th><th>Decision range</th></tr></thead>
+            <tbody>
+              <tr class="sub"><td colspan="4"><span class="sublab">NMR LipoProfile + Lipids + IR · [884000]</span></td></tr>
+              <tr><td class="mk">Small LDL‑P</td><td class="vl">high</td><td class="rgc"><div class="rgbar"><span class="band" style="left:0;width:42%"></span><i class="d-a" style="left:78%"></i></div></td><td class="nr">particle burden</td></tr>
+              <tr><td class="mk">Triglycerides</td><td class="vl">188<small> mg/dL</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:0;width:60%"></span><i class="d-w" style="left:72%"></i></div></td><td class="nr">&lt; 150 mg/dL</td></tr>
+              <tr><td class="mk">HDL‑C</td><td class="vl">52<small> mg/dL</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:40%;width:55%"></span><i class="d-ok" style="left:52%"></i></div></td><td class="nr">≥ 50 (F)</td></tr>
+              <tr><td class="mk">LP‑IR score</td><td class="vl">48</td><td class="rgc"><div class="rgbar"><span class="band" style="left:0;width:45%"></span><i class="d-w" style="left:55%"></i></div></td><td class="nr">insulin resistance</td></tr>
+              <tr class="sub"><td colspan="4"><span class="sublab">CRP + Fibrinogen + Homocysteine + Lp(a) · [320414]</span></td></tr>
+              <tr><td class="mk">Lp(a) · once</td><td class="vl">142<small> nmol/L</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:0;width:44%"></span><i class="d-a" style="left:88%"></i></div></td><td class="nr">≥ 125 = risk‑enhancing</td></tr>
+              <tr><td class="mk">hs‑CRP</td><td class="vl">2.4<small> mg/L</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:0;width:33%"></span><i class="d-w" style="left:55%"></i></div></td><td class="nr">&lt;1 / 1–3 / &gt;3</td></tr>
+              <tr><td class="mk">Fibrinogen</td><td class="vl">410<small> mg/dL</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:10%;width:60%"></span><i class="d-w" style="left:74%"></i></div></td><td class="nr">200–400 mg/dL</td></tr>
+              <tr><td class="mk">Homocysteine</td><td class="vl">11<small> µmol/L</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:0;width:55%"></span><i class="d-w" style="left:64%"></i></div></td><td class="nr">high = risk</td></tr>
+              <tr class="sub"><td colspan="4"><span class="sublab">Also from baseline</span></td></tr>
+              <tr><td class="mk">HbA1c<small>[001453]</small></td><td class="vl">5.6<small> %</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:10%;width:50%"></span><i class="d-w" style="left:58%"></i></div></td><td class="nr">&lt; 5.7 %</td></tr>
+              <tr><td class="mk">Insulin + C‑Peptide<small>[213660]</small></td><td class="vl">12<small> µIU/mL</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:15%;width:45%"></span><i class="d-w" style="left:56%"></i></div></td><td class="nr">→ HOMA‑IR (trend)</td></tr>
+              <tr><td class="mk">Cystatin C + eGFR<small>[121265]</small></td><td class="vl">78<small> mL/min</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:35%;width:60%"></span><i class="d-ok" style="left:60%"></i></div></td><td class="nr">eGFR ≥ 60</td></tr>
+              <tr><td class="mk">GGT · liver<small>[001958]</small></td><td class="vl">28<small> U/L</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:10%;width:55%"></span><i class="d-ok" style="left:34%"></i></div></td><td class="nr">hepatobiliary · also on Endocrine</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- IF IT BRANCHES HERE · Cardiometabolic / Vascular -->
+        <div class="card pad">
+          <div class="card-h"><h3>If it branches here</h3><span class="panlab">Cardiometabolic / vascular</span></div>
+          <div class="brow on"><span class="bd"></span><div class="x"><b>Baseline already covers it</b><small>NMR + Lp(a) + CRP/Fibrinogen/Homocysteine panel — no extra order needed</small></div><span class="cond ok">in baseline</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>APOE · cardiovascular</b><small>[125561] — order only if it would change the plan</small></div><span class="cond">conditional</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>ApoB</b><small>No added Physical order — covered by the NMR particle panel</small></div><span class="cond">not added</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>Vessel testing</b><small>ABI/TBI · carotid duplex · PWV · 24‑hr ABPM</small></div><span class="cond">on Flow</span></div>
         </div>
 
         <div class="card pad">
@@ -233,7 +297,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
           </div>
           <div class="acts">
             <div class="act"><div class="ico">🩸</div><h4>Log blood pressure 3× a week</h4><p>Morning readings here help your team catch any drift early.</p><div class="foot">12 notes</div></div>
-            <div class="act"><div class="ico">🧪</div><h4>Lipid panel before Sep 23</h4><p>Checks LDL, ApoB &amp; Lp(a) ahead of your wellness visit.</p><div class="foot">4 flags</div></div>
+            <div class="act"><div class="ico">🧪</div><h4>Lipid panel before Sep 23</h4><p>Checks small‑dense LDL, triglycerides &amp; hs‑CRP ahead of your visit.</p><div class="foot">4 flags</div></div>
             <div class="act"><div class="ico">🐟</div><h4>Add Omega-3, discuss a statin</h4><p>Supports your heart and lowers triglycerides — we'll review at your visit.</p><div class="foot">8 concerns</div></div>
           </div>
         </div>

@@ -177,6 +177,37 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 .stage .vlabel{position:absolute;z-index:5;font-size:10px;font-weight:640;color:#eaf6f4;background:rgba(10,22,30,.6);border:1px solid rgba(132,201,196,.25);border-radius:999px;padding:5px 11px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
 .stage .vlabel .d{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:middle}
 .stage .insight{z-index:6}
+
+/* ——— matrix labs (universal panel + branch) ——— */
+.recheck2{display:flex;align-items:center;gap:12px;padding:13px 16px;background:linear-gradient(120deg,var(--teal-quiet),rgba(255,254,251,.5));border:1px solid var(--line)}
+.recheck2 .ic{width:34px;height:34px;border-radius:9px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:17px}
+.recheck2 b{font-size:12.5px;font-weight:640}.recheck2 p{font-size:10.5px;color:var(--ink-soft)}
+.recheck2 .due{margin-left:auto;text-align:right}.recheck2 .due .n{font-family:'Nunito';font-weight:700;font-size:15px;color:var(--teal-ink)}.recheck2 .due .l{font-size:9.5px;color:var(--ink-mute)}
+.panlab{font-size:9.5px;font-weight:640;letter-spacing:.09em;text-transform:uppercase;color:var(--teal-deep)}
+.lbl{width:100%;border-collapse:collapse}
+.lbl th{text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-mute);font-weight:640;padding:0 8px 7px}
+.lbl td{padding:7px 8px;border-top:1px solid var(--line-2);vertical-align:middle}
+.lbl .mk{font-weight:640;font-size:12px}.lbl .mk small{display:block;color:var(--ink-mute);font-weight:400;font-size:9.5px}
+.lbl .vl{font-weight:800;font-size:12.5px}
+.lbl .rgc{width:56px}.lbl .nr{font-size:10px;color:var(--ink-mute);white-space:nowrap}
+.lbl tr.sub td{padding:12px 8px 4px;border-top:0}
+.sublab{font-size:9px;font-weight:700;letter-spacing:.03em;color:var(--teal-deep);background:var(--teal-quiet);border-radius:6px;padding:3px 9px;display:inline-block}
+.rgbar{height:5px;border-radius:99px;background:var(--soft-2);position:relative}
+.rgbar .band{position:absolute;top:0;height:5px;border-radius:99px;background:var(--ok-q)}
+.rgbar i{position:absolute;top:-2px;width:7px;height:9px;border-radius:3px;transform:translateX(-50%)}
+.d-ok{background:var(--ok)}.d-w{background:var(--gold)}.d-a{background:var(--alert)}
+.tier{font-size:8px;font-weight:700;color:var(--teal-deep);background:var(--teal-quiet);border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:middle}
+.brow{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px dashed var(--line)}
+.brow:first-child{border-top:0}
+.brow .bd{width:7px;height:7px;border-radius:50%;background:var(--ink-mute);margin-top:5px;flex:none}
+.brow.on .bd{background:var(--ok)}
+.brow .x b{font-size:12px;font-weight:640}.brow .x small{color:var(--ink-mute);font-size:10.5px;display:block}
+.brow .cond{margin-left:auto;align-self:center;font-size:9px;font-weight:700;color:var(--ink-mute);background:var(--soft);border:1px dashed var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.brow .cond.ok{color:var(--ok);border-style:solid;border-color:var(--ok-q);background:var(--ok-q)}
+.progs{display:flex;gap:3px;margin-left:6px;background:var(--soft);border-radius:999px;padding:4px}
+.progs button{border:0;background:none;font-family:inherit;font-size:12px;font-weight:560;color:var(--ink-soft);padding:8px 14px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.progs button.on{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;box-shadow:0 8px 15px -8px rgba(30,55,50,.4)}
+.progs .lab{align-self:center;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);padding:0 8px 0 4px}
 </style>
 </head>
 <body>
@@ -202,7 +233,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
     <!-- HEADER -->
     <div class="hdr">
       <div class="hd-logo"><div><b>BHW Care Connect</b><span>Your health, in one place</span></div></div>
-      <nav class="tabs"><a class="on" href="#">Dashboard</a><a href="#">Records</a><a href="#">Pharmacy</a><a href="#">Messages</a></nav>
+      <div class="progs"><span class="lab">Programs</span><button class="on">Primary Care</button><button class="on">Mind &amp; Mood</button><button>CharmEd</button><button class="on">Flow</button></div>
       <div class="hd-r">
         <div class="srch">⌕ Search your record</div>
         <div class="ic">↺</div>
@@ -260,29 +291,46 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
           </div>
         </div>
 
-        <!-- 3 · RECENT LABS & TESTS -->
+        <!-- recheck box -->
+        <div class="card recheck2">
+          <div class="ic">🕑</div>
+          <div><b>Next recheck due</b><p>Comprehensive stool + Calprotectin: repeat by phenotype · B12/folate recheck after repletion</p></div>
+          <div class="due"><div class="n">Wk 8</div><div class="l">Oct 2026</div></div>
+        </div>
+
+        <!-- FROM PHYSICAL PANEL -->
         <div class="card pad">
-          <div class="card-h"><h3>Recent labs &amp; tests</h3><span class="exp">⤢</span></div>
-          <div class="kac">
-            <div class="col">
-              <div class="top"><span>Calprotectin</span><span class="ar">›</span></div><div class="sc">68<small> µg/g</small></div><div class="flags">Target &lt; 50</div>
-              <div class="kbar"><i style="width:66%;background:linear-gradient(90deg,#ebd9a6,#d1a84e)"></i></div><div class="st s">— Mild gut inflammation</div>
-            </div>
-            <div class="col">
-              <div class="top"><span>Zonulin</span><span class="ar">›</span></div><div class="sc">3.1<small> ng/mL</small></div><div class="flags">Target &lt; 2.5</div>
-              <div class="kbar"><i style="width:74%;background:linear-gradient(90deg,#e0b3a2,#b06450)"></i></div><div class="st c">▾ High · permeability</div>
-            </div>
-            <div class="col">
-              <div class="top"><span>hs-CRP</span><span class="ar">›</span></div><div class="sc">2.4<small> mg/L</small></div><div class="flags">Target &lt; 1.0</div>
-              <div class="kbar"><i style="width:70%;background:linear-gradient(90deg,#e0b3a2,#b06450)"></i></div><div class="st c">▾ High · systemic</div>
-            </div>
-          </div>
-          <div class="ctext" style="margin-top:12px">Also on this panel: <b>GI-MAP stool analysis · fecal elastase · tTG-IgA &amp; total IgA (celiac) · H. pylori antigen · Vitamin D · B12/folate · ferritin · magnesium</b></div>
+          <div class="card-h"><h3>From your Physical panel</h3><span class="panlab">Universal 21 · GI subset</span></div>
+          <table class="lbl">
+            <thead><tr><th>Marker</th><th>Value</th><th class="rgc">Range</th><th>Decision range</th></tr></thead>
+            <tbody>
+            <tr class="sub"><td colspan="4"><span class="sublab">B vitamins + iron + nutrients</span></td></tr>
+            <tr><td class="mk">Vitamin B12<small>B12 + Folate + B1–B6 · [399793]</small></td><td class="vl">310<small> pg/mL</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:0%;width:44%"></span><i class="d-a" style="left:34%"></i></div></td><td class="nr">low‑normal → MMA</td></tr>
+            <tr><td class="mk">Ferritin<small>[004598]</small></td><td class="vl">22<small> ng/mL</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:0%;width:40%"></span><i class="d-a" style="left:20%"></i></div></td><td class="nr">&lt; 30 = iron deficiency</td></tr>
+            <tr><td class="mk">Iron + TIBC / TSAT<small>[001321]</small></td><td class="vl">low</td><td class="rgc"><div class="rgbar"><span class="band" style="left:0%;width:42%"></span><i class="d-w" style="left:35%"></i></div></td><td class="nr">GI loss / malabsorption</td></tr>
+            <tr><td class="mk">Zinc (RBC)<small>Mg + Zn + CoQ10 · [242507]</small></td><td class="vl">low‑nl</td><td class="rgc"><div class="rgbar"><span class="band" style="left:10%;width:45%"></span><i class="d-w" style="left:30%"></i></div></td><td class="nr">gut &amp; immune</td></tr>
+            <tr><td class="mk">25‑OH‑D<small>[504115]</small></td><td class="vl">24<small> ng/mL</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:45%;width:45%"></span><i class="d-w" style="left:30%"></i></div></td><td class="nr">malabsorption context</td></tr>
+            <tr class="sub"><td colspan="4"><span class="sublab">Inflammation + liver (shared panels)</span></td></tr>
+            <tr><td class="mk">hs‑CRP<small>CRP + Fibrinogen + Homocysteine + Lp(a) · [320414]</small></td><td class="vl">2.4<small> mg/L</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:0%;width:33%"></span><i class="d-w" style="left:55%"></i></div></td><td class="nr">&lt;1 / 1–3 / &gt;3</td></tr>
+            <tr><td class="mk">Homocysteine<small>[320414]</small></td><td class="vl">11<small> µmol/L</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:0%;width:55%"></span><i class="d-w" style="left:64%"></i></div></td><td class="nr">functional B → MMA</td></tr>
+            <tr><td class="mk">GGT · liver<small>[001958]</small></td><td class="vl">28<small> U/L</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:10%;width:55%"></span><i class="d-ok" style="left:34%"></i></div></td><td class="nr">hepatobiliary</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- IF IT BRANCHES HERE -->
+        <div class="card pad">
+          <div class="card-h"><h3>If it branches here</h3><span class="panlab">GI / malabsorption</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>Comprehensive stool (GI‑MAP)</b><small>Dysbiosis + <b>Candida / yeast overgrowth</b></small></div><span class="cond">phenotype</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>Calprotectin → IBD pathway</b><small>When alarm features / inflammation</small></div><span class="cond">if indicated</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>H. pylori · elastase · fecal fat</b><small>By phenotype</small></div><span class="cond">phenotype</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>Homocysteine + MMA</b><small>If functional B‑vitamin concern</small></div><span class="cond">conditional</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>Food‑IgG sensitivities</b><small>Limited / non‑routine — lives on Immune</small></div><span class="cond">on Immune</span></div>
         </div>
 
         <!-- 4 · UPCOMING LABS & TESTS -->
         <div class="card pad">
-          <div class="card-h"><h3>Upcoming labs &amp; tests</h3><a class="lnk" href="#">Schedule ›</a></div>
+          <div class="card-h"><h3>Upcoming labs &amp; tests</h3><a class="lnk" href="bhw-gi-tests.html">Testing map ›</a></div>
           <div class="due"><span class="dt">Sep 18</span><span class="t"><b>GI-MAP comprehensive stool</b><small>Microbiome, pathogens, digestion · home kit</small></span><span class="badge2">Ordered</span></div>
           <div class="due"><span class="dt">Sep 18</span><span class="t"><b>SIBO lactulose breath test</b><small>Small-intestine overgrowth · home kit</small></span><span class="badge2 soft">To schedule</span></div>
           <div class="due"><span class="dt">Sep 23</span><span class="t"><b>H. pylori stool antigen</b><small>With your GI visit</small></span><span class="badge2">Booked</span></div>
