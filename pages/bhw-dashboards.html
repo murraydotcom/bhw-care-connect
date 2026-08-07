@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BHW Care Connect — dashboard previews</title>
+<style>
+@font-face{font-family:'Nunito';src:url('fonts/Nunito/Nunito-VariableFont_wght.ttf') format('truetype');font-weight:300 900}
+@font-face{font-family:'OpenSans';src:url('fonts/Open_Sans/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');font-weight:300 800}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'OpenSans',system-ui,sans-serif;color:#2b3f47;min-height:100vh;padding:56px 24px;
+  background:radial-gradient(1000px 620px at 15% -8%,#d8ece7,transparent 60%),radial-gradient(1000px 700px at 100% 116%,#e8dfd2,transparent 55%),linear-gradient(160deg,#e3efec,#f3f1ea);}
+.wrap{max-width:1080px;margin:0 auto}
+h1{font-family:'Nunito';font-weight:700;font-size:30px;color:#2f6b68}
+.sub{color:#6c7b74;margin:6px 0 30px;font-size:14.5px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+a.card{display:block;text-decoration:none;color:inherit;background:#fffdf9;border:1px solid #e7e6dd;border-radius:16px;padding:20px;
+  box-shadow:0 1px 2px rgba(40,55,50,.05),0 20px 40px -28px rgba(40,55,50,.4);transition:transform .12s, box-shadow .12s}
+a.card:hover{transform:translateY(-3px);box-shadow:0 26px 46px -26px rgba(40,55,50,.5)}
+.tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:#fff;border-radius:999px;padding:4px 10px;margin-bottom:12px}
+.card h3{font-family:'Nunito';font-weight:700;font-size:17px;margin-bottom:4px}
+.card p{font-size:12.5px;color:#6c7b74;line-height:1.5}
+.card .go{margin-top:12px;font-weight:800;font-size:12.5px;color:#4a8a87}
+.note{margin-top:30px;font-size:12.5px;color:#6c7b74;background:#fffdf9;border:1px solid #e7e6dd;border-radius:14px;padding:16px 18px}
+.note b{color:#2b3f47}
+.reskin{margin-top:10px;display:flex;flex-wrap:wrap;gap:8px}
+.reskin a{font-size:12px;font-weight:700;text-decoration:none;color:#3a5560;background:#eef1ec;border:1px solid #e7e6dd;border-radius:999px;padding:7px 13px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>BHW Care Connect — dashboards</h1>
+  <div class="sub">Patient-facing health dashboards. Click any card to open it. Fonts &amp; art are bundled, so this works offline.</div>
+  <div class="grid">
+    <a class="card" href="bhw-overview.html">
+      <span class="tag" style="background:#4a8a87">Overview</span>
+      <h3>General Overview</h3>
+      <p>Whole-body view, wellness score, Key Areas of Concern, and a customized care strategy. Top toggle re-skins for each program.</p>
+      <div class="go">Open ›</div>
+    </a>
+    <a class="card" href="bhw-cardio.html">
+      <span class="tag" style="background:#b06450">Cardiovascular</span>
+      <h3>Cardiovascular system</h3>
+      <p>Heart highlighted on the body, risk score, LDL/HDL/BP markers, and a cardiology care plan.</p>
+      <div class="go">Open ›</div>
+    </a>
+    <a class="card" href="bhw-mindmood.html">
+      <span class="tag" style="background:#e09a5c">Mind &amp; Mood</span>
+      <h3>Mind &amp; Mood — brain</h3>
+      <p>Sunrise palette. Brain hero with all seven neurotransmitters orbiting; hover any to light up its role.</p>
+      <div class="go">Open ›</div>
+    </a>
+    <a class="card" href="bhw-endocrine.html">
+      <span class="tag" style="background:#c79a3e">Endocrine</span>
+      <h3>Endocrine &amp; hormones</h3>
+      <p>Whole body with the hormone glands as the focus, plus a hormones panel (cortisol, thyroid, insulin…).</p>
+      <div class="go">Open ›</div>
+    </a>
+    <a class="card" href="bhw-charmed.html">
+      <span class="tag" style="background:#2f9a90">CharmEd Minds</span>
+      <h3>CharmEd — electric</h3>
+      <p>Dark navy, teal + gold. Split circuit-brain, skills you're building, and a weekly strategy.</p>
+      <div class="go">Open ›</div>
+    </a>
+  </div>
+
+  <h1 style="font-size:22px;margin-top:38px">Body systems — detailed pages</h1>
+  <div class="sub">Each system keeps its own deep page: symptom check, recent &amp; upcoming labs/tests, trends, medications, care team, and the blueprint action items for that system.</div>
+  <div class="grid">
+    <a class="card" href="bhw-flow.html">
+      <span class="tag" style="background:#5f93bd">Flow</span>
+      <h3>Flow — vascular / circulation</h3>
+      <p>Vascular-age, Lp(a)/ApoB/triglycerides, ABI/TBI/PWV testing, and the Protect→Stop→Build priority sequence.</p>
+      <div class="go">Open ›</div>
+    </a>
+    <a class="card" href="bhw-gi.html">
+      <span class="tag" style="background:#5fa9a6">Digestive</span>
+      <h3>Digestive (GI)</h3>
+      <p>Gut-focused body, calprotectin/zonulin/hs-CRP, GI-MAP &amp; SIBO testing, and the 5R gut-repair blueprint.</p>
+      <div class="go">Open ›</div>
+    </a>
+    <a class="card" href="bhw-msk.html">
+      <span class="tag" style="background:#5fa9a6">Musculoskeletal</span>
+      <h3>Musculoskeletal — bones &amp; joints</h3>
+      <p>Bone density &amp; grip, Vitamin D / DEXA / hs-CRP, and a Calm→Mobilize→Strengthen blueprint.</p>
+      <div class="go">Open ›</div>
+    </a>
+    <a class="card" href="bhw-respiratory.html">
+      <span class="tag" style="background:#5fa9a6">Respiratory</span>
+      <h3>Respiratory — breathing</h3>
+      <p>Lung-age, spirometry / FeNO / eosinophils, and an inflammation→triggers→capacity blueprint.</p>
+      <div class="go">Open ›</div>
+    </a>
+    <a class="card" href="bhw-neuro.html">
+      <span class="tag" style="background:#5fa9a6">Neurological</span>
+      <h3>Neurological — brain &amp; nerves</h3>
+      <p>Cognition (MoCA) &amp; sleep, B12 / homocysteine / Vitamin D, nerve-conduction &amp; sleep work-up, and a Calm→Rebuild→Restore blueprint.</p>
+      <div class="go">Open ›</div>
+    </a>
+    <a class="card" href="bhw-immune.html">
+      <span class="tag" style="background:#5fa9a6">Immune</span>
+      <h3>Immune — defense &amp; resilience</h3>
+      <p>Resilience score, hs-CRP / Vitamin D / ANA, immunoglobulin &amp; ANA work-up, and a Calm→Rebuild→Balance blueprint.</p>
+      <div class="go">Open ›</div>
+    </a>
+  </div>
+
+  <div class="note" style="margin-top:16px">
+    <b>Hologram hero pages</b> — Cardiovascular, Digestive, Neurological and Immune use a dark “scan viewport” built for your futuristic holographic body art. Drop the images into <b>hm-assets/</b> (see <b>BODY-IMAGES-README.txt</b>): <code>cardio-hero.png · gi-hero.png · neuro-hero.png · immune-hero.png</code>. Until then each shows a plain placeholder figure.
+  </div>
+
+  <div class="note">
+    <b>Program re-skin</b> — the same Overview layout, rebranded per program:
+    <div class="reskin">
+      <a href="bhw-overview.html?p=primary">Primary Care</a>
+      <a href="bhw-overview.html?p=mind">Mind &amp; Mood</a>
+      <a href="bhw-overview.html?p=charmed">CharmEd</a>
+      <a href="bhw-overview.html?p=flow">Flow</a>
+    </div>
+  </div>
+</div>
+</body>
+</html>
