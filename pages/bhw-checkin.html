@@ -42,6 +42,32 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
 .meals{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
 .meals img{width:64px;height:64px;object-fit:cover;border-radius:11px;border:1px solid var(--line)}
 .meals .tag{display:flex;align-items:center;gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:11px;padding:0 12px;font-size:11.5px;font-weight:700;color:var(--ok)}
+/* Open Food Facts */
+.off-bar{display:flex;gap:8px}
+.off-bar input{flex:1;min-width:0;font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--ink)}
+.off-bar input:focus{outline:none;border-color:var(--accent)}
+.obtn{font-family:inherit;font-size:12.5px;font-weight:700;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:10px;padding:9px 14px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.obtn:hover{border-color:var(--accent)}
+.obtn.go{background:var(--accent);border-color:var(--accent);color:#fff}
+.off-status{font-size:12px;color:var(--ink-soft);margin-top:11px}
+.off-results{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.off-item{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+.off-item__b{flex:1;min-width:0}
+.off-item__n{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.off-item__m{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+.off-cam{margin-top:10px}.off-cam[hidden]{display:none}
+.off-cam video{width:100%;max-width:340px;border-radius:11px;background:#000;display:block}
+.off-cam__bar{display:flex;align-items:center;gap:12px;margin-top:8px;font-size:12px;color:var(--ink-soft)}
+.tally{margin-top:12px;background:var(--accent-quiet);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--ink)}
+.tally[hidden]{display:none}
+.tally-h{display:block;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:3px}
+.tally b{font-family:'Nunito';font-weight:700}
+.homecook{margin-top:12px;border-top:1px solid var(--line-2);padding-top:10px}
+.homecook summary{font-size:12.5px;font-weight:700;color:var(--accent-deep);cursor:pointer;list-style:none}
+.homecook summary::-webkit-details-marker{display:none}
+.homecook summary::before{content:'+ ';font-weight:800}
+.homecook[open] summary::before{content:'– '}
+.homecook .scan{margin-top:11px}
 
 /* quick rows */
 .q{padding:12px 0;border-bottom:1px solid var(--line-2)}.q:last-child{border-bottom:0}
@@ -97,18 +123,44 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   <!-- FOOD -->
   <div class="card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>Food &amp; nutrition</h2>
-    <div class="hint">Snap each meal — we break down the nutrients and track it against your nutrition plan.</div>
-    <label class="scan" for="plate">
-      <span class="ico"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>
-      <span class="t"><b>Snap your plate</b><i>Breakfast, lunch, dinner or a snack</i></span>
-      <span class="go">Open camera →</span>
-      <input id="plate" type="file" accept="image/*" capture="environment" hidden multiple onchange="addMeal(event)">
-    </label>
-    <div class="meals" id="meals"></div>
-    <div class="q" style="border-top:1px solid var(--line-2);margin-top:6px">
+    <div class="hint">Search a food or scan its barcode — nutrition facts come from <b>Open Food Facts</b>, a free open database — and it adds to today&rsquo;s totals.</div>
+
+    <div class="off-bar">
+      <input id="offQ" type="text" placeholder="Search a food — e.g. greek yogurt, oatmeal, black beans">
+      <button class="obtn go" id="offGo" type="button">Search</button>
+    </div>
+    <div class="off-bar" style="margin-top:8px">
+      <input id="offCode" type="text" inputmode="numeric" placeholder="…or type / scan a barcode">
+      <button class="obtn" id="offCodeGo" type="button">Look up</button>
+      <button class="obtn go" id="offScan" type="button">📷 Scan</button>
+    </div>
+    <div class="off-cam" id="offCam" hidden>
+      <video id="offVideo" playsinline muted></video>
+      <div class="off-cam__bar"><span id="offCamHint">Point your camera at a barcode…</span><button class="obtn" id="offCamStop" type="button">Stop</button></div>
+    </div>
+    <div class="off-status" id="offStatus"></div>
+    <div class="off-results" id="offResults"></div>
+
+    <div class="tally" id="tally" hidden>
+      <span class="tally-h">Today so far</span>
+      <span id="tallyItems">0 items</span> · <b id="tP">0</b>g protein · <b id="tC">0</b>g carbs · <b id="tF">0</b>g fat
+    </div>
+
+    <div class="q" style="border-top:1px solid var(--line-2);margin-top:12px">
       <div class="lbl">Nutrition plan — last 24 hours</div>
       <div class="opts" data-q="Nutrition"><button type="button">Off track</button><button type="button">Some of it</button><button type="button">Mostly</button><button type="button">On plan</button></div>
     </div>
+
+    <details class="homecook">
+      <summary>Home-cooked meal? Send a photo to your care team</summary>
+      <label class="scan" for="plate">
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>
+        <span class="t"><b>Snap your plate</b><i>Barcodes cover packaged foods — a photo lets your care team see the rest</i></span>
+        <span class="go">Open camera →</span>
+        <input id="plate" type="file" accept="image/*" capture="environment" hidden multiple onchange="addMeal(event)">
+      </label>
+      <div class="meals" id="meals"></div>
+    </details>
   </div>
 
   <!-- HOW YOU'RE DOING -->
@@ -226,6 +278,83 @@ function addMeal(e){
   [...(e.target.files||[])].forEach(f=>{ const img=document.createElement('img'); img.src=URL.createObjectURL(f); box.appendChild(img); MEALS++; });
   if(MEALS && !box.querySelector('.tag')){ const t=document.createElement('span'); t.className='tag'; t.textContent='Sent to your care team'; box.appendChild(t); }
 }
+
+/* ===== Open Food Facts — real food search + barcode lookup (free, no key) ===== */
+const FOODS=[]; const MACRO={p:0,c:0,f:0};
+function plateAdd(name,p,c,f){
+  FOODS.push(name); MACRO.p+=p; MACRO.c+=c; MACRO.f+=f;
+  const t=document.getElementById('tally'); t.hidden=false;
+  document.getElementById('tallyItems').textContent=FOODS.length+' item'+(FOODS.length>1?'s':'');
+  document.getElementById('tP').textContent=Math.round(MACRO.p);
+  document.getElementById('tC').textContent=Math.round(MACRO.c);
+  document.getElementById('tF').textContent=Math.round(MACRO.f);
+}
+(function(){
+  const q=document.getElementById('offQ'); if(!q) return;
+  const status=document.getElementById('offStatus'), results=document.getElementById('offResults');
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const num=n=>(n==null||isNaN(n))?0:Math.round(n*10)/10;
+  function row(p){
+    const nu=p.nutriments||{};
+    const pr=num(nu.proteins_100g), cb=num(nu.carbohydrates_100g), ft=num(nu.fat_100g);
+    const name=(p.product_name||'Unnamed food').trim();
+    const brand=(p.brands||'').split(',')[0].trim();
+    const el=document.createElement('div'); el.className='off-item';
+    el.innerHTML='<div class="off-item__b"><div class="off-item__n">'+esc(name)+(brand?' · <span style="font-weight:400;color:var(--ink-soft)">'+esc(brand)+'</span>':'')+'</div><div class="off-item__m">per 100g · '+pr+'g protein · '+cb+'g carbs · '+ft+'g fat</div></div>';
+    const b=document.createElement('button'); b.className='obtn go'; b.type='button'; b.textContent='Add 100g';
+    b.onclick=()=>{ plateAdd(name,pr,cb,ft); b.textContent='Added ✓'; b.disabled=true; };
+    el.appendChild(b); return el;
+  }
+  async function search(){
+    const term=q.value.trim(); if(!term) return;
+    status.textContent='Searching Open Food Facts…'; results.innerHTML='';
+    try{
+      const url='https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(term)+'&search_simple=1&action=process&json=1&page_size=8&fields=product_name,brands,nutriments';
+      const r=await fetch(url); const d=await r.json();
+      const ps=(d.products||[]).filter(p=>p.product_name && p.nutriments);
+      if(!ps.length){ status.textContent='No matches — try a simpler term.'; return; }
+      status.textContent=ps.length+' results · tap Add to count it toward today';
+      ps.slice(0,8).forEach(p=>results.appendChild(row(p)));
+    }catch(e){ status.textContent='Couldn’t reach the food database right now — check your connection and try again.'; }
+  }
+  async function lookup(){
+    const code=(document.getElementById('offCode').value||'').trim(); if(!code) return;
+    status.textContent='Looking up barcode…'; results.innerHTML='';
+    try{
+      const url='https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields=product_name,brands,nutriments';
+      const r=await fetch(url); const d=await r.json();
+      if(d.status!==1 || !d.product){ status.textContent='No product found for that barcode.'; return; }
+      status.textContent='Found it · tap Add to count it toward today'; results.appendChild(row(d.product));
+    }catch(e){ status.textContent='Couldn’t reach the food database right now — check your connection and try again.'; }
+  }
+  document.getElementById('offGo').onclick=search;
+  q.addEventListener('keydown',e=>{ if(e.key==='Enter') search(); });
+  document.getElementById('offCodeGo').onclick=lookup;
+  /* live camera barcode scan — native BarcodeDetector, graceful fallback */
+  const cam=document.getElementById('offCam'), video=document.getElementById('offVideo'), hint=document.getElementById('offCamHint');
+  let stream=null, detector=null, scanning=false, raf=null;
+  function stopCam(){ scanning=false; if(raf) cancelAnimationFrame(raf); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } if(cam) cam.hidden=true; }
+  async function startCam(){
+    if(!('BarcodeDetector' in window)){ status.textContent='Live scanning isn’t supported on this browser — type the barcode instead.'; return; }
+    try{ detector=new window.BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128']}); }
+    catch(e){ status.textContent='Live scanning isn’t available here — type the barcode instead.'; return; }
+    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); }
+    catch(e){ status.textContent='Camera unavailable or permission denied — type the barcode instead.'; return; }
+    cam.hidden=false; video.srcObject=stream;
+    try{ await video.play(); }catch(e){}
+    scanning=true; hint.textContent='Point your camera at a barcode…'; status.textContent='';
+    (function loop(){
+      if(!scanning) return;
+      detector.detect(video).then(codes=>{
+        if(codes && codes.length){ const val=codes[0].rawValue||''; stopCam(); document.getElementById('offCode').value=val; lookup(); }
+        else { raf=requestAnimationFrame(loop); }
+      }).catch(()=>{ raf=requestAnimationFrame(loop); });
+    })();
+  }
+  document.getElementById('offScan').onclick=startCam;
+  document.getElementById('offCamStop').onclick=stopCam;
+})();
+
 async function saveAll(){
   const done=document.getElementById('done');
   const parts=[];
@@ -236,6 +365,7 @@ async function saveAll(){
   if(meds.length) parts.push('Took: '+meds.join(', '));
   const devs=[...document.querySelectorAll('.dv.on .nm')].map(n=>n.childNodes[0].textContent.trim());
   if(devs.length) parts.push('Devices: '+devs.join(', '));
+  if(FOODS.length) parts.push('Food ('+FOODS.length+'): '+FOODS.join(', ')+` — ~${Math.round(MACRO.p)}g protein, ${Math.round(MACRO.c)}g carbs, ${Math.round(MACRO.f)}g fat`);
   if(MEALS) parts.push(MEALS+' meal photo'+(MEALS>1?'s':'')+' logged');
   const summary=`${P.name} check-in — `+(parts.length?parts.join(' · '):'opened, nothing logged');
   done.hidden=false; done.textContent='Saving…';
