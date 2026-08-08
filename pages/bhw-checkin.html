@@ -67,15 +67,16 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
 .fuel{margin-top:14px;border-top:1px solid var(--line-2);padding-top:14px}
 .fuel[hidden]{display:none}
 .fuel-h{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:11px}
-.ves-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.ves-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
 .ves{text-align:center}
 .ves__v{position:relative;width:52px;height:74px;margin:0 auto 8px;border:2px solid var(--vc);border-radius:8px 8px 14px 14px;overflow:hidden;background:color-mix(in srgb,var(--vc) 8%,#fff)}
 .ves__f{position:absolute;left:0;right:0;bottom:0;height:0;background:color-mix(in srgb,var(--vc) 40%,#fff);border-top:2px solid var(--vc);transition:height .45s cubic-bezier(.2,.7,.2,1)}
 .ves__n{font-family:'Nunito';font-weight:700;font-size:14px;color:var(--ink)}
 .ves__val{font-size:10px;color:var(--ink-soft);margin-top:1px;font-variant-numeric:tabular-nums}
+.micro-h{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-mute);margin:16px 0 0}
 .micros{display:flex;flex-direction:column;gap:9px;margin-top:15px}
 .micro{display:flex;align-items:center;gap:10px;font-size:11.5px}
-.micro .ml{width:52px;font-weight:800;color:var(--ink-soft);flex-shrink:0}
+.micro .ml{width:74px;font-weight:800;color:var(--ink-soft);flex-shrink:0;line-height:1.2}
 .micro .mbar{flex:1;height:6px;border-radius:99px;background:var(--soft-2);overflow:hidden}
 .micro .mbar i{display:block;height:100%;width:0;border-radius:99px;background:var(--mc);transition:width .4s ease}
 .micro .mv{width:98px;text-align:right;color:var(--ink-soft);font-variant-numeric:tabular-nums;flex-shrink:0}
@@ -175,15 +176,23 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
     <div class="fuel" id="fuel" hidden>
       <div class="fuel-h">Today so far · <span id="tallyItems">0 items</span></div>
       <div class="ves-grid">
-        <div class="ves" style="--vc:var(--accent-deep)"><div class="ves__v"><div class="ves__f" id="fCal"></div></div><div class="ves__n" id="tCal">0</div><div class="ves__val">of <span id="gCal">2000</span> kcal</div></div>
         <div class="ves" style="--vc:var(--coral)"><div class="ves__v"><div class="ves__f" id="fP"></div></div><div class="ves__n"><span id="tP">0</span>g</div><div class="ves__val">Protein · <span id="gP">90</span>g</div></div>
         <div class="ves" style="--vc:var(--amber)"><div class="ves__v"><div class="ves__f" id="fC"></div></div><div class="ves__n"><span id="tC">0</span>g</div><div class="ves__val">Carbs · <span id="gC">225</span>g</div></div>
         <div class="ves" style="--vc:var(--accent)"><div class="ves__v"><div class="ves__f" id="fF"></div></div><div class="ves__n"><span id="tF">0</span>g</div><div class="ves__val">Fat · <span id="gF">65</span>g</div></div>
       </div>
       <div class="micros">
-        <div class="micro" style="--mc:var(--good)"><span class="ml">Fiber</span><span class="mbar"><i id="bFib"></i></span><span class="mv"><b id="tFib">0</b> / 28 g goal</span></div>
-        <div class="micro" style="--mc:var(--coral)"><span class="ml">Sugar</span><span class="mbar"><i id="bSug"></i></span><span class="mv"><b id="tSug">0</b> / 50 g limit</span></div>
-        <div class="micro" style="--mc:var(--amber)"><span class="ml">Sodium</span><span class="mbar"><i id="bSod"></i></span><span class="mv"><b id="tSod">0</b> / 2300 mg</span></div>
+        <div class="micro" style="--mc:var(--good)"><span class="ml">Fiber</span><span class="mbar"><i id="bFiber"></i></span><span class="mv"><b id="tFiber">0</b> / 28 g goal</span></div>
+        <div class="micro" style="--mc:var(--coral)"><span class="ml">Sugar</span><span class="mbar"><i id="bSugar"></i></span><span class="mv"><b id="tSugar">0</b> / 50 g limit</span></div>
+        <div class="micro" style="--mc:var(--amber)"><span class="ml">Sodium</span><span class="mbar"><i id="bSodium"></i></span><span class="mv"><b id="tSodium">0</b> / 2300 mg</span></div>
+      </div>
+      <div class="micro-h">Vitamins &amp; minerals</div>
+      <div class="micros">
+        <div class="micro" style="--mc:var(--amber)"><span class="ml">Vitamin D</span><span class="mbar"><i id="bVitd"></i></span><span class="mv"><b id="tVitd">0</b> / 20 µg</span></div>
+        <div class="micro" style="--mc:var(--good)"><span class="ml">Vitamin C</span><span class="mbar"><i id="bVitc"></i></span><span class="mv"><b id="tVitc">0</b> / 90 mg</span></div>
+        <div class="micro" style="--mc:var(--coral)"><span class="ml">Iron</span><span class="mbar"><i id="bIron"></i></span><span class="mv"><b id="tIron">0</b> / 18 mg</span></div>
+        <div class="micro" style="--mc:var(--accent)"><span class="ml">Calcium</span><span class="mbar"><i id="bCalcium"></i></span><span class="mv"><b id="tCalcium">0</b> / 1000 mg</span></div>
+        <div class="micro" style="--mc:var(--accent-deep)"><span class="ml">Potassium</span><span class="mbar"><i id="bPotassium"></i></span><span class="mv"><b id="tPotassium">0</b> / 3400 mg</span></div>
+        <div class="micro" style="--mc:var(--good)"><span class="ml">Magnesium</span><span class="mbar"><i id="bMagnesium"></i></span><span class="mv"><b id="tMagnesium">0</b> / 400 mg</span></div>
       </div>
     </div>
   </div>
@@ -191,11 +200,11 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   <!-- HYDRATION -->
   <div class="card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>Hydration</h2>
-    <div class="hint">Tap a cup as you drink — a full glass before each meal helps. Aim for 8 a day.</div>
+    <div class="hint">Tap a cup as you drink — a full glass before each meal helps. Aim for 12 a day.</div>
     <div class="hydro">
       <div class="hydro__v"><div class="hydro__f" id="waterFill"></div></div>
       <div class="hydro__b">
-        <div class="hydro__val"><span id="waterCups">0</span> of 8 <span>cups · <span id="waterOz">0</span> oz</span></div>
+        <div class="hydro__val"><span id="waterCups">0</span> of 12 <span>cups · <span id="waterOz">0</span> oz</span></div>
         <div class="hydro__cups" id="waterCupsRow"></div>
         <div class="hydro__ctrl"><button type="button" onclick="setWater(WATER-1)">–</button><button type="button" onclick="setWater(WATER+1)">+</button></div>
       </div>
@@ -336,12 +345,12 @@ function readDataURL(f){ return new Promise((res,rej)=>{ const r=new FileReader(
 function markCareTeam(box){ if(!box.querySelector('.tag')){ const t=document.createElement('span'); t.className='tag'; t.textContent='Sent to your care team'; box.appendChild(t); } }
 function estRow(it){
   const el=document.createElement('div'); el.className='off-item';
-  const meta=(it.portion?it.portion+' · ':'')+'~'+it.calories+' kcal · estimate';
+  const meta=(it.portion?it.portion+' · ':'')+'estimate';
   el.innerHTML='<div class="off-item__b"><div class="off-item__n">'+escH(it.name)+'</div><div class="off-item__m">'+escH(meta)+'</div>'
     +'<div class="est-macros">P <input type="number" min="0" value="'+it.protein+'"> C <input type="number" min="0" value="'+it.carbs+'"> F <input type="number" min="0" value="'+it.fat+'"></div></div>';
   const ins=el.querySelectorAll('.est-macros input');
   const b=document.createElement('button'); b.className='obtn go'; b.type='button'; b.textContent='Add';
-  b.onclick=()=>{ plateAdd(it.name,{cal:+it.calories||0,p:+ins[0].value||0,c:+ins[1].value||0,f:+ins[2].value||0,fiber:+it.fiber||0,sugar:+it.sugar||0,sodium:+it.sodium||0}); b.textContent='Added ✓'; b.disabled=true; };
+  b.onclick=()=>{ plateAdd(it.name,{p:+ins[0].value||0,c:+ins[1].value||0,f:+ins[2].value||0,fiber:+it.fiber||0,sugar:+it.sugar||0,sodium:+it.sodium||0,vitd:+it.vitd||0,vitc:+it.vitc||0,iron:+it.iron||0,calcium:+it.calcium||0,potassium:+it.potassium||0,magnesium:+it.magnesium||0}); b.textContent='Added ✓'; b.disabled=true; };
   el.appendChild(b); return el;
 }
 async function estimatePlate(e){
@@ -367,12 +376,16 @@ async function estimatePlate(e){
 
 /* ===== Nutrition tally — fuel vessels + nutrient bars ===== */
 const FOODS=[];
-const NUTRI={cal:0,p:0,c:0,f:0,fiber:0,sugar:0,sodium:0};
-const TARGET={cal:2000,p:90,c:225,f:65,fiber:28,sugar:50,sodium:2300};
+const MACROS=['p','c','f'];
+const MICROS=['fiber','sugar','sodium','vitd','vitc','iron','calcium','potassium','magnesium'];
+const KEYS=[...MACROS,...MICROS];
+const NUTRI={}; KEYS.forEach(k=>NUTRI[k]=0);
+const TARGET={p:90,c:225,f:65,fiber:28,sugar:50,sodium:2300,vitd:20,vitc:90,iron:18,calcium:1000,potassium:3400,magnesium:400};
 const R=x=>Math.round(x||0);
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
 function plateAdd(name,n){
   n=n||{}; FOODS.push(name);
-  ['cal','p','c','f','fiber','sugar','sodium'].forEach(k=>{ NUTRI[k]+=(+n[k]||0); });
+  KEYS.forEach(k=>{ NUTRI[k]+=(+n[k]||0); });
   renderFuel();
 }
 function renderFuel(){
@@ -381,24 +394,23 @@ function renderFuel(){
   const set=(id,v)=>{const e=document.getElementById(id); if(e) e.textContent=v;};
   const fill=(id,v,t)=>{const e=document.getElementById(id); if(e) e.style.height=Math.min(100,Math.round(v/t*100))+'%';};
   const bar=(id,v,t)=>{const e=document.getElementById(id); if(e) e.style.width=Math.min(100,Math.round(v/t*100))+'%';};
-  set('tCal',R(NUTRI.cal)); set('tP',R(NUTRI.p)); set('tC',R(NUTRI.c)); set('tF',R(NUTRI.f));
-  set('tFib',R(NUTRI.fiber)); set('tSug',R(NUTRI.sugar)); set('tSod',R(NUTRI.sodium));
-  fill('fCal',NUTRI.cal,TARGET.cal); fill('fP',NUTRI.p,TARGET.p); fill('fC',NUTRI.c,TARGET.c); fill('fF',NUTRI.f,TARGET.f);
-  bar('bFib',NUTRI.fiber,TARGET.fiber); bar('bSug',NUTRI.sugar,TARGET.sugar); bar('bSod',NUTRI.sodium,TARGET.sodium);
+  MACROS.forEach(k=>{ set('t'+k.toUpperCase(),R(NUTRI[k])); fill('f'+k.toUpperCase(),NUTRI[k],TARGET[k]); });
+  MICROS.forEach(k=>{ set('t'+cap(k),R(NUTRI[k])); bar('b'+cap(k),NUTRI[k],TARGET[k]); });
 }
 
 /* ===== Hydration tracker ===== */
+const WATER_GOAL=12;
 let WATER=0;
 function setWater(n){
-  WATER=Math.max(0,Math.min(12,n));
+  WATER=Math.max(0,Math.min(16,n));
   document.getElementById('waterCups').textContent=WATER;
   document.getElementById('waterOz').textContent=WATER*8;
-  document.getElementById('waterFill').style.height=Math.min(100,Math.round(WATER/8*100))+'%';
+  document.getElementById('waterFill').style.height=Math.min(100,Math.round(WATER/WATER_GOAL*100))+'%';
   [...document.querySelectorAll('#waterCupsRow .cup')].forEach((c,i)=>c.classList.toggle('on',i<WATER));
 }
 (function(){
   const row=document.getElementById('waterCupsRow'); if(!row) return;
-  for(let i=0;i<8;i++){ const c=document.createElement('button'); c.type='button'; c.className='cup'; c.onclick=()=>setWater(i+1===WATER?i:i+1); row.appendChild(c); }
+  for(let i=0;i<WATER_GOAL;i++){ const c=document.createElement('button'); c.type='button'; c.className='cup'; c.onclick=()=>setWater(i+1===WATER?i:i+1); row.appendChild(c); }
 })();
 
 /* ===== Open Food Facts — real food search + barcode lookup (free, no key) ===== */
@@ -410,15 +422,17 @@ function setWater(n){
   function row(p){
     const nu=p.nutriments||{};
     const pr=num(nu.proteins_100g), cb=num(nu.carbohydrates_100g), ft=num(nu.fat_100g);
-    const cal=num(nu['energy-kcal_100g']!=null?nu['energy-kcal_100g']:(nu.energy_100g?nu.energy_100g/4.184:0));
     const fib=num(nu.fiber_100g), sug=num(nu.sugars_100g);
     const sod=num(nu.sodium_100g!=null?nu.sodium_100g*1000:(nu.salt_100g!=null?nu.salt_100g*400:0)); // g→mg; salt→sodium
+    const g2mg=k=>num((nu[k+'_100g']||0)*1000);
+    const vitd=num((nu['vitamin-d_100g']||0)*1e6);      // g→µg
+    const vitc=g2mg('vitamin-c'), iron=g2mg('iron'), calcium=g2mg('calcium'), potassium=g2mg('potassium'), magnesium=g2mg('magnesium');
     const name=(p.product_name||'Unnamed food').trim();
     const brand=(p.brands||'').split(',')[0].trim();
     const el=document.createElement('div'); el.className='off-item';
-    el.innerHTML='<div class="off-item__b"><div class="off-item__n">'+esc(name)+(brand?' · <span style="font-weight:400;color:var(--ink-soft)">'+esc(brand)+'</span>':'')+'</div><div class="off-item__m">per 100g · '+cal+' kcal · '+pr+'g P · '+cb+'g C · '+ft+'g F</div></div>';
+    el.innerHTML='<div class="off-item__b"><div class="off-item__n">'+esc(name)+(brand?' · <span style="font-weight:400;color:var(--ink-soft)">'+esc(brand)+'</span>':'')+'</div><div class="off-item__m">per 100g · '+pr+'g P · '+cb+'g C · '+ft+'g F</div></div>';
     const b=document.createElement('button'); b.className='obtn go'; b.type='button'; b.textContent='Add 100g';
-    b.onclick=()=>{ plateAdd(name,{cal,p:pr,c:cb,f:ft,fiber:fib,sugar:sug,sodium:sod}); b.textContent='Added ✓'; b.disabled=true; };
+    b.onclick=()=>{ plateAdd(name,{p:pr,c:cb,f:ft,fiber:fib,sugar:sug,sodium:sod,vitd,vitc,iron,calcium,potassium,magnesium}); b.textContent='Added ✓'; b.disabled=true; };
     el.appendChild(b); return el;
   }
   async function search(){
@@ -481,8 +495,10 @@ async function saveAll(){
   if(meds.length) parts.push('Took: '+meds.join(', '));
   const devs=[...document.querySelectorAll('.dv.on .nm')].map(n=>n.childNodes[0].textContent.trim());
   if(devs.length) parts.push('Devices: '+devs.join(', '));
-  if(FOODS.length) parts.push('Food ('+FOODS.length+'): '+FOODS.join(', ')+` — ~${R(NUTRI.cal)} kcal, ${R(NUTRI.p)}g protein, ${R(NUTRI.c)}g carbs, ${R(NUTRI.f)}g fat, ${R(NUTRI.fiber)}g fiber, ${R(NUTRI.sugar)}g sugar, ${R(NUTRI.sodium)}mg sodium`);
-  if(WATER) parts.push(`Water: ${WATER} cups (${WATER*8} oz)`);
+  if(FOODS.length) parts.push('Food ('+FOODS.length+'): '+FOODS.join(', ')
+    +` — ~${R(NUTRI.p)}g protein, ${R(NUTRI.c)}g carbs, ${R(NUTRI.f)}g fat, ${R(NUTRI.fiber)}g fiber, ${R(NUTRI.sugar)}g sugar, ${R(NUTRI.sodium)}mg sodium`
+    +` · vitamins ~D ${R(NUTRI.vitd)}µg, C ${R(NUTRI.vitc)}mg, iron ${R(NUTRI.iron)}mg, calcium ${R(NUTRI.calcium)}mg, potassium ${R(NUTRI.potassium)}mg, magnesium ${R(NUTRI.magnesium)}mg`);
+  if(WATER) parts.push(`Water: ${WATER} of ${WATER_GOAL} cups (${WATER*8} oz)`);
   if(MEALS) parts.push(MEALS+' meal photo'+(MEALS>1?'s':'')+' logged');
   const summary=`${P.name} check-in — `+(parts.length?parts.join(' · '):'opened, nothing logged');
   done.hidden=false; done.textContent='Saving…';

@@ -63,12 +63,15 @@ Rules:
   {
     "items": [
       { "name": string, "portion": string, "grams": number,
-        "protein": number, "carbs": number, "fat": number, "calories": number,
-        "fiber": number, "sugar": number, "sodium": number }
+        "protein": number, "carbs": number, "fat": number,
+        "fiber": number, "sugar": number, "sodium": number,
+        "vitd": number, "vitc": number, "iron": number,
+        "calcium": number, "potassium": number, "magnesium": number }
     ],
     "note": string
   }
-- grams/protein/carbs/fat/fiber/sugar are grams; sodium is milligrams; calories is kcal. Use numbers (no units) and round to whole numbers.
+- Units: grams for protein/carbs/fat/fiber/sugar; milligrams for sodium, vitc, iron, calcium, potassium, magnesium; micrograms for vitd (vitamin D). Use numbers only (no units) and round to whole numbers.
+- Estimate vitamins/minerals from typical values for the foods you see; use 0 when a nutrient is negligible. Do NOT include calories.
 - Keep items to the distinct foods actually visible (typically 1–6). "note" must remind that these are photo estimates to confirm.`;
 
 exports.handler = async (event) => {
@@ -122,8 +125,10 @@ exports.handler = async (event) => {
           .map((it) => ({
             name: String(it.name).slice(0, 80).trim(),
             portion: String(it.portion || "").slice(0, 40).trim(),
-            grams: n(it.grams), protein: n(it.protein), carbs: n(it.carbs), fat: n(it.fat), calories: n(it.calories),
+            grams: n(it.grams), protein: n(it.protein), carbs: n(it.carbs), fat: n(it.fat),
             fiber: n(it.fiber), sugar: n(it.sugar), sodium: n(it.sodium),
+            vitd: n(it.vitd), vitc: n(it.vitc), iron: n(it.iron),
+            calcium: n(it.calcium), potassium: n(it.potassium), magnesium: n(it.magnesium),
           }))
       : [];
     const note = String(parsed.note || "These are photo estimates — please check and adjust.").slice(0, 240);
