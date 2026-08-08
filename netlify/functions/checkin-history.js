@@ -56,8 +56,12 @@ async function readOverride(pid, name, programLabel) {
       return nm && P.title((pg.properties || {})["Patient Name"]).trim().toLowerCase() === nm;
     });
     if (!mine.length) return {};
-    // Prefer a plan for this program, else the most recent.
-    const forProg = mine.find((pg) => P.sel((pg.properties || {})["Program"]) === programLabel);
+    // Prefer a plan for this program, else the most recent. Match leniently:
+    // Care Plans use "Flow"/"CharmEd Minds"/"Mind & Mood Recovery" while the
+    // check-in uses "Flow · Vascular"/"CharmEd"/"Mind & Mood" — compare on the
+    // first word so they still line up.
+    const firstWord = (s) => String(s || "").toLowerCase().split(/[^a-z]+/).filter(Boolean)[0] || "";
+    const forProg = mine.find((pg) => firstWord(P.sel((pg.properties || {})["Program"])) === firstWord(programLabel));
     const pick = forProg || mine[mine.length - 1];
     const raw = P.text((pick.properties || {})["Nutrition Targets (JSON)"]);
     if (!raw) return {};
