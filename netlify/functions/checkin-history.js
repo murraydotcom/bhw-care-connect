@@ -20,7 +20,7 @@
 
 const { json, queryDb, P, DB } = require("./_lib");
 
-const CHECKIN_DB = process.env.CHECKIN_DB_ID || "";
+const CHECKIN_DB = process.env.CHECKIN_DB_ID || DB.checkins;
 const CAREPLAN_DB = process.env.CAREPLAN_DB_ID || DB.carePlans;
 const MASTER_DB = process.env.MASTER_DB_ID || DB.masterList;
 const PROGRAMS = { primary: "Primary Care", flow: "Flow · Vascular", mind: "Mind & Mood", charmed: "CharmEd" };
