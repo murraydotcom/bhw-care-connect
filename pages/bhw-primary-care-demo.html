@@ -161,7 +161,7 @@ a.sys:hover{transform:translateY(-2px);box-shadow:0 16px 26px -16px rgba(30,55,5
     <div class="hd-logo"><img src="hm-assets/bhw-emblem.png" alt="BHW"><div><b>BHW Primary Care</b><span>Baltimore Healthcare &amp; Wellness</span></div></div>
     <div class="progs"><button class="on">Primary Care</button><button class="on">Mind &amp; Mood</button><button>CharmEd</button><button class="on">Flow</button></div>
     <div class="hd-r">
-      <button class="btn-msg"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 6.5l8 6 8-6"/></svg> Message the office</button>
+      <button class="btn-msg" onclick="openMsg()"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 6.5l8 6 8-6"/></svg> Message the office</button>
       <div class="srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg> Search</div>
       <div class="me"><div class="av">JR</div><div><b>Jordan Rivera</b><span>Patient · #10428</span></div></div>
     </div>
@@ -305,5 +305,60 @@ a.sys:hover{transform:translateY(-2px);box-shadow:0 16px 26px -16px rgba(30,55,5
   </div>
   </div>
 </div>
+
+<!-- Message the office (portal → Front Desk triage queue) -->
+<style>
+.msg-ov{position:fixed;inset:0;background:rgba(24,40,38,.44);backdrop-filter:blur(3px);display:grid;place-items:center;z-index:90;padding:20px}
+.msg-ov[hidden]{display:none}
+.msg-card{background:var(--card,#fffdfa);border:1px solid var(--line,#e7e6dd);border-radius:20px;max-width:440px;width:100%;padding:24px 24px 20px;box-shadow:0 40px 90px -40px rgba(20,40,36,.6);position:relative;font-family:inherit}
+.msg-card h3{font-family:'Nunito',inherit;font-weight:700;font-size:19px;color:var(--ink,#294049)}
+.msg-x{position:absolute;top:14px;right:16px;border:0;background:none;font-size:22px;line-height:1;color:var(--ink-mute,#9fa89e);cursor:pointer}
+.msg-sub{font-size:12px;color:var(--ink-soft,#6c7b74);margin:5px 0 15px;line-height:1.5}
+.msg-in{width:100%;font-family:inherit;font-size:14px;color:var(--ink,#294049);background:var(--soft,#f3f4ef);border:1px solid var(--line,#e7e6dd);border-radius:11px;padding:11px 13px;margin-bottom:9px;outline:none}
+.msg-in:focus{border-color:var(--teal,#5fa9a6)}
+textarea.msg-in{resize:vertical;min-height:84px}
+.msg-row{display:flex;gap:9px;justify-content:flex-end;margin-top:4px}
+.msg-cancel{background:none;border:1px solid var(--line,#e7e6dd);border-radius:999px;padding:10px 16px;font-family:inherit;font-weight:700;font-size:13px;color:var(--ink-soft,#6c7b74);cursor:pointer}
+.msg-send{background:linear-gradient(135deg,var(--teal,#5fa9a6),var(--teal-deep,#4a8a87));border:0;border-radius:999px;padding:10px 20px;font-family:inherit;font-weight:700;font-size:13px;color:#fff;cursor:pointer;box-shadow:0 12px 20px -12px rgba(74,138,135,.8)}
+.msg-send:disabled{opacity:.6}
+.msg-note{font-size:12px;color:var(--ink-soft,#6c7b74);margin-top:10px;min-height:16px;font-weight:600}
+</style>
+<div id="msgModal" class="msg-ov" hidden>
+  <div class="msg-card" role="dialog" aria-modal="true" aria-labelledby="msgT">
+    <button class="msg-x" onclick="closeMsg()" aria-label="Close">&times;</button>
+    <h3 id="msgT">Message the office</h3>
+    <p class="msg-sub">Your care team sees this at the front desk and will follow up. For anything urgent or an emergency, call 911 or the office directly.</p>
+    <form id="msgForm" onsubmit="return sendMsg(event)">
+      <input class="msg-in" id="msgName" placeholder="Your name" autocomplete="name" value="Jordan Rivera">
+      <input class="msg-in" id="msgPhone" placeholder="Best callback number" autocomplete="tel" inputmode="tel" value="940-637-5470">
+      <textarea class="msg-in" id="msgBody" placeholder="How can we help?" required></textarea>
+      <input type="text" id="msgHp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">
+      <div class="msg-row"><button type="button" class="msg-cancel" onclick="closeMsg()">Cancel</button><button type="submit" class="msg-send" id="msgSend">Send</button></div>
+      <div class="msg-note" id="msgNote"></div>
+    </form>
+  </div>
+</div>
+<script>
+// Front Desk lives on the crewOS deploy; the portal message crosses origins to it.
+const OFFICE_API='https://bhwcrewos.netlify.app/.netlify/functions/portal-message';
+function openMsg(){document.getElementById('msgModal').hidden=false;document.getElementById('msgBody').focus();}
+function closeMsg(){document.getElementById('msgModal').hidden=true;}
+document.addEventListener('keydown',e=>{if(e.key==='Escape')closeMsg();});
+async function sendMsg(e){
+  e.preventDefault();
+  var note=document.getElementById('msgNote'), btn=document.getElementById('msgSend');
+  var payload={name:document.getElementById('msgName').value.trim(),phone:document.getElementById('msgPhone').value.trim(),message:document.getElementById('msgBody').value.trim(),hp:document.getElementById('msgHp').value};
+  if(!payload.message){note.textContent='Please enter a message.';return false;}
+  btn.disabled=true;note.textContent='Sending…';
+  try{
+    var r=await fetch(OFFICE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+    var d=await r.json().catch(function(){return {};});
+    if(r.ok&&d.ok){note.textContent='Sent — your care team will follow up. ✓';document.getElementById('msgBody').value='';setTimeout(closeMsg,1500);}
+    else{note.textContent=d.error||'Couldn’t send right now — please call the office.';}
+  }catch(err){note.textContent='Couldn’t send right now — please call the office.';}
+  btn.disabled=false;return false;
+}
+</script>
+
 </body>
 </html>
