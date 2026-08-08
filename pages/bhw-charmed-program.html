@@ -170,9 +170,17 @@ a.sys:hover{transform:translateY(-2px);box-shadow:0 16px 26px -16px rgba(30,55,5
   <div class="grid">
     <!-- LEFT: 3 cards -->
     <aside class="col">
-      <div class="card checkin" onclick="openCheckin()" style="cursor:pointer">
-        <div class="e">Today</div><h3>Daily check-in</h3><p>Under a minute — goes straight to your care team.</p>
-        <div class="go"><span>Start check-in</span><span>→</span></div>
+      <div class="card qci">
+        <div class="qci-h"><span class="e">Today</span><b>Quick check-in</b></div>
+        <div class="qci-b">
+          <div class="qrow"><span class="ql">Feeling</span><div class="qopts faces" data-q="Feeling"><button type="button" data-v="Rough">😣</button><button type="button" data-v="Low">🙁</button><button type="button" data-v="OK">😐</button><button type="button" data-v="Good">🙂</button><button type="button" data-v="Great">😄</button></div></div>
+          <div class="qrow"><span class="ql">Sleep</span><div class="qopts" data-q="Sleep"><button type="button">Rough</button><button type="button">OK</button><button type="button">Good</button><button type="button">Great</button></div></div>
+          <div class="qrow"><span class="ql">Connection</span><div class="qopts" data-q="People"><button type="button">None</button><button type="button">A little</button><button type="button">Real time</button></div></div>
+          <div class="qrow"><span class="ql">Water</span><div class="qopts" data-q="Water"><button type="button">&lt;4</button><button type="button">4–6</button><button type="button">6–8</button><button type="button">8+</button></div></div>
+          <div class="qrow"><span class="ql">Nutrition 24h</span><div class="qopts" data-q="Nutrition"><button type="button">Off</button><button type="button">Some</button><button type="button">Most</button><button type="button">On plan</button></div></div>
+          <div class="qsaved" id="qsaved"></div>
+          <a class="qmore" href="bhw-checkin.html?program=charmed"><span>Add detail · scan food · vitals · devices</span><span>→</span></a>
+        </div>
       </div>
 
       <div class="card pt">
@@ -359,104 +367,42 @@ async function sendMsg(e){
 </script>
 
 
-<!-- Daily check-in (patient portal → care team) -->
+
 <style>
-.ci-ov{position:fixed;inset:0;background:rgba(24,40,38,.5);backdrop-filter:blur(3px);display:grid;place-items:center;z-index:95;padding:18px;overflow:auto}
-.ci-ov[hidden]{display:none}
-.ci-card{background:var(--card,#fffdfa);border:1px solid var(--line,#e7e6dd);border-radius:22px;max-width:460px;width:100%;padding:22px 22px 20px;box-shadow:0 40px 90px -40px rgba(20,40,36,.6);position:relative;font-family:inherit;max-height:92vh;overflow:auto}
-.ci-x{position:absolute;top:14px;right:16px;border:0;background:none;font-size:23px;line-height:1;color:var(--ink-mute,#9fa89e);cursor:pointer}
-.ci-hd h3{font-family:'Nunito',inherit;font-weight:700;font-size:20px;color:var(--ink,#294049)}
-.ci-hd span{font-size:11.5px;color:var(--ink-soft,#6c7b74);display:block;margin-top:2px}
-.ci-scan{display:flex;align-items:center;gap:13px;border:1.5px dashed var(--line,#dcd9cf);border-radius:13px;padding:13px 15px;cursor:pointer;margin-top:16px}
-.ci-scan:hover{border-color:var(--sage,#5fa9a6)}
-.ci-scan .ico{width:44px;height:44px;border-radius:11px;background:var(--sage-quiet,rgba(120,195,191,.16));color:var(--sage-deep,#4a8a87);display:grid;place-items:center;flex-shrink:0}
-.ci-scan .ico svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
-.ci-scan .t{flex:1}.ci-scan .t b{font-size:14px;color:var(--ink,#294049);display:block}.ci-scan .t i{font-style:normal;font-size:11.5px;color:var(--ink-soft,#6c7b74)}
-.ci-scan .go{font-size:12px;font-weight:800;color:var(--sage-deep,#4a8a87);white-space:nowrap}
-.ci-shot{display:flex;align-items:center;gap:11px;margin-top:11px;font-size:12.5px;font-weight:700;color:#5f9a6b}
-.ci-shot[hidden]{display:none}.ci-shot img{width:50px;height:50px;object-fit:cover;border-radius:10px;border:1px solid var(--line,#e7e6dd)}
-.ci-q{margin-top:16px;display:flex;flex-direction:column;gap:14px}
-.ci-row .lbl{font-size:13px;font-weight:700;color:var(--ink,#294049);display:block;margin-bottom:7px}
-.ci-row .lbl em{font-style:normal;font-weight:400;color:var(--ink-soft,#6c7b74);font-size:11.5px}
-.ci-opts{display:flex;gap:7px;flex-wrap:wrap}
-.ci-opts button{font-family:inherit;font-size:12px;border:1px solid var(--line,#e7e6dd);background:var(--soft,#f3f4ef);border-radius:99px;padding:7px 13px;cursor:pointer;color:var(--ink,#294049)}
-.ci-opts button:hover{border-color:var(--sage,#5fa9a6)}
-.ci-opts button.sel{background:var(--sage,#5fa9a6);border-color:var(--sage,#5fa9a6);color:#fff}
-.ci-save{margin-top:18px;width:100%;background:linear-gradient(135deg,var(--sage,#5fa9a6),var(--sage-deep,#4a8a87));border:0;border-radius:12px;padding:13px;font-family:inherit;font-weight:800;font-size:14px;color:#fff;cursor:pointer}
-.ci-save:disabled{opacity:.6}
-.ci-done{margin-top:11px;font-size:12.5px;font-weight:700;color:#5f9a6b;text-align:center}.ci-done[hidden]{display:none}
+/* inline quick check-in */
+.qci{padding:0;overflow:hidden}
+.qci-h{background:linear-gradient(135deg,var(--sage),var(--sage-deep));color:#fff;padding:12px 15px}
+.qci-h .e{font-size:9px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;opacity:.82;display:block;margin-bottom:1px}
+.qci-h b{font-family:'Nunito',inherit;font-size:15px}
+.qci-b{padding:11px 15px 13px}
+.qrow{display:flex;align-items:center;gap:9px;padding:6px 0;border-bottom:1px solid var(--line-2)}
+.qrow:last-of-type{border-bottom:0}
+.qrow .ql{font-size:11px;font-weight:700;color:var(--ink-soft);width:70px;flex-shrink:0}
+.qopts{display:flex;gap:5px;flex-wrap:wrap}
+.qopts button{font-family:inherit;font-size:10.5px;border:1px solid var(--line);background:var(--soft,#f3f4ef);border-radius:99px;padding:4px 9px;cursor:pointer;color:var(--ink)}
+.qopts button:hover{border-color:var(--sage)}
+.qopts button.sel{background:var(--sage);border-color:var(--sage);color:#fff}
+.qopts.faces button{font-size:15px;padding:2px 4px;border:0;background:none;filter:grayscale(.55);opacity:.55}
+.qopts.faces button.sel{filter:none;opacity:1;transform:scale(1.16)}
+.qsaved{font-size:10.5px;font-weight:700;color:var(--ok,#5f9a6b);margin-top:8px;min-height:13px}
+.qmore{display:flex;align-items:center;justify-content:space-between;margin-top:9px;background:var(--sage-quiet,rgba(120,195,191,.15));color:var(--sage-ink,#356b68);border-radius:10px;padding:10px 12px;font-weight:800;font-size:11.5px;text-decoration:none}
+.qmore:hover{filter:brightness(.97)}
 </style>
-<div id="ciModal" class="ci-ov" hidden>
-  <div class="ci-card">
-    <button class="ci-x" onclick="closeCheckin()" aria-label="Close">&times;</button>
-    <div class="ci-hd"><h3>Today's check-in</h3><span>Under a minute — goes straight to your care team.</span></div>
-    <label class="ci-scan" for="ciPlate">
-      <span class="ico"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>
-      <span class="t"><b>Snap your plate</b><i>Photo your meal — we'll break down the nutrients</i></span>
-      <span class="go">Open camera →</span>
-      <input id="ciPlate" type="file" accept="image/*" capture="environment" hidden onchange="ciPlate(event)">
-    </label>
-    <div class="ci-shot" id="ciShot" hidden><img id="ciShotImg" alt="Your meal"><span>Got it — sent to your care team to break down.</span></div>
-    <div class="ci-q" id="ciQ"></div>
-    <button class="ci-save" onclick="saveCheckin()">Save today&rsquo;s check-in</button>
-    <div class="ci-done" id="ciDone" hidden>Saved — thank you. Your care team sees this.</div>
-  </div>
-</div>
+
 <script>
-// Care-plan-driven check-in items. In the real portal this list is built from
-// what the patient's care plan asks them to track; edit per program as needed.
-const CHECKIN=[
-  {q:'How are you feeling today?', key:'Feeling', opts:['Rough','Low','OK','Good','Great']},
-  {q:'Any symptoms today?', key:'Symptoms', multi:true, opts:['None','Fatigue','Headache','Pain','Bloating','Low mood','Anxious','Other']},
-  {q:'How was your sleep?', key:'Sleep', opts:['Rough','OK','Good','Great']},
-  {q:'Time outside?', key:'Outside', opts:['None','A little','A walk','30+ min']},
-  {q:'Time with people you care about?', key:'People', opts:['None','A little','Real time']},
-  {q:'Took your vitamins? <em>iron · vitamin D</em>', key:'Vitamins', opts:['Yes','Not yet']},
-  {q:'Moved your body?', key:'Movement', opts:['Not yet','10 min','20 min','30+ min']},
-];
-const CI_STATE={}; let CI_PLATE=false;
-function openCheckin(){ renderCheckin(); document.getElementById('ciModal').hidden=false; }
-function closeCheckin(){ document.getElementById('ciModal').hidden=true; }
-document.addEventListener('keydown',e=>{ if(e.key==='Escape') closeCheckin(); });
-function renderCheckin(){
-  document.getElementById('ciQ').innerHTML=CHECKIN.map((it,i)=>`
-    <div class="ci-row"><span class="lbl">${it.q}</span>
-      <div class="ci-opts" data-i="${i}">${it.opts.map(o=>`<button type="button" onclick="ciPick(${i},'${o.replace(/'/g,"\\'")}',${!!it.multi})">${o}</button>`).join('')}</div>
-    </div>`).join('');
-}
-function ciPick(i,val,multi){
-  const it=CHECKIN[i], wrap=document.querySelector(`.ci-opts[data-i="${i}"]`);
-  if(multi){
-    const set=new Set(CI_STATE[it.key]||[]);
-    set.has(val)?set.delete(val):set.add(val);
-    CI_STATE[it.key]=[...set];
-    [...wrap.children].forEach(b=>b.classList.toggle('sel', set.has(b.textContent)));
-  } else {
-    CI_STATE[it.key]=val;
-    [...wrap.children].forEach(b=>b.classList.toggle('sel', b.textContent===val));
-  }
-}
-function ciPlate(e){
-  const f=e.target.files&&e.target.files[0]; if(!f) return;
-  CI_PLATE=true;
-  const img=document.getElementById('ciShotImg'); img.src=URL.createObjectURL(f);
-  document.getElementById('ciShot').hidden=false;
-}
-async function saveCheckin(){
-  const done=document.getElementById('ciDone');
-  const parts=CHECKIN.map(it=>{ const v=CI_STATE[it.key]; if(!v||(Array.isArray(v)&&!v.length)) return null; return `${it.key}: ${Array.isArray(v)?v.join(', '):v}`; }).filter(Boolean);
-  if(CI_PLATE) parts.push('Meal photo logged');
-  const summary='Daily check-in — '+(parts.length?parts.join(' · '):'opened, nothing logged');
-  done.hidden=false; done.textContent='Saving…';
-  try{
-    // Reuse the office endpoint so the check-in reaches the care team / triage queue.
-    if(typeof OFFICE_API==='string'){
-      await fetch(OFFICE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'Jordan Rivera',phone:'940-637-5470',message:summary})});
-    }
-    done.textContent='Saved — thank you. Your care team sees this. ✓';
-    setTimeout(closeCheckin,1600);
-  }catch(err){ done.textContent='Saved on your device — will sync when you\u2019re back online.'; }
-}
+// Inline quick check-in — fast tap-log; opens the full page for detail, food
+// scan, vitals and device connections.
+(function(){
+  document.querySelectorAll('.qci .qopts[data-q]').forEach(function(wrap){
+    wrap.querySelectorAll('button').forEach(function(b){
+      b.addEventListener('click',function(){
+        [].forEach.call(wrap.children,function(x){x.classList.remove('sel');});
+        b.classList.add('sel');
+        var n=document.getElementById('qsaved'); if(n) n.textContent='Logged ✓ — your care team sees this.';
+      });
+    });
+  });
+})();
 </script>
 
 </body>

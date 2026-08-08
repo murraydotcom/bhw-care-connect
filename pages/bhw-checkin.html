@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your check-in — BHW Care Connect</title>
+<style>
+@font-face{font-family:'Nunito';src:url('fonts/Nunito/Nunito-VariableFont_wght.ttf') format('truetype');font-weight:300 900;font-display:swap}
+@font-face{font-family:'OpenSans';src:url('fonts/Open_Sans/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');font-weight:300 800;font-display:swap}
+:root{
+  --ink:#294049; --ink-soft:#6c7b74; --ink-mute:#9fa89e; --line:#e7e6dd; --line-2:#eef0ec;
+  --card:#fffdfa; --soft:#f3f4ef; --bg1:#d8ece7; --bg2:#e8dfd2;
+  --accent:#5fa9a6; --accent-deep:#4a8a87; --accent-quiet:rgba(120,195,191,.16);
+  --ok:#5f9a6b; --gold:#c79a3e; --alert:#b06450;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px;line-height:1.5;
+  background:radial-gradient(1000px 620px at 12% -8%,var(--bg1),transparent 60%),radial-gradient(1000px 700px at 100% 116%,var(--bg2),transparent 55%),linear-gradient(160deg,#e6f0ec,#f3f1ea);
+  min-height:100vh;padding:22px 16px 60px}
+.wrap{max-width:680px;margin:0 auto}
+
+.top{display:flex;align-items:center;gap:13px;margin-bottom:16px}
+.top .mk{width:40px;height:40px;border-radius:11px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;flex-shrink:0}
+.top h1{font-family:'Nunito';font-weight:700;font-size:20px}
+.top .sub{font-size:11.5px;color:var(--ink-soft)}
+.top .back{margin-left:auto;font-size:12px;font-weight:700;color:var(--ink-soft);text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 13px}
+.top .back:hover{border-color:var(--accent)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 12px 30px -24px rgba(30,55,50,.5)}
+.card > h2{font-family:'Nunito';font-weight:700;font-size:16px;display:flex;align-items:center;gap:9px;margin-bottom:4px}
+.card > h2 .ic{width:28px;height:28px;border-radius:8px;background:var(--accent-quiet);color:var(--accent-deep);display:grid;place-items:center}
+.card > h2 .ic svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.card > .hint{font-size:11.5px;color:var(--ink-soft);margin-bottom:12px}
+
+/* food scanner */
+.scan{display:flex;align-items:center;gap:14px;border:1.6px dashed var(--line);border-radius:14px;padding:16px;cursor:pointer}
+.scan:hover{border-color:var(--accent)}
+.scan .ico{width:52px;height:52px;border-radius:12px;background:var(--accent-quiet);color:var(--accent-deep);display:grid;place-items:center;flex-shrink:0}
+.scan .ico svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.scan .t{flex:1}.scan .t b{font-size:15px;display:block}.scan .t i{font-style:normal;font-size:12px;color:var(--ink-soft)}
+.scan .go{font-size:12.5px;font-weight:800;color:var(--accent-deep)}
+.meals{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.meals img{width:64px;height:64px;object-fit:cover;border-radius:11px;border:1px solid var(--line)}
+.meals .tag{display:flex;align-items:center;gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:11px;padding:0 12px;font-size:11.5px;font-weight:700;color:var(--ok)}
+
+/* quick rows */
+.q{padding:12px 0;border-bottom:1px solid var(--line-2)}.q:last-child{border-bottom:0}
+.q .lbl{font-size:13.5px;font-weight:700;margin-bottom:9px}.q .lbl em{font-style:normal;font-weight:400;color:var(--ink-soft);font-size:11.5px}
+.opts{display:flex;gap:7px;flex-wrap:wrap}
+.opts button{font-family:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--soft);border-radius:99px;padding:8px 14px;cursor:pointer;color:var(--ink)}
+.opts button:hover{border-color:var(--accent)}
+.opts button.sel{background:var(--accent);border-color:var(--accent);color:#fff}
+.faces button{font-size:20px;width:44px;padding:6px 0;text-align:center}
+
+/* compliance checklist */
+.chk{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-2)}.chk:last-child{border-bottom:0}
+.chk .box{width:24px;height:24px;border:2px solid #cdd6d3;border-radius:8px;display:grid;place-items:center;cursor:pointer;flex-shrink:0;background:#fff}
+.chk .box svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.chk.on .box{background:var(--ok);border-color:var(--ok)}.chk.on .box svg{opacity:1}
+.chk .nm{font-size:13.5px;font-weight:700}.chk .nm span{display:block;font-weight:400;font-size:11.5px;color:var(--ink-soft)}
+
+/* vitals grid */
+.vitals{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px}
+.vt{background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:11px 12px}
+.vt .k{font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-mute);display:flex;align-items:center;gap:6px}
+.vt .k svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
+.vt input{width:100%;border:0;background:none;font-family:'Nunito';font-weight:700;font-size:20px;color:var(--ink);margin-top:5px;outline:none}
+.vt input::placeholder{color:#c7cdc9;font-weight:700}
+.vt .u{font-size:11px;color:var(--ink-mute);font-weight:600}
+
+/* devices */
+.dev{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px}
+.dv{display:flex;align-items:center;gap:11px;background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:11px 12px;cursor:pointer}
+.dv:hover{border-color:var(--accent)}
+.dv .lg{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-family:'Nunito';font-weight:800;font-size:14px;color:#fff;flex-shrink:0}
+.dv .nm{font-size:12.5px;font-weight:700;line-height:1.2}.dv .nm span{display:block;font-size:10.5px;font-weight:600;color:var(--ink-soft)}
+.dv .st{margin-left:auto;font-size:10.5px;font-weight:800;color:var(--accent-deep)}
+.dv.on{border-color:var(--ok);background:#eef5ee}.dv.on .st{color:var(--ok)}
+
+.save{position:sticky;bottom:14px;margin-top:6px}
+.save button{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent-deep));border:0;border-radius:14px;padding:16px;font-family:inherit;font-weight:800;font-size:15px;color:#fff;cursor:pointer;box-shadow:0 16px 30px -14px rgba(74,138,135,.8)}
+.done{margin-top:11px;text-align:center;font-size:12.5px;font-weight:700;color:var(--ok)}.done[hidden]{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="mk"><svg viewBox="0 0 48 48" width="24" height="24"><path d="M10 24h6l3-8 5 16 4-8h10" fill="none" stroke="#4a8a87" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div>
+      <h1>Today&rsquo;s check-in</h1>
+      <div class="sub" id="sub">Log as much or as little as you like — it goes to your care team.</div>
+    </div>
+    <a class="back" id="back" href="bhw-primary-care-demo.html">← Back</a>
+  </div>
+
+  <!-- FOOD -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>Food &amp; nutrition</h2>
+    <div class="hint">Snap each meal — we break down the nutrients and track it against your nutrition plan.</div>
+    <label class="scan" for="plate">
+      <span class="ico"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>
+      <span class="t"><b>Snap your plate</b><i>Breakfast, lunch, dinner or a snack</i></span>
+      <span class="go">Open camera →</span>
+      <input id="plate" type="file" accept="image/*" capture="environment" hidden multiple onchange="addMeal(event)">
+    </label>
+    <div class="meals" id="meals"></div>
+    <div class="q" style="border-top:1px solid var(--line-2);margin-top:6px">
+      <div class="lbl">Nutrition plan — last 24 hours</div>
+      <div class="opts" data-q="Nutrition"><button type="button">Off track</button><button type="button">Some of it</button><button type="button">Mostly</button><button type="button">On plan</button></div>
+    </div>
+  </div>
+
+  <!-- HOW YOU'RE DOING -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></span>How you&rsquo;re doing</h2>
+    <div class="q"><div class="lbl">How are you feeling today?</div><div class="opts faces" data-q="Feeling"><button type="button" data-v="Rough">😣</button><button type="button" data-v="Low">🙁</button><button type="button" data-v="OK">😐</button><button type="button" data-v="Good">🙂</button><button type="button" data-v="Great">😄</button></div></div>
+    <div class="q"><div class="lbl">Motivation</div><div class="opts" data-q="Motivation"><button type="button">Empty</button><button type="button">Low</button><button type="button">Steady</button><button type="button">Strong</button></div></div>
+    <div class="q"><div class="lbl">How was your sleep? <em>hours &amp; quality</em></div><div class="opts" data-q="Sleep"><button type="button">Rough</button><button type="button">OK</button><button type="button">Good</button><button type="button">Great</button></div></div>
+    <div class="q"><div class="lbl">Moved your body?</div><div class="opts" data-q="Movement"><button type="button">Not yet</button><button type="button">10 min</button><button type="button">20 min</button><button type="button">30+ min</button><button type="button">Workout</button></div></div>
+    <div class="q"><div class="lbl">Time outside?</div><div class="opts" data-q="Outside"><button type="button">None</button><button type="button">A little</button><button type="button">A walk</button><button type="button">30+ min</button></div></div>
+    <div class="q"><div class="lbl">Time with people you care about?</div><div class="opts" data-q="People"><button type="button">None</button><button type="button">A little</button><button type="button">Real time</button></div></div>
+    <div class="q"><div class="lbl">Water</div><div class="opts" data-q="Water"><button type="button">Under 4</button><button type="button">4–6</button><button type="button">6–8</button><button type="button">8+ cups</button></div></div>
+  </div>
+
+  <!-- SYMPTOMS (program-specific) -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></span>Symptoms <span id="symProg" style="font-size:11px;font-weight:600;color:var(--ink-soft)"></span></h2>
+    <div class="hint">Tap anything you&rsquo;ve noticed today — this is tailored to your program.</div>
+    <div class="opts" id="symptoms" data-q="Symptoms" data-multi="1"></div>
+  </div>
+
+  <!-- MEDICATION / VITAMIN COMPLIANCE -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M10.5 20.5 4 14a5 5 0 0 1 7-7l6.5 6.5a5 5 0 0 1-7 7z"/><path d="M7.5 7.5 16 16"/></svg></span>Medications &amp; vitamins</h2>
+    <div class="hint">Check off what you&rsquo;ve taken — straight from your care plan.</div>
+    <div id="meds"></div>
+  </div>
+
+  <!-- VITALS -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 14h4l2 5 4-10 2 5h4"/></svg></span>Vital signs</h2>
+    <div class="hint">Enter any you have — or connect a device below and these fill in for you.</div>
+    <div class="vitals">
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><path d="M4 14h3l2 4 3-8 2 4h6"/></svg>Blood pressure</div><input id="v_bp" inputmode="text" placeholder="120/80"><span class="u">mmHg</span></div>
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg>Heart rate</div><input id="v_hr" inputmode="numeric" placeholder="—"><span class="u">bpm</span></div>
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><path d="M12 3v6M8 21a4 4 0 0 1 8 0"/><circle cx="12" cy="13" r="3"/></svg>Weight</div><input id="v_wt" inputmode="decimal" placeholder="—"><span class="u">lb</span></div>
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/></svg>Glucose</div><input id="v_glu" inputmode="numeric" placeholder="—"><span class="u">mg/dL</span></div>
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><path d="M12 3v9M12 12a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>Temp</div><input id="v_temp" inputmode="decimal" placeholder="—"><span class="u">°F</span></div>
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>O₂ sat</div><input id="v_o2" inputmode="numeric" placeholder="—"><span class="u">%</span></div>
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><path d="M4 20l4-4 3 3 5-6 4 4"/></svg>Steps</div><input id="v_steps" inputmode="numeric" placeholder="—"><span class="u">today</span></div>
+    </div>
+  </div>
+
+  <!-- DEVICES -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="3"/><path d="M11 6h2"/></svg></span>Connect your devices</h2>
+    <div class="hint">Link a device once and your vitals, glucose, sleep and steps sync automatically.</div>
+    <div class="dev" id="devices"></div>
+  </div>
+
+  <div class="save">
+    <button onclick="saveAll()">Save today&rsquo;s check-in</button>
+    <div class="done" id="done" hidden>Saved — thank you. Your care team sees this. ✓</div>
+  </div>
+
+</div>
+
+<script>
+// Reuse the office endpoint (same one the "Message the office" button uses) so
+// the check-in reaches the care team / triage queue.
+const OFFICE_API='https://bhwcrewos.netlify.app/.netlify/functions/portal-message';
+
+const PROGRAMS={
+  primary:{name:'Primary Care', back:'bhw-primary-care-demo.html', accent:'#5fa9a6', deep:'#4a8a87',
+    symptoms:['Fatigue','Headache','Dizziness','Chest tightness','Shortness of breath','Joint pain','Digestive upset','Low mood','Poor sleep','Other'],
+    meds:[['Rosuvastatin 10 mg','Nightly · cholesterol'],['Vitamin D3 + K2','Daily'],['Iron','Every other morning, with vitamin C']]},
+  flow:{name:'Flow · Vascular', back:'bhw-flow-program.html', accent:'#5f93bd', deep:'#436f92',
+    symptoms:['Leg cramps','Cold hands/feet','Swelling','Chest tightness','Shortness of breath','Palpitations','Dizziness','Fatigue','Headache','Other'],
+    meds:[['Icosapent ethyl 2 g','Twice daily · triglycerides'],['Rosuvastatin 10 mg','Nightly'],['Vitamin D3 + K2','Daily'],['Omega-3','Daily']]},
+  mind:{name:'Mind & Mood', back:'bhw-mindmood-program.html', accent:'#e0965c', deep:'#b9713a',
+    symptoms:['Low mood','Anxiety','Irritability','Poor sleep','Low motivation','Racing thoughts','Cravings','Fatigue','Appetite change','Other'],
+    meds:[['Methyl-B12','Morning'],['Vitamin D3','Daily'],['Magnesium glycinate','Evening'],['Omega-3','Daily']]},
+  charmed:{name:'CharmEd', back:'bhw-charmed-program.html', accent:'#3aa79b', deep:'#2c7f76',
+    symptoms:['Brain fog','Memory slips','Word-finding','Poor focus','Low mood','Poor sleep','Fatigue','Headache','Other'],
+    meds:[['Methyl-B12','Morning'],['Vitamin D3','Daily'],['Omega-3','Daily'],['Magnesium threonate','Evening']]},
+};
+const DEVICES=[
+  ['Dexcom','CGM · glucose','#1a9c4a','DX'],
+  ['Apple Health','iPhone · Watch','#222','AH'],
+  ['Google Fit','Android','#4285f4','GF'],
+  ['Fitbit','Activity · sleep','#00b0b9','FB'],
+  ['Oura','Ring · sleep · HRV','#4b4f8a','OU'],
+  ['Withings','BP · scale','#20c1c9','WI'],
+];
+
+const params=new URLSearchParams(location.search);
+const P=PROGRAMS[params.get('program')]||PROGRAMS.primary;
+document.documentElement.style.setProperty('--accent',P.accent);
+document.documentElement.style.setProperty('--accent-deep',P.deep);
+document.getElementById('sub').textContent=P.name+' · log as much or as little as you like — it goes to your care team.';
+const back=document.getElementById('back'); back.href=P.back;
+document.getElementById('symProg').textContent='· '+P.name;
+
+// symptoms (program-specific, multi-select)
+document.getElementById('symptoms').innerHTML=P.symptoms.map(s=>`<button type="button">${s}</button>`).join('');
+// meds checklist
+document.getElementById('meds').innerHTML=P.meds.map((m,i)=>`<div class="chk" data-med="${i}" onclick="this.classList.toggle('on')"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span class="nm">${m[0]}<span>${m[1]}</span></span></div>`).join('');
+// devices
+document.getElementById('devices').innerHTML=DEVICES.map((d,i)=>`<div class="dv" data-dev="${i}" onclick="this.classList.toggle('on');this.querySelector('.st').textContent=this.classList.contains('on')?'Connected ✓':'Connect'"><span class="lg" style="background:${d[2]}">${d[3]}</span><span class="nm">${d[0]}<span>${d[1]}</span></span><span class="st">Connect</span></div>`).join('');
+
+const STATE={}; let MEALS=0;
+// single / multi option pickers
+document.querySelectorAll('.opts[data-q]').forEach(wrap=>{
+  const key=wrap.dataset.q, multi=wrap.dataset.multi;
+  wrap.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const val=b.dataset.v||b.textContent;
+      if(multi){ b.classList.toggle('sel'); const set=new Set(STATE[key]||[]); set.has(val)?set.delete(val):set.add(val); STATE[key]=[...set]; }
+      else { [...wrap.children].forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); STATE[key]=val; }
+    });
+  });
+});
+function addMeal(e){
+  const box=document.getElementById('meals');
+  [...(e.target.files||[])].forEach(f=>{ const img=document.createElement('img'); img.src=URL.createObjectURL(f); box.appendChild(img); MEALS++; });
+  if(MEALS && !box.querySelector('.tag')){ const t=document.createElement('span'); t.className='tag'; t.textContent='Sent to your care team'; box.appendChild(t); }
+}
+async function saveAll(){
+  const done=document.getElementById('done');
+  const parts=[];
+  Object.entries(STATE).forEach(([k,v])=>{ if(v&&(!Array.isArray(v)||v.length)) parts.push(`${k}: ${Array.isArray(v)?v.join(', '):v}`); });
+  const vt={BP:'v_bp',HR:'v_hr',Weight:'v_wt',Glucose:'v_glu',Temp:'v_temp',O2:'v_o2',Steps:'v_steps'};
+  Object.entries(vt).forEach(([k,id])=>{ const val=document.getElementById(id).value.trim(); if(val) parts.push(`${k}: ${val}`); });
+  const meds=[...document.querySelectorAll('.chk.on .nm')].map(n=>n.childNodes[0].textContent.trim());
+  if(meds.length) parts.push('Took: '+meds.join(', '));
+  const devs=[...document.querySelectorAll('.dv.on .nm')].map(n=>n.childNodes[0].textContent.trim());
+  if(devs.length) parts.push('Devices: '+devs.join(', '));
+  if(MEALS) parts.push(MEALS+' meal photo'+(MEALS>1?'s':'')+' logged');
+  const summary=`${P.name} check-in — `+(parts.length?parts.join(' · '):'opened, nothing logged');
+  done.hidden=false; done.textContent='Saving…';
+  try{
+    await fetch(OFFICE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'Jordan Rivera',phone:'940-637-5470',message:summary})});
+    done.textContent='Saved — thank you. Your care team sees this. ✓';
+  }catch(err){ done.textContent='Saved on your device — will sync when you’re back online.'; }
+}
+</script>
+</body>
+</html>
