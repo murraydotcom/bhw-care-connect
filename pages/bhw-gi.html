@@ -1,0 +1,396 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BHW Care Connect — Digestive (GI)</title>
+<style>
+@font-face{font-family:'Nunito';src:url('fonts/Nunito/Nunito-VariableFont_wght.ttf') format('truetype');font-weight:300 900;font-display:swap}
+@font-face{font-family:'OpenSans';src:url('fonts/Open_Sans/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');font-weight:300 800;font-display:swap}
+:root{
+  --ink:#294049; --ink-soft:#6c7b74; --ink-mute:#9fa89e; --line:rgba(255,255,255,.6); --line-2:rgba(120,150,145,.14);
+  --card:rgba(255,255,254,.5); --soft:rgba(238,241,236,.7); --soft-2:rgba(220,230,226,.6);
+  --teal:#5fa9a6; --teal-lite:#84c9c4; --teal-deep:#4a8a87; --teal-ink:#356b68; --teal-quiet:rgba(120,195,191,.18);
+  --clay:#b07a55; --clay-q:#f1e7dc; --gold:#d1a84e; --gold-q:#f4ecd6; --ok:#6f8f6a; --ok-q:#e6ede2; --alert:#b06450; --alert-q:#f2e4de;
+  --r:18px; --r-sm:12px;
+  --sh:0 1px 0 rgba(255,255,255,.6) inset, 0 22px 44px -28px rgba(30,55,50,.55);
+  --sh-sm:0 10px 22px -16px rgba(30,55,50,.4);
+  --glass:saturate(1.2) blur(16px);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:13.5px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;padding:26px;
+  background:
+    radial-gradient(1100px 680px at 12% -6%, #d9ede8, transparent 60%),
+    radial-gradient(1000px 720px at 102% 116%, #e9e0d2, transparent 55%),
+    linear-gradient(158deg,#dfeeea 0%,#eef0ea 46%,#f3f1ea 100%);}
+h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sans-serif}
+.mut{color:var(--ink-soft)}.tiny{font-size:10.5px}.eb{font-size:10px;font-weight:640;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute)}
+
+.app{max-width:1400px;margin:0 auto;display:flex;background:rgba(255,254,251,.46);backdrop-filter:blur(26px) saturate(1.15);
+  border:1px solid rgba(255,255,255,.7);border-radius:26px;overflow:hidden;
+  box-shadow:0 60px 130px -55px rgba(30,45,40,.6), inset 0 1px 0 rgba(255,255,255,.85)}
+
+/* LEFT ICON RAIL */
+.rail{width:64px;flex:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 0;background:rgba(255,254,251,.4);border-right:1px solid var(--line-2)}
+.rail .brand{width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;box-shadow:var(--sh-sm);margin-bottom:10px}
+.rail .brand img{width:26px;height:26px;object-fit:contain}
+.rail .i{position:relative;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--ink-soft);font-size:16px;cursor:pointer}
+.rail .i.on{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;box-shadow:0 10px 18px -9px rgba(74,138,135,.75)}
+.rail .i:hover:not(.on){background:var(--soft)}
+.rail .i .tip{position:absolute;left:50px;top:50%;transform:translateY(-50%);background:var(--ink);color:#fff;font-size:10.5px;font-weight:560;padding:4px 9px;border-radius:7px;white-space:nowrap;opacity:0;pointer-events:none;transition:.12s;z-index:9}
+.rail .i:hover .tip{opacity:1}
+.rail .spacer{flex:1}
+.mainpane{flex:1;min-width:0;display:flex;flex-direction:column}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:18px;padding:15px 24px;border-bottom:1px solid var(--line-2)}
+.hd-logo b{font-size:15.5px;font-weight:640;color:var(--teal-ink)}.hd-logo span{font-size:10px;color:var(--ink-mute);display:block;margin-top:-1px}
+.tabs{display:flex;gap:2px;margin-left:10px}
+.tabs a{padding:9px 16px;border-radius:999px;color:var(--ink-soft);text-decoration:none;font-weight:520;font-size:12.5px}
+.tabs a.on{background:var(--ink);color:#fff}
+.hd-r{margin-left:auto;display:flex;align-items:center;gap:12px}
+.srch{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:999px;padding:9px 15px;color:var(--ink-mute);min-width:180px;font-size:12px}
+.hd-r .ic{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;display:grid;place-items:center;color:var(--ink-soft)}
+.me{display:flex;align-items:center;gap:9px}
+.me .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--teal-lite),var(--teal));color:#fff;display:grid;place-items:center;font-weight:560;font-size:12px}
+.me b{font-size:12.5px}.me span{font-size:10.5px;color:var(--ink-mute);display:block}
+
+/* BODY GRID: big body stage + data column */
+.stagegrid{flex:1;display:grid;grid-template-columns:minmax(380px,44%) 1fr;gap:0}
+.stage{position:relative;display:flex;align-items:center;justify-content:center;padding:24px;border-right:1px solid var(--line-2);overflow:hidden;
+  background:radial-gradient(58% 60% at 50% 42%, rgba(255,255,255,.5), transparent 70%)}
+.stage .rings{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:min(78%,470px);aspect-ratio:1;border-radius:50%;pointer-events:none;
+  background:radial-gradient(closest-side, rgba(132,201,196,.16), rgba(132,201,196,.05) 62%, transparent 72%)}
+.stage .rings::before,.stage .rings::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid rgba(94,169,166,.28)}
+.stage .rings::after{inset:16%;border-color:rgba(94,169,166,.18);border-style:dashed}
+.stage .ring2{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:min(56%,340px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(94,169,166,.22);pointer-events:none;
+  box-shadow:0 0 40px rgba(132,201,196,.18) inset}
+.stage .arc{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:min(70%,420px);aspect-ratio:1;border-radius:50%;pointer-events:none;
+  border:2px solid transparent;border-top-color:var(--teal);border-right-color:rgba(94,169,166,.4);filter:drop-shadow(0 0 6px rgba(94,169,166,.5))}
+.stage .bodywrap{position:relative;z-index:2;display:flex;align-items:flex-end;justify-content:center;height:100%}
+.stage svg.body{max-height:520px;filter:drop-shadow(0 30px 34px rgba(40,80,74,.2)) drop-shadow(0 0 26px rgba(132,201,196,.45))}
+.stage img.body{max-height:520px;filter:drop-shadow(0 30px 34px rgba(40,80,74,.2)) drop-shadow(0 0 26px rgba(132,201,196,.45))}
+.stage .floor{position:absolute;left:50%;bottom:56px;transform:translateX(-50%);width:220px;height:24px;border-radius:50%;background:radial-gradient(closest-side,rgba(40,70,64,.2),transparent);filter:blur(3px);z-index:1}
+.hot{position:absolute;border-radius:50%;filter:blur(9px);pointer-events:none}
+.organtag{position:absolute;z-index:3;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:11px;font-weight:640;color:var(--teal-deep);box-shadow:var(--sh-sm);white-space:nowrap}
+.organtag .ln{position:absolute;right:100%;top:50%;width:40px;height:1px;background:linear-gradient(90deg,transparent,var(--teal))}
+.zoom{position:absolute;left:50%;transform:translateX(-50%);bottom:20px;display:flex;flex-direction:column;gap:8px}
+.zoom button{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.85);color:var(--ink-soft);font-size:16px;display:grid;place-items:center;cursor:pointer;box-shadow:var(--sh-sm)}
+.insight{position:absolute;left:22px;bottom:22px;width:224px;background:rgba(53,107,104,.92);color:#fff;border-radius:16px;padding:14px 15px;box-shadow:0 24px 40px -20px rgba(20,50,46,.7);backdrop-filter:blur(6px)}
+.insight .h{display:flex;align-items:center;gap:9px}.insight .h .n{font-family:'Nunito';font-weight:700;font-size:22px}
+.insight .h b{font-weight:640;font-size:12.5px}
+.insight p{font-size:10.8px;color:rgba(255,255,255,.82);margin:7px 0 11px;line-height:1.5}
+.insight .cta{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.16);border-radius:9px;padding:8px 11px;font-weight:640;font-size:11.5px}
+.insight .dismiss{display:block;text-align:center;margin-top:8px;font-size:10.5px;color:rgba(255,255,255,.7)}
+
+/* DATA COLUMN */
+.data{padding:20px 22px 22px;display:flex;flex-direction:column;gap:14px;overflow:auto}
+.ov-title{display:flex;align-items:center;gap:9px}
+.ov-title .dot{width:22px;height:22px;border-radius:50%;background:conic-gradient(from 220deg,var(--teal),var(--gold),var(--clay),var(--teal))}
+.ov-title b{font-size:18px;font-weight:640}
+.ov-analyze{margin-left:auto;text-align:right;font-size:11px;color:var(--ink-soft)}
+.ov-analyze .bar{width:150px;height:4px;border-radius:99px;background:var(--soft-2);margin-top:5px;overflow:hidden}
+.ov-analyze .bar i{display:block;height:100%;width:62%;border-radius:99px;background:linear-gradient(90deg,var(--teal-lite),var(--teal-deep))}
+.card{background:var(--card);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:16px 18px}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-h h3{font-size:15.5px;font-weight:640}
+.card-h .exp{color:var(--ink-mute);cursor:pointer}
+
+.row2{display:grid;grid-template-columns:1.15fr 1fr;gap:14px}
+.age{display:flex;align-items:center;gap:16px;padding:16px 18px}
+.age .ico{width:40px;height:40px;border-radius:11px;background:var(--teal-quiet);display:grid;place-items:center;color:var(--teal-deep);font-size:19px}
+.age .b{display:flex;gap:22px}
+.age .lab{font-size:11.5px;color:var(--ink-soft)}
+.age .n{font-size:34px;font-weight:700;line-height:1}.age .n small{font-size:11px;color:var(--ink-mute);font-weight:560}
+.age .up{font-size:10.5px;font-weight:640;color:var(--ok);margin-top:3px}
+.narr{padding:16px 18px;display:flex;flex-direction:column;justify-content:center}
+.narr p{font-size:13.5px;line-height:1.5}.narr b{font-weight:640}
+.narr a{margin-top:10px;align-self:flex-start;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-weight:640;font-size:11.5px;color:var(--teal-deep);text-decoration:none;box-shadow:var(--sh-sm)}
+
+.kac{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.kac .col{padding:2px 16px}.kac .col+.col{border-left:1px solid var(--line-2)}
+.kac .top{display:flex;align-items:center;justify-content:space-between;font-size:12px;font-weight:560}
+.kac .top .ar{color:var(--ink-mute)}
+.kac .sc{font-size:30px;font-weight:700;margin:6px 0 1px}.kac .sc small{font-size:11px;color:var(--ink-mute);font-weight:560}
+.kac .flags{font-size:10.5px;color:var(--ink-mute)}
+.kbar{height:6px;border-radius:99px;background:var(--soft-2);margin:9px 0 8px;overflow:hidden}.kbar i{display:block;height:100%;border-radius:99px}
+.kac .st{font-size:11px;font-weight:640}
+.st.c{color:var(--alert)}.st.s{color:#b0862e}.st.o{color:var(--ok)}
+
+.tabsw{display:flex;gap:4px;background:var(--soft);border-radius:999px;padding:4px}
+.tabsw button{border:0;background:none;font-family:inherit;font-size:11.5px;font-weight:560;color:var(--ink-soft);padding:7px 14px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.tabsw button.on{background:#fff;color:var(--ink);box-shadow:var(--sh-sm)}
+.tabsw .badge{background:var(--teal);color:#fff;border-radius:999px;font-size:9.5px;font-weight:640;padding:1px 6px}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.act{border:1px solid var(--line);border-radius:var(--r-sm);padding:14px;background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(250,248,242,.35))}
+.act .ico{width:34px;height:34px;border-radius:10px;background:var(--teal-quiet);display:grid;place-items:center;font-size:16px;margin-bottom:10px}
+.act h4{font-size:13.5px;font-weight:640;line-height:1.3}
+.act p{font-size:12px;color:var(--ink-soft);margin-top:6px;line-height:1.5}
+.act .foot{margin-top:11px;padding-top:9px;border-top:1px solid var(--line-2);font-size:10.5px;color:var(--ink-mute)}
+
+.promo{display:flex;align-items:center;gap:15px;padding:15px 18px;background:linear-gradient(120deg,rgba(94,169,166,.14),rgba(255,254,251,.6));border:1px solid var(--line)}
+.promo .ico{width:44px;height:44px;border-radius:12px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:21px;box-shadow:var(--sh-sm)}
+.promo .tx b{font-size:13px;font-weight:640}.promo .tx p{font-size:11px;color:var(--ink-soft)}
+.promo .go{margin-left:auto;background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;border:0;border-radius:999px;padding:11px 18px;font-weight:640;font-size:12px;cursor:pointer;box-shadow:0 12px 20px -12px rgba(74,138,135,.8)}
+@media(max-width:1120px){.stagegrid{grid-template-columns:1fr}.stage{border-right:0;border-bottom:1px solid var(--line-2);min-height:420px}.acts,.kac{grid-template-columns:1fr}.kac .col+.col{border-left:0;border-top:1px solid var(--line-2)}}
+.rail .brand svg{width:30px;height:30px;display:block}
+/* ——— system-page template sections ——— */
+.lnk{font-size:11.5px;color:var(--teal-deep);font-weight:640;text-decoration:none}
+.symp{display:flex;flex-wrap:wrap;gap:8px}
+.symp .p{display:inline-flex;align-items:center;gap:7px;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:12px;font-weight:520;color:var(--ink-soft)}
+.symp .p.on{color:var(--ink);background:#fff}
+.symp .p .d{width:8px;height:8px;border-radius:50%;flex:none}
+.due{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--line-2)}
+.due:first-of-type{border-top:0}
+.due .dt{width:54px;flex:none;font-weight:640;font-size:12px;color:var(--teal-deep)}
+.due .t{flex:1}.due .t b{font-size:12.5px;font-weight:640}.due .t small{display:block;color:var(--ink-mute);font-size:10.5px}
+.badge2{font-size:10px;font-weight:640;background:var(--teal-quiet);color:var(--teal-deep);border-radius:999px;padding:4px 10px;white-space:nowrap}
+.badge2.soft{background:var(--soft);color:var(--ink-mute)}
+.chart svg{display:block}
+.xax{display:flex;justify-content:space-between;font-size:10px;color:var(--ink-mute);margin-top:5px}
+.ctext{font-size:11.5px;color:var(--ink-soft);margin-top:9px}
+.tabsw.sm button{padding:6px 11px;font-size:11px}
+.med{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line-2)}
+.med:first-of-type{border-top:0}
+.med .nm{font-weight:640;font-size:12.5px}.med .nm small{display:block;color:var(--ink-mute);font-weight:400;font-size:10.5px}
+.med .dose{font-size:11.5px;color:var(--ink-soft);white-space:nowrap;align-self:center}
+.refill{margin-top:11px;width:100%;background:var(--teal-quiet);border:0;color:var(--teal-deep);border-radius:9px;padding:10px 0;font-weight:640;font-size:12px;cursor:pointer}
+.team{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:12px}
+.mem{display:flex;align-items:center;gap:8px;font-size:12px}
+.mem .av{width:32px;height:32px;border-radius:50%;background:var(--teal-quiet);color:var(--teal-ink);display:grid;place-items:center;font-weight:640;font-size:11px}
+.mem b{font-weight:640}.mem span{display:block;color:var(--ink-mute);font-size:10px}
+.note{font-size:12px;color:var(--ink-soft);background:var(--soft);border-radius:10px;padding:11px 12px;line-height:1.55}
+.ph-badge{font-size:10px;font-weight:640;color:var(--ink-mute);background:var(--soft);border:1px dashed var(--line);border-radius:999px;padding:4px 10px}
+.phasestrip{display:flex;align-items:center;gap:8px;margin:2px 0 4px;font-size:11px;flex-wrap:wrap}
+.phasestrip span{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-weight:640;color:var(--ink-soft)}
+.phasestrip span.on{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;border-color:transparent}
+.phasestrip em{margin-left:auto;color:var(--ink-mute);font-size:11px}
+
+/* ——— dark hologram scan-viewport (holographic hero) ——— */
+.stage{background:radial-gradient(70% 66% at 50% 42%, #0f2330 0%, #0a1721 55%, #060d14 100%) !important;padding:18px !important}
+.stage::before{content:"";position:absolute;inset:14px;border-radius:20px;border:1px solid rgba(132,201,196,.16);box-shadow:0 0 60px rgba(95,169,166,.14) inset;pointer-events:none;z-index:4}
+.stage::after{content:"SYSTEM OVERVIEW · DIGESTIVE";position:absolute;top:24px;left:26px;font-size:9px;letter-spacing:.24em;color:rgba(160,210,205,.6);z-index:5;font-weight:640}
+.stage .hero{position:relative;z-index:2;max-width:100%;max-height:560px;object-fit:contain;filter:drop-shadow(0 0 40px rgba(95,169,166,.25))}
+.stage .scan{position:absolute;left:0;right:0;height:120px;top:0;z-index:3;pointer-events:none;background:linear-gradient(180deg,transparent,rgba(132,201,196,.10),transparent);animation:sweep 6s linear infinite}
+@keyframes sweep{0%{transform:translateY(-140px)}100%{transform:translateY(640px)}}
+.stage .vlabel{position:absolute;z-index:5;font-size:10px;font-weight:640;color:#eaf6f4;background:rgba(10,22,30,.6);border:1px solid rgba(132,201,196,.25);border-radius:999px;padding:5px 11px;-webkit-backdrop-filter:blur(4px);backdrop-filter:blur(4px)}
+.stage .vlabel .d{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:6px;vertical-align:middle}
+.stage .insight{z-index:6}
+
+/* ——— matrix labs (universal panel + branch) ——— */
+.recheck2{display:flex;align-items:center;gap:12px;padding:13px 16px;background:linear-gradient(120deg,var(--teal-quiet),rgba(255,254,251,.5));border:1px solid var(--line)}
+.recheck2 .ic{width:34px;height:34px;border-radius:9px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:17px}
+.recheck2 b{font-size:12.5px;font-weight:640}.recheck2 p{font-size:10.5px;color:var(--ink-soft)}
+.recheck2 .due{margin-left:auto;text-align:right}.recheck2 .due .n{font-family:'Nunito';font-weight:700;font-size:15px;color:var(--teal-ink)}.recheck2 .due .l{font-size:9.5px;color:var(--ink-mute)}
+.panlab{font-size:9.5px;font-weight:640;letter-spacing:.09em;text-transform:uppercase;color:var(--teal-deep)}
+.lbl{width:100%;border-collapse:collapse}
+.lbl th{text-align:left;font-size:9px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-mute);font-weight:640;padding:0 8px 7px}
+.lbl td{padding:7px 8px;border-top:1px solid var(--line-2);vertical-align:middle}
+.lbl .mk{font-weight:640;font-size:12px}.lbl .mk small{display:block;color:var(--ink-mute);font-weight:400;font-size:9.5px}
+.lbl .vl{font-weight:800;font-size:12.5px}
+.lbl .rgc{width:56px}.lbl .nr{font-size:10px;color:var(--ink-mute);white-space:nowrap}
+.lbl tr.sub td{padding:12px 8px 4px;border-top:0}
+.sublab{font-size:9px;font-weight:700;letter-spacing:.03em;color:var(--teal-deep);background:var(--teal-quiet);border-radius:6px;padding:3px 9px;display:inline-block}
+.rgbar{height:5px;border-radius:99px;background:var(--soft-2);position:relative}
+.rgbar .band{position:absolute;top:0;height:5px;border-radius:99px;background:var(--ok-q)}
+.rgbar i{position:absolute;top:-2px;width:7px;height:9px;border-radius:3px;transform:translateX(-50%)}
+.d-ok{background:var(--ok)}.d-w{background:var(--gold)}.d-a{background:var(--alert)}
+.tier{font-size:8px;font-weight:700;color:var(--teal-deep);background:var(--teal-quiet);border-radius:5px;padding:1px 5px;margin-left:6px;vertical-align:middle}
+.brow{display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px dashed var(--line)}
+.brow:first-child{border-top:0}
+.brow .bd{width:7px;height:7px;border-radius:50%;background:var(--ink-mute);margin-top:5px;flex:none}
+.brow.on .bd{background:var(--ok)}
+.brow .x b{font-size:12px;font-weight:640}.brow .x small{color:var(--ink-mute);font-size:10.5px;display:block}
+.brow .cond{margin-left:auto;align-self:center;font-size:9px;font-weight:700;color:var(--ink-mute);background:var(--soft);border:1px dashed var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
+.brow .cond.ok{color:var(--ok);border-style:solid;border-color:var(--ok-q);background:var(--ok-q)}
+.progs{display:flex;gap:3px;margin-left:6px;background:var(--soft);border-radius:999px;padding:4px}
+.progs button{border:0;background:none;font-family:inherit;font-size:12px;font-weight:560;color:var(--ink-soft);padding:8px 14px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.progs button.on{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;box-shadow:0 8px 15px -8px rgba(30,55,50,.4)}
+.progs .lab{align-self:center;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);padding:0 8px 0 4px}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- LEFT RAIL -->
+  <nav class="rail">
+    <div class="brand"><svg viewBox="0 0 48 48" width="30" height="30"><rect x="2" y="2" width="44" height="44" rx="13" fill="#e7f1ef"/><path d="M11 24h5l2.5-6.5 4 13 3-6.5h9.5" fill="none" stroke="#4a8a87" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3"/><path d="M5.5 19c.4-3.3 3-5.5 6.5-5.5S18.1 15.7 18.5 19"/></svg><span class="tip">Overview</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-6.6-4.3-6.6-9.2A3.7 3.7 0 0 1 12 7.7a3.7 3.7 0 0 1 6.6 3.1C18.6 15.7 12 20 12 20z"/><path d="M5 12h3l1.5-2.5L12 14l1.5-3 1 1.5H19" opacity=".55"/></svg><span class="tip">Cardiovascular</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v6"/><path d="M10 8.5C9 8 8 8.7 7.4 10 6.4 12 6 14.4 6.6 17c.3 1.3 1.4 1.9 2.6 1.5 1-.3 1.4-1.2 1.4-2.4V9.5"/><path d="M14 8.5c1-.5 2 .2 2.6 1.5 1 2 1.4 4.4.8 7-.3 1.3-1.4 1.9-2.6 1.5-1-.3-1.4-1.2-1.4-2.4V9.5"/></svg><span class="tip">Respiratory</span></div>
+    <div class="i on"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M10 4v4.4c0 1.4-.8 2-1.9 2.4-2 .7-3.1 2.6-2.6 4.7.5 2.2 2.6 3.6 5 3.4 2.8-.2 4.6-2.1 4.6-4.8 0-1.9-.9-2.9-.9-4.3"/><path d="M14.2 8.4c1.4 0 2.3.9 2.3 2.2"/></svg><span class="tip">Digestive (GI)</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v13"/><path d="M12 6.5C11.4 5.1 10 4.6 8.7 5.2 7.4 5.8 6.9 7.1 7.5 8.3 6.2 8.5 5.3 9.6 5.5 11c.2 1.1 1.1 1.9 2.3 1.9M9 16.6c-1.3.3-2.6-.6-2.8-1.9"/><path d="M12 6.5c.6-1.4 2-1.9 3.3-1.3 1.3.6 1.8 1.9 1.2 3.1 1.3.2 2.2 1.3 2 2.7-.2 1.1-1.1 1.9-2.3 1.9M15 16.6c1.3.3 2.6-.6 2.8-1.9"/><circle cx="12" cy="12.5" r="1" fill="currentColor" stroke="none"/></svg><span class="tip">Neurological</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M8.6 8.6l6.8 6.8"/><path d="M8.6 8.6a1.9 1.9 0 1 0-2.3-2.3A1.9 1.9 0 1 0 8.6 8.6z"/><path d="M15.4 15.4a1.9 1.9 0 1 0 2.3 2.3 1.9 1.9 0 1 0-2.3-2.3z"/></svg><span class="tip">Musculoskeletal</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 13V5.5a2 2 0 1 0-4 0V13a3.5 3.5 0 1 0 4 0z"/><path d="M12 8v6.6"/><circle cx="12" cy="16.5" r="1.6" fill="currentColor" stroke="none"/></svg><span class="tip">Endocrine</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3.4l6.4 2.3v5c0 4.1-2.7 7.3-6.4 8.5-3.7-1.2-6.4-4.4-6.4-8.5v-5L12 3.4z"/><path d="M9.4 11.9l1.9 1.9 3.5-3.8"/></svg><span class="tip">Immune</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3h5M10.5 3v5.4L6.4 16.4A2 2 0 0 0 8.2 19.4h7.6a2 2 0 0 0 1.8-3L13.5 8.4V3M8.4 14h7.2"/></svg><span class="tip">Labs &amp; results</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.7 13.4l6.7-6.7a3.3 3.3 0 0 1 4.7 4.7l-6.7 6.7a3.3 3.3 0 0 1-4.7-4.7z"/><path d="M10 10l4 4"/></svg><span class="tip">Medications</span></div>
+    <div class="spacer"></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3.5v2M12 18.5v2M4.4 12h2M17.6 12h2M6 6l1.4 1.4M16.6 16.6L18 18M6 18l1.4-1.4M16.6 7.4L18 6"/></svg><span class="tip">Settings</span></div>
+  </nav>
+
+  <div class="mainpane">
+    <!-- HEADER -->
+    <div class="hdr">
+      <div class="hd-logo"><div><b>BHW Care Connect</b><span>Your health, in one place</span></div></div>
+      <div class="progs"><span class="lab">Programs</span><button class="on">Primary Care</button><button class="on">Mind &amp; Mood</button><button>CharmEd</button><button class="on">Flow</button></div>
+      <div class="hd-r">
+        <div class="srch">⌕ Search your record</div>
+        <div class="ic">↺</div>
+        <div class="me"><div class="av">JR</div><div><b>Jordan Rivera</b><span>Patient · #10428</span></div></div>
+      </div>
+    </div>
+
+    <div class="stagegrid">
+      <!-- BIG BODY STAGE -->
+      <div class="stage">
+        <div class="scan"></div>
+        <div class="vlabel" style="top:22%;right:24px"><span class="d" style="background:var(--teal-lite)"></span>Stomach · reflux</div>
+        <div class="vlabel" style="bottom:30%;left:24px"><span class="d" style="background:var(--gold)"></span>Colon · microbiome</div>
+        <img class="hero" src="hm-assets/gi-hero.png" onerror="this.onerror=null;this.src='hm-assets/body-figure.svg';this.style.filter='drop-shadow(0 20px 30px rgba(0,0,0,.4))'" alt="New gut insights holographic view">
+        <div class="insight">
+          <div class="h"><span class="n">3</span><b>New gut insights</b></div>
+          <p>Your gut symptoms are easing — a couple of small moves this week keep the momentum.</p>
+          <div class="cta"><span>Book a check-in</span><span>→</span></div>
+          <span class="dismiss">Dismiss ×</span>
+        </div>
+      </div>
+
+      <!-- DATA COLUMN -->
+      <div class="data">
+        <div class="ov-title">
+          <span class="dot"></span><b>Digestive · Gut health</b>
+          <div class="ov-analyze">Phase · <b>Repair</b><div class="bar"><i style="width:70%;background:linear-gradient(90deg,var(--teal-lite),var(--teal-deep))"></i></div></div>
+        </div>
+        <div class="phasestrip"><span>Remove</span><span>Replace</span><span>Reinoculate</span><span class="on">Repair</span><span>Rebalance</span><em>“Heal the gut, and the whole body follows.”</em></div>
+
+        <div class="row2">
+          <div class="card age">
+            <div class="ico">🌱</div>
+            <div class="b">
+              <div><div class="lab">Symptom-light days</div><div class="n">18<small> / 30</small></div><div class="up">▲ up from 11</div></div>
+              <div><div class="lab">Flares</div><div class="n">3<small> this mo</small></div><div class="up" style="color:var(--ok)">▼ improving</div></div>
+            </div>
+          </div>
+          <div class="card narr">
+            <p>Your <b>bloating and irregular pattern</b> point to the gut lining and microbiome — the 5R plan is working on both.</p>
+            <a href="#">View full report ›</a>
+          </div>
+        </div>
+
+        <!-- 2 · SYMPTOM CHECK -->
+        <div class="card pad">
+          <div class="card-h"><h3>Symptom check</h3><a class="lnk" href="#">Update ›</a></div>
+          <div class="symp">
+            <span class="p on"><span class="d" style="background:var(--gold)"></span>Bloating · after meals</span>
+            <span class="p on"><span class="d" style="background:var(--alert)"></span>Bowel pattern · irregular</span>
+            <span class="p on"><span class="d" style="background:var(--gold)"></span>Reflux / heartburn · 2×/wk</span>
+            <span class="p on"><span class="d" style="background:var(--gold)"></span>Abdominal pain · mild, lower left</span>
+            <span class="p on"><span class="d" style="background:var(--gold)"></span>Food reactions · dairy, gluten</span>
+            <span class="p"><span class="d" style="background:var(--ok)"></span>Blood in stool · none</span>
+          </div>
+        </div>
+
+        <!-- recheck box -->
+        <div class="card recheck2">
+          <div class="ic">🕑</div>
+          <div><b>Next recheck due</b><p>Comprehensive stool + Calprotectin: repeat by phenotype · B12/folate recheck after repletion</p></div>
+          <div class="due"><div class="n">Wk 8</div><div class="l">Oct 2026</div></div>
+        </div>
+
+        <!-- FROM PHYSICAL PANEL -->
+        <div class="card pad">
+          <div class="card-h"><h3>From your Physical panel</h3><span class="panlab">Universal 21 · GI subset</span></div>
+          <table class="lbl">
+            <thead><tr><th>Marker</th><th>Value</th><th class="rgc">Range</th><th>Decision range</th></tr></thead>
+            <tbody>
+            <tr class="sub"><td colspan="4"><span class="sublab">B vitamins + iron + nutrients</span></td></tr>
+            <tr><td class="mk">Vitamin B12<small>B12 + Folate + B1–B6 · [399793]</small></td><td class="vl">310<small> pg/mL</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:0%;width:44%"></span><i class="d-a" style="left:34%"></i></div></td><td class="nr">low‑normal → MMA</td></tr>
+            <tr><td class="mk">Ferritin<small>[004598]</small></td><td class="vl">22<small> ng/mL</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:0%;width:40%"></span><i class="d-a" style="left:20%"></i></div></td><td class="nr">&lt; 30 = iron deficiency</td></tr>
+            <tr><td class="mk">Iron + TIBC / TSAT<small>[001321]</small></td><td class="vl">low</td><td class="rgc"><div class="rgbar"><span class="band" style="left:0%;width:42%"></span><i class="d-w" style="left:35%"></i></div></td><td class="nr">GI loss / malabsorption</td></tr>
+            <tr><td class="mk">Zinc (RBC)<small>Mg + Zn + CoQ10 · [242507]</small></td><td class="vl">low‑nl</td><td class="rgc"><div class="rgbar"><span class="band" style="left:10%;width:45%"></span><i class="d-w" style="left:30%"></i></div></td><td class="nr">gut &amp; immune</td></tr>
+            <tr><td class="mk">25‑OH‑D<small>[504115]</small></td><td class="vl">24<small> ng/mL</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:45%;width:45%"></span><i class="d-w" style="left:30%"></i></div></td><td class="nr">malabsorption context</td></tr>
+            <tr class="sub"><td colspan="4"><span class="sublab">Inflammation + liver (shared panels)</span></td></tr>
+            <tr><td class="mk">hs‑CRP<small>CRP + Fibrinogen + Homocysteine + Lp(a) · [320414]</small></td><td class="vl">2.4<small> mg/L</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:0%;width:33%"></span><i class="d-w" style="left:55%"></i></div></td><td class="nr">&lt;1 / 1–3 / &gt;3</td></tr>
+            <tr><td class="mk">Homocysteine<small>[320414]</small></td><td class="vl">11<small> µmol/L</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:0%;width:55%"></span><i class="d-w" style="left:64%"></i></div></td><td class="nr">functional B → MMA</td></tr>
+            <tr><td class="mk">GGT · liver<small>[001958]</small></td><td class="vl">28<small> U/L</small></td><td class="rgc"><div class="rgbar"><span class="band" style="left:10%;width:55%"></span><i class="d-ok" style="left:34%"></i></div></td><td class="nr">hepatobiliary</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- IF IT BRANCHES HERE -->
+        <div class="card pad">
+          <div class="card-h"><h3>If it branches here</h3><span class="panlab">GI / malabsorption</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>Comprehensive stool (GI‑MAP)</b><small>Dysbiosis + <b>Candida / yeast overgrowth</b></small></div><span class="cond">phenotype</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>Calprotectin → IBD pathway</b><small>When alarm features / inflammation</small></div><span class="cond">if indicated</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>H. pylori · elastase · fecal fat</b><small>By phenotype</small></div><span class="cond">phenotype</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>Homocysteine + MMA</b><small>If functional B‑vitamin concern</small></div><span class="cond">conditional</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>Food‑IgG sensitivities</b><small>Limited / non‑routine — lives on Immune</small></div><span class="cond">on Immune</span></div>
+        </div>
+
+        <!-- 4 · UPCOMING LABS & TESTS -->
+        <div class="card pad">
+          <div class="card-h"><h3>Upcoming labs &amp; tests</h3><a class="lnk" href="bhw-gi-tests.html">Testing map ›</a></div>
+          <div class="due"><span class="dt">Sep 18</span><span class="t"><b>GI-MAP comprehensive stool</b><small>Microbiome, pathogens, digestion · home kit</small></span><span class="badge2">Ordered</span></div>
+          <div class="due"><span class="dt">Sep 18</span><span class="t"><b>SIBO lactulose breath test</b><small>Small-intestine overgrowth · home kit</small></span><span class="badge2 soft">To schedule</span></div>
+          <div class="due"><span class="dt">Sep 23</span><span class="t"><b>H. pylori stool antigen</b><small>With your GI visit</small></span><span class="badge2">Booked</span></div>
+          <div class="due"><span class="dt">Q4</span><span class="t"><b>Screening colonoscopy</b><small>Age-50 baseline</small></span><span class="badge2 soft">To schedule</span></div>
+        </div>
+
+        <!-- 5 · TRENDS & GRAPHS -->
+        <div class="card pad">
+          <div class="card-h"><h3>Trends</h3><div class="tabsw sm"><button class="on">Bloating score</button><button>Calprotectin</button><button>hs-CRP</button></div></div>
+          <div class="chart">
+            <svg viewBox="0 0 520 150" preserveAspectRatio="none" width="100%" height="150">
+              <line x1="0" y1="40" x2="520" y2="40" stroke="var(--line-2)"/><line x1="0" y1="80" x2="520" y2="80" stroke="var(--line-2)"/><line x1="0" y1="120" x2="520" y2="120" stroke="var(--line-2)"/>
+              <line x1="0" y1="104" x2="520" y2="104" stroke="var(--teal)" stroke-dasharray="3 4" opacity=".6"/>
+              <path d="M10 34 L110 44 L210 58 L310 66 L410 82 L510 96" fill="none" stroke="var(--teal-deep)" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+              <g fill="var(--teal-deep)"><circle cx="10" cy="34" r="3.5"/><circle cx="110" cy="44" r="3.5"/><circle cx="210" cy="58" r="3.5"/><circle cx="310" cy="66" r="3.5"/><circle cx="410" cy="82" r="3.5"/><circle cx="510" cy="96" r="4.5"/></g>
+            </svg>
+            <div class="xax"><span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Now</span></div>
+            <div class="ctext">Daily bloating score down from <b>8 → 4 / 10</b> since starting the plan. Dashed line = goal (≤ 2).</div>
+          </div>
+        </div>
+
+        <!-- 6 · MEDICATIONS -->
+        <div class="card pad">
+          <div class="card-h"><h3>Medications · digestive</h3><a class="lnk" href="#">All ›</a></div>
+          <div class="med"><div class="nm">Omeprazole (PPI)<small>Reflux · taper planned</small></div><div class="dose">20 mg · morning</div></div>
+          <div class="med"><div class="nm">Digestive enzymes<small>Fat / protein breakdown</small></div><div class="dose">with meals</div></div>
+          <div class="med"><div class="nm">Multi-strain probiotic<small>Microbiome support</small></div><div class="dose">daily</div></div>
+          <button class="refill">＋ Request a refill</button>
+        </div>
+
+        <!-- 7 · CARE TEAM & NOTES -->
+        <div class="card pad">
+          <div class="card-h"><h3>Care team &amp; notes</h3><a class="lnk" href="#">Message ›</a></div>
+          <div class="team">
+            <div class="mem"><div class="av">SO</div><div><b>Dr Osei</b><span>Gastroenterology</span></div></div>
+            <div class="mem"><div class="av">AM</div><div><b>NP Amaris</b><span>Primary care</span></div></div>
+            <div class="mem"><div class="av">RD</div><div><b>Priya</b><span>Dietitian · gut / FODMAP</span></div></div>
+          </div>
+          <div class="note">Reflux is settling — we'll start tapering the PPI once symptoms hold for 2 weeks. Keep the food-symptom log going; it's guiding the elimination trial.</div>
+        </div>
+
+        <!-- 8 · BLUEPRINT / ACTION ITEMS -->
+        <div class="card pad">
+          <div class="card-h"><h3>Blueprint · action items</h3><span class="ph-badge">from your gut care plan · 5R</span></div>
+          <div class="acts">
+            <div class="act"><div class="ico">🚫</div><h4>1 · Remove triggers</h4><p>Structured elimination — dairy &amp; gluten trial, alcohol, NSAIDs — then reintroduce one at a time.</p><div class="foot">Elimination</div></div>
+            <div class="act"><div class="ico">🦠</div><h4>2 · Replace &amp; reinoculate</h4><p>Digestive enzymes with meals, multi-strain probiotic, fermented foods &amp; prebiotic fibre.</p><div class="foot">Support</div></div>
+            <div class="act"><div class="ico">🌿</div><h4>3 · Repair the lining</h4><p>L-glutamine, zinc-carnosine, omega-3 and polyphenols to calm permeability.</p><div class="foot">Healing</div></div>
+          </div>
+          <div class="ctext" style="margin-top:12px"><b>Checkpoints:</b> Baseline → Week 4 → Week 8 → Week 12 · <b>5R protocol</b> tracked with your dietitian</div>
+        </div>
+
+        <div class="card promo">
+          <div class="ico">🩺</div>
+          <div class="tx"><b>Talk with your GI clinician</b><p>Review your gut plan, reflux taper, and stool results</p></div>
+          <button class="go">Message ›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

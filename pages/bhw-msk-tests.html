@@ -1,0 +1,90 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>BHW Care Connect — Musculoskeletal Testing Map</title>
+<style>
+@font-face{font-family:'Nunito';src:url('fonts/Nunito/Nunito-VariableFont_wght.ttf') format('truetype');font-weight:300 900;font-display:swap}
+@font-face{font-family:'OpenSans';src:url('fonts/Open_Sans/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');font-weight:300 800;font-display:swap}
+:root{
+  --ink:#233942; --ink-soft:#6c7b74; --ink-mute:#9aa7a2; --line:#e7ece9; --line-2:#eef2f0;
+  --teal:#5fa9a6; --teal-lite:#84c9c4; --teal-deep:#4a8a87; --teal-ink:#356b68; --teal-quiet:#eaf4f2;
+  --gold:#c39a3e; --gold-q:#f4ecd6; --ok:#6f8f6a; --ok-q:#e7efe4; --alert:#c0685a; --alert-q:#f6e7e2; --heart:#c65a52;
+  --r:16px; --sh:0 10px 26px -18px rgba(30,55,50,.5); --sh-sm:0 6px 16px -12px rgba(30,55,50,.5);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:13px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;padding:24px;
+  background:radial-gradient(1000px 640px at 12% -6%,#d9ede8,transparent 60%),radial-gradient(1000px 700px at 100% 116%,#ece2d4,transparent 55%),linear-gradient(158deg,#e2efec,#eef0ea 46%,#f3f1ea);}
+h1,h2,h3,h4,.ov-title b,.tc .n{font-family:'Nunito','OpenSans',sans-serif}
+.app{max-width:1400px;margin:0 auto;display:flex;background:rgba(255,254,251,.55);backdrop-filter:blur(24px) saturate(1.12);border:1px solid rgba(255,255,255,.7);border-radius:22px;overflow:hidden;box-shadow:0 50px 110px -55px rgba(30,55,50,.55)}
+.rail{width:60px;flex:none;display:flex;flex-direction:column;align-items:center;gap:5px;padding:14px 0;background:rgba(255,254,251,.5);border-right:1px solid var(--line-2)}
+.rail .brand{width:38px;height:38px;border-radius:11px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;box-shadow:var(--sh-sm);margin-bottom:8px}
+.rail .brand svg{width:28px;height:28px}
+.rail .i{position:relative;width:38px;height:38px;border-radius:11px;display:grid;place-items:center;color:var(--ink-soft);cursor:pointer}
+.rail .i svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.rail .i.on{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;box-shadow:0 10px 18px -9px rgba(74,138,135,.7)}
+.rail .i:hover:not(.on){background:var(--teal-quiet)}
+.rail .spacer{flex:1}
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.hdr{display:flex;align-items:center;gap:16px;padding:13px 22px;border-bottom:1px solid var(--line-2);background:#fff}
+.hd-logo b{font-size:15px;font-weight:800;color:var(--teal-ink)}.hd-logo span{font-size:9.5px;color:var(--ink-mute);display:block}
+.progs{display:flex;gap:3px;margin-left:6px;background:var(--teal-quiet);border-radius:999px;padding:4px}
+.progs button{border:0;background:none;font-family:inherit;font-size:12px;font-weight:600;color:var(--ink-soft);padding:8px 14px;border-radius:999px;cursor:pointer;white-space:nowrap}
+.progs button.on{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff}
+.progs .lab{align-self:center;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);padding:0 8px 0 4px}
+.hd-r{margin-left:auto;display:flex;align-items:center;gap:10px}
+.me{display:flex;align-items:center;gap:8px}.me .av{width:32px;height:32px;border-radius:50%;background:linear-gradient(135deg,var(--teal-lite),var(--teal));color:#fff;display:grid;place-items:center;font-weight:700;font-size:11px}
+.me b{font-size:12px}.me span{font-size:10px;color:var(--ink-mute);display:block}
+.scroll{flex:1;overflow:auto;padding:20px 24px 26px}
+.ov-title{display:flex;align-items:center;gap:10px;margin-bottom:4px}
+.ov-title .dot{width:22px;height:22px;border-radius:50%;background:conic-gradient(from 220deg,var(--heart),var(--gold),var(--teal),var(--heart))}
+.ov-title b{font-size:19px;font-weight:700}
+.sub{color:var(--ink-soft);font-size:12.5px;margin-bottom:14px}
+.sub b{color:var(--ink)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;margin-bottom:18px;font-size:11px;color:var(--ink-soft)}
+.legend .k{display:inline-flex;align-items:center;gap:6px}
+.legend .d{width:9px;height:9px;border-radius:50%}
+.d-done{background:var(--ok)}.d-sch{background:var(--teal)}.d-rec{background:var(--gold)}.d-no{background:var(--ink-mute)}
+.sec{margin-bottom:22px}
+.sec-h{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.sec-h .ic{width:30px;height:30px;border-radius:9px;background:var(--teal-quiet);display:grid;place-items:center}
+.sec-h .ic svg{width:17px;height:17px;stroke:var(--teal-deep);fill:none;stroke-width:1.7}
+.sec-h h3{font-size:15px;font-weight:800}
+.sec-h span{font-size:10.5px;color:var(--ink-mute)}
+.tgrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.tc{background:#fff;border:1px solid var(--line);border-radius:14px;padding:14px 15px;box-shadow:var(--sh-sm);position:relative}
+.tc .top{display:flex;align-items:flex-start;justify-content:space-between;gap:10px}
+.tc .n{font-size:14px;font-weight:800}
+.tc .measures{font-size:11.5px;color:var(--ink-soft);margin-top:3px;line-height:1.45}
+.tc .st{font-size:9.5px;font-weight:800;border-radius:999px;padding:4px 10px;white-space:nowrap;flex:none}
+.st.done{background:var(--ok-q);color:var(--ok)}.st.sch{background:var(--teal-quiet);color:var(--teal-deep)}.st.rec{background:var(--gold-q);color:#a97e28}.st.no{background:#eef1ef;color:var(--ink-mute)}
+.tc .res{display:flex;align-items:center;gap:8px;margin-top:11px;padding-top:10px;border-top:1px solid var(--line-2);font-size:11.5px}
+.tc .res b{font-weight:800}.tc .res .dt{color:var(--ink-mute)}
+.tc .esc{margin-top:9px;font-size:10.5px;color:var(--ink-mute)}
+.tc .esc b{color:var(--teal-deep)}
+.note{margin-top:6px;display:flex;align-items:center;gap:10px;background:var(--teal-quiet);border:1px solid var(--line);border-radius:12px;padding:12px 15px;font-size:12px;color:var(--ink-soft)}
+.note b{color:var(--ink)}.note .ar{margin-left:auto;color:var(--teal-deep);font-weight:800;font-size:11.5px;white-space:nowrap}
+@media(max-width:1000px){.tgrid{grid-template-columns:1fr}}
+</style>
+</head><body><div class="app">
+  <nav class="rail"><div class="brand"><svg viewBox="0 0 48 48"><rect x="2" y="2" width="44" height="44" rx="13" fill="#e7f1ef"/><path d="M11 24h5l2.5-6.5 4 13 3-6.5h9.5" fill="none" stroke="#4a8a87" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="i on" title="Musculoskeletal"><svg viewBox="0 0 24 24"><path d="M12 20s-6.6-4.3-6.6-9.2A3.7 3.7 0 0 1 12 7.7a3.7 3.7 0 0 1 6.6 3.1C18.6 15.7 12 20 12 20z"/></svg></div><a class="i" href="bhw-msk.html" title="Labs &amp; results" style="text-decoration:none"><svg viewBox="0 0 24 24"><path d="M9.5 3h5M10.5 3v5.4L6.4 16.4A2 2 0 0 0 8.2 19.4h7.6a2 2 0 0 0 1.8-3L13.5 8.4V3"/></svg></a><div class="spacer"></div><div class="i" title="Settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 3.5v2M12 18.5v2M4.4 12h2M17.6 12h2M6 6l1.4 1.4M16.6 16.6L18 18M6 18l1.4-1.4M16.6 7.4L18 6"/></svg></div></nav>
+  <div class="main">
+    <div class="hdr"><div class="hd-logo"><div><b>BHW Care Connect</b><span>Your health, in one place</span></div></div>
+      <div class="progs"><span class="lab">Programs</span><button class="on">Primary Care</button><button class="on">Mind &amp; Mood</button><button>CharmEd</button><button class="on">Flow</button></div>
+      <div class="hd-r"><div class="me"><div class="av">JR</div><div><b>Jordan Rivera</b><span>Patient · #10428</span></div></div></div></div>
+    <div class="scroll">
+      <div class="ov-title"><span class="dot"></span><b>Musculoskeletal · Testing map</b></div>
+      <div class="sub">The <b>imaging &amp; functional tests</b> for bones and joints — separate from the labs. Inflammatory‑arthritis serologies live on the Immune page.</div>
+      <div class="legend"><span class="k"><span class="d d-done"></span>Done</span><span class="k"><span class="d d-sch"></span>Scheduled / booked</span><span class="k"><span class="d d-rec"></span>Recommended</span><span class="k"><span class="d d-no"></span>Not yet ordered</span></div>
+      <div class="sec"><div class="sec-h"><div class="ic"><svg viewBox="0 0 24 24"><path d="M8.6 8.6l6.8 6.8"/><path d="M8.6 8.6a1.9 1.9 0 1 0-2.3-2.3A1.9 1.9 0 1 0 8.6 8.6z"/><path d="M15.4 15.4a1.9 1.9 0 1 0 2.3 2.3 1.9 1.9 0 1 0-2.3-2.3z"/></svg></div><h3>Bone density</h3></div><div class="tgrid">
+          <div class="tc"><div class="top"><div><div class="n">DEXA scan</div><div class="measures">Bone mineral density T‑score</div></div><span class="st done">Done</span></div><div class="res"><b>T‑score −1.4</b><span class="dt">· osteopenia · 2025</span></div><div class="esc">&lt; −2.5 → <b>osteoporosis treatment</b></div></div>
+</div></div>
+      <div class="sec"><div class="sec-h"><div class="ic"><svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 9h18"/></svg></div><h3>Joint &amp; structure</h3></div><div class="tgrid">
+          <div class="tc"><div class="top"><div><div class="n">Weight‑bearing X‑ray</div><div class="measures">Joint space &amp; arthritis</div></div><span class="st sch">Oct</span></div><div class="res"><span class="dt">Knees</span></div><div class="esc">Advanced → <b>orthopedics</b></div></div>
+          <div class="tc"><div class="top"><div><div class="n">MRI</div><div class="measures">Soft tissue / cartilage</div></div><span class="st no">Not ordered</span></div><div class="res"><span class="dt">If mechanical symptoms</span></div><div class="esc">Tear → <b>orthopedics</b></div></div>
+          <div class="tc"><div class="top"><div><div class="n">Musculoskeletal ultrasound</div><div class="measures">Tendon &amp; joint effusion</div></div><span class="st no">Not ordered</span></div><div class="res"><span class="dt">Point‑of‑care</span></div><div class="esc">—</div></div>
+</div></div>
+      <div class="sec"><div class="sec-h"><div class="ic"><svg viewBox="0 0 24 24"><path d="M3 12h4l2-5 3 10 2-6 2 3h5"/></svg></div><h3>Function</h3></div><div class="tgrid">
+          <div class="tc"><div class="top"><div><div class="n">PT functional movement screen</div><div class="measures">Strength, balance, gait</div></div><span class="st sch">Oct</span></div><div class="res"><span class="dt">With physical therapy</span></div><div class="esc">Deficit → <b>strength program</b></div></div>
+          <div class="tc"><div class="top"><div><div class="n">Gait &amp; balance test</div><div class="measures">Fall‑risk assessment</div></div><span class="st done">Done</span></div><div class="res"><b>Low‑moderate risk</b></div><div class="esc">High → <b>balance rehab</b></div></div>
+</div></div>
+      <div class="note"><div><b>RF / anti‑CCP &amp; inflammatory serologies</b> live on the Immune page; Vitamin D / calcium show on the MSK labs.</div></div>
+    </div>
+  </div>
+</div></body></html>

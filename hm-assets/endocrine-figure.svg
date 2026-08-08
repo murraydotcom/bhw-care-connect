@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 560" width="240" height="560">
+  <defs>
+    <linearGradient id="ebody" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0%" stop-color="#FBF3EA"/>
+      <stop offset="40%" stop-color="#EBDDCF"/>
+      <stop offset="100%" stop-color="#D6C3B2"/>
+    </linearGradient>
+    <radialGradient id="gland" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff" stop-opacity=".95"/>
+      <stop offset="55%" stop-color="#fff" stop-opacity=".2"/>
+      <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <g stroke="#BBA88F" stroke-width="1" fill="url(#ebody)">
+    <ellipse cx="120" cy="50" rx="24" ry="28"/>
+    <path d="M105 74 Q120 83 135 74 L141 104 Q120 113 99 104 Z"/>
+    <path d="M96 108 C86 120 84 132 88 152 C92 178 96 205 100 245 C101 272 99 300 94 328
+             C92 362 97 432 101 500 C103 524 105 534 109 543 L118 543
+             C120 518 119 460 119 402 C119 372 119 352 120 344
+             C121 352 121 372 121 402 C121 460 120 518 122 543 L131 543
+             C135 534 137 524 139 500 C143 432 148 362 146 328
+             C141 300 139 272 140 245 C144 205 148 178 152 152
+             C156 132 154 120 144 108 C120 100 120 100 96 108 Z"/>
+    <path d="M92 112 C80 122 74 140 76 162 C78 200 80 240 86 280 C88 300 90 315 92 330 C96 336 100 336 102 330 C104 315 102 300 100 280 C98 240 96 200 98 168 C99 150 100 130 98 118 Z"/>
+    <path d="M148 112 C160 122 166 140 164 162 C162 200 160 240 154 280 C152 300 150 315 148 330 C144 336 140 336 138 330 C136 315 138 300 140 280 C142 240 144 200 142 168 C141 150 140 130 142 118 Z"/>
+  </g>
+
+  <!-- endocrine glands -->
+  <g>
+    <!-- pituitary / hypothalamus -->
+    <circle cx="120" cy="52" r="14" fill="url(#gland)"/><circle cx="120" cy="52" r="5" fill="#C77FB0" stroke="#fff" stroke-width="1.5"/>
+    <!-- thyroid -->
+    <circle cx="120" cy="98" r="13" fill="url(#gland)"/><circle cx="120" cy="98" r="5" fill="#57A08F" stroke="#fff" stroke-width="1.5"/>
+    <!-- thymus -->
+    <circle cx="120" cy="150" r="12" fill="url(#gland)"/><circle cx="120" cy="150" r="4.5" fill="#6E86C4" stroke="#fff" stroke-width="1.5"/>
+    <!-- adrenals -->
+    <circle cx="106" cy="232" r="12" fill="url(#gland)"/><circle cx="106" cy="232" r="4.5" fill="#E09A5C" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="134" cy="232" r="12" fill="url(#gland)"/><circle cx="134" cy="232" r="4.5" fill="#E09A5C" stroke="#fff" stroke-width="1.5"/>
+    <!-- pancreas -->
+    <circle cx="120" cy="256" r="13" fill="url(#gland)"/><circle cx="120" cy="256" r="5" fill="#C79A3E" stroke="#fff" stroke-width="1.5"/>
+    <!-- gonads -->
+    <circle cx="108" cy="322" r="11" fill="url(#gland)"/><circle cx="108" cy="322" r="4.5" fill="#D9776E" stroke="#fff" stroke-width="1.5"/>
+    <circle cx="132" cy="322" r="11" fill="url(#gland)"/><circle cx="132" cy="322" r="4.5" fill="#D9776E" stroke="#fff" stroke-width="1.5"/>
+  </g>
+</svg>
