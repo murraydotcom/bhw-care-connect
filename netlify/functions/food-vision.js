@@ -63,11 +63,12 @@ Rules:
   {
     "items": [
       { "name": string, "portion": string, "grams": number,
-        "protein": number, "carbs": number, "fat": number, "calories": number }
+        "protein": number, "carbs": number, "fat": number, "calories": number,
+        "fiber": number, "sugar": number, "sodium": number }
     ],
     "note": string
   }
-- grams/protein/carbs/fat are grams; calories is kcal. Use numbers (no units) and round to whole numbers.
+- grams/protein/carbs/fat/fiber/sugar are grams; sodium is milligrams; calories is kcal. Use numbers (no units) and round to whole numbers.
 - Keep items to the distinct foods actually visible (typically 1–6). "note" must remind that these are photo estimates to confirm.`;
 
 exports.handler = async (event) => {
@@ -122,6 +123,7 @@ exports.handler = async (event) => {
             name: String(it.name).slice(0, 80).trim(),
             portion: String(it.portion || "").slice(0, 40).trim(),
             grams: n(it.grams), protein: n(it.protein), carbs: n(it.carbs), fat: n(it.fat), calories: n(it.calories),
+            fiber: n(it.fiber), sugar: n(it.sugar), sodium: n(it.sodium),
           }))
       : [];
     const note = String(parsed.note || "These are photo estimates — please check and adjust.").slice(0, 240);

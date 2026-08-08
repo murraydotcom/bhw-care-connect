@@ -8,10 +8,12 @@
 @font-face{font-family:'Nunito';src:url('fonts/Nunito/Nunito-VariableFont_wght.ttf') format('truetype');font-weight:300 900;font-display:swap}
 @font-face{font-family:'OpenSans';src:url('fonts/Open_Sans/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');font-weight:300 800;font-display:swap}
 :root{
-  --ink:#294049; --ink-soft:#6c7b74; --ink-mute:#9fa89e; --line:#e7e6dd; --line-2:#eef0ec;
-  --card:#fffdfa; --soft:#f3f4ef; --bg1:#d8ece7; --bg2:#e8dfd2;
-  --accent:#5fa9a6; --accent-deep:#4a8a87; --accent-quiet:rgba(120,195,191,.16);
-  --ok:#5f9a6b; --gold:#c79a3e; --alert:#b06450;
+  --ink:#294049; --ink-soft:#6c7b74; --ink-mute:#9fa89e; --line:#e7ece9; --line-2:#eef2f0;
+  --card:#ffffff; --soft:#f2f6f4; --soft-2:#e9f1ee; --bg1:#d8ece7; --bg2:#e8dfd2;
+  --accent:#5fa9a6; --accent-deep:#4a8a87; --accent-quiet:#eaf4f2;
+  --coral:#b06450; --coral-q:#f2e4de; --amber:#c39a3e; --amber-q:#f4ecd6; --good:#6f8f6a; --good-q:#e6ede2;
+  --water:#4c94b8; --water-q:#e4f0f5;
+  --ok:#6f8f6a; --gold:#c39a3e; --alert:#b06450;
 }
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px;line-height:1.5;
@@ -61,10 +63,36 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
 .off-cam{margin-top:10px}.off-cam[hidden]{display:none}
 .off-cam video{width:100%;max-width:340px;border-radius:11px;background:#000;display:block}
 .off-cam__bar{display:flex;align-items:center;gap:12px;margin-top:8px;font-size:12px;color:var(--ink-soft)}
-.tally{margin-top:12px;background:var(--accent-quiet);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--ink)}
-.tally[hidden]{display:none}
-.tally-h{display:block;font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:3px}
-.tally b{font-family:'Nunito';font-weight:700}
+/* Today's fuel — mirrors the Blueprint fuel vessels */
+.fuel{margin-top:14px;border-top:1px solid var(--line-2);padding-top:14px}
+.fuel[hidden]{display:none}
+.fuel-h{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:11px}
+.ves-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.ves{text-align:center}
+.ves__v{position:relative;width:52px;height:74px;margin:0 auto 8px;border:2px solid var(--vc);border-radius:8px 8px 14px 14px;overflow:hidden;background:color-mix(in srgb,var(--vc) 8%,#fff)}
+.ves__f{position:absolute;left:0;right:0;bottom:0;height:0;background:color-mix(in srgb,var(--vc) 40%,#fff);border-top:2px solid var(--vc);transition:height .45s cubic-bezier(.2,.7,.2,1)}
+.ves__n{font-family:'Nunito';font-weight:700;font-size:14px;color:var(--ink)}
+.ves__val{font-size:10px;color:var(--ink-soft);margin-top:1px;font-variant-numeric:tabular-nums}
+.micros{display:flex;flex-direction:column;gap:9px;margin-top:15px}
+.micro{display:flex;align-items:center;gap:10px;font-size:11.5px}
+.micro .ml{width:52px;font-weight:800;color:var(--ink-soft);flex-shrink:0}
+.micro .mbar{flex:1;height:6px;border-radius:99px;background:var(--soft-2);overflow:hidden}
+.micro .mbar i{display:block;height:100%;width:0;border-radius:99px;background:var(--mc);transition:width .4s ease}
+.micro .mv{width:98px;text-align:right;color:var(--ink-soft);font-variant-numeric:tabular-nums;flex-shrink:0}
+.micro .mv b{font-family:'Nunito';color:var(--ink)}
+/* Hydration tracker — mirrors the fuel vessel */
+.hydro{display:flex;align-items:center;gap:18px}
+.hydro__v{position:relative;width:64px;height:90px;flex-shrink:0;border:2px solid var(--water);border-radius:9px 9px 16px 16px;overflow:hidden;background:var(--water-q)}
+.hydro__f{position:absolute;left:0;right:0;bottom:0;height:0;background:color-mix(in srgb,var(--water) 45%,#fff);border-top:2px solid var(--water);transition:height .45s cubic-bezier(.2,.7,.2,1)}
+.hydro__b{flex:1;min-width:0}
+.hydro__val{font-family:'Nunito';font-weight:700;font-size:21px;color:var(--ink)}
+.hydro__val span{font-size:12px;font-weight:600;color:var(--ink-soft)}
+.hydro__cups{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}
+.cup{width:21px;height:25px;border:2px solid #cfe0e6;border-radius:4px 4px 7px 7px;cursor:pointer;background:#fff;padding:0}
+.cup.on{border-color:var(--water);background:color-mix(in srgb,var(--water) 30%,#fff)}
+.hydro__ctrl{display:flex;gap:8px}
+.hydro__ctrl button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--soft);font-size:18px;font-weight:700;cursor:pointer;color:var(--ink);line-height:1}
+.hydro__ctrl button:hover{border-color:var(--water)}
 .homecook{margin-top:12px;border-top:1px solid var(--line-2);padding-top:10px}
 .homecook summary{font-size:12.5px;font-weight:700;color:var(--accent-deep);cursor:pointer;list-style:none}
 .homecook summary::-webkit-details-marker{display:none}
@@ -144,9 +172,33 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
     <div class="off-status" id="offStatus"></div>
     <div class="off-results" id="offResults"></div>
 
-    <div class="tally" id="tally" hidden>
-      <span class="tally-h">Today so far</span>
-      <span id="tallyItems">0 items</span> · <b id="tP">0</b>g protein · <b id="tC">0</b>g carbs · <b id="tF">0</b>g fat
+    <div class="fuel" id="fuel" hidden>
+      <div class="fuel-h">Today so far · <span id="tallyItems">0 items</span></div>
+      <div class="ves-grid">
+        <div class="ves" style="--vc:var(--accent-deep)"><div class="ves__v"><div class="ves__f" id="fCal"></div></div><div class="ves__n" id="tCal">0</div><div class="ves__val">of <span id="gCal">2000</span> kcal</div></div>
+        <div class="ves" style="--vc:var(--coral)"><div class="ves__v"><div class="ves__f" id="fP"></div></div><div class="ves__n"><span id="tP">0</span>g</div><div class="ves__val">Protein · <span id="gP">90</span>g</div></div>
+        <div class="ves" style="--vc:var(--amber)"><div class="ves__v"><div class="ves__f" id="fC"></div></div><div class="ves__n"><span id="tC">0</span>g</div><div class="ves__val">Carbs · <span id="gC">225</span>g</div></div>
+        <div class="ves" style="--vc:var(--accent)"><div class="ves__v"><div class="ves__f" id="fF"></div></div><div class="ves__n"><span id="tF">0</span>g</div><div class="ves__val">Fat · <span id="gF">65</span>g</div></div>
+      </div>
+      <div class="micros">
+        <div class="micro" style="--mc:var(--good)"><span class="ml">Fiber</span><span class="mbar"><i id="bFib"></i></span><span class="mv"><b id="tFib">0</b> / 28 g goal</span></div>
+        <div class="micro" style="--mc:var(--coral)"><span class="ml">Sugar</span><span class="mbar"><i id="bSug"></i></span><span class="mv"><b id="tSug">0</b> / 50 g limit</span></div>
+        <div class="micro" style="--mc:var(--amber)"><span class="ml">Sodium</span><span class="mbar"><i id="bSod"></i></span><span class="mv"><b id="tSod">0</b> / 2300 mg</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HYDRATION -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>Hydration</h2>
+    <div class="hint">Tap a cup as you drink — a full glass before each meal helps. Aim for 8 a day.</div>
+    <div class="hydro">
+      <div class="hydro__v"><div class="hydro__f" id="waterFill"></div></div>
+      <div class="hydro__b">
+        <div class="hydro__val"><span id="waterCups">0</span> of 8 <span>cups · <span id="waterOz">0</span> oz</span></div>
+        <div class="hydro__cups" id="waterCupsRow"></div>
+        <div class="hydro__ctrl"><button type="button" onclick="setWater(WATER-1)">–</button><button type="button" onclick="setWater(WATER+1)">+</button></div>
+      </div>
     </div>
 
     <div class="q" style="border-top:1px solid var(--line-2);margin-top:12px">
@@ -177,7 +229,6 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
     <div class="q"><div class="lbl">Moved your body?</div><div class="opts" data-q="Movement"><button type="button">Not yet</button><button type="button">10 min</button><button type="button">20 min</button><button type="button">30+ min</button><button type="button">Workout</button></div></div>
     <div class="q"><div class="lbl">Time outside?</div><div class="opts" data-q="Outside"><button type="button">None</button><button type="button">A little</button><button type="button">A walk</button><button type="button">30+ min</button></div></div>
     <div class="q"><div class="lbl">Time with people you care about?</div><div class="opts" data-q="People"><button type="button">None</button><button type="button">A little</button><button type="button">Real time</button></div></div>
-    <div class="q"><div class="lbl">Water</div><div class="opts" data-q="Water"><button type="button">Under 4</button><button type="button">4–6</button><button type="button">6–8</button><button type="button">8+ cups</button></div></div>
   </div>
 
   <!-- SYMPTOMS (program-specific) -->
@@ -290,7 +341,7 @@ function estRow(it){
     +'<div class="est-macros">P <input type="number" min="0" value="'+it.protein+'"> C <input type="number" min="0" value="'+it.carbs+'"> F <input type="number" min="0" value="'+it.fat+'"></div></div>';
   const ins=el.querySelectorAll('.est-macros input');
   const b=document.createElement('button'); b.className='obtn go'; b.type='button'; b.textContent='Add';
-  b.onclick=()=>{ plateAdd(it.name,+ins[0].value||0,+ins[1].value||0,+ins[2].value||0); b.textContent='Added ✓'; b.disabled=true; };
+  b.onclick=()=>{ plateAdd(it.name,{cal:+it.calories||0,p:+ins[0].value||0,c:+ins[1].value||0,f:+ins[2].value||0,fiber:+it.fiber||0,sugar:+it.sugar||0,sodium:+it.sodium||0}); b.textContent='Added ✓'; b.disabled=true; };
   el.appendChild(b); return el;
 }
 async function estimatePlate(e){
@@ -314,16 +365,43 @@ async function estimatePlate(e){
   }catch(err){ status.textContent='Couldn’t reach the estimator — check your connection, or use search/barcode above.'; }
 }
 
-/* ===== Open Food Facts — real food search + barcode lookup (free, no key) ===== */
-const FOODS=[]; const MACRO={p:0,c:0,f:0};
-function plateAdd(name,p,c,f){
-  FOODS.push(name); MACRO.p+=p; MACRO.c+=c; MACRO.f+=f;
-  const t=document.getElementById('tally'); t.hidden=false;
-  document.getElementById('tallyItems').textContent=FOODS.length+' item'+(FOODS.length>1?'s':'');
-  document.getElementById('tP').textContent=Math.round(MACRO.p);
-  document.getElementById('tC').textContent=Math.round(MACRO.c);
-  document.getElementById('tF').textContent=Math.round(MACRO.f);
+/* ===== Nutrition tally — fuel vessels + nutrient bars ===== */
+const FOODS=[];
+const NUTRI={cal:0,p:0,c:0,f:0,fiber:0,sugar:0,sodium:0};
+const TARGET={cal:2000,p:90,c:225,f:65,fiber:28,sugar:50,sodium:2300};
+const R=x=>Math.round(x||0);
+function plateAdd(name,n){
+  n=n||{}; FOODS.push(name);
+  ['cal','p','c','f','fiber','sugar','sodium'].forEach(k=>{ NUTRI[k]+=(+n[k]||0); });
+  renderFuel();
 }
+function renderFuel(){
+  document.getElementById('fuel').hidden=false;
+  document.getElementById('tallyItems').textContent=FOODS.length+' item'+(FOODS.length!==1?'s':'');
+  const set=(id,v)=>{const e=document.getElementById(id); if(e) e.textContent=v;};
+  const fill=(id,v,t)=>{const e=document.getElementById(id); if(e) e.style.height=Math.min(100,Math.round(v/t*100))+'%';};
+  const bar=(id,v,t)=>{const e=document.getElementById(id); if(e) e.style.width=Math.min(100,Math.round(v/t*100))+'%';};
+  set('tCal',R(NUTRI.cal)); set('tP',R(NUTRI.p)); set('tC',R(NUTRI.c)); set('tF',R(NUTRI.f));
+  set('tFib',R(NUTRI.fiber)); set('tSug',R(NUTRI.sugar)); set('tSod',R(NUTRI.sodium));
+  fill('fCal',NUTRI.cal,TARGET.cal); fill('fP',NUTRI.p,TARGET.p); fill('fC',NUTRI.c,TARGET.c); fill('fF',NUTRI.f,TARGET.f);
+  bar('bFib',NUTRI.fiber,TARGET.fiber); bar('bSug',NUTRI.sugar,TARGET.sugar); bar('bSod',NUTRI.sodium,TARGET.sodium);
+}
+
+/* ===== Hydration tracker ===== */
+let WATER=0;
+function setWater(n){
+  WATER=Math.max(0,Math.min(12,n));
+  document.getElementById('waterCups').textContent=WATER;
+  document.getElementById('waterOz').textContent=WATER*8;
+  document.getElementById('waterFill').style.height=Math.min(100,Math.round(WATER/8*100))+'%';
+  [...document.querySelectorAll('#waterCupsRow .cup')].forEach((c,i)=>c.classList.toggle('on',i<WATER));
+}
+(function(){
+  const row=document.getElementById('waterCupsRow'); if(!row) return;
+  for(let i=0;i<8;i++){ const c=document.createElement('button'); c.type='button'; c.className='cup'; c.onclick=()=>setWater(i+1===WATER?i:i+1); row.appendChild(c); }
+})();
+
+/* ===== Open Food Facts — real food search + barcode lookup (free, no key) ===== */
 (function(){
   const q=document.getElementById('offQ'); if(!q) return;
   const status=document.getElementById('offStatus'), results=document.getElementById('offResults');
@@ -332,12 +410,15 @@ function plateAdd(name,p,c,f){
   function row(p){
     const nu=p.nutriments||{};
     const pr=num(nu.proteins_100g), cb=num(nu.carbohydrates_100g), ft=num(nu.fat_100g);
+    const cal=num(nu['energy-kcal_100g']!=null?nu['energy-kcal_100g']:(nu.energy_100g?nu.energy_100g/4.184:0));
+    const fib=num(nu.fiber_100g), sug=num(nu.sugars_100g);
+    const sod=num(nu.sodium_100g!=null?nu.sodium_100g*1000:(nu.salt_100g!=null?nu.salt_100g*400:0)); // g→mg; salt→sodium
     const name=(p.product_name||'Unnamed food').trim();
     const brand=(p.brands||'').split(',')[0].trim();
     const el=document.createElement('div'); el.className='off-item';
-    el.innerHTML='<div class="off-item__b"><div class="off-item__n">'+esc(name)+(brand?' · <span style="font-weight:400;color:var(--ink-soft)">'+esc(brand)+'</span>':'')+'</div><div class="off-item__m">per 100g · '+pr+'g protein · '+cb+'g carbs · '+ft+'g fat</div></div>';
+    el.innerHTML='<div class="off-item__b"><div class="off-item__n">'+esc(name)+(brand?' · <span style="font-weight:400;color:var(--ink-soft)">'+esc(brand)+'</span>':'')+'</div><div class="off-item__m">per 100g · '+cal+' kcal · '+pr+'g P · '+cb+'g C · '+ft+'g F</div></div>';
     const b=document.createElement('button'); b.className='obtn go'; b.type='button'; b.textContent='Add 100g';
-    b.onclick=()=>{ plateAdd(name,pr,cb,ft); b.textContent='Added ✓'; b.disabled=true; };
+    b.onclick=()=>{ plateAdd(name,{cal,p:pr,c:cb,f:ft,fiber:fib,sugar:sug,sodium:sod}); b.textContent='Added ✓'; b.disabled=true; };
     el.appendChild(b); return el;
   }
   async function search(){
@@ -400,7 +481,8 @@ async function saveAll(){
   if(meds.length) parts.push('Took: '+meds.join(', '));
   const devs=[...document.querySelectorAll('.dv.on .nm')].map(n=>n.childNodes[0].textContent.trim());
   if(devs.length) parts.push('Devices: '+devs.join(', '));
-  if(FOODS.length) parts.push('Food ('+FOODS.length+'): '+FOODS.join(', ')+` — ~${Math.round(MACRO.p)}g protein, ${Math.round(MACRO.c)}g carbs, ${Math.round(MACRO.f)}g fat`);
+  if(FOODS.length) parts.push('Food ('+FOODS.length+'): '+FOODS.join(', ')+` — ~${R(NUTRI.cal)} kcal, ${R(NUTRI.p)}g protein, ${R(NUTRI.c)}g carbs, ${R(NUTRI.f)}g fat, ${R(NUTRI.fiber)}g fiber, ${R(NUTRI.sugar)}g sugar, ${R(NUTRI.sodium)}mg sodium`);
+  if(WATER) parts.push(`Water: ${WATER} cups (${WATER*8} oz)`);
   if(MEALS) parts.push(MEALS+' meal photo'+(MEALS>1?'s':'')+' logged');
   const summary=`${P.name} check-in — `+(parts.length?parts.join(' · '):'opened, nothing logged');
   done.hidden=false; done.textContent='Saving…';
