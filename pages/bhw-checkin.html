@@ -181,18 +181,18 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
         <div class="ves" style="--vc:var(--accent)"><div class="ves__v"><div class="ves__f" id="fF"></div></div><div class="ves__n"><span id="tF">0</span>g</div><div class="ves__val">Fat · <span id="gF">65</span>g</div></div>
       </div>
       <div class="micros">
-        <div class="micro" style="--mc:var(--good)"><span class="ml">Fiber</span><span class="mbar"><i id="bFiber"></i></span><span class="mv"><b id="tFiber">0</b> / 28 g goal</span></div>
-        <div class="micro" style="--mc:var(--coral)"><span class="ml">Sugar</span><span class="mbar"><i id="bSugar"></i></span><span class="mv"><b id="tSugar">0</b> / 50 g limit</span></div>
-        <div class="micro" style="--mc:var(--amber)"><span class="ml">Sodium</span><span class="mbar"><i id="bSodium"></i></span><span class="mv"><b id="tSodium">0</b> / 2300 mg</span></div>
+        <div class="micro" style="--mc:var(--good)"><span class="ml">Fiber</span><span class="mbar"><i id="bFiber"></i></span><span class="mv"><b id="tFiber">0</b> / <span id="gFiber">28</span> g goal</span></div>
+        <div class="micro" style="--mc:var(--coral)"><span class="ml">Sugar</span><span class="mbar"><i id="bSugar"></i></span><span class="mv"><b id="tSugar">0</b> / <span id="gSugar">50</span> g limit</span></div>
+        <div class="micro" style="--mc:var(--amber)"><span class="ml">Sodium</span><span class="mbar"><i id="bSodium"></i></span><span class="mv"><b id="tSodium">0</b> / <span id="gSodium">2300</span> mg</span></div>
       </div>
       <div class="micro-h">Vitamins &amp; minerals</div>
       <div class="micros">
-        <div class="micro" style="--mc:var(--amber)"><span class="ml">Vitamin D</span><span class="mbar"><i id="bVitd"></i></span><span class="mv"><b id="tVitd">0</b> / 20 µg</span></div>
-        <div class="micro" style="--mc:var(--good)"><span class="ml">Vitamin C</span><span class="mbar"><i id="bVitc"></i></span><span class="mv"><b id="tVitc">0</b> / 90 mg</span></div>
-        <div class="micro" style="--mc:var(--coral)"><span class="ml">Iron</span><span class="mbar"><i id="bIron"></i></span><span class="mv"><b id="tIron">0</b> / 18 mg</span></div>
-        <div class="micro" style="--mc:var(--accent)"><span class="ml">Calcium</span><span class="mbar"><i id="bCalcium"></i></span><span class="mv"><b id="tCalcium">0</b> / 1000 mg</span></div>
-        <div class="micro" style="--mc:var(--accent-deep)"><span class="ml">Potassium</span><span class="mbar"><i id="bPotassium"></i></span><span class="mv"><b id="tPotassium">0</b> / 3400 mg</span></div>
-        <div class="micro" style="--mc:var(--good)"><span class="ml">Magnesium</span><span class="mbar"><i id="bMagnesium"></i></span><span class="mv"><b id="tMagnesium">0</b> / 400 mg</span></div>
+        <div class="micro" style="--mc:var(--amber)"><span class="ml">Vitamin D</span><span class="mbar"><i id="bVitd"></i></span><span class="mv"><b id="tVitd">0</b> / <span id="gVitd">20</span> µg</span></div>
+        <div class="micro" style="--mc:var(--good)"><span class="ml">Vitamin C</span><span class="mbar"><i id="bVitc"></i></span><span class="mv"><b id="tVitc">0</b> / <span id="gVitc">90</span> mg</span></div>
+        <div class="micro" style="--mc:var(--coral)"><span class="ml">Iron</span><span class="mbar"><i id="bIron"></i></span><span class="mv"><b id="tIron">0</b> / <span id="gIron">18</span> mg</span></div>
+        <div class="micro" style="--mc:var(--accent)"><span class="ml">Calcium</span><span class="mbar"><i id="bCalcium"></i></span><span class="mv"><b id="tCalcium">0</b> / <span id="gCalcium">1000</span> mg</span></div>
+        <div class="micro" style="--mc:var(--accent-deep)"><span class="ml">Potassium</span><span class="mbar"><i id="bPotassium"></i></span><span class="mv"><b id="tPotassium">0</b> / <span id="gPotassium">3400</span> mg</span></div>
+        <div class="micro" style="--mc:var(--good)"><span class="ml">Magnesium</span><span class="mbar"><i id="bMagnesium"></i></span><span class="mv"><b id="tMagnesium">0</b> / <span id="gMagnesium">400</span> mg</span></div>
       </div>
     </div>
   </div>
@@ -288,19 +288,28 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
 // the check-in reaches the care team / triage queue.
 const OFFICE_API='https://bhwcrewos.netlify.app/.netlify/functions/portal-message';
 
+// Nutrient targets per program (daily). Starting defaults the care team can
+// tune per patient: general baseline for Primary Care, then program-specific
+// tilts — Flow leans higher protein / lower sodium / more potassium (vascular,
+// GLP-1 muscle preservation); Mind & Mood and CharmEd lean higher magnesium /
+// vitamin D / lower sugar (mood & cognition).
 const PROGRAMS={
   primary:{name:'Primary Care', back:'bhw-primary-care-demo.html', accent:'#5fa9a6', deep:'#4a8a87',
     symptoms:['Fatigue','Headache','Dizziness','Chest tightness','Shortness of breath','Joint pain','Digestive upset','Low mood','Poor sleep','Other'],
-    meds:[['Rosuvastatin 10 mg','Nightly · cholesterol'],['Vitamin D3 + K2','Daily'],['Iron','Every other morning, with vitamin C']]},
+    meds:[['Rosuvastatin 10 mg','Nightly · cholesterol'],['Vitamin D3 + K2','Daily'],['Iron','Every other morning, with vitamin C']],
+    targets:{p:90,c:225,f:65,fiber:28,sugar:50,sodium:2300,vitd:20,vitc:90,iron:18,calcium:1000,potassium:3400,magnesium:400}},
   flow:{name:'Flow · Vascular', back:'bhw-flow-program.html', accent:'#5f93bd', deep:'#436f92',
     symptoms:['Leg cramps','Cold hands/feet','Swelling','Chest tightness','Shortness of breath','Palpitations','Dizziness','Fatigue','Headache','Other'],
-    meds:[['Icosapent ethyl 2 g','Twice daily · triglycerides'],['Rosuvastatin 10 mg','Nightly'],['Vitamin D3 + K2','Daily'],['Omega-3','Daily']]},
+    meds:[['Icosapent ethyl 2 g','Twice daily · triglycerides'],['Rosuvastatin 10 mg','Nightly'],['Vitamin D3 + K2','Daily'],['Omega-3','Daily']],
+    targets:{p:110,c:180,f:60,fiber:35,sugar:36,sodium:1500,vitd:25,vitc:120,iron:18,calcium:1000,potassium:4000,magnesium:420}},
   mind:{name:'Mind & Mood', back:'bhw-mindmood-program.html', accent:'#e0965c', deep:'#b9713a',
     symptoms:['Low mood','Anxiety','Irritability','Poor sleep','Low motivation','Racing thoughts','Cravings','Fatigue','Appetite change','Other'],
-    meds:[['Methyl-B12','Morning'],['Vitamin D3','Daily'],['Magnesium glycinate','Evening'],['Omega-3','Daily']]},
+    meds:[['Methyl-B12','Morning'],['Vitamin D3','Daily'],['Magnesium glycinate','Evening'],['Omega-3','Daily']],
+    targets:{p:100,c:200,f:65,fiber:30,sugar:40,sodium:2000,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450}},
   charmed:{name:'CharmEd', back:'bhw-charmed-program.html', accent:'#3aa79b', deep:'#2c7f76',
     symptoms:['Brain fog','Memory slips','Word-finding','Poor focus','Low mood','Poor sleep','Fatigue','Headache','Other'],
-    meds:[['Methyl-B12','Morning'],['Vitamin D3','Daily'],['Omega-3','Daily'],['Magnesium threonate','Evening']]},
+    meds:[['Methyl-B12','Morning'],['Vitamin D3','Daily'],['Omega-3','Daily'],['Magnesium threonate','Evening']],
+    targets:{p:100,c:180,f:65,fiber:30,sugar:36,sodium:1800,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450}},
 };
 const DEVICES=[
   ['Dexcom','CGM · glucose','#1a9c4a','DX'],
@@ -380,9 +389,16 @@ const MACROS=['p','c','f'];
 const MICROS=['fiber','sugar','sodium','vitd','vitc','iron','calcium','potassium','magnesium'];
 const KEYS=[...MACROS,...MICROS];
 const NUTRI={}; KEYS.forEach(k=>NUTRI[k]=0);
-const TARGET={p:90,c:225,f:65,fiber:28,sugar:50,sodium:2300,vitd:20,vitc:90,iron:18,calcium:1000,potassium:3400,magnesium:400};
+const TARGET=P.targets;  // program-specific daily targets
 const R=x=>Math.round(x||0);
 const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+// show each program's goal numbers next to the vessels + bars
+function applyTargets(){
+  const set=(id,v)=>{const e=document.getElementById(id); if(e) e.textContent=v;};
+  MACROS.forEach(k=>set('g'+k.toUpperCase(),TARGET[k]));
+  MICROS.forEach(k=>set('g'+cap(k),TARGET[k]));
+}
+applyTargets();
 function plateAdd(name,n){
   n=n||{}; FOODS.push(name);
   KEYS.forEach(k=>{ NUTRI[k]+=(+n[k]||0); });
