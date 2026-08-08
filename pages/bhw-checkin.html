@@ -94,6 +94,13 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
 .hydro__ctrl{display:flex;gap:8px}
 .hydro__ctrl button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--soft);font-size:18px;font-weight:700;cursor:pointer;color:var(--ink);line-height:1}
 .hydro__ctrl button:hover{border-color:var(--water)}
+/* Trend sparklines */
+.trend{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line-2)}
+.trend:last-child{border-bottom:0}
+.trend .tl{width:64px;font-size:11.5px;font-weight:800;color:var(--ink-soft);flex-shrink:0}
+.trend svg{flex:1;height:34px;min-width:0}
+.trend .tv{width:66px;text-align:right;font-size:11.5px;color:var(--ink-soft);flex-shrink:0}
+.trend .tv b{font-family:'Nunito';color:var(--ink)}
 .homecook{margin-top:12px;border-top:1px solid var(--line-2);padding-top:10px}
 .homecook summary{font-size:12.5px;font-weight:700;color:var(--accent-deep);cursor:pointer;list-style:none}
 .homecook summary::-webkit-details-marker{display:none}
@@ -173,6 +180,24 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
     <div class="off-status" id="offStatus"></div>
     <div class="off-results" id="offResults"></div>
 
+    <details class="homecook">
+      <summary>Home-cooked or fresh meal? Snap a photo for an instant estimate</summary>
+      <label class="scan" for="plate">
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>
+        <span class="t"><b>Snap your plate</b><i>We estimate the foods &amp; macros — you confirm before it counts</i></span>
+        <span class="go">Open camera →</span>
+        <input id="plate" type="file" accept="image/*" capture="environment" hidden onchange="estimatePlate(event)">
+      </label>
+      <div class="meals" id="meals"></div>
+      <div class="off-status" id="plateStatus"></div>
+      <div class="off-results" id="plateEst"></div>
+    </details>
+
+    <div class="q" style="border-top:1px solid var(--line-2);margin-top:12px">
+      <div class="lbl">Nutrition plan — last 24 hours</div>
+      <div class="opts" data-q="Nutrition"><button type="button">Off track</button><button type="button">Some of it</button><button type="button">Mostly</button><button type="button">On plan</button></div>
+    </div>
+
     <div class="fuel" id="fuel" hidden>
       <div class="fuel-h">Today so far · <span id="tallyItems">0 items</span></div>
       <div class="ves-grid">
@@ -209,24 +234,13 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
         <div class="hydro__ctrl"><button type="button" onclick="setWater(WATER-1)">–</button><button type="button" onclick="setWater(WATER+1)">+</button></div>
       </div>
     </div>
+  </div>
 
-    <div class="q" style="border-top:1px solid var(--line-2);margin-top:12px">
-      <div class="lbl">Nutrition plan — last 24 hours</div>
-      <div class="opts" data-q="Nutrition"><button type="button">Off track</button><button type="button">Some of it</button><button type="button">Mostly</button><button type="button">On plan</button></div>
-    </div>
-
-    <details class="homecook">
-      <summary>Home-cooked or fresh meal? Snap a photo for an instant estimate</summary>
-      <label class="scan" for="plate">
-        <span class="ico"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>
-        <span class="t"><b>Snap your plate</b><i>We estimate the foods &amp; macros — you confirm before it counts</i></span>
-        <span class="go">Open camera →</span>
-        <input id="plate" type="file" accept="image/*" capture="environment" hidden onchange="estimatePlate(event)">
-      </label>
-      <div class="meals" id="meals"></div>
-      <div class="off-status" id="plateStatus"></div>
-      <div class="off-results" id="plateEst"></div>
-    </details>
+  <!-- TREND (stored history) -->
+  <div class="card" id="trendCard" hidden>
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 18l5-6 4 3 6-8"/><path d="M4 21h16"/></svg></span>Your trend <span id="trendDays" style="font-size:11px;font-weight:600;color:var(--ink-soft)"></span></h2>
+    <div class="hint">Your recent check-ins — the more you log, the clearer the pattern for you and your care team.</div>
+    <div id="trends"></div>
   </div>
 
   <!-- HOW YOU'RE DOING -->
@@ -389,7 +403,7 @@ const MACROS=['p','c','f'];
 const MICROS=['fiber','sugar','sodium','vitd','vitc','iron','calcium','potassium','magnesium'];
 const KEYS=[...MACROS,...MICROS];
 const NUTRI={}; KEYS.forEach(k=>NUTRI[k]=0);
-const TARGET=P.targets;  // program-specific daily targets
+let TARGET=Object.assign({},P.targets);  // program defaults; per-patient overrides merge in from the care plan
 const R=x=>Math.round(x||0);
 const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
 // show each program's goal numbers next to the vessels + bars
@@ -399,6 +413,48 @@ function applyTargets(){
   MICROS.forEach(k=>set('g'+cap(k),TARGET[k]));
 }
 applyTargets();
+
+/* ===== Storage: per-patient targets + trend (stored history) ===== */
+const HIST_API='/.netlify/functions/checkin-history';
+const SAVE_API='/.netlify/functions/checkin-save';
+const PATIENT={ name: params.get('name')||'Jordan Rivera', phone: params.get('phone')||'940-637-5470', id: params.get('pid')||'' };
+const PROGKEY=params.get('program')||'primary';
+const FEEL={Rough:1,Low:2,OK:3,Good:4,Great:5}, SLEEPS={Rough:1,OK:2,Good:3,Great:4};
+function spark(vals,color){
+  const pts=[]; vals.forEach((v,i)=>{ if(v!=null&&!isNaN(v)) pts.push([i,+v]); });
+  if(pts.length<2) return '<svg viewBox="0 0 100 34" preserveAspectRatio="none"></svg>';
+  const ys=pts.map(p=>p[1]), maxX=vals.length-1, minY=Math.min(...ys), maxY=Math.max(...ys);
+  const nx=x=>maxX>0?x/maxX*100:50, ny=y=>maxY>minY?30-(y-minY)/(maxY-minY)*26:17;
+  const d=pts.map((p,i)=>(i?'L':'M')+nx(p[0]).toFixed(1)+' '+ny(p[1]).toFixed(1)).join(' ');
+  return `<svg viewBox="0 0 100 34" preserveAspectRatio="none"><path d="${d}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>`;
+}
+function renderTrend(series){
+  const rows=[
+    ['Feeling', series.map(s=>FEEL[s.feeling]||null), 'var(--accent-deep)', v=>['—','Rough','Low','OK','Good','Great'][Math.round(v)]||'—'],
+    ['Sleep', series.map(s=>SLEEPS[s.sleep]||null), 'var(--accent)', v=>['—','Rough','OK','Good','Great'][Math.round(v)]||'—'],
+    ['Water', series.map(s=>s.water), 'var(--water)', v=>R(v)+' cups'],
+    ['Protein', series.map(s=>s.p), 'var(--coral)', v=>R(v)+' g'],
+    ['Fiber', series.map(s=>s.fiber), 'var(--good)', v=>R(v)+' g'],
+    ['Sodium', series.map(s=>s.sodium), 'var(--amber)', v=>R(v)+' mg'],
+  ];
+  const box=document.getElementById('trends'); box.innerHTML='';
+  rows.forEach(([label,vals,color,fmt])=>{
+    const nn=vals.filter(v=>v!=null&&!isNaN(v));
+    if(nn.length<2) return;
+    const el=document.createElement('div'); el.className='trend';
+    el.innerHTML=`<span class="tl">${label}</span>${spark(vals,color)}<span class="tv"><b>${fmt(nn[nn.length-1])}</b></span>`;
+    box.appendChild(el);
+  });
+  if(box.children.length){ document.getElementById('trendCard').hidden=false; document.getElementById('trendDays').textContent='· last '+series.length+' check-ins'; }
+}
+(async function loadHistory(){
+  try{
+    const r=await fetch(HIST_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({patient:PATIENT,program:PROGKEY,days:30})});
+    const d=await r.json().catch(()=>({}));
+    if(d&&d.override&&Object.keys(d.override).length){ TARGET=Object.assign({},P.targets,d.override); applyTargets(); renderFuel(); }
+    if(d&&Array.isArray(d.series)&&d.series.length) renderTrend(d.series);
+  }catch(e){/* offline / not configured — page still works */}
+})();
 function plateAdd(name,n){
   n=n||{}; FOODS.push(name);
   KEYS.forEach(k=>{ NUTRI[k]+=(+n[k]||0); });
@@ -518,8 +574,18 @@ async function saveAll(){
   if(MEALS) parts.push(MEALS+' meal photo'+(MEALS>1?'s':'')+' logged');
   const summary=`${P.name} check-in — `+(parts.length?parts.join(' · '):'opened, nothing logged');
   done.hidden=false; done.textContent='Saving…';
+  // Structured record → checkin-save (for trending). Inert until CHECKIN_DB_ID is set.
+  const v=id=>{const e=document.getElementById(id); return e?e.value.trim():'';};
+  const payload={
+    program:PROGKEY, patient:PATIENT, date:new Date().toISOString().slice(0,10), summary,
+    well:{feeling:STATE.Feeling,motivation:STATE.Motivation,sleep:STATE.Sleep,movement:STATE.Movement,outside:STATE.Outside,people:STATE.People,nutrition:STATE.Nutrition},
+    symptoms:STATE.Symptoms||[], meds, water:WATER,
+    nutrients:NUTRI,
+    vitals:{bp:v('v_bp'),hr:v('v_hr'),wt:v('v_wt'),glu:v('v_glu'),temp:v('v_temp'),o2:v('v_o2'),steps:v('v_steps')},
+  };
+  fetch(SAVE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
   try{
-    await fetch(OFFICE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:'Jordan Rivera',phone:'940-637-5470',message:summary})});
+    await fetch(OFFICE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:PATIENT.name,phone:PATIENT.phone,message:summary})});
     done.textContent='Saved — thank you. Your care team sees this. ✓';
   }catch(err){ done.textContent='Saved on your device — will sync when you’re back online.'; }
 }
