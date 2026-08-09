@@ -688,7 +688,7 @@ h1,h2,h3,h4{margin:0; color:var(--fg-strong); text-wrap:balance;}
             <div class="profile-name" id="pf-name">—</div>
             <div class="profile-sub" id="pf-sub"></div>
           </div>
-          <a class="profile-page" id="pf-page" href="#" target="_blank" rel="noopener" hidden>Open my full page →</a>
+          
         </div>
         <div class="profile-programs" id="pf-programs"></div>
         <div class="profile-grid" id="pf-grid"></div>
@@ -1557,8 +1557,6 @@ function renderProfile(p){
   document.getElementById('pf-name').textContent=p.name||'—';
   var sub=[]; if(p.age!=null) sub.push(p.age+' yrs'); if(p.gender) sub.push(p.gender); if(p.mrn) sub.push('MRN '+p.mrn);
   document.getElementById('pf-sub').textContent=sub.join('  ·  ');
-  var pg=document.getElementById('pf-page');
-  if(p.patientPage){ pg.href=p.patientPage; pg.hidden=false; } else { pg.hidden=true; }
   document.getElementById('pf-programs').innerHTML=(p.programs||[]).map(function(x){ return '<span class="pf-chip">'+medEsc(x)+'</span>'; }).join('');
   var fields=[];
   if(p.payer) fields.push(['Insurance', p.payer + (p.medicaidMco?(' · '+p.medicaidMco):'')]);
