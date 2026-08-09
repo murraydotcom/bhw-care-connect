@@ -22,6 +22,6 @@ export const CONTACT = {
    * profile, care plan, and programs. The Personal Health Blueprint is what
    * they see inside once signed in. Same page, two doors.
    */
-  portalUrl: 'bhw-primary-care-demo.html',
+  portalUrl: 'bhw-patient-portal-mockup.html?next=dashboard',
   blueprintUrl: 'bhw-patient-portal-mockup.html',
 } as const
