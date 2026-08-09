@@ -3,10 +3,10 @@ import { CONTACT } from '../data/contact'
 import styles from './SiteFooter.module.css'
 
 const CARE_LINKS: { label: string; href: string }[] = [
-  { label: 'Primary Care', href: 'bhw-patient-portal-mockup.html' },
-  { label: 'Mind & Mood', href: 'bhw-mindmood-patient-mockup.html' },
-  { label: 'CharmEd Minds', href: 'bhw-charmed-patient-mockup.html' },
-  { label: 'Flow', href: 'bhw-flow-patient-mockup.html' },
+  { label: 'Primary Care', href: 'bhw-primary-care-demo.html' },
+  { label: 'Mind & Mood', href: 'bhw-mindmood-program.html' },
+  { label: 'CharmEd Minds', href: 'bhw-charmed-program.html' },
+  { label: 'Flow', href: 'bhw-flow-program.html' },
   { label: 'Meet the care team', href: '#' },
 ]
 
