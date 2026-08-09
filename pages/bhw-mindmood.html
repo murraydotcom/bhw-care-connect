@@ -1,0 +1,392 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>BHW Mind & Mood — Brain & neurotransmitters</title>
+<style>
+@font-face{font-family:'Nunito';src:url('fonts/Nunito/Nunito-VariableFont_wght.ttf') format('truetype');font-weight:300 900;font-display:swap}
+@font-face{font-family:'OpenSans';src:url('fonts/Open_Sans/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');font-weight:300 800;font-display:swap}
+:root{
+  --ink:#294049; --ink-soft:#6c7b74; --ink-mute:#9fa89e; --line:rgba(255,255,255,.6); --line-2:rgba(120,150,145,.14);
+  --card:rgba(255,255,254,.5); --soft:rgba(238,241,236,.7); --soft-2:rgba(220,230,226,.6);
+  --teal:#5fa9a6; --teal-lite:#84c9c4; --teal-deep:#4a8a87; --teal-ink:#356b68; --teal-quiet:rgba(120,195,191,.18);
+  --ring:94,169,166; --glow:132,201,196;   /* HUD ring + body glow, per program */
+  --warm2:233,224,210;                       /* second scene glow, per program */
+  --clay:#b07a55; --clay-q:#f1e7dc; --gold:#d1a84e; --gold-q:#f4ecd6; --ok:#6f8f6a; --ok-q:#e6ede2; --alert:#b06450; --alert-q:#f2e4de;
+  --r:18px; --r-sm:12px;
+  --sh:0 1px 0 rgba(255,255,255,.6) inset, 0 22px 44px -28px rgba(30,55,50,.55);
+  --sh-sm:0 10px 22px -16px rgba(30,55,50,.4);
+  --glass:saturate(1.2) blur(16px);
+}
+/* ——— program skins: same layout, brand accent only ——— */
+/* Mind & Mood Recovery — sunrise palette (HEAL · RESTORE · RISE) */
+:root[data-program="mind"]{--teal:#E09A5C;--teal-lite:#F2BE84;--teal-deep:#CB6F4E;--teal-ink:#9a5236;--teal-quiet:rgba(233,168,120,.2);--ring:230,150,95;--glow:245,196,135;--warm2:245,216,196}
+:root[data-program="charmed"]{--teal:#C0A046;--teal-lite:#dcc06a;--teal-deep:#9C8038;--teal-ink:#6f5b26;--teal-quiet:rgba(192,160,70,.16);--ring:192,160,70;--glow:224,196,110;--warm2:236,226,204}
+:root[data-program="flow"]{--teal:#5f93bd;--teal-lite:#83b1d6;--teal-deep:#4f7f92;--teal-ink:#345a6b;--teal-quiet:rgba(95,147,189,.16);--ring:95,147,189;--glow:131,177,214;--warm2:214,226,235}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:13.5px;line-height:1.5;-webkit-font-smoothing:antialiased;min-height:100vh;padding:26px;
+  background:
+    radial-gradient(1300px 720px at 50% -16%, rgba(248,198,120,.70), transparent 58%),
+    radial-gradient(760px 520px at 50% -6%, rgba(240,150,110,.34), transparent 60%),
+    radial-gradient(1000px 640px at 6% 4%, rgba(230,168,182,.42), transparent 55%),
+    radial-gradient(1250px 900px at 100% 128%, rgba(140,180,178,.6), transparent 55%),
+    linear-gradient(172deg,#fdf1e2 0%,#f6ede1 42%,#e9f0ea 100%);}
+h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sans-serif}
+.mut{color:var(--ink-soft)}.tiny{font-size:10.5px}.eb{font-size:10px;font-weight:640;letter-spacing:.14em;text-transform:uppercase;color:var(--ink-mute)}
+
+.app{max-width:1400px;margin:0 auto;display:flex;background:rgba(255,254,251,.46);backdrop-filter:blur(26px) saturate(1.15);
+  border:1px solid rgba(255,255,255,.7);border-radius:26px;overflow:hidden;
+  box-shadow:0 60px 130px -55px rgba(30,45,40,.6), inset 0 1px 0 rgba(255,255,255,.85)}
+
+/* LEFT ICON RAIL */
+.rail{width:64px;flex:none;display:flex;flex-direction:column;align-items:center;gap:4px;padding:16px 0;background:rgba(255,254,251,.4);border-right:1px solid var(--line-2)}
+.rail .brand{width:40px;height:40px;border-radius:12px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;box-shadow:var(--sh-sm);margin-bottom:10px}
+.rail .brand img{width:26px;height:26px;object-fit:contain}
+.rail .i{position:relative;width:40px;height:40px;border-radius:12px;display:grid;place-items:center;color:var(--ink-soft);font-size:16px;cursor:pointer}
+.rail .i.on{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;box-shadow:0 10px 18px -9px rgba(74,138,135,.75)}
+.rail .i:hover:not(.on){background:var(--soft)}
+.rail .i .tip{position:absolute;left:50px;top:50%;transform:translateY(-50%);background:var(--ink);color:#fff;font-size:10.5px;font-weight:560;padding:4px 9px;border-radius:7px;white-space:nowrap;opacity:0;pointer-events:none;transition:.12s;z-index:9}
+.rail .i:hover .tip{opacity:1}
+.rail .spacer{flex:1}
+.mainpane{flex:1;min-width:0;display:flex;flex-direction:column}
+
+/* HEADER */
+.hdr{display:flex;align-items:center;gap:18px;padding:15px 24px;border-bottom:1px solid var(--line-2)}
+.hd-logo b{font-size:15.5px;font-weight:640;color:var(--teal-ink)}.hd-logo span{font-size:10px;color:var(--ink-mute);display:block;margin-top:-1px}
+.progs{display:flex;gap:3px;margin-left:14px;background:var(--soft);border-radius:999px;padding:4px}
+.progs button{border:0;background:none;font-family:inherit;font-size:12px;font-weight:560;color:var(--ink-soft);padding:8px 15px;border-radius:999px;cursor:pointer}
+.progs button.on{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;box-shadow:0 8px 15px -8px rgba(0,0,0,.35)}
+.hd-r{margin-left:auto;display:flex;align-items:center;gap:12px}
+.srch{display:flex;align-items:center;gap:8px;background:rgba(255,255,255,.7);border:1px solid var(--line);border-radius:999px;padding:9px 15px;color:var(--ink-mute);min-width:180px;font-size:12px}
+.hd-r .ic{width:34px;height:34px;border-radius:50%;border:1px solid var(--line);background:#fff;display:grid;place-items:center;color:var(--ink-soft)}
+.me{display:flex;align-items:center;gap:9px}
+.me .av{width:34px;height:34px;border-radius:50%;background:linear-gradient(135deg,var(--teal-lite),var(--teal));color:#fff;display:grid;place-items:center;font-weight:560;font-size:12px}
+.me b{font-size:12.5px}.me span{font-size:10.5px;color:var(--ink-mute);display:block}
+
+/* BODY GRID: big body stage + data column */
+.stagegrid{flex:1;display:grid;grid-template-columns:minmax(380px,44%) 1fr;gap:0}
+.stage{position:relative;display:flex;align-items:center;justify-content:center;padding:24px;border-right:1px solid var(--line-2);overflow:hidden;
+  background:radial-gradient(58% 60% at 50% 42%, rgba(255,255,255,.5), transparent 70%)}
+/* futuristic scan-rings behind the body */
+.stage .rings{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:min(78%,470px);aspect-ratio:1;border-radius:50%;pointer-events:none;
+  background:radial-gradient(closest-side, rgba(var(--glow),.16), rgba(var(--glow),.05) 62%, transparent 72%)}
+.stage .rings::before,.stage .rings::after{content:"";position:absolute;inset:0;border-radius:50%;border:1px solid rgba(var(--ring),.28)}
+.stage .rings::after{inset:16%;border-color:rgba(var(--ring),.18);border-style:dashed}
+.stage .ring2{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:min(56%,340px);aspect-ratio:1;border-radius:50%;border:1px solid rgba(var(--ring),.22);pointer-events:none;
+  box-shadow:0 0 40px rgba(var(--glow),.18) inset}
+.stage .arc{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);width:min(70%,420px);aspect-ratio:1;border-radius:50%;pointer-events:none;
+  border:2px solid transparent;border-top-color:var(--teal);border-right-color:rgba(var(--ring),.4);filter:drop-shadow(0 0 6px rgba(var(--ring),.5))}
+.stage .bodywrap{position:relative;z-index:2;display:flex;align-items:flex-end;justify-content:center;height:100%}
+.stage .body{max-height:530px;filter:drop-shadow(0 30px 34px rgba(40,80,74,.2)) drop-shadow(0 0 26px rgba(var(--glow),.5))}
+.stage .brain{max-height:none;width:min(96%,440px);filter:drop-shadow(0 26px 30px rgba(120,80,50,.22)) drop-shadow(0 0 34px rgba(var(--glow),.62))}
+/* seven neurotransmitters orbiting the ring */
+.ntpos{position:absolute;z-index:4;top:46%;left:50%}
+.ntnode{display:flex;align-items:center;gap:6px;background:rgba(255,255,255,.9);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:999px;padding:5px 11px;font-size:11px;font-weight:640;color:var(--teal-ink);box-shadow:var(--sh-sm);white-space:nowrap;cursor:pointer;transform:translate(-50%,-50%);transition:transform .12s, box-shadow .12s, background .12s}
+.ntnode .nd{width:9px;height:9px;border-radius:50%;flex:none}
+.ntpos:hover .ntnode,.ntpos.on .ntnode{transform:translate(-50%,-50%) scale(1.14);box-shadow:0 0 0 3px rgba(var(--glow),.55), var(--sh)}
+/* light-up detail panel */
+.ntdetail{position:absolute;top:16px;left:16px;z-index:6;width:240px;background:rgba(255,255,255,.92);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);border:1px solid var(--line);border-radius:15px;padding:14px 15px;box-shadow:var(--sh)}
+.ntdetail .h{display:flex;align-items:center;gap:8px;font-family:'Nunito';font-weight:640;font-size:14px}
+.ntdetail .h .nd{width:12px;height:12px;border-radius:50%}
+.ntdetail .role{font-size:10.5px;color:var(--ink-mute);margin:2px 0 9px 20px;text-transform:capitalize}
+.ntdetail .bar{height:6px;border-radius:99px;background:var(--soft-2);overflow:hidden;margin-bottom:4px}
+.ntdetail .bar i{display:block;height:100%;border-radius:99px}
+.ntdetail .lvl{font-size:10px;font-weight:640;margin-bottom:9px}
+.ntdetail p{font-size:12px;color:var(--ink-soft);line-height:1.55}
+/* right-side seven-row list */
+.ntlist{display:flex;flex-direction:column}
+.ntrow{display:flex;align-items:center;gap:10px;padding:8px 0;border-top:1px solid var(--line-2);cursor:pointer}
+.ntrow:first-child{border-top:0}
+.ntrow.on{background:var(--soft);border-radius:8px;margin:0 -8px;padding:8px}
+.ntrow .nd{width:9px;height:9px;border-radius:50%;flex:none}
+.ntrow .nm{font-weight:640;font-size:12.5px;width:104px}
+.ntrow .role{font-size:11.5px;color:var(--ink-mute);flex:1;text-transform:capitalize}
+.ntrow .bar{width:84px;height:6px;border-radius:99px;background:var(--soft-2);overflow:hidden;flex:none}
+.ntrow .bar i{display:block;height:100%}
+.ntrow .st{font-size:10px;font-weight:640;width:44px;text-align:right}
+.st.c{color:var(--alert)}.st.s{color:#b0862e}.st.o{color:var(--ok)}
+.stage .floor{position:absolute;left:50%;bottom:56px;transform:translateX(-50%);width:220px;height:24px;border-radius:50%;background:radial-gradient(closest-side,rgba(40,70,64,.2),transparent);filter:blur(3px);z-index:1}
+.hot{position:absolute;border-radius:50%;filter:blur(9px);pointer-events:none;z-index:2}
+.organtag{position:absolute;z-index:3;background:rgba(255,255,255,.85);-webkit-backdrop-filter:blur(8px);backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:11px;font-weight:640;color:var(--teal-deep);box-shadow:var(--sh-sm);white-space:nowrap;transform:translateY(-50%)}
+.organtag .ln{position:absolute;right:100%;top:50%;width:34px;height:1px;background:linear-gradient(90deg,transparent,var(--teal))}
+.organtag.left .ln{right:auto;left:100%;background:linear-gradient(90deg,var(--teal),transparent)}
+/* zoom controls */
+.zoom{position:absolute;left:50%;transform:translateX(-50%);bottom:20px;display:flex;flex-direction:column;gap:8px}
+.zoom button{width:36px;height:36px;border-radius:50%;border:1px solid var(--line);background:rgba(255,255,255,.85);color:var(--ink-soft);font-size:16px;display:grid;place-items:center;cursor:pointer;box-shadow:var(--sh-sm)}
+/* floating insight card (light glass) */
+.insight{position:absolute;left:22px;bottom:22px;width:224px;background:color-mix(in srgb, var(--teal-ink) 92%, transparent);color:#fff;border-radius:16px;padding:14px 15px;box-shadow:0 24px 40px -20px rgba(20,50,46,.7);backdrop-filter:blur(6px)}
+.insight .h{display:flex;align-items:center;gap:9px}.insight .h .n{font-family:'Nunito';font-weight:700;font-size:22px}
+.insight .h b{font-weight:640;font-size:12.5px}
+.insight p{font-size:10.8px;color:rgba(255,255,255,.82);margin:7px 0 11px;line-height:1.5}
+.insight .cta{display:flex;align-items:center;justify-content:space-between;background:rgba(255,255,255,.16);border-radius:9px;padding:8px 11px;font-weight:640;font-size:11.5px}
+.insight .dismiss{display:block;text-align:center;margin-top:8px;font-size:10.5px;color:rgba(255,255,255,.7)}
+
+/* DATA COLUMN */
+.data{padding:20px 22px 22px;display:flex;flex-direction:column;gap:14px;overflow:auto}
+.ov-title{display:flex;align-items:center;gap:9px}
+.ov-title .dot{width:22px;height:22px;border-radius:50%;background:conic-gradient(from 220deg,var(--teal),var(--gold),var(--clay),var(--teal))}
+.ov-title b{font-size:18px;font-weight:640}
+.ov-analyze{margin-left:auto;text-align:right;font-size:11px;color:var(--ink-soft)}
+.ov-analyze .bar{width:150px;height:4px;border-radius:99px;background:var(--soft-2);margin-top:5px;overflow:hidden}
+.ov-analyze .bar i{display:block;height:100%;width:62%;border-radius:99px;background:linear-gradient(90deg,var(--teal-lite),var(--teal-deep))}
+.card{background:var(--card);-webkit-backdrop-filter:var(--glass);backdrop-filter:var(--glass);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--sh)}
+.pad{padding:16px 18px}
+.card-h{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.card-h h3{font-size:15.5px;font-weight:640}
+.card-h .exp{color:var(--ink-mute);cursor:pointer}
+
+.row2{display:grid;grid-template-columns:1.15fr 1fr;gap:14px}
+.age{display:flex;align-items:center;gap:16px;padding:16px 18px}
+.age .ico{width:40px;height:40px;border-radius:11px;background:var(--teal-quiet);display:grid;place-items:center;color:var(--teal-deep);font-size:19px}
+.age .b{display:flex;gap:22px}
+.age .lab{font-size:11.5px;color:var(--ink-soft)}
+.age .n{font-size:34px;font-weight:700;line-height:1}.age .n small{font-size:11px;color:var(--ink-mute);font-weight:560}
+.age .up{font-size:10.5px;font-weight:640;color:var(--ok);margin-top:3px}
+.narr{padding:16px 18px;display:flex;flex-direction:column;justify-content:center}
+.narr p{font-size:13.5px;line-height:1.5}.narr b{font-weight:640}
+.narr a{margin-top:10px;align-self:flex-start;background:#fff;border:1px solid var(--line);border-radius:999px;padding:8px 14px;font-weight:640;font-size:11.5px;color:var(--teal-deep);text-decoration:none;box-shadow:var(--sh-sm)}
+
+/* key areas of concern */
+.kac{display:grid;grid-template-columns:repeat(3,1fr);gap:0}
+.kac .col{padding:2px 16px}.kac .col+.col{border-left:1px solid var(--line-2)}
+.kac .top{display:flex;align-items:center;justify-content:space-between;font-size:12pxZ;font-weight:560}
+.kac .top .ar{color:var(--ink-mute)}
+.kac .sc{font-size:30px;font-weight:700;margin:6px 0 1px}.kac .sc small{font-size:11px;color:var(--ink-mute);font-weight:560}
+.kac .flags{font-size:10.5px;color:var(--ink-mute)}
+.kbar{height:6px;border-radius:99px;background:var(--soft-2);margin:9px 0 8px;overflow:hidden}.kbar i{display:block;height:100%;border-radius:99px}
+.kac .st{font-size:11px;font-weight:640}
+.st.c{color:var(--alert)}.st.s{color:#b0862e}.st.o{color:var(--ok)}
+
+/* care strategy */
+.tabsw{display:flex;gap:4px;background:var(--soft);border-radius:999px;padding:4px}
+.tabsw button{border:0;background:none;font-family:inherit;font-size:11.5px;font-weight:560;color:var(--ink-soft);padding:7px 14px;border-radius:999px;cursor:pointer;display:flex;align-items:center;gap:6px}
+.tabsw button.on{background:#fff;color:var(--ink);box-shadow:var(--sh-sm)}
+.tabsw .badge{background:var(--teal);color:#fff;border-radius:999px;font-size:9.5px;font-weight:640;padding:1px 6px}
+.acts{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.act{border:1px solid var(--line);border-radius:var(--r-sm);padding:14px;background:linear-gradient(180deg,rgba(255,255,255,.55),rgba(250,248,242,.35))}
+.act .ico{width:34px;height:34px;border-radius:10px;background:var(--teal-quiet);display:grid;place-items:center;font-size:16px;margin-bottom:10px}
+.act h4{font-size:13.5px;font-weight:640;line-height:1.3}
+.act p{font-size:12px;color:var(--ink-soft);margin-top:6px;line-height:1.5}
+.act .foot{margin-top:11px;padding-top:9px;border-top:1px solid var(--line-2);font-size:10.5px;color:var(--ink-mute)}
+
+/* promo */
+.promo{display:flex;align-items:center;gap:15px;padding:15px 18px;background:linear-gradient(120deg,rgba(var(--glow),.24),rgba(255,254,251,.55));border:1px solid var(--line)}
+.promo .ico{width:44px;height:44px;border-radius:12px;background:#fff;border:1px solid var(--line);display:grid;place-items:center;font-size:21px;box-shadow:var(--sh-sm)}
+.promo .tx b{font-size:13px;font-weight:640}.promo .tx p{font-size:11px;color:var(--ink-soft)}
+.promo .go{margin-left:auto;background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;border:0;border-radius:999px;padding:11px 18px;font-weight:640;font-size:12px;cursor:pointer;box-shadow:0 12px 20px -12px rgba(74,138,135,.8)}
+@media(max-width:1120px){.stagegrid{grid-template-columns:1fr}.stage{border-right:0;border-bottom:1px solid var(--line-2);min-height:420px}.acts,.kac{grid-template-columns:1fr}.kac .col+.col{border-left:0;border-top:1px solid var(--line-2)}}
+.rail .brand svg{width:30px;height:30px;display:block}
+
+/* template sections */
+.phasestrip{display:flex;align-items:center;gap:8px;margin:2px 0 4px;font-size:11px;flex-wrap:wrap}
+.phasestrip span{background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:5px 12px;font-weight:640;color:var(--ink-soft)}
+.phasestrip span.on{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;border-color:transparent}
+.phasestrip em{margin-left:auto;color:var(--ink-mute);font-size:11px}
+.safety{display:flex;align-items:center;gap:10px;padding:11px 14px;background:rgba(176,100,80,.1);border:1px solid rgba(176,100,80,.3);border-radius:12px;font-size:12px;color:var(--ink)}
+.safety b{color:var(--alert)}
+.lnk{font-size:11.5px;color:var(--teal-deep);font-weight:640;text-decoration:none}
+.symp{display:flex;flex-wrap:wrap;gap:8px}
+.symp .p{display:inline-flex;align-items:center;gap:7px;background:var(--soft);border:1px solid var(--line);border-radius:999px;padding:7px 13px;font-size:12px;font-weight:520;color:var(--ink-soft)}
+.symp .p.on{color:var(--ink);background:#fff}
+.symp .p .d{width:8px;height:8px;border-radius:50%;flex:none}
+.med{display:flex;justify-content:space-between;gap:10px;padding:9px 0;border-top:1px solid var(--line-2)}
+.med:first-of-type{border-top:0}
+.med .nm{font-weight:640;font-size:12.5px}.med .nm small{display:block;color:var(--ink-mute);font-weight:400;font-size:10.5px}
+.med .dose{font-size:11.5px;color:var(--ink-soft);white-space:nowrap;align-self:center}
+.ctext{font-size:11.5px;color:var(--ink-soft);margin-top:9px}
+.ph-badge{font-size:10px;font-weight:640;color:var(--ink-mute);background:var(--soft);border:1px dashed var(--line);border-radius:999px;padding:4px 10px}
+</style>
+</head>
+<body>
+<div class="app">
+  <!-- LEFT RAIL -->
+  <nav class="rail">
+    <div class="brand"><svg viewBox="0 0 48 48" width="30" height="30"><defs><linearGradient id="sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F6D9C0"/><stop offset="100%" stop-color="#FBEEE0"/></linearGradient><linearGradient id="sun" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#F4C063"/><stop offset="100%" stop-color="#E58F5E"/></linearGradient></defs><rect x="2" y="2" width="44" height="44" rx="13" fill="url(#sky)"/><clipPath id="cc"><rect x="2" y="2" width="44" height="44" rx="13"/></clipPath><g clip-path="url(#cc)"><circle cx="24" cy="30" r="10" fill="url(#sun)"/><g stroke="#E9A65E" stroke-width="1.6" stroke-linecap="round" opacity=".8"><line x1="24" y1="11" x2="24" y2="15"/><line x1="10" y1="17" x2="13" y2="20"/><line x1="38" y1="17" x2="35" y2="20"/><line x1="5" y1="30" x2="9" y2="30"/><line x1="39" y1="30" x2="43" y2="30"/></g><path d="M2 32 Q12 29 24 32 T46 32 V46 H2 Z" fill="#8FB6B2"/><path d="M2 37 Q13 34 24 37 T46 37 V46 H2 Z" fill="#5E93A0" opacity=".85"/></g></svg></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3"/><path d="M5.5 19c.4-3.3 3-5.5 6.5-5.5S18.1 15.7 18.5 19"/></svg><span class="tip">Overview</span></div>
+    <div class="i on"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v13"/><path d="M12 6.5C11.4 5.1 10 4.6 8.7 5.2 7.4 5.8 6.9 7.1 7.5 8.3 6.2 8.5 5.3 9.6 5.5 11c.2 1.1 1.1 1.9 2.3 1.9M9 16.6c-1.3.3-2.6-.6-2.8-1.9"/><path d="M12 6.5c.6-1.4 2-1.9 3.3-1.3 1.3.6 1.8 1.9 1.2 3.1 1.3.2 2.2 1.3 2 2.7-.2 1.1-1.1 1.9-2.3 1.9M15 16.6c1.3.3 2.6-.6 2.8-1.9"/><circle cx="12" cy="12.5" r="1" fill="currentColor" stroke="none"/></svg><span class="tip">Brain · mood &amp; focus</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M13 3l-6.5 9h4.5l-1 9 6.5-9.5H12l1-8.5z"/></svg><span class="tip">Nervous system</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20s-6.6-4.3-6.6-9.2A3.7 3.7 0 0 1 12 7.7a3.7 3.7 0 0 1 6.6 3.1C18.6 15.7 12 20 12 20z"/><path d="M5 12h3l1.5-2.5L12 14l1.5-3 1 1.5H19" opacity=".55"/></svg><span class="tip">Cardiovascular</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6v13"/><path d="M12 6.5C11.4 5.1 10 4.6 8.7 5.2 7.4 5.8 6.9 7.1 7.5 8.3 6.2 8.5 5.3 9.6 5.5 11c.2 1.1 1.1 1.9 2.3 1.9M9 16.6c-1.3.3-2.6-.6-2.8-1.9"/><path d="M12 6.5c.6-1.4 2-1.9 3.3-1.3 1.3.6 1.8 1.9 1.2 3.1 1.3.2 2.2 1.3 2 2.7-.2 1.1-1.1 1.9-2.3 1.9M15 16.6c1.3.3 2.6-.6 2.8-1.9"/><circle cx="12" cy="12.5" r="1" fill="currentColor" stroke="none"/></svg><span class="tip">Gut–brain (GI)</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 13V5.5a2 2 0 1 0-4 0V13a3.5 3.5 0 1 0 4 0z"/><path d="M12 8v6.6"/><circle cx="12" cy="16.5" r="1.6" fill="currentColor" stroke="none"/></svg><span class="tip">Endocrine · hormones</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M9.5 3h5M10.5 3v5.4L6.4 16.4A2 2 0 0 0 8.2 19.4h7.6a2 2 0 0 0 1.8-3L13.5 8.4V3M8.4 14h7.2"/></svg><span class="tip">Labs &amp; results</span></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M6.7 13.4l6.7-6.7a3.3 3.3 0 0 1 4.7 4.7l-6.7 6.7a3.3 3.3 0 0 1-4.7-4.7z"/><path d="M10 10l4 4"/></svg><span class="tip">Medications</span></div>
+    <div class="spacer"></div>
+    <div class="i"><svg viewBox="0 0 24 24" width="19" height="19" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M12 3.5v2M12 18.5v2M4.4 12h2M17.6 12h2M6 6l1.4 1.4M16.6 16.6L18 18M6 18l1.4-1.4M16.6 7.4L18 6"/></svg><span class="tip">Settings</span></div>
+  </nav>
+
+  <div class="mainpane">
+    <!-- HEADER -->
+    <div class="hdr">
+      <div class="hd-logo"><div><b id="brandName">BHW Primary Care</b><span>Your health, in one place</span></div></div>
+      <div class="progs" id="progs">
+        <button data-p="primary" class="on">Primary Care</button>
+        <button data-p="mind">Mind &amp; Mood</button>
+        <button data-p="charmed">CharmEd</button>
+        <button data-p="flow">Flow</button>
+      </div>
+      <div class="hd-r">
+        <div class="srch">⌕ Search</div>
+        <div class="me"><div class="av">JR</div><div><b>Jordan Rivera</b><span>Patient · #10428</span></div></div>
+      </div>
+    </div>
+
+    <div class="stagegrid">
+      <!-- BIG BODY STAGE -->
+      <div class="stage">
+        <div class="rings"></div><div class="ring2"></div><div class="arc"></div>
+        <!-- seven neurotransmitters orbit the ring; hover to light up -->
+        <div id="ntorbit"></div>
+        <div class="ntdetail" id="ntdetail"></div>
+        <div class="bodywrap" style="align-items:center">
+          <!-- hand-drawn brain; swap src for a licensed brain diagram when ready -->
+          <img class="body brain" src="hm-assets/brain-figure.svg" alt="Brain & neurotransmitters">
+        </div>
+        <div class="zoom"><button>＋</button><button>－</button><button>⤢</button></div>
+        <div class="insight">
+          <div class="h"><span class="n">3</span><b>New insights<br>from your team</b></div>
+          <p>Your last check-ins point to a few small wins worth acting on this week.</p>
+          <div class="cta"><span>Book a check-in</span><span>→</span></div>
+          <span class="dismiss">Dismiss ×</span>
+        </div>
+      </div>
+
+      <!-- DATA COLUMN -->
+      <div class="data">
+        <div class="ov-title">
+          <span class="dot"></span><b>Mind &amp; Mood · Overview</b>
+          <div class="ov-analyze">Stage · <b>Building skills</b><div class="bar"><i style="width:62%;background:linear-gradient(90deg,var(--teal-lite),var(--teal-deep))"></i></div></div>
+        </div>
+        <div class="phasestrip"><span>Intake</span><span>Stabilizing</span><span class="on">Building skills</span><span>Sustaining</span></div>
+        <div class="safety">💙 <span><b>In crisis? Call or text 988</b> any time · 911 if in immediate danger · BHW (443) 762-5343</span></div>
+
+        <div class="row2">
+          <div class="card age">
+            <div class="ico">🌅</div>
+            <div class="b">
+              <div><div class="lab">Mood score</div><div class="n">71<small> /100</small></div><div class="up">▲ +6 this month</div></div>
+              <div><div class="lab">Sleep</div><div class="n">6.4<small> hrs</small></div><div class="up" style="color:var(--teal-deep)">— building back</div></div>
+            </div>
+          </div>
+          <div class="card narr">
+            <p>Your <b>sleep and stress</b> are driving most of the ups and downs — and your gut and heart rhythms track right along with them.</p>
+            <a href="#">View full report ›</a>
+          </div>
+        </div>
+
+        <div class="card pad">
+          <div class="card-h"><h3>Neurotransmitters</h3><span class="mut" style="font-size:10.5px">7 · hover to explore</span></div>
+          <div class="ntlist" id="ntlist"></div>
+        </div>
+
+        <div class="card pad">
+          <div class="card-h"><h3>What we're connecting</h3><span class="exp">⤢</span></div>
+          <div class="kac" style="grid-template-columns:repeat(4,1fr)">
+            <div class="col">
+              <div class="top"><span>Brain</span><span class="ar">›</span></div><div class="sc">68<small>/100</small></div><div class="flags">mood &amp; focus</div>
+              <div class="kbar"><i style="width:68%;background:linear-gradient(90deg,#f0c58a,#e09a5c)"></i></div><div class="st s">— Watching</div>
+            </div>
+            <div class="col">
+              <div class="top"><span>Nervous system</span><span class="ar">›</span></div><div class="sc">61<small>/100</small></div><div class="flags">stress &amp; sleep</div>
+              <div class="kbar"><i style="width:61%;background:linear-gradient(90deg,#f0c58a,#e09a5c)"></i></div><div class="st s">— Watching</div>
+            </div>
+            <div class="col">
+              <div class="top"><span>Cardiovascular</span><span class="ar">›</span></div><div class="sc">74<small>/100</small></div><div class="flags">HRV · rhythm</div>
+              <div class="kbar"><i style="width:74%;background:linear-gradient(90deg,#bcd6c9,#57a08f)"></i></div><div class="st o">▲ On track</div>
+            </div>
+            <div class="col">
+              <div class="top"><span>Gut–brain</span><span class="ar">›</span></div><div class="sc">58<small>/100</small></div><div class="flags">vagus · digestion</div>
+              <div class="kbar"><i style="width:58%;background:linear-gradient(90deg,#e9b7bf,#d38a9a)"></i></div><div class="st s">— Watching</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="card pad">
+          <div class="card-h"><h3>Screening</h3><a class="lnk" href="#">Re-screen ›</a></div>
+          <div class="kac">
+            <div class="col"><div class="top"><span>PHQ-9 · depression</span></div><div class="sc">11<small>/27</small></div><div class="flags">Moderate</div><div class="kbar"><i style="width:41%;background:linear-gradient(90deg,#ebd9a6,#d1a84e)"></i></div><div class="st s">— Down from 16</div></div>
+            <div class="col"><div class="top"><span>GAD-7 · anxiety</span></div><div class="sc">8<small>/21</small></div><div class="flags">Mild–moderate</div><div class="kbar"><i style="width:38%;background:linear-gradient(90deg,#ebd9a6,#d1a84e)"></i></div><div class="st s">— Improving</div></div>
+            <div class="col"><div class="top"><span>AUDIT-C · alcohol</span></div><div class="sc">2<small>/12</small></div><div class="flags">Low risk</div><div class="kbar"><i style="width:17%;background:linear-gradient(90deg,#bcd6b6,#6f8f6a)"></i></div><div class="st o">▲ On track</div></div>
+          </div>
+        </div>
+
+        <div class="card pad">
+          <div class="card-h"><h3>Labs worth reviewing</h3><span class="mut" style="font-size:10.5px">brain–body drivers</span></div>
+          <div class="ntlist">
+            <div class="ntrow"><span class="nd" style="background:#b06450"></span><span class="nm">Vitamin D</span><span class="role">28 ng/mL · target 40–60</span><span class="bar"><i style="width:45%;background:#d1a84e"></i></span><span class="st s">— Low</span></div>
+            <div class="ntrow"><span class="nd" style="background:#b06450"></span><span class="nm">hs-CRP</span><span class="role">2.4 mg/L · optimal &lt;1</span><span class="bar"><i style="width:70%;background:#b06450"></i></span><span class="st c">▾ High</span></div>
+            <div class="ntrow"><span class="nd" style="background:#d1a84e"></span><span class="nm">Homocysteine</span><span class="role">11 µmol/L · methylation</span><span class="bar"><i style="width:58%;background:#d1a84e"></i></span><span class="st s">— Borderline</span></div>
+            <div class="ntrow"><span class="nd" style="background:#d1a84e"></span><span class="nm">Ferritin (iron)</span><span class="role">22 ng/mL · fatigue/mood</span><span class="bar"><i style="width:34%;background:#d1a84e"></i></span><span class="st s">— Low-normal</span></div>
+            <div class="ntrow"><span class="nd" style="background:#6f8f6a"></span><span class="nm">TSH / Free T4</span><span class="role">thyroid · normal</span><span class="bar"><i style="width:60%;background:#6f8f6a"></i></span><span class="st o">▲ OK</span></div>
+            <div class="ntrow"><span class="nd" style="background:#b06450"></span><span class="nm">Omega-3 index</span><span class="role">4.6 % · target &gt;8</span><span class="bar"><i style="width:46%;background:#d1a84e"></i></span><span class="st s">— Low</span></div>
+          </div>
+        </div>
+
+        <div class="card pad">
+          <div class="card-h"><h3>Blueprint · treatment priorities</h3><span class="ph-badge">from your Mind &amp; Mood plan</span></div>
+          <div class="acts">
+            <div class="act"><div class="ico">💙</div><h4>1 · Safety &amp; stability</h4><p>Safety plan, a consistent sleep window, crisis supports in place.</p><div class="foot">Priority</div></div>
+            <div class="act"><div class="ico">🗣️</div><h4>2 · Ease hardest symptoms</h4><p>Weekly therapy; medication if indicated; correct Vit D, iron &amp; inflammation.</p><div class="foot">Therapy + drivers</div></div>
+            <div class="act"><div class="ico">🌿</div><h4>3 · Build coping skills</h4><p>Grounding, CBT/DBT skills, daily mood + sleep log.</p><div class="foot">Skills</div></div>
+          </div>
+          <div class="ctext" style="margin-top:12px"><b>Then:</b> 4 · Strengthen connection &amp; purpose · 5 · Sustain &amp; prevent setbacks &nbsp;·&nbsp; <b>Gut–brain:</b> Remove → Repair → Reinoculate · <b>Supplements:</b> Omega-3, D3+K2, Mg glycinate, methyl-B</div>
+        </div>
+
+        <div class="card promo">
+          <div class="ico">💬</div>
+          <div class="tx"><b>Talk with your Mind &amp; Mood clinician</b><p>Review your sleep, stress, and next steps together</p></div>
+          <button class="go">Message ›</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+(function(){
+  var NAMES={primary:'BHW Primary Care',mind:'BHW Mind & Mood',charmed:'BHW CharmEd Minds',flow:'BHW Flow'};
+  var p=(new URLSearchParams(location.search)).get('p')||'mind';
+  if(!NAMES[p])p='mind';
+  document.documentElement.dataset.program=p;
+  document.getElementById('brandName').textContent=NAMES[p];
+  document.querySelectorAll('#progs button').forEach(function(b){b.classList.toggle('on',b.dataset.p===p);});
+
+  // ——— the seven major neurotransmitters ———
+  var NT=[
+    {n:'Glutamate',c:'#3E9AA8',role:'learning & memory',lvl:'Fair',pct:58,st:'—',stc:'s',ex:"Your brain's main ‘go’ signal — it powers learning and memory. Balance keeps thinking sharp without overload."},
+    {n:'GABA',c:'#57A08F',role:'calm & sleep',lvl:'Good',pct:74,st:'▲',stc:'o',ex:"The brain's ‘brake’ — it calms activity, eases anxiety, and helps you relax and sleep."},
+    {n:'Acetylcholine',c:'#C79A3E',role:'focus & memory',lvl:'Fair',pct:62,st:'—',stc:'s',ex:"Supports focus, memory and attention, and helps steady muscle and heart-rate signals."},
+    {n:'Dopamine',c:'#E09A5C',role:'motivation & reward',lvl:'Low',pct:44,st:'▾',stc:'c',ex:"Drives motivation, reward and pleasure — and supports attention and movement."},
+    {n:'Serotonin',c:'#D38A9A',role:'mood & digestion',lvl:'Fair',pct:60,st:'—',stc:'s',ex:"Steadies mood, sleep, appetite and digestion; low levels can weigh on mood."},
+    {n:'Norepinephrine',c:'#6E86C4',role:'alertness & stress',lvl:'High',pct:82,st:'▾',stc:'c',ex:"Fuels alertness and the fight-or-flight response, nudging heart rate and blood pressure up under stress."},
+    {n:'Endorphins',c:'#D9776E',role:'pain relief & well-being',lvl:'Good',pct:70,st:'▲',stc:'o',ex:"Your natural pain-relievers — released with exercise and stress to lift mood and ease discomfort."}
+  ];
+  var Rx=200,Ry=186,orbit=document.getElementById('ntorbit'),list=document.getElementById('ntlist'),detail=document.getElementById('ntdetail');
+  function setActive(i){
+    var d=NT[i];
+    detail.innerHTML='<div class="h"><span class="nd" style="background:'+d.c+'"></span>'+d.n+'</div>'+
+      '<div class="role">'+d.role+'</div>'+
+      '<div class="bar"><i style="width:'+d.pct+'%;background:'+d.c+'"></i></div>'+
+      '<div class="lvl st '+d.stc+'">'+d.st+' '+d.lvl+'</div><p>'+d.ex+'</p>';
+    document.querySelectorAll('.ntpos').forEach(function(el,j){el.classList.toggle('on',j===i);});
+    document.querySelectorAll('.ntrow').forEach(function(el,j){el.classList.toggle('on',j===i);});
+  }
+  NT.forEach(function(d,i){
+    var th=i*2*Math.PI/NT.length, dx=Math.round(Rx*Math.sin(th)), dy=Math.round(-Ry*Math.cos(th));
+    var pos=document.createElement('div'); pos.className='ntpos';
+    pos.style.transform='translate('+dx+'px,'+dy+'px)';
+    pos.innerHTML='<div class="ntnode"><span class="nd" style="background:'+d.c+'"></span>'+d.n+'</div>';
+    pos.addEventListener('mouseenter',function(){setActive(i);});
+    orbit.appendChild(pos);
+    var row=document.createElement('div'); row.className='ntrow';
+    row.innerHTML='<span class="nd" style="background:'+d.c+'"></span><span class="nm">'+d.n+'</span>'+
+      '<span class="role">'+d.role+'</span>'+
+      '<span class="bar"><i style="width:'+d.pct+'%;background:'+d.c+'"></i></span>'+
+      '<span class="st '+d.stc+'">'+d.st+' '+d.lvl+'</span>';
+    row.addEventListener('mouseenter',function(){setActive(i);});
+    list.appendChild(row);
+  });
+  setActive(4); // Serotonin lit by default
+})();
+</script>
+</body>
+</html>

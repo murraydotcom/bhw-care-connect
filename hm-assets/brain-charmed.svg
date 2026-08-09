@@ -1,0 +1,60 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 300" width="320" height="300">
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#F4D588"/><stop offset="55%" stop-color="#E6B94E"/><stop offset="100%" stop-color="#C89A32"/>
+    </linearGradient>
+    <linearGradient id="teal" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#79D8CE"/><stop offset="55%" stop-color="#3FB6AC"/><stop offset="100%" stop-color="#2E948B"/>
+    </linearGradient>
+    <radialGradient id="enode" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fff"/><stop offset="45%" stop-color="#fff" stop-opacity=".5"/><stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="eglow" x="-40%" y="-40%" width="180%" height="180%"><feGaussianBlur stdDeviation="2.4" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+  </defs>
+
+  <!-- left hemisphere (gold) -->
+  <path fill="url(#gold)" stroke="#F6DC93" stroke-width="1.4"
+    d="M156 44 C126 36 84 44 64 78 C46 108 46 148 66 172 C80 192 104 200 128 198 C142 197 152 191 156 182 Z"/>
+  <!-- right hemisphere (teal) -->
+  <path fill="url(#teal)" stroke="#8CE0D6" stroke-width="1.4"
+    d="M164 44 C194 36 236 44 256 78 C274 108 274 148 254 172 C240 192 216 200 192 198 C178 197 168 191 164 182 Z"/>
+
+  <!-- electric circuitry -->
+  <g fill="none" stroke-linecap="round" filter="url(#eglow)">
+    <g stroke="#FBE7A6" stroke-width="1.6" opacity=".92">
+      <path d="M150 70 L120 70 L108 84"/><path d="M150 96 L96 96 L84 110"/>
+      <path d="M150 122 L110 122 L98 136"/><path d="M150 150 L128 150 L120 162"/>
+      <path d="M78 96 L78 128"/>
+    </g>
+    <g stroke="#A9EEE4" stroke-width="1.6" opacity=".92">
+      <path d="M170 70 L200 70 L212 84"/><path d="M170 96 L224 96 L236 110"/>
+      <path d="M170 122 L210 122 L222 136"/><path d="M170 150 L192 150 L200 162"/>
+      <path d="M242 96 L242 128"/>
+    </g>
+  </g>
+  <!-- circuit nodes -->
+  <g>
+    <g fill="#FFF7DF" stroke="#E6B94E" stroke-width="1">
+      <circle cx="108" cy="84" r="3.4"/><circle cx="84" cy="110" r="3.4"/><circle cx="98" cy="136" r="3.4"/><circle cx="120" cy="162" r="3.4"/><circle cx="78" cy="128" r="3.4"/>
+    </g>
+    <g fill="#E6FbF7" stroke="#3FB6AC" stroke-width="1">
+      <circle cx="212" cy="84" r="3.4"/><circle cx="236" cy="110" r="3.4"/><circle cx="222" cy="136" r="3.4"/><circle cx="200" cy="162" r="3.4"/><circle cx="242" cy="128" r="3.4"/>
+    </g>
+  </g>
+
+  <!-- central spark -->
+  <circle cx="160" cy="112" r="16" fill="url(#enode)"/>
+  <circle cx="160" cy="112" r="4.5" fill="#fff"/>
+
+  <!-- filaments flowing to a lightbulb -->
+  <g fill="none" stroke-width="1.6" opacity=".8" filter="url(#eglow)">
+    <path d="M132 196 C140 220 150 232 160 236" stroke="#F6DC93"/>
+    <path d="M150 198 C154 220 158 230 160 236" stroke="#F6DC93"/>
+    <path d="M188 196 C180 220 170 232 160 236" stroke="#8CE0D6"/>
+    <path d="M170 198 C166 220 162 230 160 236" stroke="#8CE0D6"/>
+  </g>
+  <circle cx="160" cy="248" r="13" fill="url(#enode)"/>
+  <circle cx="160" cy="248" r="7" fill="none" stroke="#FBE7A6" stroke-width="1.8"/>
+  <rect x="154" y="259" width="12" height="5" rx="2" fill="#8CE0D6"/>
+  <rect x="155.5" y="265" width="9" height="4" rx="2" fill="#F6DC93"/>
+</svg>

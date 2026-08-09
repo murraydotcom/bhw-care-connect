@@ -30,4 +30,15 @@ if (existsSync(fileURLToPath(pagesSrc))) {
     copied++
   }
 }
-console.log(`build-merge: copied ${copied} patient page(s) + assets into app/dist`)
+
+// 3) Care Connect health-dashboard support folders → dist root, so the
+//    dashboard pages' relative `fonts/...` and `hm-assets/...` paths resolve.
+//    Drop patient body / hologram artwork into hm-assets (see hm-assets/README.txt).
+for (const dir of ['fonts', 'hm-assets']) {
+  const src = new URL('./' + dir + '/', base)
+  if (existsSync(fileURLToPath(src))) {
+    cpSync(src, new URL('./' + dir + '/', dist), { recursive: true })
+  }
+}
+
+console.log(`build-merge: copied ${copied} patient page(s) + assets + dashboard support folders into app/dist`)

@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 560" width="240" height="560">
+  <defs>
+    <linearGradient id="body" x1="0.15" y1="0" x2="0.85" y2="1">
+      <stop offset="0%" stop-color="#F2F7F8"/>
+      <stop offset="34%" stop-color="#D6E3E7"/>
+      <stop offset="68%" stop-color="#BACBD2"/>
+      <stop offset="100%" stop-color="#A6BAC2"/>
+    </linearGradient>
+    <linearGradient id="rim" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0%" stop-color="#BfeAf3"/>
+      <stop offset="100%" stop-color="#8fd0e0"/>
+    </linearGradient>
+    <radialGradient id="sheen" cx="42%" cy="30%" r="60%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".55"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <g stroke="#9BB4BC" stroke-width="1" fill="url(#body)">
+    <!-- head + neck -->
+    <ellipse cx="120" cy="50" rx="24" ry="28"/>
+    <path d="M105 74 Q120 83 135 74 L141 104 Q120 113 99 104 Z"/>
+    <!-- torso + legs -->
+    <path d="M96 108 C86 120 84 132 88 152 C92 178 96 205 100 245 C101 272 99 300 94 328
+             C92 362 97 432 101 500 C103 524 105 534 109 543 L118 543
+             C120 518 119 460 119 402 C119 372 119 352 120 344
+             C121 352 121 372 121 402 C121 460 120 518 122 543 L131 543
+             C135 534 137 524 139 500 C143 432 148 362 146 328
+             C141 300 139 272 140 245 C144 205 148 178 152 152
+             C156 132 154 120 144 108 C120 100 120 100 96 108 Z"/>
+    <!-- left arm -->
+    <path d="M92 112 C80 122 74 140 76 162 C78 200 80 240 86 280 C88 300 90 315 92 330
+             C96 336 100 336 102 330 C104 315 102 300 100 280 C98 240 96 200 98 168
+             C99 150 100 130 98 118 Z"/>
+    <!-- right arm -->
+    <path d="M148 112 C160 122 166 140 164 162 C162 200 160 240 154 280 C152 300 150 315 148 330
+             C144 336 140 336 138 330 C136 315 138 300 140 280 C142 240 144 200 142 168
+             C141 150 140 130 142 118 Z"/>
+  </g>
+
+  <!-- soft sheen over chest/shoulders -->
+  <ellipse cx="112" cy="150" rx="60" ry="80" fill="url(#sheen)"/>
+
+  <!-- muscle contour accents (subtle) -->
+  <g fill="none" stroke="#8AAAB4" stroke-width="1.1" opacity=".38" stroke-linecap="round">
+    <path d="M104 116 Q120 123 136 116"/>            <!-- clavicle -->
+    <path d="M104 132 Q112 150 120 150 Q128 150 136 132"/> <!-- pecs -->
+    <path d="M120 152 L120 300"/>                    <!-- midline -->
+    <path d="M110 200 Q120 206 130 200"/>            <!-- abs 1 -->
+    <path d="M110 226 Q120 232 130 226"/>            <!-- abs 2 -->
+    <path d="M111 252 Q120 258 129 252"/>            <!-- abs 3 -->
+    <path d="M108 360 Q106 432 111 492"/>            <!-- left quad -->
+    <path d="M132 360 Q134 432 129 492"/>            <!-- right quad -->
+    <path d="M100 250 Q120 262 140 250"/>            <!-- waist -->
+  </g>
+
+  <!-- blue rim highlights -->
+  <g fill="none" stroke="url(#rim)" stroke-width="2.4" opacity=".85" stroke-linecap="round">
+    <path d="M90 118 C82 128 78 142 79 158"/>        <!-- left shoulder edge -->
+    <path d="M150 118 C158 128 162 142 161 158"/>    <!-- right shoulder edge -->
+    <path d="M104 134 Q112 150 119 150"/>            <!-- left pec glow -->
+    <path d="M136 134 Q128 150 121 150"/>            <!-- right pec glow -->
+    <path d="M98 372 Q95 440 101 500"/>              <!-- left thigh edge -->
+    <path d="M142 372 Q145 440 139 500"/>            <!-- right thigh edge -->
+  </g>
+</svg>

@@ -15,6 +15,14 @@
 #   /bhw-charmed-patient-mockup.html → CharmEd program page
 #   /bhw-flow-patient-mockup.html    → Flow program page
 #   /bhw-mindmood-patient-mockup.html→ Mind & Mood program page
+#
+# Care Connect health dashboards (pages/ + fonts/ + hm-assets/, merged in):
+#   /bhw-dashboards.html   → dashboards index (links all of the below)
+#   /bhw-overview.html     → General Overview (program re-skins via ?p=)
+#   /bhw-cardio.html       → Cardiovascular (Primary-Care-style summary)
+#   /bhw-flow.html /bhw-gi.html /bhw-msk.html /bhw-respiratory.html
+#   /bhw-neuro.html /bhw-immune.html /bhw-endocrine.html → per-system deep pages
+#   Patient body / hologram artwork drops into hm-assets/ (see hm-assets/README.txt)
 
 [[headers]]
   for = "/*"

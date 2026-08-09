@@ -1,0 +1,594 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Your check-in — BHW Care Connect</title>
+<style>
+@font-face{font-family:'Nunito';src:url('fonts/Nunito/Nunito-VariableFont_wght.ttf') format('truetype');font-weight:300 900;font-display:swap}
+@font-face{font-family:'OpenSans';src:url('fonts/Open_Sans/OpenSans-VariableFont_wdth,wght.ttf') format('truetype');font-weight:300 800;font-display:swap}
+:root{
+  --ink:#294049; --ink-soft:#6c7b74; --ink-mute:#9fa89e; --line:#e7ece9; --line-2:#eef2f0;
+  --card:#ffffff; --soft:#f2f6f4; --soft-2:#e9f1ee; --bg1:#d8ece7; --bg2:#e8dfd2;
+  --accent:#5fa9a6; --accent-deep:#4a8a87; --accent-quiet:#eaf4f2;
+  --coral:#b06450; --coral-q:#f2e4de; --amber:#c39a3e; --amber-q:#f4ecd6; --good:#6f8f6a; --good-q:#e6ede2;
+  --water:#4c94b8; --water-q:#e4f0f5;
+  --ok:#6f8f6a; --gold:#c39a3e; --alert:#b06450;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px;line-height:1.5;
+  background:radial-gradient(1000px 620px at 12% -8%,var(--bg1),transparent 60%),radial-gradient(1000px 700px at 100% 116%,var(--bg2),transparent 55%),linear-gradient(160deg,#e6f0ec,#f3f1ea);
+  min-height:100vh;padding:22px 16px 60px}
+.wrap{max-width:680px;margin:0 auto}
+
+.top{display:flex;align-items:center;gap:13px;margin-bottom:16px}
+.top .mk{width:40px;height:40px;border-radius:11px;background:var(--card);border:1px solid var(--line);display:grid;place-items:center;flex-shrink:0}
+.top h1{font-family:'Nunito';font-weight:700;font-size:20px}
+.top .sub{font-size:11.5px;color:var(--ink-soft)}
+.top .back{margin-left:auto;font-size:12px;font-weight:700;color:var(--ink-soft);text-decoration:none;background:var(--card);border:1px solid var(--line);border-radius:10px;padding:9px 13px}
+.top .back:hover{border-color:var(--accent)}
+
+.card{background:var(--card);border:1px solid var(--line);border-radius:18px;padding:18px;margin-bottom:14px;box-shadow:0 12px 30px -24px rgba(30,55,50,.5)}
+.card > h2{font-family:'Nunito';font-weight:700;font-size:16px;display:flex;align-items:center;gap:9px;margin-bottom:4px}
+.card > h2 .ic{width:28px;height:28px;border-radius:8px;background:var(--accent-quiet);color:var(--accent-deep);display:grid;place-items:center}
+.card > h2 .ic svg{width:16px;height:16px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.card > .hint{font-size:11.5px;color:var(--ink-soft);margin-bottom:12px}
+
+/* food scanner */
+.scan{display:flex;align-items:center;gap:14px;border:1.6px dashed var(--line);border-radius:14px;padding:16px;cursor:pointer}
+.scan:hover{border-color:var(--accent)}
+.scan .ico{width:52px;height:52px;border-radius:12px;background:var(--accent-quiet);color:var(--accent-deep);display:grid;place-items:center;flex-shrink:0}
+.scan .ico svg{width:26px;height:26px;fill:none;stroke:currentColor;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.scan .t{flex:1}.scan .t b{font-size:15px;display:block}.scan .t i{font-style:normal;font-size:12px;color:var(--ink-soft)}
+.scan .go{font-size:12.5px;font-weight:800;color:var(--accent-deep)}
+.meals{display:flex;gap:9px;flex-wrap:wrap;margin-top:12px}
+.meals img{width:64px;height:64px;object-fit:cover;border-radius:11px;border:1px solid var(--line)}
+.meals .tag{display:flex;align-items:center;gap:6px;background:var(--soft);border:1px solid var(--line);border-radius:11px;padding:0 12px;font-size:11.5px;font-weight:700;color:var(--ok)}
+/* Open Food Facts */
+.off-bar{display:flex;gap:8px}
+.off-bar input{flex:1;min-width:0;font-family:inherit;font-size:13px;border:1px solid var(--line);border-radius:10px;padding:10px 12px;background:#fff;color:var(--ink)}
+.off-bar input:focus{outline:none;border-color:var(--accent)}
+.obtn{font-family:inherit;font-size:12.5px;font-weight:700;border:1px solid var(--line);background:var(--soft);color:var(--ink);border-radius:10px;padding:9px 14px;cursor:pointer;white-space:nowrap;flex-shrink:0}
+.obtn:hover{border-color:var(--accent)}
+.obtn.go{background:var(--accent);border-color:var(--accent);color:#fff}
+.off-status{font-size:12px;color:var(--ink-soft);margin-top:11px}
+.off-results{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.off-item{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:11px;padding:10px 12px}
+.off-item__b{flex:1;min-width:0}
+.off-item__n{font-size:13px;font-weight:700;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.off-item__m{font-size:11.5px;color:var(--ink-soft);margin-top:2px}
+.est-macros{display:flex;gap:7px;align-items:center;margin-top:7px;font-size:11px;font-weight:800;color:var(--ink-soft)}
+.est-macros input{width:48px;font-family:inherit;font-size:12.5px;font-weight:700;border:1px solid var(--line);border-radius:7px;padding:4px 6px;background:#fff;color:var(--ink)}
+.est-macros input:focus{outline:none;border-color:var(--accent)}
+.off-cam{margin-top:10px}.off-cam[hidden]{display:none}
+.off-cam video{width:100%;max-width:340px;border-radius:11px;background:#000;display:block}
+.off-cam__bar{display:flex;align-items:center;gap:12px;margin-top:8px;font-size:12px;color:var(--ink-soft)}
+/* Today's fuel — mirrors the Blueprint fuel vessels */
+.fuel{margin-top:14px;border-top:1px solid var(--line-2);padding-top:14px}
+.fuel[hidden]{display:none}
+.fuel-h{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--accent-deep);margin-bottom:11px}
+.ves-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.ves{text-align:center}
+.ves__v{position:relative;width:52px;height:74px;margin:0 auto 8px;border:2px solid var(--vc);border-radius:8px 8px 14px 14px;overflow:hidden;background:color-mix(in srgb,var(--vc) 8%,#fff)}
+.ves__f{position:absolute;left:0;right:0;bottom:0;height:0;background:color-mix(in srgb,var(--vc) 40%,#fff);border-top:2px solid var(--vc);transition:height .45s cubic-bezier(.2,.7,.2,1)}
+.ves__n{font-family:'Nunito';font-weight:700;font-size:14px;color:var(--ink)}
+.ves__val{font-size:10px;color:var(--ink-soft);margin-top:1px;font-variant-numeric:tabular-nums}
+.micro-h{font-size:10px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--ink-mute);margin:16px 0 0}
+.micros{display:flex;flex-direction:column;gap:9px;margin-top:15px}
+.micro{display:flex;align-items:center;gap:10px;font-size:11.5px}
+.micro .ml{width:74px;font-weight:800;color:var(--ink-soft);flex-shrink:0;line-height:1.2}
+.micro .mbar{flex:1;height:6px;border-radius:99px;background:var(--soft-2);overflow:hidden}
+.micro .mbar i{display:block;height:100%;width:0;border-radius:99px;background:var(--mc);transition:width .4s ease}
+.micro .mv{width:98px;text-align:right;color:var(--ink-soft);font-variant-numeric:tabular-nums;flex-shrink:0}
+.micro .mv b{font-family:'Nunito';color:var(--ink)}
+/* Hydration tracker — mirrors the fuel vessel */
+.hydro{display:flex;align-items:center;gap:18px}
+.hydro__v{position:relative;width:64px;height:90px;flex-shrink:0;border:2px solid var(--water);border-radius:9px 9px 16px 16px;overflow:hidden;background:var(--water-q)}
+.hydro__f{position:absolute;left:0;right:0;bottom:0;height:0;background:color-mix(in srgb,var(--water) 45%,#fff);border-top:2px solid var(--water);transition:height .45s cubic-bezier(.2,.7,.2,1)}
+.hydro__b{flex:1;min-width:0}
+.hydro__val{font-family:'Nunito';font-weight:700;font-size:21px;color:var(--ink)}
+.hydro__val span{font-size:12px;font-weight:600;color:var(--ink-soft)}
+.hydro__cups{display:flex;gap:5px;flex-wrap:wrap;margin:10px 0}
+.cup{width:21px;height:25px;border:2px solid #cfe0e6;border-radius:4px 4px 7px 7px;cursor:pointer;background:#fff;padding:0}
+.cup.on{border-color:var(--water);background:color-mix(in srgb,var(--water) 30%,#fff)}
+.hydro__ctrl{display:flex;gap:8px}
+.hydro__ctrl button{width:34px;height:34px;border-radius:9px;border:1px solid var(--line);background:var(--soft);font-size:18px;font-weight:700;cursor:pointer;color:var(--ink);line-height:1}
+.hydro__ctrl button:hover{border-color:var(--water)}
+/* Trend sparklines */
+.trend{display:flex;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid var(--line-2)}
+.trend:last-child{border-bottom:0}
+.trend .tl{width:64px;font-size:11.5px;font-weight:800;color:var(--ink-soft);flex-shrink:0}
+.trend svg{flex:1;height:34px;min-width:0}
+.trend .tv{width:66px;text-align:right;font-size:11.5px;color:var(--ink-soft);flex-shrink:0}
+.trend .tv b{font-family:'Nunito';color:var(--ink)}
+.homecook{margin-top:12px;border-top:1px solid var(--line-2);padding-top:10px}
+.homecook summary{font-size:12.5px;font-weight:700;color:var(--accent-deep);cursor:pointer;list-style:none}
+.homecook summary::-webkit-details-marker{display:none}
+.homecook summary::before{content:'+ ';font-weight:800}
+.homecook[open] summary::before{content:'– '}
+.homecook .scan{margin-top:11px}
+
+/* quick rows */
+.q{padding:12px 0;border-bottom:1px solid var(--line-2)}.q:last-child{border-bottom:0}
+.q .lbl{font-size:13.5px;font-weight:700;margin-bottom:9px}.q .lbl em{font-style:normal;font-weight:400;color:var(--ink-soft);font-size:11.5px}
+.opts{display:flex;gap:7px;flex-wrap:wrap}
+.opts button{font-family:inherit;font-size:12.5px;border:1px solid var(--line);background:var(--soft);border-radius:99px;padding:8px 14px;cursor:pointer;color:var(--ink)}
+.opts button:hover{border-color:var(--accent)}
+.opts button.sel{background:var(--accent);border-color:var(--accent);color:#fff}
+.faces button{font-size:20px;width:44px;padding:6px 0;text-align:center}
+
+/* compliance checklist */
+.chk{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line-2)}.chk:last-child{border-bottom:0}
+.chk .box{width:24px;height:24px;border:2px solid #cdd6d3;border-radius:8px;display:grid;place-items:center;cursor:pointer;flex-shrink:0;background:#fff}
+.chk .box svg{width:14px;height:14px;stroke:#fff;fill:none;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;opacity:0}
+.chk.on .box{background:var(--ok);border-color:var(--ok)}.chk.on .box svg{opacity:1}
+.chk .nm{font-size:13.5px;font-weight:700}.chk .nm span{display:block;font-weight:400;font-size:11.5px;color:var(--ink-soft)}
+
+/* vitals grid */
+.vitals{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px}
+.vt{background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:11px 12px}
+.vt .k{font-size:11px;font-weight:800;letter-spacing:.03em;text-transform:uppercase;color:var(--ink-mute);display:flex;align-items:center;gap:6px}
+.vt .k svg{width:14px;height:14px;fill:none;stroke:currentColor;stroke-width:2}
+.vt input{width:100%;border:0;background:none;font-family:'Nunito';font-weight:700;font-size:20px;color:var(--ink);margin-top:5px;outline:none}
+.vt input::placeholder{color:#c7cdc9;font-weight:700}
+.vt .u{font-size:11px;color:var(--ink-mute);font-weight:600}
+
+/* devices */
+.dev{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:11px}
+.dv{display:flex;align-items:center;gap:11px;background:var(--soft);border:1px solid var(--line);border-radius:13px;padding:11px 12px;cursor:pointer}
+.dv:hover{border-color:var(--accent)}
+.dv .lg{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-family:'Nunito';font-weight:800;font-size:14px;color:#fff;flex-shrink:0}
+.dv .nm{font-size:12.5px;font-weight:700;line-height:1.2}.dv .nm span{display:block;font-size:10.5px;font-weight:600;color:var(--ink-soft)}
+.dv .st{margin-left:auto;font-size:10.5px;font-weight:800;color:var(--accent-deep)}
+.dv.on{border-color:var(--ok);background:#eef5ee}.dv.on .st{color:var(--ok)}
+
+.save{position:sticky;bottom:14px;margin-top:6px}
+.save button{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent-deep));border:0;border-radius:14px;padding:16px;font-family:inherit;font-weight:800;font-size:15px;color:#fff;cursor:pointer;box-shadow:0 16px 30px -14px rgba(74,138,135,.8)}
+.done{margin-top:11px;text-align:center;font-size:12.5px;font-weight:700;color:var(--ok)}.done[hidden]{display:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="top">
+    <div class="mk"><svg viewBox="0 0 48 48" width="24" height="24"><path d="M10 24h6l3-8 5 16 4-8h10" fill="none" stroke="#4a8a87" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+    <div>
+      <h1>Today&rsquo;s check-in</h1>
+      <div class="sub" id="sub">Log as much or as little as you like — it goes to your care team.</div>
+    </div>
+    <a class="back" id="back" href="bhw-primary-care-demo.html">← Back</a>
+  </div>
+
+  <!-- FOOD -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>Food &amp; nutrition</h2>
+    <div class="hint">Search a food or scan its barcode — nutrition facts come from <b>Open Food Facts</b>, a free open database — and it adds to today&rsquo;s totals.</div>
+
+    <div class="off-bar">
+      <input id="offQ" type="text" placeholder="Search a food — e.g. greek yogurt, oatmeal, black beans">
+      <button class="obtn go" id="offGo" type="button">Search</button>
+    </div>
+    <div class="off-bar" style="margin-top:8px">
+      <input id="offCode" type="text" inputmode="numeric" placeholder="…or type / scan a barcode">
+      <button class="obtn" id="offCodeGo" type="button">Look up</button>
+      <button class="obtn go" id="offScan" type="button">📷 Scan</button>
+    </div>
+    <div class="off-cam" id="offCam" hidden>
+      <video id="offVideo" playsinline muted></video>
+      <div class="off-cam__bar"><span id="offCamHint">Point your camera at a barcode…</span><button class="obtn" id="offCamStop" type="button">Stop</button></div>
+    </div>
+    <div class="off-status" id="offStatus"></div>
+    <div class="off-results" id="offResults"></div>
+
+    <details class="homecook">
+      <summary>Home-cooked or fresh meal? Snap a photo for an instant estimate</summary>
+      <label class="scan" for="plate">
+        <span class="ico"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>
+        <span class="t"><b>Snap your plate</b><i>We estimate the foods &amp; macros — you confirm before it counts</i></span>
+        <span class="go">Open camera →</span>
+        <input id="plate" type="file" accept="image/*" capture="environment" hidden onchange="estimatePlate(event)">
+      </label>
+      <div class="meals" id="meals"></div>
+      <div class="off-status" id="plateStatus"></div>
+      <div class="off-results" id="plateEst"></div>
+    </details>
+
+    <div class="q" style="border-top:1px solid var(--line-2);margin-top:12px">
+      <div class="lbl">Nutrition plan — last 24 hours</div>
+      <div class="opts" data-q="Nutrition"><button type="button">Off track</button><button type="button">Some of it</button><button type="button">Mostly</button><button type="button">On plan</button></div>
+    </div>
+
+    <div class="fuel" id="fuel" hidden>
+      <div class="fuel-h">Today so far · <span id="tallyItems">0 items</span></div>
+      <div class="ves-grid">
+        <div class="ves" style="--vc:var(--coral)"><div class="ves__v"><div class="ves__f" id="fP"></div></div><div class="ves__n"><span id="tP">0</span>g</div><div class="ves__val">Protein · <span id="gP">90</span>g</div></div>
+        <div class="ves" style="--vc:var(--amber)"><div class="ves__v"><div class="ves__f" id="fC"></div></div><div class="ves__n"><span id="tC">0</span>g</div><div class="ves__val">Carbs · <span id="gC">225</span>g</div></div>
+        <div class="ves" style="--vc:var(--accent)"><div class="ves__v"><div class="ves__f" id="fF"></div></div><div class="ves__n"><span id="tF">0</span>g</div><div class="ves__val">Fat · <span id="gF">65</span>g</div></div>
+      </div>
+      <div class="micros">
+        <div class="micro" style="--mc:var(--good)"><span class="ml">Fiber</span><span class="mbar"><i id="bFiber"></i></span><span class="mv"><b id="tFiber">0</b> / <span id="gFiber">28</span> g goal</span></div>
+        <div class="micro" style="--mc:var(--coral)"><span class="ml">Sugar</span><span class="mbar"><i id="bSugar"></i></span><span class="mv"><b id="tSugar">0</b> / <span id="gSugar">50</span> g limit</span></div>
+        <div class="micro" style="--mc:var(--amber)"><span class="ml">Sodium</span><span class="mbar"><i id="bSodium"></i></span><span class="mv"><b id="tSodium">0</b> / <span id="gSodium">2300</span> mg</span></div>
+      </div>
+      <div class="micro-h">Vitamins &amp; minerals</div>
+      <div class="micros">
+        <div class="micro" style="--mc:var(--amber)"><span class="ml">Vitamin D</span><span class="mbar"><i id="bVitd"></i></span><span class="mv"><b id="tVitd">0</b> / <span id="gVitd">20</span> µg</span></div>
+        <div class="micro" style="--mc:var(--good)"><span class="ml">Vitamin C</span><span class="mbar"><i id="bVitc"></i></span><span class="mv"><b id="tVitc">0</b> / <span id="gVitc">90</span> mg</span></div>
+        <div class="micro" style="--mc:var(--coral)"><span class="ml">Iron</span><span class="mbar"><i id="bIron"></i></span><span class="mv"><b id="tIron">0</b> / <span id="gIron">18</span> mg</span></div>
+        <div class="micro" style="--mc:var(--accent)"><span class="ml">Calcium</span><span class="mbar"><i id="bCalcium"></i></span><span class="mv"><b id="tCalcium">0</b> / <span id="gCalcium">1000</span> mg</span></div>
+        <div class="micro" style="--mc:var(--accent-deep)"><span class="ml">Potassium</span><span class="mbar"><i id="bPotassium"></i></span><span class="mv"><b id="tPotassium">0</b> / <span id="gPotassium">3400</span> mg</span></div>
+        <div class="micro" style="--mc:var(--good)"><span class="ml">Magnesium</span><span class="mbar"><i id="bMagnesium"></i></span><span class="mv"><b id="tMagnesium">0</b> / <span id="gMagnesium">400</span> mg</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- HYDRATION -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>Hydration</h2>
+    <div class="hint">Tap a cup as you drink — a full glass before each meal helps. Aim for 12 a day.</div>
+    <div class="hydro">
+      <div class="hydro__v"><div class="hydro__f" id="waterFill"></div></div>
+      <div class="hydro__b">
+        <div class="hydro__val"><span id="waterCups">0</span> of 12 <span>cups · <span id="waterOz">0</span> oz</span></div>
+        <div class="hydro__cups" id="waterCupsRow"></div>
+        <div class="hydro__ctrl"><button type="button" onclick="setWater(WATER-1)">–</button><button type="button" onclick="setWater(WATER+1)">+</button></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- TREND (stored history) -->
+  <div class="card" id="trendCard" hidden>
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 18l5-6 4 3 6-8"/><path d="M4 21h16"/></svg></span>Your trend <span id="trendDays" style="font-size:11px;font-weight:600;color:var(--ink-soft)"></span></h2>
+    <div class="hint">Your recent check-ins — the more you log, the clearer the pattern for you and your care team.</div>
+    <div id="trends"></div>
+  </div>
+
+  <!-- HOW YOU'RE DOING -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></span>How you&rsquo;re doing</h2>
+    <div class="q"><div class="lbl">How are you feeling today?</div><div class="opts faces" data-q="Feeling"><button type="button" data-v="Rough">😣</button><button type="button" data-v="Low">🙁</button><button type="button" data-v="OK">😐</button><button type="button" data-v="Good">🙂</button><button type="button" data-v="Great">😄</button></div></div>
+    <div class="q"><div class="lbl">Motivation</div><div class="opts" data-q="Motivation"><button type="button">Empty</button><button type="button">Low</button><button type="button">Steady</button><button type="button">Strong</button></div></div>
+    <div class="q"><div class="lbl">How was your sleep? <em>hours &amp; quality</em></div><div class="opts" data-q="Sleep"><button type="button">Rough</button><button type="button">OK</button><button type="button">Good</button><button type="button">Great</button></div></div>
+    <div class="q"><div class="lbl">Moved your body?</div><div class="opts" data-q="Movement"><button type="button">Not yet</button><button type="button">10 min</button><button type="button">20 min</button><button type="button">30+ min</button><button type="button">Workout</button></div></div>
+    <div class="q"><div class="lbl">Time outside?</div><div class="opts" data-q="Outside"><button type="button">None</button><button type="button">A little</button><button type="button">A walk</button><button type="button">30+ min</button></div></div>
+    <div class="q"><div class="lbl">Time with people you care about?</div><div class="opts" data-q="People"><button type="button">None</button><button type="button">A little</button><button type="button">Real time</button></div></div>
+  </div>
+
+  <!-- SYMPTOMS (program-specific) -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></span>Symptoms <span id="symProg" style="font-size:11px;font-weight:600;color:var(--ink-soft)"></span></h2>
+    <div class="hint">Tap anything you&rsquo;ve noticed today — this is tailored to your program.</div>
+    <div class="opts" id="symptoms" data-q="Symptoms" data-multi="1"></div>
+  </div>
+
+  <!-- MEDICATION / VITAMIN COMPLIANCE -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M10.5 20.5 4 14a5 5 0 0 1 7-7l6.5 6.5a5 5 0 0 1-7 7z"/><path d="M7.5 7.5 16 16"/></svg></span>Medications &amp; vitamins</h2>
+    <div class="hint">Check off what you&rsquo;ve taken — straight from your care plan.</div>
+    <div id="meds"></div>
+  </div>
+
+  <!-- VITALS -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 14h4l2 5 4-10 2 5h4"/></svg></span>Vital signs</h2>
+    <div class="hint">Enter any you have — or connect a device below and these fill in for you.</div>
+    <div class="vitals">
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><path d="M4 14h3l2 4 3-8 2 4h6"/></svg>Blood pressure</div><input id="v_bp" inputmode="text" placeholder="120/80"><span class="u">mmHg</span></div>
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg>Heart rate</div><input id="v_hr" inputmode="numeric" placeholder="—"><span class="u">bpm</span></div>
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><path d="M12 3v6M8 21a4 4 0 0 1 8 0"/><circle cx="12" cy="13" r="3"/></svg>Weight</div><input id="v_wt" inputmode="decimal" placeholder="—"><span class="u">lb</span></div>
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 8v4"/></svg>Glucose</div><input id="v_glu" inputmode="numeric" placeholder="—"><span class="u">mg/dL</span></div>
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><path d="M12 3v9M12 12a3 3 0 1 0 0 6 3 3 0 0 0 0-6z"/></svg>Temp</div><input id="v_temp" inputmode="decimal" placeholder="—"><span class="u">°F</span></div>
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9 12l2 2 4-4"/></svg>O₂ sat</div><input id="v_o2" inputmode="numeric" placeholder="—"><span class="u">%</span></div>
+      <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><path d="M4 20l4-4 3 3 5-6 4 4"/></svg>Steps</div><input id="v_steps" inputmode="numeric" placeholder="—"><span class="u">today</span></div>
+    </div>
+  </div>
+
+  <!-- DEVICES -->
+  <div class="card">
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="3"/><path d="M11 6h2"/></svg></span>Connect your devices</h2>
+    <div class="hint">Link a device once and your vitals, glucose, sleep and steps sync automatically.</div>
+    <div class="dev" id="devices"></div>
+  </div>
+
+  <div class="save">
+    <button onclick="saveAll()">Save today&rsquo;s check-in</button>
+    <div class="done" id="done" hidden>Saved — thank you. Your care team sees this. ✓</div>
+  </div>
+
+</div>
+
+<script>
+// Reuse the office endpoint (same one the "Message the office" button uses) so
+// the check-in reaches the care team / triage queue.
+const OFFICE_API='https://bhwcrewos.netlify.app/.netlify/functions/portal-message';
+
+// Nutrient targets per program (daily). Starting defaults the care team can
+// tune per patient: general baseline for Primary Care, then program-specific
+// tilts — Flow leans higher protein / lower sodium / more potassium (vascular,
+// GLP-1 muscle preservation); Mind & Mood and CharmEd lean higher magnesium /
+// vitamin D / lower sugar (mood & cognition).
+const PROGRAMS={
+  primary:{name:'Primary Care', back:'bhw-primary-care-demo.html', accent:'#5fa9a6', deep:'#4a8a87',
+    symptoms:['Fatigue','Headache','Dizziness','Chest tightness','Shortness of breath','Joint pain','Digestive upset','Low mood','Poor sleep','Other'],
+    meds:[['Rosuvastatin 10 mg','Nightly · cholesterol'],['Vitamin D3 + K2','Daily'],['Iron','Every other morning, with vitamin C']],
+    targets:{p:90,c:225,f:65,fiber:28,sugar:50,sodium:2300,vitd:20,vitc:90,iron:18,calcium:1000,potassium:3400,magnesium:400}},
+  flow:{name:'Flow · Vascular', back:'bhw-flow-program.html', accent:'#5f93bd', deep:'#436f92',
+    symptoms:['Leg cramps','Cold hands/feet','Swelling','Chest tightness','Shortness of breath','Palpitations','Dizziness','Fatigue','Headache','Other'],
+    meds:[['Icosapent ethyl 2 g','Twice daily · triglycerides'],['Rosuvastatin 10 mg','Nightly'],['Vitamin D3 + K2','Daily'],['Omega-3','Daily']],
+    targets:{p:110,c:180,f:60,fiber:35,sugar:36,sodium:1500,vitd:25,vitc:120,iron:18,calcium:1000,potassium:4000,magnesium:420}},
+  mind:{name:'Mind & Mood', back:'bhw-mindmood-program.html', accent:'#e0965c', deep:'#b9713a',
+    symptoms:['Low mood','Anxiety','Irritability','Poor sleep','Low motivation','Racing thoughts','Cravings','Fatigue','Appetite change','Other'],
+    meds:[['Methyl-B12','Morning'],['Vitamin D3','Daily'],['Magnesium glycinate','Evening'],['Omega-3','Daily']],
+    targets:{p:100,c:200,f:65,fiber:30,sugar:40,sodium:2000,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450}},
+  charmed:{name:'CharmEd', back:'bhw-charmed-program.html', accent:'#3aa79b', deep:'#2c7f76',
+    symptoms:['Brain fog','Memory slips','Word-finding','Poor focus','Low mood','Poor sleep','Fatigue','Headache','Other'],
+    meds:[['Methyl-B12','Morning'],['Vitamin D3','Daily'],['Omega-3','Daily'],['Magnesium threonate','Evening']],
+    targets:{p:100,c:180,f:65,fiber:30,sugar:36,sodium:1800,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450}},
+};
+const DEVICES=[
+  ['Dexcom','CGM · glucose','#1a9c4a','DX'],
+  ['Apple Health','iPhone · Watch','#222','AH'],
+  ['Google Fit','Android','#4285f4','GF'],
+  ['Fitbit','Activity · sleep','#00b0b9','FB'],
+  ['Oura','Ring · sleep · HRV','#4b4f8a','OU'],
+  ['Withings','BP · scale','#20c1c9','WI'],
+];
+
+const params=new URLSearchParams(location.search);
+const P=PROGRAMS[params.get('program')]||PROGRAMS.primary;
+document.documentElement.style.setProperty('--accent',P.accent);
+document.documentElement.style.setProperty('--accent-deep',P.deep);
+document.getElementById('sub').textContent=P.name+' · log as much or as little as you like — it goes to your care team.';
+const back=document.getElementById('back'); back.href=P.back;
+document.getElementById('symProg').textContent='· '+P.name;
+
+// symptoms (program-specific, multi-select)
+document.getElementById('symptoms').innerHTML=P.symptoms.map(s=>`<button type="button">${s}</button>`).join('');
+// meds checklist
+document.getElementById('meds').innerHTML=P.meds.map((m,i)=>`<div class="chk" data-med="${i}" onclick="this.classList.toggle('on')"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span class="nm">${m[0]}<span>${m[1]}</span></span></div>`).join('');
+// devices
+document.getElementById('devices').innerHTML=DEVICES.map((d,i)=>`<div class="dv" data-dev="${i}" onclick="this.classList.toggle('on');this.querySelector('.st').textContent=this.classList.contains('on')?'Connected ✓':'Connect'"><span class="lg" style="background:${d[2]}">${d[3]}</span><span class="nm">${d[0]}<span>${d[1]}</span></span><span class="st">Connect</span></div>`).join('');
+
+const STATE={}; let MEALS=0;
+// single / multi option pickers
+document.querySelectorAll('.opts[data-q]').forEach(wrap=>{
+  const key=wrap.dataset.q, multi=wrap.dataset.multi;
+  wrap.querySelectorAll('button').forEach(b=>{
+    b.addEventListener('click',()=>{
+      const val=b.dataset.v||b.textContent;
+      if(multi){ b.classList.toggle('sel'); const set=new Set(STATE[key]||[]); set.has(val)?set.delete(val):set.add(val); STATE[key]=[...set]; }
+      else { [...wrap.children].forEach(x=>x.classList.remove('sel')); b.classList.add('sel'); STATE[key]=val; }
+    });
+  });
+});
+/* ===== Snap your plate — OpenAI-vision estimate, patient confirms ===== */
+const VISION_API='/.netlify/functions/food-vision';
+const escH=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function readDataURL(f){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(f); }); }
+function markCareTeam(box){ if(!box.querySelector('.tag')){ const t=document.createElement('span'); t.className='tag'; t.textContent='Sent to your care team'; box.appendChild(t); } }
+function estRow(it){
+  const el=document.createElement('div'); el.className='off-item';
+  const meta=(it.portion?it.portion+' · ':'')+'estimate';
+  el.innerHTML='<div class="off-item__b"><div class="off-item__n">'+escH(it.name)+'</div><div class="off-item__m">'+escH(meta)+'</div>'
+    +'<div class="est-macros">P <input type="number" min="0" value="'+it.protein+'"> C <input type="number" min="0" value="'+it.carbs+'"> F <input type="number" min="0" value="'+it.fat+'"></div></div>';
+  const ins=el.querySelectorAll('.est-macros input');
+  const b=document.createElement('button'); b.className='obtn go'; b.type='button'; b.textContent='Add';
+  b.onclick=()=>{ plateAdd(it.name,{p:+ins[0].value||0,c:+ins[1].value||0,f:+ins[2].value||0,fiber:+it.fiber||0,sugar:+it.sugar||0,sodium:+it.sodium||0,vitd:+it.vitd||0,vitc:+it.vitc||0,iron:+it.iron||0,calcium:+it.calcium||0,potassium:+it.potassium||0,magnesium:+it.magnesium||0}); b.textContent='Added ✓'; b.disabled=true; };
+  el.appendChild(b); return el;
+}
+async function estimatePlate(e){
+  const f=(e.target.files||[])[0]; if(!f) return;
+  const box=document.getElementById('meals'), status=document.getElementById('plateStatus'), est=document.getElementById('plateEst');
+  est.innerHTML=''; box.innerHTML='';
+  const img=document.createElement('img'); img.src=URL.createObjectURL(f); box.appendChild(img); MEALS++;
+  status.textContent='Looking at your plate…';
+  let dataUrl; try{ dataUrl=await readDataURL(f); }catch(err){ status.textContent='Couldn’t read that photo — try again.'; return; }
+  try{
+    const r=await fetch(VISION_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl})});
+    const d=await r.json().catch(()=>({}));
+    if(r.status===503){ status.textContent='Photo estimates aren’t switched on yet — your photo was sent to your care team instead. (Search or scan a barcode above for exact numbers.)'; markCareTeam(box); return; }
+    if(!r.ok){ status.textContent=(d&&d.error)||'Couldn’t estimate this photo — try search or a barcode above.'; return; }
+    if(!d.items||!d.items.length){ status.textContent=(d&&d.note)||'Couldn’t spot foods in that photo — try search or a barcode above.'; return; }
+    status.textContent=d.note||'Estimated — check the numbers, adjust if needed, then Add.';
+    d.items.forEach(it=>est.appendChild(estRow(it)));
+    const all=document.createElement('button'); all.className='obtn go'; all.type='button'; all.style.marginTop='8px'; all.textContent='Add all to today';
+    all.onclick=()=>{ est.querySelectorAll('.off-item .obtn').forEach(b=>{ if(!b.disabled) b.click(); }); all.disabled=true; all.textContent='Added ✓'; };
+    est.appendChild(all);
+  }catch(err){ status.textContent='Couldn’t reach the estimator — check your connection, or use search/barcode above.'; }
+}
+
+/* ===== Nutrition tally — fuel vessels + nutrient bars ===== */
+const FOODS=[];
+const MACROS=['p','c','f'];
+const MICROS=['fiber','sugar','sodium','vitd','vitc','iron','calcium','potassium','magnesium'];
+const KEYS=[...MACROS,...MICROS];
+const NUTRI={}; KEYS.forEach(k=>NUTRI[k]=0);
+let TARGET=Object.assign({},P.targets);  // program defaults; per-patient overrides merge in from the care plan
+const R=x=>Math.round(x||0);
+const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
+// show each program's goal numbers next to the vessels + bars
+function applyTargets(){
+  const set=(id,v)=>{const e=document.getElementById(id); if(e) e.textContent=v;};
+  MACROS.forEach(k=>set('g'+k.toUpperCase(),TARGET[k]));
+  MICROS.forEach(k=>set('g'+cap(k),TARGET[k]));
+}
+applyTargets();
+
+/* ===== Storage: per-patient targets + trend (stored history) ===== */
+const HIST_API='/.netlify/functions/checkin-history';
+const SAVE_API='/.netlify/functions/checkin-save';
+const PATIENT={ name: params.get('name')||'Jordan Rivera', phone: params.get('phone')||'940-637-5470', id: params.get('pid')||'' };
+const PROGKEY=params.get('program')||'primary';
+const FEEL={Rough:1,Low:2,OK:3,Good:4,Great:5}, SLEEPS={Rough:1,OK:2,Good:3,Great:4};
+function spark(vals,color){
+  const pts=[]; vals.forEach((v,i)=>{ if(v!=null&&!isNaN(v)) pts.push([i,+v]); });
+  if(pts.length<2) return '<svg viewBox="0 0 100 34" preserveAspectRatio="none"></svg>';
+  const ys=pts.map(p=>p[1]), maxX=vals.length-1, minY=Math.min(...ys), maxY=Math.max(...ys);
+  const nx=x=>maxX>0?x/maxX*100:50, ny=y=>maxY>minY?30-(y-minY)/(maxY-minY)*26:17;
+  const d=pts.map((p,i)=>(i?'L':'M')+nx(p[0]).toFixed(1)+' '+ny(p[1]).toFixed(1)).join(' ');
+  return `<svg viewBox="0 0 100 34" preserveAspectRatio="none"><path d="${d}" fill="none" stroke="${color}" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" vector-effect="non-scaling-stroke"/></svg>`;
+}
+function renderTrend(series){
+  const rows=[
+    ['Feeling', series.map(s=>FEEL[s.feeling]||null), 'var(--accent-deep)', v=>['—','Rough','Low','OK','Good','Great'][Math.round(v)]||'—'],
+    ['Sleep', series.map(s=>SLEEPS[s.sleep]||null), 'var(--accent)', v=>['—','Rough','OK','Good','Great'][Math.round(v)]||'—'],
+    ['Water', series.map(s=>s.water), 'var(--water)', v=>R(v)+' cups'],
+    ['Protein', series.map(s=>s.p), 'var(--coral)', v=>R(v)+' g'],
+    ['Fiber', series.map(s=>s.fiber), 'var(--good)', v=>R(v)+' g'],
+    ['Sodium', series.map(s=>s.sodium), 'var(--amber)', v=>R(v)+' mg'],
+  ];
+  const box=document.getElementById('trends'); box.innerHTML='';
+  rows.forEach(([label,vals,color,fmt])=>{
+    const nn=vals.filter(v=>v!=null&&!isNaN(v));
+    if(nn.length<2) return;
+    const el=document.createElement('div'); el.className='trend';
+    el.innerHTML=`<span class="tl">${label}</span>${spark(vals,color)}<span class="tv"><b>${fmt(nn[nn.length-1])}</b></span>`;
+    box.appendChild(el);
+  });
+  if(box.children.length){ document.getElementById('trendCard').hidden=false; document.getElementById('trendDays').textContent='· last '+series.length+' check-ins'; }
+}
+(async function loadHistory(){
+  try{
+    const r=await fetch(HIST_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({patient:PATIENT,program:PROGKEY,days:30})});
+    const d=await r.json().catch(()=>({}));
+    if(d&&d.override&&Object.keys(d.override).length){ TARGET=Object.assign({},P.targets,d.override); applyTargets(); renderFuel(); }
+    if(d&&Array.isArray(d.series)&&d.series.length) renderTrend(d.series);
+  }catch(e){/* offline / not configured — page still works */}
+})();
+function plateAdd(name,n){
+  n=n||{}; FOODS.push(name);
+  KEYS.forEach(k=>{ NUTRI[k]+=(+n[k]||0); });
+  renderFuel();
+}
+function renderFuel(){
+  document.getElementById('fuel').hidden=false;
+  document.getElementById('tallyItems').textContent=FOODS.length+' item'+(FOODS.length!==1?'s':'');
+  const set=(id,v)=>{const e=document.getElementById(id); if(e) e.textContent=v;};
+  const fill=(id,v,t)=>{const e=document.getElementById(id); if(e) e.style.height=Math.min(100,Math.round(v/t*100))+'%';};
+  const bar=(id,v,t)=>{const e=document.getElementById(id); if(e) e.style.width=Math.min(100,Math.round(v/t*100))+'%';};
+  MACROS.forEach(k=>{ set('t'+k.toUpperCase(),R(NUTRI[k])); fill('f'+k.toUpperCase(),NUTRI[k],TARGET[k]); });
+  MICROS.forEach(k=>{ set('t'+cap(k),R(NUTRI[k])); bar('b'+cap(k),NUTRI[k],TARGET[k]); });
+}
+
+/* ===== Hydration tracker ===== */
+const WATER_GOAL=12;
+let WATER=0;
+function setWater(n){
+  WATER=Math.max(0,Math.min(16,n));
+  document.getElementById('waterCups').textContent=WATER;
+  document.getElementById('waterOz').textContent=WATER*8;
+  document.getElementById('waterFill').style.height=Math.min(100,Math.round(WATER/WATER_GOAL*100))+'%';
+  [...document.querySelectorAll('#waterCupsRow .cup')].forEach((c,i)=>c.classList.toggle('on',i<WATER));
+}
+(function(){
+  const row=document.getElementById('waterCupsRow'); if(!row) return;
+  for(let i=0;i<WATER_GOAL;i++){ const c=document.createElement('button'); c.type='button'; c.className='cup'; c.onclick=()=>setWater(i+1===WATER?i:i+1); row.appendChild(c); }
+})();
+
+/* ===== Open Food Facts — real food search + barcode lookup (free, no key) ===== */
+(function(){
+  const q=document.getElementById('offQ'); if(!q) return;
+  const status=document.getElementById('offStatus'), results=document.getElementById('offResults');
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const num=n=>(n==null||isNaN(n))?0:Math.round(n*10)/10;
+  function row(p){
+    const nu=p.nutriments||{};
+    const pr=num(nu.proteins_100g), cb=num(nu.carbohydrates_100g), ft=num(nu.fat_100g);
+    const fib=num(nu.fiber_100g), sug=num(nu.sugars_100g);
+    const sod=num(nu.sodium_100g!=null?nu.sodium_100g*1000:(nu.salt_100g!=null?nu.salt_100g*400:0)); // g→mg; salt→sodium
+    const g2mg=k=>num((nu[k+'_100g']||0)*1000);
+    const vitd=num((nu['vitamin-d_100g']||0)*1e6);      // g→µg
+    const vitc=g2mg('vitamin-c'), iron=g2mg('iron'), calcium=g2mg('calcium'), potassium=g2mg('potassium'), magnesium=g2mg('magnesium');
+    const name=(p.product_name||'Unnamed food').trim();
+    const brand=(p.brands||'').split(',')[0].trim();
+    const el=document.createElement('div'); el.className='off-item';
+    el.innerHTML='<div class="off-item__b"><div class="off-item__n">'+esc(name)+(brand?' · <span style="font-weight:400;color:var(--ink-soft)">'+esc(brand)+'</span>':'')+'</div><div class="off-item__m">per 100g · '+pr+'g P · '+cb+'g C · '+ft+'g F</div></div>';
+    const b=document.createElement('button'); b.className='obtn go'; b.type='button'; b.textContent='Add 100g';
+    b.onclick=()=>{ plateAdd(name,{p:pr,c:cb,f:ft,fiber:fib,sugar:sug,sodium:sod,vitd,vitc,iron,calcium,potassium,magnesium}); b.textContent='Added ✓'; b.disabled=true; };
+    el.appendChild(b); return el;
+  }
+  async function search(){
+    const term=q.value.trim(); if(!term) return;
+    status.textContent='Searching Open Food Facts…'; results.innerHTML='';
+    try{
+      const url='https://world.openfoodfacts.org/cgi/search.pl?search_terms='+encodeURIComponent(term)+'&search_simple=1&action=process&json=1&page_size=8&fields=product_name,brands,nutriments';
+      const r=await fetch(url); const d=await r.json();
+      const ps=(d.products||[]).filter(p=>p.product_name && p.nutriments);
+      if(!ps.length){ status.textContent='No matches — try a simpler term.'; return; }
+      status.textContent=ps.length+' results · tap Add to count it toward today';
+      ps.slice(0,8).forEach(p=>results.appendChild(row(p)));
+    }catch(e){ status.textContent='Couldn’t reach the food database right now — check your connection and try again.'; }
+  }
+  async function lookup(){
+    const code=(document.getElementById('offCode').value||'').trim(); if(!code) return;
+    status.textContent='Looking up barcode…'; results.innerHTML='';
+    try{
+      const url='https://world.openfoodfacts.org/api/v2/product/'+encodeURIComponent(code)+'.json?fields=product_name,brands,nutriments';
+      const r=await fetch(url); const d=await r.json();
+      if(d.status!==1 || !d.product){ status.textContent='No product found for that barcode.'; return; }
+      status.textContent='Found it · tap Add to count it toward today'; results.appendChild(row(d.product));
+    }catch(e){ status.textContent='Couldn’t reach the food database right now — check your connection and try again.'; }
+  }
+  document.getElementById('offGo').onclick=search;
+  q.addEventListener('keydown',e=>{ if(e.key==='Enter') search(); });
+  document.getElementById('offCodeGo').onclick=lookup;
+  /* live camera barcode scan — native BarcodeDetector, graceful fallback */
+  const cam=document.getElementById('offCam'), video=document.getElementById('offVideo'), hint=document.getElementById('offCamHint');
+  let stream=null, detector=null, scanning=false, raf=null;
+  function stopCam(){ scanning=false; if(raf) cancelAnimationFrame(raf); if(stream){ stream.getTracks().forEach(t=>t.stop()); stream=null; } if(cam) cam.hidden=true; }
+  async function startCam(){
+    if(!('BarcodeDetector' in window)){ status.textContent='Live scanning isn’t supported on this browser — type the barcode instead.'; return; }
+    try{ detector=new window.BarcodeDetector({formats:['ean_13','ean_8','upc_a','upc_e','code_128']}); }
+    catch(e){ status.textContent='Live scanning isn’t available here — type the barcode instead.'; return; }
+    try{ stream=await navigator.mediaDevices.getUserMedia({video:{facingMode:'environment'}}); }
+    catch(e){ status.textContent='Camera unavailable or permission denied — type the barcode instead.'; return; }
+    cam.hidden=false; video.srcObject=stream;
+    try{ await video.play(); }catch(e){}
+    scanning=true; hint.textContent='Point your camera at a barcode…'; status.textContent='';
+    (function loop(){
+      if(!scanning) return;
+      detector.detect(video).then(codes=>{
+        if(codes && codes.length){ const val=codes[0].rawValue||''; stopCam(); document.getElementById('offCode').value=val; lookup(); }
+        else { raf=requestAnimationFrame(loop); }
+      }).catch(()=>{ raf=requestAnimationFrame(loop); });
+    })();
+  }
+  document.getElementById('offScan').onclick=startCam;
+  document.getElementById('offCamStop').onclick=stopCam;
+})();
+
+async function saveAll(){
+  const done=document.getElementById('done');
+  const parts=[];
+  Object.entries(STATE).forEach(([k,v])=>{ if(v&&(!Array.isArray(v)||v.length)) parts.push(`${k}: ${Array.isArray(v)?v.join(', '):v}`); });
+  const vt={BP:'v_bp',HR:'v_hr',Weight:'v_wt',Glucose:'v_glu',Temp:'v_temp',O2:'v_o2',Steps:'v_steps'};
+  Object.entries(vt).forEach(([k,id])=>{ const val=document.getElementById(id).value.trim(); if(val) parts.push(`${k}: ${val}`); });
+  const meds=[...document.querySelectorAll('.chk.on .nm')].map(n=>n.childNodes[0].textContent.trim());
+  if(meds.length) parts.push('Took: '+meds.join(', '));
+  const devs=[...document.querySelectorAll('.dv.on .nm')].map(n=>n.childNodes[0].textContent.trim());
+  if(devs.length) parts.push('Devices: '+devs.join(', '));
+  if(FOODS.length) parts.push('Food ('+FOODS.length+'): '+FOODS.join(', ')
+    +` — ~${R(NUTRI.p)}g protein, ${R(NUTRI.c)}g carbs, ${R(NUTRI.f)}g fat, ${R(NUTRI.fiber)}g fiber, ${R(NUTRI.sugar)}g sugar, ${R(NUTRI.sodium)}mg sodium`
+    +` · vitamins ~D ${R(NUTRI.vitd)}µg, C ${R(NUTRI.vitc)}mg, iron ${R(NUTRI.iron)}mg, calcium ${R(NUTRI.calcium)}mg, potassium ${R(NUTRI.potassium)}mg, magnesium ${R(NUTRI.magnesium)}mg`);
+  if(WATER) parts.push(`Water: ${WATER} of ${WATER_GOAL} cups (${WATER*8} oz)`);
+  if(MEALS) parts.push(MEALS+' meal photo'+(MEALS>1?'s':'')+' logged');
+  const summary=`${P.name} check-in — `+(parts.length?parts.join(' · '):'opened, nothing logged');
+  done.hidden=false; done.textContent='Saving…';
+  // Structured record → checkin-save (for trending). Inert until CHECKIN_DB_ID is set.
+  const v=id=>{const e=document.getElementById(id); return e?e.value.trim():'';};
+  const payload={
+    program:PROGKEY, patient:PATIENT, date:new Date().toISOString().slice(0,10), summary,
+    well:{feeling:STATE.Feeling,motivation:STATE.Motivation,sleep:STATE.Sleep,movement:STATE.Movement,outside:STATE.Outside,people:STATE.People,nutrition:STATE.Nutrition},
+    symptoms:STATE.Symptoms||[], meds, water:WATER,
+    nutrients:NUTRI,
+    vitals:{bp:v('v_bp'),hr:v('v_hr'),wt:v('v_wt'),glu:v('v_glu'),temp:v('v_temp'),o2:v('v_o2'),steps:v('v_steps')},
+  };
+  fetch(SAVE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
+  try{
+    await fetch(OFFICE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:PATIENT.name,phone:PATIENT.phone,message:summary})});
+    done.textContent='Saved — thank you. Your care team sees this. ✓';
+  }catch(err){ done.textContent='Saved on your device — will sync when you’re back online.'; }
+}
+</script>
+</body>
+</html>
