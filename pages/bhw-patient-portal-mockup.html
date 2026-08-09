@@ -1627,8 +1627,14 @@ async function loginStep(){
     if(!res.ok || !d.ok){ st.textContent=d.error||'That code didn’t match.'; btn.disabled=false; return; }
     if(d.token){ try{ sessionStorage.setItem('bhw_pt_session', d.token); }catch(e){} }
     try{ sessionStorage.setItem('bhw_pt_family', JSON.stringify({patient:d.patient||{name:idVal}, dependents:d.dependents||[]})); }catch(e){}
-    enterApp();
+    afterAuth();
   }catch(e){ st.textContent='Network error — try again.'; btn.disabled=false; }
+}
+/* After sign-in: ?next=dashboard (Patient Portal door) -> the dashboard;
+   otherwise reveal the in-page Blueprint (Personal Health Blueprint door). */
+function afterAuth(){
+  try{ if(new URLSearchParams(location.search).get('next')==='dashboard'){ location.href='bhw-primary-care-demo.html'; return; } }catch(e){}
+  enterApp();
 }
 function signOut(){
   try{ sessionStorage.removeItem('bhw_pt_session'); }catch(e){}
@@ -1644,7 +1650,7 @@ function signOut(){
     var t=sessionStorage.getItem('bhw_pt_session');
     if(!t) return;
     var p=JSON.parse(atob(t.split('.')[0].replace(/-/g,'+').replace(/_/g,'/')));
-    if(p && p.exp && Date.now()<p.exp) enterApp();
+    if(p && p.exp && Date.now()<p.exp) afterAuth();
   }catch(e){}
 })();
 function go(pane, btn){
