@@ -1,6 +1,9 @@
 <!doctype html>
 <html lang="en">
 <head>
+<script>/* Care Connect gate: require a signed-in patient session (or ?preview=1 to demo) */
+(function(){try{if(/[?&]preview=1/.test(location.search))return;var t=sessionStorage.getItem('bhw_pt_session'),ok=false;if(t){var p=JSON.parse(atob(t.split('.')[0].replace(/-/g,'+').replace(/_/g,'/')));ok=p&&p.exp&&Date.now()<p.exp;}if(!ok)location.replace('bhw-patient-portal-mockup.html?next=dashboard');}catch(e){}})();</script>
+
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Your check-in — BHW Care Connect</title>
@@ -417,7 +420,10 @@ applyTargets();
 /* ===== Storage: per-patient targets + trend (stored history) ===== */
 const HIST_API='/.netlify/functions/checkin-history';
 const SAVE_API='/.netlify/functions/checkin-save';
-const PATIENT={ name: params.get('name')||'Jordan Rivera', phone: params.get('phone')||'940-637-5470', id: params.get('pid')||'' };
+// Prefer the signed-in patient (matched to the Master List by email/phone at login);
+// fall back to query params, then the demo identity.
+const SESSION_PT=(function(){try{var f=JSON.parse(sessionStorage.getItem('bhw_pt_family')||'null');return (f&&f.patient)||null;}catch(e){return null;}})();
+const PATIENT={ name: params.get('name')||(SESSION_PT&&SESSION_PT.name)||'Jordan Rivera', phone: params.get('phone')||(SESSION_PT&&SESSION_PT.phone)||'940-637-5470', id: params.get('pid')||(SESSION_PT&&SESSION_PT.id)||'' };
 const PROGKEY=params.get('program')||'primary';
 const FEEL={Rough:1,Low:2,OK:3,Good:4,Great:5}, SLEEPS={Rough:1,OK:2,Good:3,Great:4};
 function spark(vals,color){
