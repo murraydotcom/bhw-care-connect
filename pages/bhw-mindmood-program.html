@@ -408,5 +408,7 @@ async function sendMsg(e){
 })();
 </script>
 
+<script>/* Link to the matched patient Notion page when signed in */
+addEventListener('DOMContentLoaded',function(){try{var f=JSON.parse(sessionStorage.getItem('bhw_pt_family')||'null');var pp=f&&f.patient&&f.patient.patientPage;if(!pp)return;var a=document.createElement('a');a.href=pp;a.target='_blank';a.rel='noopener';a.textContent='Open my full page →';a.style.cssText='position:fixed;bottom:14px;right:14px;z-index:9999;background:#4a8a87;color:#fff;font:700 12px system-ui,sans-serif;padding:9px 14px;border-radius:999px;text-decoration:none;box-shadow:0 8px 20px -6px rgba(20,40,36,.5)';document.body.appendChild(a);}catch(e){}});</script>
 </body>
 </html>

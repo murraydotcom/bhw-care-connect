@@ -1633,14 +1633,7 @@ async function loginStep(){
 /* After sign-in: ?next=dashboard (Patient Portal door) -> the dashboard;
    otherwise reveal the in-page Blueprint (Personal Health Blueprint door). */
 function afterAuth(){
-  try{
-    if(new URLSearchParams(location.search).get('next')==='dashboard'){
-      var fam=JSON.parse(sessionStorage.getItem('bhw_pt_family')||'null');
-      var pp=fam&&fam.patient&&fam.patient.patientPage;   // their Notion "Patient Page" (matched by email/phone)
-      location.href = pp ? pp : 'bhw-primary-care-demo.html';
-      return;
-    }
-  }catch(e){}
+  try{ if(new URLSearchParams(location.search).get('next')==='dashboard'){ location.href='bhw-primary-care-demo.html'; return; } }catch(e){}
   enterApp();
 }
 function signOut(){
