@@ -621,6 +621,10 @@ h1,h2,h3,h4{margin:0; color:var(--fg-strong); text-wrap:balance;}
       <label for="f-email" id="f-idlabel">Email</label>
       <input id="f-email" type="email" placeholder="you@email.com" autocomplete="email">
     </div>
+    <div class="login-field">
+      <label for="f-dob">Date of birth</label>
+      <input id="f-dob" type="date" autocomplete="bday">
+    </div>
     <button type="button" id="idToggle" onclick="toggleLoginMode()"
       style="background:none;border:none;padding:2px 0 4px;color:var(--accent,#80abbd);font:inherit;font-size:.82rem;font-weight:600;cursor:pointer;text-decoration:underline;align-self:flex-start">No email? Use your phone number →</button>
     <div class="login-field" id="codeField" style="display:none;">
@@ -1596,11 +1600,13 @@ async function loginStep(){
   var btn=document.getElementById('loginBtn'), st=document.getElementById('loginStatus');
   var isPhone=_ptAuth.mode==='phone';
   var idVal=(document.getElementById('f-email').value||'').trim();
-  var payloadId=isPhone ? {phone:idVal} : {email:idVal};
+  var dobVal=(document.getElementById('f-dob').value||'').trim();
+  var payloadId=isPhone ? {phone:idVal, dob:dobVal} : {email:idVal, dob:dobVal};
   if(!_ptAuth.sent){
     if(isPhone){
       if(idVal.replace(/\D/g,'').length<10){ st.textContent='Enter a valid mobile number.'; return; }
     }else if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(idVal)){ st.textContent='Enter a valid email.'; return; }
+    if(!/^\d{4}-\d{2}-\d{2}$/.test(dobVal)){ st.textContent='Enter your date of birth.'; return; }
     btn.disabled=true; st.textContent='Sending your code…';
     try{
       var res=await fetch('/.netlify/functions/patient-auth',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(Object.assign({action:'send'},payloadId))});

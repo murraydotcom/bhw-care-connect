@@ -47,6 +47,9 @@ function readPhone(pg, prop) {
   if (!f) return "";
   return phoneDigits(f.phone_number || P.text(f) || "");
 }
+function readDob(pg) {
+  return String((pg.properties || {})["DOB"]?.date?.start || "").slice(0, 10);
+}
 // Normalize a user-entered phone to E.164 for Stytch (US default). Returns "" if
 // it clearly isn't a phone so the caller can fall back to email.
 function normalizePhone(raw) {
@@ -114,11 +117,12 @@ async function medsFor(pg) {
 // Dependents = records whose Guardian Email / Guardian Phone is this login, so a
 // patient with no email can still be reached by phone, and a child with neither
 // is reached through a caregiver by either channel.
-async function loadFamily({ email, phone }) {
+async function loadFamily({ email, phone, dob }) {
   try {
     const dig = phone ? phoneDigits(phone).slice(-10) : "";
+    const dobOk = (pg) => !dob || readDob(pg) === dob;   // DOB tie-breaker for shared contact
     const matchSelf = (pg) =>
-      email ? readEmail(pg, "Email") === email : !!dig && readPhone(pg, "Phone").slice(-10) === dig;
+      (email ? readEmail(pg, "Email") === email : !!dig && readPhone(pg, "Phone").slice(-10) === dig) && dobOk(pg);
     const matchDep = (pg) =>
       email
         ? readEmail(pg, "Guardian Email") === email
@@ -246,7 +250,8 @@ exports.handler = async (event) => {
       // whichever channel the patient used.
       const idKey = phone ? { phone } : { email };
       const idLabel = email || phone;
-      let family = await loadFamily(idKey);
+      const dob = /^\d{4}-\d{2}-\d{2}$/.test(body.dob || "") ? body.dob : "";
+      let family = await loadFamily({ ...idKey, dob });
       if (!family) {
         family = HAS_STYTCH
           ? { patient: { name: phone ? idLabel : email.split("@")[0], email, phone }, dependents: [] }
