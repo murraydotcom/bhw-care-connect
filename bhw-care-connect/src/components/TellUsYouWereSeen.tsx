@@ -16,11 +16,15 @@ type Status = 'idle' | 'sending' | 'sent' | 'error'
 
 /** Transition-of-care heads-up after an ER, urgent care or hospital visit. */
 export function TellUsYouWereSeen() {
+  const [name, setName] = useState('')
+  const [phone, setPhone] = useState('')
   const [place, setPlace] = useState('')
   const [when, setWhen] = useState('')
   const [note, setNote] = useState('')
   const [status, setStatus] = useState<Status>('idle')
 
+  const nameId = useId()
+  const phoneId = useId()
   const placeLabelId = useId()
   const whenLabelId = useId()
   const noteId = useId()
@@ -32,7 +36,14 @@ export function TellUsYouWereSeen() {
     if (sending) return
     setStatus('sending')
     try {
-      await submitVisitNotice({ place, when, note, submittedAt: new Date().toISOString() })
+      await submitVisitNotice({
+        name,
+        phone,
+        place,
+        when,
+        note,
+        submittedAt: new Date().toISOString(),
+      })
       setStatus('sent')
     } catch {
       setStatus('error')
@@ -72,6 +83,42 @@ export function TellUsYouWereSeen() {
       </div>
 
       <form className={styles.card} onSubmit={onSubmit}>
+        <div className={styles.duo}>
+          <div className={styles.group}>
+            <label className={styles.groupLabel} htmlFor={nameId}>
+              Your full name
+            </label>
+            <input
+              id={nameId}
+              className={styles.input}
+              value={name}
+              placeholder="As it appears on your chart"
+              autoComplete="name"
+              onChange={(event) => {
+                setName(event.target.value)
+                setStatus('idle')
+              }}
+            />
+          </div>
+          <div className={styles.group}>
+            <label className={styles.groupLabel} htmlFor={phoneId}>
+              Best callback number
+            </label>
+            <input
+              id={phoneId}
+              className={styles.input}
+              type="tel"
+              value={phone}
+              placeholder="(443) 555-0142"
+              autoComplete="tel"
+              onChange={(event) => {
+                setPhone(event.target.value)
+                setStatus('idle')
+              }}
+            />
+          </div>
+        </div>
+
         <div className={styles.group} role="group" aria-labelledby={placeLabelId}>
           <span className={styles.groupLabel} id={placeLabelId}>
             Where were you seen?

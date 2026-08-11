@@ -42,6 +42,13 @@ export const INTAKE: Field[] = [
   { id: 'name', label: 'Your full name', type: 'text', placeholder: 'As it appears on your chart' },
   { id: 'dob', label: 'Date of birth', type: 'text', placeholder: 'MM / DD / YYYY' },
   {
+    id: 'phone',
+    label: 'Best callback number',
+    type: 'text',
+    placeholder: '(443) 555-0142',
+    help: 'So we can reach you and match this to your chart.',
+  },
+  {
     id: 'blueprint',
     label: 'Do you have access to your Personal Health Blueprint?',
     type: 'chips',

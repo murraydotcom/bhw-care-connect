@@ -32,7 +32,7 @@ export function TriageForm({ triage }: TriageFormProps) {
       : 'Send to my care team'
 
   const submitNote = sent
-    ? `You’re in the queue as ${reference}. We’ll answer in your Health Blueprint inbox.`
+    ? `You’re in the queue${reference ? ` as ${reference}` : ''}. We’ll answer in your Health Blueprint inbox.`
     : status === 'error'
       ? `That didn’t send. Try once more, or call ${CONTACT.phone} and we’ll take it down for you.`
       : 'A real person on your care team claims this, and nothing sits unread.'

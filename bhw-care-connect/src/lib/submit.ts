@@ -1,4 +1,5 @@
-import type { RouteKey } from '../data/triage'
+import { INTAKE, ROUTES, type Field, type RouteKey } from '../data/triage'
+import { config } from '../config'
 
 /**
  * ─────────────────────────────────────────────────────────────────────────────
@@ -42,30 +43,78 @@ export interface TriageReceipt {
 }
 
 export interface VisitNotice {
+  /** Who was seen — needed so the nurse can pull the right chart. */
+  name: string
+  /** Callback number — matches the chart and lets the nurse reach the patient. */
+  phone: string
   place: string
   when: string
   note: string
   submittedAt: string
 }
 
-function logForDevelopment(label: string, payload: unknown) {
-  if (import.meta.env.DEV) {
-    console.info(`[BHW Care Connect] ${label} (stub — nothing was sent)`, payload)
-  }
-}
+/**
+ * The queue only has a name, a callback number and one free-text Summary, so the
+ * structured answers are composed into a readable summary. `name` and `phone`
+ * travel as their own fields (the queue matches the chart by phone); everything
+ * else — route, SLA, date of birth, per-question answers — goes in the message.
+ */
+function composeTriageMessage(s: TriageSubmission): string {
+  const route = ROUTES.find((r) => r.key === s.route)
+  const fields: Field[] = [...INTAKE, ...(route?.fields ?? [])]
+  const labelFor = (id: string) => fields.find((f) => f.id === id)?.label ?? id
 
-/** Simulates the round trip so loading states are exercised in the demo. */
-function settle<T>(value: T): Promise<T> {
-  return new Promise((resolve) => setTimeout(() => resolve(value), 350))
+  const lines: string[] = [`[${s.routeLabel}${route ? ` · ${route.sla}` : ''}]`]
+  if (s.freeText.trim()) lines.push(`“${s.freeText.trim()}”`)
+  // name and phone are sent as their own fields, not repeated in the body.
+  for (const field of fields) {
+    if (field.id === 'name' || field.id === 'phone') continue
+    const value = s.answers[field.id]?.trim()
+    if (value) lines.push(`${labelFor(field.id)}: ${value}`)
+  }
+  return lines.join('\n')
 }
 
 /**
- * Send a Just Ask message to the care team.
- * Replace the stub with your real POST; return the reference the queue assigns.
+ * POST one intake to the BHWcrewOS `portal-message` function → the Patient
+ * Request Triage Queue. PHI leaves the browser only here, only over TLS, only to
+ * that BAA-covered endpoint — and is never logged. Throws on any non-OK response
+ * so the caller can show its error state.
+ */
+async function postToQueue(payload: {
+  name: string
+  phone: string
+  message: string
+}): Promise<{ ok: boolean; reference?: string; matched?: boolean }> {
+  const response = await fetch(config.intakeUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    // `hp` is the endpoint's honeypot — a real patient never sets it.
+    body: JSON.stringify({ ...payload, hp: '' }),
+  })
+  const data = (await response.json().catch(() => ({}))) as {
+    ok?: boolean
+    reference?: string
+    matched?: boolean
+    error?: string
+  }
+  if (!response.ok || data.ok === false) {
+    throw new Error(data.error || `Intake failed (${response.status})`)
+  }
+  return { ok: true, reference: data.reference, matched: data.matched }
+}
+
+/**
+ * Send a Just Ask message to the care team. Returns the reference the queue
+ * assigns (its Request ID) so the patient can quote it when they call.
  */
 export async function submitTriage(submission: TriageSubmission): Promise<TriageReceipt> {
-  logForDevelopment('triage submission', submission)
-  return settle({ reference: 'BHW-2481' })
+  const result = await postToQueue({
+    name: submission.answers.name ?? '',
+    phone: submission.answers.phone ?? '',
+    message: composeTriageMessage(submission),
+  })
+  return { reference: result.reference ?? '' }
 }
 
 /**
@@ -73,6 +122,11 @@ export async function submitTriage(submission: TriageSubmission): Promise<Triage
  * ER, urgent care or hospital visit.
  */
 export async function submitVisitNotice(notice: VisitNotice): Promise<void> {
-  logForDevelopment('transition-of-care notice', notice)
-  await settle(null)
+  const detail = [
+    `Transition of care — ${notice.place || 'a recent visit'}${notice.when ? `, ${notice.when}` : ''}.`,
+    notice.note.trim(),
+  ]
+    .filter(Boolean)
+    .join(' ')
+  await postToQueue({ name: notice.name, phone: notice.phone, message: detail })
 }
