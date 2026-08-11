@@ -1,0 +1,21 @@
+# Netlify build config for bhw-care-connect.netlify.app
+#
+# The deployable app lives in the bhw-care-connect/ subfolder (a React + Vite
+# build); the repo root also holds bhw-hq/ and the design zip, which are NOT
+# part of this site. `base` points Netlify at the app so it builds only that.
+#
+# Routing is hash-based (#/, #/resources) and `base` in vite.config.ts is './',
+# so no SPA redirect rules are needed — the built dist is a plain static folder.
+
+[build]
+  base = "bhw-care-connect"
+  command = "npm run build"
+  publish = "dist"
+
+# Patient-facing page: keep it out of frames and stop MIME sniffing.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
