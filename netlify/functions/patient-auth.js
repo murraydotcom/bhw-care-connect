@@ -10,10 +10,11 @@
 //   STYTCH_ENV          "test" | "live"  (default "test")
 //   SESSION_SECRET      HMAC key for our own session token (already used by staff auth)
 //
-// If STYTCH_PROJECT_ID / STYTCH_SECRET are absent the function runs in DEMO mode
-// so the mockup still works end to end: nothing is emailed and any 6-digit code
-// is accepted. Add the two keys and it becomes a real passwordless login with
-// no other change.
+// DEMO mode (nothing emailed, any 6-digit code accepted) runs ONLY when the
+// Stytch keys are absent AND ALLOW_DEMO_AUTH="1" is set — for local/preview use.
+// Without that flag, missing keys FAIL CLOSED so production never grants access
+// without real auth. Add the two keys and it becomes a real passwordless login;
+// live keys (project-live-… / secret-live-…) auto-select the live Stytch API.
 //
 // Actions (POST JSON):
 //   { action:"send",   email }                 -> { ok, methodId?, demo? }
@@ -179,8 +180,18 @@ function demoFamily(email) {
 }
 
 const HAS_STYTCH = !!(process.env.STYTCH_PROJECT_ID && process.env.STYTCH_SECRET);
-const STYTCH_BASE =
-  (process.env.STYTCH_ENV === "live" ? "https://api.stytch.com" : "https://test.stytch.com") + "/v1";
+// Demo mode (accepts any 6-digit code, returns a sample family) is for local /
+// preview use ONLY. It requires BOTH no Stytch keys AND an explicit opt-in flag,
+// so production without keys fails closed instead of granting access to anyone.
+const DEMO_MODE = !HAS_STYTCH && process.env.ALLOW_DEMO_AUTH === "1";
+// Use the live API when live keys are present (project-live-… / secret-live-…)
+// or STYTCH_ENV is explicitly "live" — so pasting in live keys can't silently
+// keep authenticating against Stytch's test environment.
+const STYTCH_LIVE =
+  process.env.STYTCH_ENV === "live" ||
+  /-live-/.test(process.env.STYTCH_PROJECT_ID || "") ||
+  /-live-/.test(process.env.STYTCH_SECRET || "");
+const STYTCH_BASE = (STYTCH_LIVE ? "https://api.stytch.com" : "https://test.stytch.com") + "/v1";
 
 function stytchAuthHeader() {
   const basic = Buffer.from(
@@ -215,17 +226,23 @@ exports.handler = async (event) => {
   const phone = email ? "" : normalizePhone(body.phone);
 
   try {
+    // Fail closed: if real auth isn't configured and demo isn't explicitly
+    // enabled, refuse sign-in rather than granting access to anyone.
+    if (!HAS_STYTCH && !DEMO_MODE && (body.action === "send" || body.action === "verify")) {
+      return json(503, { error: "Patient sign-in isn’t available right now — please call the office." });
+    }
+
     // ---- send a code (email or SMS) ---------------------------------------
     if (body.action === "send") {
       if (phone) {
-        if (!HAS_STYTCH) return json(200, { ok: true, demo: true, channel: "sms" });
+        if (DEMO_MODE) return json(200, { ok: true, demo: true, channel: "sms" });
         const r = await stytch("/otps/sms/login_or_create", { phone_number: phone });
         if (!r.ok)
           return json(502, { error: r.data.error_message || "Could not text the code — try again." });
         return json(200, { ok: true, methodId: r.data.phone_id, channel: "sms" });
       }
       if (!isEmail(email)) return json(400, { error: "Enter a valid email or phone number." });
-      if (!HAS_STYTCH) return json(200, { ok: true, demo: true, channel: "email" });
+      if (DEMO_MODE) return json(200, { ok: true, demo: true, channel: "email" });
       const r = await stytch("/otps/email/login_or_create", { email });
       if (!r.ok)
         return json(502, { error: r.data.error_message || "Could not send the code — try again." });
@@ -253,11 +270,11 @@ exports.handler = async (event) => {
       const dob = /^\d{4}-\d{2}-\d{2}$/.test(body.dob || "") ? body.dob : "";
       let family = await loadFamily({ ...idKey, dob });
       if (!family) {
-        family = HAS_STYTCH
-          ? { patient: { name: phone ? idLabel : email.split("@")[0], email, phone }, dependents: [] }
-          : demoFamily(idLabel);
+        family = DEMO_MODE
+          ? demoFamily(idLabel)
+          : { patient: { name: phone ? idLabel : email.split("@")[0], email, phone }, dependents: [] };
       }
-      const demo = !HAS_STYTCH || !!family.demo;
+      const demo = DEMO_MODE || !!family.demo;
       const dependentIds = (family.dependents || []).map((d) => d.id).filter(Boolean);
 
       let token = null;
