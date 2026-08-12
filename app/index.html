@@ -51,14 +51,11 @@
     </script>
 
     <!--
-      Local-business structured data — this is what puts the practice into
-      Google's local pack / map results and feeds AI answer engines.
-      ⚠️ NAP MUST MATCH the Google Business Profile EXACTLY. Confirm/adjust:
-        • streetAddress + postalCode (using 2131 Maryland Ave, 21218 as placeholder)
-        • geo latitude/longitude (approximate — copy the exact pin from GBP)
-        • openingHours (placeholder Mon–Fri 9–5)
-        • areaServed county list
-        • add the Google Business Profile URL + any social profiles to "sameAs"
+      Local-business structured data — puts the practice into Google's local
+      pack / map results and feeds AI answer engines. NAP confirmed against the
+      practice; geo lat/long is approximate (fine — Google uses the verified
+      address + GBP for the map pin). Add the Google Business Profile URL to
+      "sameAs" when handy.
     -->
     <script type="application/ld+json">
     {
@@ -90,14 +87,16 @@
         { "@type": "City", "name": "Baltimore" },
         { "@type": "AdministrativeArea", "name": "Baltimore County, MD" },
         { "@type": "AdministrativeArea", "name": "Anne Arundel County, MD" },
-        { "@type": "AdministrativeArea", "name": "Howard County, MD" }
+        { "@type": "AdministrativeArea", "name": "Howard County, MD" },
+        { "@type": "AdministrativeArea", "name": "Carroll County, MD" },
+        { "@type": "AdministrativeArea", "name": "Harford County, MD" }
       ],
       "openingHoursSpecification": [
         {
           "@type": "OpeningHoursSpecification",
           "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
           "opens": "09:00",
-          "closes": "17:00"
+          "closes": "16:00"
         }
       ],
       "sameAs": [
