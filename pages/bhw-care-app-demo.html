@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>BHW Care Connect — Care App Demo</title>
+<meta name="description" content="Care Connect patient app prototype — plan, nutrition, daily check-in, trends, labs and messages in one place.">
+
+<!-- Opal &amp; Ironstone patient design system. Playfair Display and Caveat are
+     self-hosted in tokens/fonts.css; Montserrat and Lora load here. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700&family=Lora:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/opal-ironstone/styles.css">
+
+<style>
+/* ── page chrome ──────────────────────────────────────────────────────────── */
+body{margin:0;background:var(--bg)}
+a{color:var(--accent-2);text-decoration:none}
+a:hover{color:var(--accent-2-hover)}
+[hidden]{display:none!important}
+
+/* ── app primitives (on top of the design system) ─────────────────────────── */
+details summary{cursor:pointer;list-style:none;font-size:12px;font-weight:600;color:var(--accent-2);padding:4px 0}
+details summary::-webkit-details-marker{display:none}
+details[open] summary{color:var(--fg-muted)}
+/* The design system sets .input{width:100%} but no box-sizing, so padding and
+   border spill out of a fixed-width column. Scoped here rather than a global
+   reset, which would shift the flex sizing the design was drawn with. */
+.input{box-sizing:border-box}
+.sc{display:flex;gap:6px;margin-top:10px}
+.sc label{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;padding:9px 3px;border:1px solid var(--border-strong);border-radius:12px;font-size:10.5px;line-height:1.25;color:var(--fg-muted);text-align:center;cursor:pointer;background:var(--bg)}
+.sc input{accent-color:var(--accent);margin:0}
+.row{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--divider)}
+.row:first-of-type{border-top:0}
+.tb{flex:1;display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;font:inherit;font-size:10px;font-weight:600;letter-spacing:.02em;color:var(--fg-subtle);cursor:pointer;padding:8px 0 2px}
+.tb-on{color:var(--accent)}
+.dot{width:5px;height:5px;border-radius:50%;background:currentColor}
+.ring{width:62px;height:62px;border-radius:50%;display:grid;place-items:center;font-family:var(--font-display);font-size:15px;color:var(--fg-strong)}
+.ring>div{width:48px;height:48px;border-radius:50%;background:var(--bg-elevated);display:grid;place-items:center}
+
+/* ── iOS 26 device frame (ported from the design's ios-frame component) ───── */
+.ios{width:402px;height:874px;border-radius:48px;overflow:hidden;position:relative;background:#F2F2F7;
+  box-shadow:0 40px 80px rgba(0,0,0,.18),0 0 0 1px rgba(0,0,0,.12);
+  font-family:-apple-system,system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+[data-theme="dark"] .ios{background:#000}
+.ios-island{position:absolute;top:11px;left:50%;transform:translateX(-50%);width:126px;height:37px;border-radius:24px;background:#000;z-index:50}
+.ios-status{position:absolute;top:0;left:0;right:0;z-index:10;box-sizing:border-box;width:100%;
+  display:flex;gap:154px;align-items:center;justify-content:center;padding:21px 24px 19px;color:#000}
+[data-theme="dark"] .ios-status{color:#fff}
+.ios-status>div{flex:1;height:22px;display:flex;align-items:center;justify-content:center}
+.ios-time{padding-top:1.5px;font-family:-apple-system,"SF Pro",system-ui;font-weight:590;font-size:17px;line-height:22px}
+.ios-glyphs{gap:7px;padding-top:1px;padding-right:1px}
+.ios-screen{height:100%;display:flex;flex-direction:column}
+.ios-content{flex:1;overflow:auto}
+.ios-home{position:absolute;bottom:0;left:0;right:0;z-index:60;height:34px;display:flex;justify-content:center;align-items:flex-end;padding-bottom:8px;pointer-events:none}
+.ios-home>div{width:139px;height:5px;border-radius:100px;background:rgba(0,0,0,.25)}
+[data-theme="dark"] .ios-home>div{background:rgba(255,255,255,.7)}
+
+/* The frame is fixed at 402 x 874; scale it down rather than clip it on
+   narrow screens, so the prototype survives being opened on a phone. */
+.stage{display:flex;border-radius:48px;box-shadow:0 0 0 1px var(--border-strong)}
+@media (max-width:460px){
+  .stage{transform:scale(.84);transform-origin:top center;margin-bottom:-140px}
+}
+@media (max-width:380px){
+  .stage{transform:scale(.72);margin-bottom:-245px}
+}
+</style>
+</head>
+
+<body>
+<div class="bhw" style="min-height:100vh;padding:36px 24px 60px;display:flex;flex-direction:column;align-items:center;gap:8px">
+<div class="eyebrow" style="text-align:center">BHW Medical Group · Care Connect</div>
+<h1 style="margin:2px 0 0;font-size:1.62rem;font-weight:500;text-align:center">Avery's plan, in one place</h1>
+<p style="margin:0 0 22px;font-size:13px;color:var(--fg-muted);max-width:440px;text-align:center;text-wrap:pretty">Hormones, supplements, nutrition and a daily check-in across every concern area. Tap <strong style="font-weight:600">Care team</strong> in the app header to see the clinical layer.</p>
+
+<button id="themeToggle" type="button" style="margin:-14px 0 22px;padding:7px 14px;border:1px solid var(--border-strong);border-radius:999px;background:var(--bg-elevated);font:inherit;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--fg-muted);cursor:pointer;white-space:nowrap">Switch to <span id="themeLabel">Dark</span> mode</button>
+
+<div class="stage">
+<div class="ios" data-om-starter="ios-frame">
+  <div class="ios-island"></div>
+  <div class="ios-status">
+    <div><span class="ios-time">9:41</span></div>
+    <div class="ios-glyphs">
+      <svg width="19" height="12" viewBox="0 0 19 12" aria-hidden="true">
+        <rect x="0" y="7.5" width="3.2" height="4.5" rx="0.7" fill="currentColor"/>
+        <rect x="4.8" y="5" width="3.2" height="7" rx="0.7" fill="currentColor"/>
+        <rect x="9.6" y="2.5" width="3.2" height="9.5" rx="0.7" fill="currentColor"/>
+        <rect x="14.4" y="0" width="3.2" height="12" rx="0.7" fill="currentColor"/>
+      </svg>
+      <svg width="17" height="12" viewBox="0 0 17 12" aria-hidden="true">
+        <path d="M8.5 3.2C10.8 3.2 12.9 4.1 14.4 5.6L15.5 4.5C13.7 2.7 11.2 1.5 8.5 1.5C5.8 1.5 3.3 2.7 1.5 4.5L2.6 5.6C4.1 4.1 6.2 3.2 8.5 3.2Z" fill="currentColor"/>
+        <path d="M8.5 6.8C9.9 6.8 11.1 7.3 12 8.2L13.1 7.1C11.8 5.9 10.2 5.1 8.5 5.1C6.8 5.1 5.2 5.9 3.9 7.1L5 8.2C5.9 7.3 7.1 6.8 8.5 6.8Z" fill="currentColor"/>
+        <circle cx="8.5" cy="10.5" r="1.5" fill="currentColor"/>
+      </svg>
+      <svg width="27" height="13" viewBox="0 0 27 13" aria-hidden="true">
+        <rect x="0.5" y="0.5" width="23" height="12" rx="3.5" stroke="currentColor" stroke-opacity="0.35" fill="none"/>
+        <rect x="2" y="2" width="20" height="9" rx="2" fill="currentColor"/>
+        <path d="M25 4.5V8.5C25.8 8.2 26.5 7.2 26.5 6.5C26.5 5.8 25.8 4.8 25 4.5Z" fill="currentColor" fill-opacity="0.4"/>
+      </svg>
+    </div>
+  </div>
+
+  <div class="ios-screen">
+  <div class="ios-content">
+  <div style="height:100%;display:flex;flex-direction:column;background:var(--bg);font-family:var(--font-sans)">
+
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;padding:60px 18px 12px;border-bottom:1px solid var(--divider);background:var(--bg)">
+      <div>
+        <div id="screenTitle" style="font-family:var(--font-display);font-size:17px;color:var(--fg-strong)">Good morning, Avery</div>
+        <div style="font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--fg-subtle);margin-top:2px">Week 2 · Aug 19</div>
+      </div>
+      <button id="careToggle" type="button" class="btn" style="padding:.45em 1em;font-size:11px;background:var(--accent-quiet);color:var(--accent-quiet-fg)">Patient</button>
+    </div>
+
+    <div style="flex:1;overflow:auto;padding:16px 18px 22px;display:flex;flex-direction:column;gap:14px">
+
+    <!-- ── Today ───────────────────────────────────────────────────────── -->
+    <section data-screen="today" style="display:flex;flex-direction:column;gap:14px">
+      <div class="card card-feature" style="padding:18px">
+        <div class="eyebrow" style="font-size:10px">Tonight</div>
+        <h2 style="margin:6px 0 6px;font-size:1.35rem;font-weight:500">Progesterone 100 mg</h2>
+        <p style="margin:0 0 14px;font-size:13px;color:var(--fg);line-height:1.55">One capsule about an hour before bed, with liquid at the consistency your speech therapist approved. It may make you drowsy — that is expected.</p>
+        <button type="button" id="markTaken" class="btn btn-primary" style="font-size:12px" aria-pressed="false">Mark as taken</button>
+      </div>
+
+      <div class="card" style="padding:16px">
+        <div class="eyebrow" style="font-size:10px;margin-bottom:6px">Today</div>
+        <div class="row"><div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Estradiol patch</div><div style="font-size:12px;color:var(--fg-muted)">0.025 mg/day · next change Thursday</div></div><span class="badge badge-sage">On</span></div>
+        <div class="row"><div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Cholesterol medicine</div><div style="font-size:12px;color:var(--fg-muted)">Morning, as before</div></div><span class="badge badge-sage">On</span></div>
+        <div class="row"><div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Multivitamin + vitamin D</div><div style="font-size:12px;color:var(--fg-muted)">Starts next week</div></div><span class="badge badge-neutral">Waiting</span></div>
+        <div class="row"><div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Fiber (PHGG)</div><div style="font-size:12px;color:var(--fg-muted)">Week 4, after swallowing is cleared</div></div><span class="badge badge-neutral">Waiting</span></div>
+      </div>
+
+      <div class="card" style="padding:16px;display:flex;align-items:center;justify-content:space-between;gap:12px">
+        <div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Daily check-in</div><div style="font-size:12px;color:var(--fg-muted)">7 short questions · about a minute</div></div>
+        <button type="button" data-go="check" class="btn btn-primary" style="font-size:12px">Start</button>
+      </div>
+
+      <div class="card" style="padding:16px">
+        <div class="eyebrow" style="font-size:10px;margin-bottom:12px">Nutrition today</div>
+        <div style="display:flex;justify-content:space-between;gap:6px">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div class="ring" data-ring="protein" data-ring-show="pct"><div data-ring-val>82</div></div><div style="font-size:10px;color:var(--fg-muted)">Protein</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div class="ring" data-ring="fiber" data-ring-show="pct"><div data-ring-val>64</div></div><div style="font-size:10px;color:var(--fg-muted)">Fiber</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div class="ring" data-ring="fluids" data-ring-show="pct"><div data-ring-val>70</div></div><div style="font-size:10px;color:var(--fg-muted)">Fluids</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div class="ring" data-ring="plants" data-ring-show="pct"><div data-ring-val>44</div></div><div style="font-size:10px;color:var(--fg-muted)">Plants</div></div>
+        </div>
+      </div>
+
+      <div class="alert alert-info" style="padding:14px 16px"><div class="bar"></div><div><strong style="display:block;font-size:13px;margin-bottom:4px">Two things we're still confirming</strong><span style="font-size:12px;color:var(--fg);line-height:1.5">A pending result from a recent procedure, and whether capsules are safe to swallow. The plan can change once we have both.</span></div></div>
+
+      <div data-care class="card" style="padding:16px;border-color:var(--border-strong)">
+        <div class="eyebrow" style="font-size:10px;margin-bottom:8px">Encounter coding · lab review + HRT planning</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px">
+          <span class="badge badge-neutral">N95.1</span><span class="badge badge-neutral">E78.00</span><span class="badge badge-neutral">G47.00</span><span class="badge badge-neutral">Z71.2</span><span class="badge badge-neutral">Z79.890</span>
+        </div>
+        <p style="margin:12px 0 0;font-size:12px;color:var(--fg-muted);line-height:1.5">Illustrative codes only — this panel shows how the care-team layer surfaces coding, not a real encounter.</p>
+      </div>
+    </section>
+
+    <!-- ── Plan ────────────────────────────────────────────────────────── -->
+    <section data-screen="plan" style="display:flex;flex-direction:column;gap:14px">
+      <div class="card card-feature" style="padding:18px">
+        <div class="eyebrow" style="font-size:10px;margin-bottom:12px">Rollout · one change at a time</div>
+        <div style="display:flex;flex-direction:column;gap:0">
+          <div class="plan-item" style="padding:10px 0"><div class="mark" style="background:var(--accent);color:var(--accent-fg)">1</div><div><h4>Weeks 1–2 · now</h4><p>Estradiol patch and nightly progesterone start. Your care team reviews the two antidepressants together.</p></div></div>
+          <div class="plan-item" style="padding:10px 0"><div class="mark">2</div><div><h4>Weeks 2–3</h4><p>Add the multivitamin and vitamin D.</p></div></div>
+          <div class="plan-item" style="padding:10px 0"><div class="mark">3</div><div><h4>Weeks 3–4</h4><p>Add omega-3 only if you are not eating fish twice a week.</p></div></div>
+          <div class="plan-item" style="padding:10px 0"><div class="mark">4</div><div><h4>Weeks 4–6</h4><p>Start fiber (PHGG) at 3 g, then 5 g if it agrees with you.</p></div></div>
+          <div class="plan-item" style="padding:10px 0"><div class="mark">5</div><div><h4>Weeks 6–8</h4><p>Full reassessment: sleep, 4 AM waking, mood, thinking, energy, bleeding, bowels, side effects.</p></div></div>
+          <div class="plan-item" style="padding:10px 0"><div class="mark">6</div><div><h4>Month 3–4</h4><p>Recheck vitamin D. Repeat IgA, IgG and IgM.</p></div></div>
+        </div>
+      </div>
+
+      <div class="card" style="padding:16px">
+        <div class="eyebrow" style="font-size:10px;margin-bottom:6px">Hormones</div>
+        <div class="row"><div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Estradiol patch 0.025 mg/day</div><div style="font-size:12px;color:var(--fg-muted)">Changed twice a week</div></div><span class="badge badge-sage">Started</span></div>
+        <div class="row"><div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Micronized progesterone 100 mg</div><div style="font-size:12px;color:var(--fg-muted)">Every night, continuous</div></div><span class="badge badge-sage">Started</span></div>
+        <details style="margin-top:10px"><summary>Why both, and what to watch</summary>
+        <p style="margin:6px 0 0;font-size:12px;color:var(--fg-muted);line-height:1.6">Progesterone protects the lining of the uterus while you are on estrogen. If continuous dosing causes troublesome bleeding, 200 mg nightly for 12–14 nights a month is an alternative. Some progesterone capsules contain peanut oil and can cause real drowsiness and dizziness — it adds to hydroxyzine, cyclobenzaprine and cannabis. Transdermal estrogen appears to carry less clotting risk than tablets, though not zero.</p></details>
+        <div data-care class="alert alert-warn" style="margin-top:12px;padding:12px 14px"><div class="bar"></div><div style="font-size:12px;line-height:1.5"><strong style="display:block;margin-bottom:3px">Before continuing past a bridge</strong>Confirm uterine/endometrial status and any unexplained bleeding; breast pathology and current mammography; no prior VTE/PE, stroke, MI, active liver disease or pregnancy. Cervical surveillance continues on the usual schedule.</div></div>
+      </div>
+
+      <div class="card" style="padding:16px">
+        <div class="eyebrow" style="font-size:10px;margin-bottom:6px">Medicines under review</div>
+        <div class="row"><div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Two antidepressants in the same class</div><div style="font-size:12px;color:var(--fg-muted)">Do not stop either on your own</div></div><span class="badge badge-gold">Review</span></div>
+        <div class="row"><div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">A long-term allergy medicine</div><div style="font-size:12px;color:var(--fg-muted)">Is it still helping?</div></div><span class="badge badge-gold">Review</span></div>
+        <div class="row"><div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Cholesterol medicine</div><div style="font-size:12px;color:var(--fg-muted)">Well above target before treatment, at goal now</div></div><span class="badge badge-sage">Working</span></div>
+        <details style="margin-top:10px"><summary>Why these are being looked at now</summary>
+        <p style="margin:6px 0 0;font-size:12px;color:var(--fg-muted);line-height:1.6">Two SSRIs together raise the serotonergic and sedating load, and starting hormones is the right moment to sort out whether this is a cross-taper or intended long term. That class can affect sleep, mood, attention and memory. Skip 5-HTP, tryptophan, St. John's wort and serotonergic mood formulas, and no added GABA while progesterone is new.</p></details>
+      </div>
+
+      <div class="card" style="padding:16px">
+        <div class="eyebrow" style="font-size:10px;margin-bottom:6px">Supplements</div>
+        <div class="row"><div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Multivitamin</div><div style="font-size:12px;color:var(--fg-muted)">Iron-free, copper-free · zinc 8–12 mg · D3 800–1,000 IU · selenium 55 mcg · folate 400 mcg DFE · no retinol, no kelp</div></div></div>
+        <div class="row"><div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Vitamin D3</div><div style="font-size:12px;color:var(--fg-muted)">1,000 IU/day total from everything you take</div></div></div>
+        <div class="row"><div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Omega-3</div><div style="font-size:12px;color:var(--fg-muted)">500–1,000 mg EPA + DHA with a meal, only if fish is hard</div></div></div>
+        <div class="row"><div><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">PHGG fiber</div><div style="font-size:12px;color:var(--fg-muted)">3 g daily for a week, then 5 g · mixed to your approved consistency</div></div></div>
+        <details style="margin-top:10px"><summary>What we are deliberately not adding</summary>
+        <p style="margin:6px 0 0;font-size:12px;color:var(--fg-muted);line-height:1.6">High-dose zinc (yours is normal, and 50 mg or more long term can lower copper and immune function), iron, copper, high-potency B-complex, preformed vitamin A or cod liver oil, extra iodine or kelp, colostrum, glutamine and immune-mushroom blends. Nothing added at once, so we can tell what is working.</p></details>
+        <p data-care style="margin:12px 0 0;font-size:12px;color:var(--fg-muted);line-height:1.5">Vitamin D, zinc, ferritin, B12, copper, magnesium and vitamin A all sit within range. Maintenance dosing only; no repletion indicated.</p>
+      </div>
+    </section>
+
+    <!-- ── Food ────────────────────────────────────────────────────────── -->
+    <section data-screen="food" style="display:flex;flex-direction:column;gap:14px">
+      <div class="card card-feature" style="padding:18px">
+        <div class="eyebrow" style="font-size:10px;margin-bottom:14px">Today's targets</div>
+        <div style="display:flex;justify-content:space-between;gap:6px">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div class="ring" data-ring="protein" data-ring-show="value" style="width:70px;height:70px"><div data-ring-val style="width:54px;height:54px">62</div></div><div style="font-size:10.5px;color:var(--fg-muted);text-align:center">Protein<br>of 75 g</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div class="ring" data-ring="fiber" data-ring-show="value" style="width:70px;height:70px"><div data-ring-val style="width:54px;height:54px">18</div></div><div style="font-size:10.5px;color:var(--fg-muted);text-align:center">Fiber<br>of 28 g</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div class="ring" data-ring="fluids" data-ring-show="value" style="width:70px;height:70px"><div data-ring-val style="width:54px;height:54px">1.4</div></div><div style="font-size:10.5px;color:var(--fg-muted);text-align:center">Fluids<br>of 2 L</div></div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:6px"><div class="ring" data-ring="plants" data-ring-show="value" style="width:70px;height:70px"><div data-ring-val style="width:54px;height:54px">11</div></div><div style="font-size:10.5px;color:var(--fg-muted);text-align:center">Plants<br>of 25/wk</div></div>
+        </div>
+      </div>
+
+      <div class="alert alert-warn" style="padding:14px 16px"><div class="bar"></div><div style="font-size:12px;line-height:1.5"><strong style="display:block;margin-bottom:3px">Liquids first</strong>Thin liquids through a straw are not safe for you right now. Everything here — water, powders, shakes — goes to the consistency Speech Pathology set. No dry scoops.</div></div>
+
+      <div class="card" style="padding:16px">
+        <div class="eyebrow" style="font-size:10px;margin-bottom:10px">Easy wins today</div>
+        <label style="display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--divider);font-size:13px;color:var(--fg);cursor:pointer"><input type="checkbox" style="accent-color:var(--accent);margin-top:2px">Two kiwifruit, if the texture works</label>
+        <label style="display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--divider);font-size:13px;color:var(--fg);cursor:pointer"><input type="checkbox" style="accent-color:var(--accent);margin-top:2px">Oats with chia or ground flax</label>
+        <label style="display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--divider);font-size:13px;color:var(--fg);cursor:pointer"><input type="checkbox" style="accent-color:var(--accent);margin-top:2px">A small portion of beans or lentils</label>
+        <label style="display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--divider);font-size:13px;color:var(--fg);cursor:pointer"><input type="checkbox" style="accent-color:var(--accent);margin-top:2px">20–30 g protein at this meal</label>
+        <label style="display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--divider);font-size:13px;color:var(--fg);cursor:pointer"><input type="checkbox" style="accent-color:var(--accent);margin-top:2px">Olive oil, avocado, nuts or seeds</label>
+        <label style="display:flex;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--divider);font-size:13px;color:var(--fg);cursor:pointer"><input type="checkbox" style="accent-color:var(--accent);margin-top:2px">Berries or another colorful plant</label>
+        <button type="button" id="logMealBtn" class="btn btn-outline" style="margin-top:12px;font-size:12px" aria-expanded="false" aria-controls="mealPanel">Log a meal</button>
+
+        <div id="mealPanel" hidden style="margin-top:14px;padding-top:14px;border-top:1px solid var(--divider)">
+          <p style="margin:0 0 10px;font-size:11.5px;color:var(--fg-muted);line-height:1.5">In the built app a photo of your plate fills these in and you confirm them before they count. Type them for now.</p>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+            <label style="font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-muted)">Protein g<input class="input" type="number" min="0" step="1" data-meal="protein" placeholder="0" style="margin-top:4px;font-size:13px"></label>
+            <label style="font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-muted)">Fiber g<input class="input" type="number" min="0" step="1" data-meal="fiber" placeholder="0" style="margin-top:4px;font-size:13px"></label>
+            <label style="font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-muted)">Fluids L<input class="input" type="number" min="0" step="0.1" data-meal="fluids" placeholder="0" style="margin-top:4px;font-size:13px"></label>
+            <label style="font-size:10.5px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--fg-muted)">Plants<input class="input" type="number" min="0" step="1" data-meal="plants" placeholder="0" style="margin-top:4px;font-size:13px"></label>
+          </div>
+          <div style="display:flex;gap:8px;margin-top:12px">
+            <button type="button" id="mealAdd" class="btn btn-primary" style="font-size:12px">Add to today</button>
+            <button type="button" id="mealCancel" class="btn btn-outline" style="font-size:12px">Cancel</button>
+          </div>
+        </div>
+
+        <div id="mealLog" hidden style="margin-top:12px"></div>
+      </div>
+
+      <div class="card" style="padding:16px">
+        <div class="eyebrow" style="font-size:10px;margin-bottom:8px">The reasoning</div>
+        <details><summary>Why fiber and food come before probiotics</summary><p style="margin:6px 0 10px;font-size:12px;color:var(--fg-muted);line-height:1.6">PHGG is a soluble fiber that feeds the bacteria already in your gut and helps regularity. Evidence for off-the-shelf probiotics is inconsistent and strain-specific, so a high-count blend is not the place to start. Aim for 25–30 g fiber a day and 20–30 different plants a week, built up gradually.</p></details>
+        <details><summary>Why this is not called "boosting IgA"</summary><p style="margin:6px 0 10px;font-size:12px;color:var(--fg-muted);line-height:1.6">Your total IgA is low-normal, not deficient. Blood IgA subclasses do not measure the secretory IgA in your gut, and no supplement has been shown to normalize that pathway. So the goal is a well-fed mucosal barrier, not a number.</p></details>
+        <details><summary>Calcium, and what to skip</summary><p style="margin:6px 0 0;font-size:12px;color:var(--fg-muted);line-height:1.6">1,000–1,200 mg of calcium a day, food first. Do not cut foods based on food-IgG panels — they do not show allergy or intolerance and they narrow your nutrition for no gain.</p></details>
+      </div>
+    </section>
+
+    <!-- ── Daily check-in ──────────────────────────────────────────────── -->
+    <section data-screen="check" style="display:flex;flex-direction:column;gap:14px">
+      <p style="margin:0;font-size:13px;color:var(--fg-muted);line-height:1.55">Seven areas, one tap each. Skip anything that doesn't apply.</p>
+
+      <div class="card" style="padding:16px"><div style="font-family:var(--font-display);font-size:16px;color:var(--fg-strong)">Sleep</div><div style="font-size:12px;color:var(--fg-muted);margin-top:2px">How did last night go?</div>
+      <div class="sc"><label><input type="radio" name="sleep"><span>Slept through</span></label><label><input type="radio" name="sleep"><span>Woke once</span></label><label><input type="radio" name="sleep"><span>Woke at 4 AM</span></label><label><input type="radio" name="sleep"><span>Barely slept</span></label></div></div>
+
+      <div class="card" style="padding:16px"><div style="font-family:var(--font-display);font-size:16px;color:var(--fg-strong)">Thinking and focus</div><div style="font-size:12px;color:var(--fg-muted);margin-top:2px">Errors or losing the thread today?</div>
+      <div class="sc"><label><input type="radio" name="cog"><span>Sharp</span></label><label><input type="radio" name="cog"><span>A few slips</span></label><label><input type="radio" name="cog"><span>Frequent errors</span></label><label><input type="radio" name="cog"><span>Couldn't track</span></label></div></div>
+
+      <div class="card" style="padding:16px"><div style="font-family:var(--font-display);font-size:16px;color:var(--fg-strong)">Energy and stamina</div><div style="font-size:12px;color:var(--fg-muted);margin-top:2px">How far did your energy get you?</div>
+      <div class="sc"><label><input type="radio" name="fat"><span>Steady all day</span></label><label><input type="radio" name="fat"><span>Faded by afternoon</span></label><label><input type="radio" name="fat"><span>Ran out early</span></label><label><input type="radio" name="fat"><span>Couldn't get going</span></label></div></div>
+
+      <div class="card" style="padding:16px"><div style="font-family:var(--font-display);font-size:16px;color:var(--fg-strong)">Mood and anxiety</div><div style="font-size:12px;color:var(--fg-muted);margin-top:2px">Closest to how today felt.</div>
+      <div class="sc"><label><input type="radio" name="mood"><span>Settled</span></label><label><input type="radio" name="mood"><span>Low</span></label><label><input type="radio" name="mood"><span>Anxious</span></label><label><input type="radio" name="mood"><span>Both</span></label></div></div>
+
+      <div class="card" style="padding:16px"><div style="font-family:var(--font-display);font-size:16px;color:var(--fg-strong)">Bowels</div><div style="font-size:12px;color:var(--fg-muted);margin-top:2px">Today's pattern.</div>
+      <div class="sc"><label><input type="radio" name="gi"><span>Easy</span></label><label><input type="radio" name="gi"><span>Hard to pass</span></label><label><input type="radio" name="gi"><span>None today</span></label><label><input type="radio" name="gi"><span>Loose</span></label></div></div>
+
+      <div class="card" style="padding:16px"><div style="font-family:var(--font-display);font-size:16px;color:var(--fg-strong)">Back and leg pain</div><div style="font-size:12px;color:var(--fg-muted);margin-top:2px">Where it usually shows up.</div>
+      <div class="sc"><label><input type="radio" name="pain"><span>None</span></label><label><input type="radio" name="pain"><span>Mild</span></label><label><input type="radio" name="pain"><span>Moderate</span></label><label><input type="radio" name="pain"><span>Severe</span></label></div></div>
+
+      <div class="card" style="padding:16px"><div style="font-family:var(--font-display);font-size:16px;color:var(--fg-strong)">Anything new</div><div style="font-size:12px;color:var(--fg-muted);margin-top:2px">Since starting the patch and progesterone.</div>
+      <div class="sc"><label><input type="radio" name="se"><span>Nothing new</span></label><label><input type="radio" name="se"><span>Breast tenderness</span></label><label><input type="radio" name="se"><span>Headache</span></label><label><input type="radio" name="se"><span>Spotting</span></label></div>
+      <textarea class="input" rows="2" placeholder="Anything else you want your care team to see" style="margin-top:12px;font-size:13px"></textarea></div>
+
+      <div data-sent class="alert alert-info" style="padding:14px 16px" role="status"><div class="bar"></div><div style="font-size:12px;line-height:1.5"><strong style="display:block;margin-bottom:3px" id="sentHeading">Recorded on this device</strong><span id="sentDetail"></span> If pain, bleeding or a side effect worries you before your next visit, send a message instead of waiting.</div></div>
+      <button type="button" id="sendCheckin" class="btn btn-primary" style="justify-content:center">Send today's check-in</button>
+    </section>
+
+    <!-- ── Trends ──────────────────────────────────────────────────────── -->
+    <section data-screen="trends" style="display:flex;flex-direction:column;gap:14px">
+      <p style="margin:0;font-size:13px;color:var(--fg-muted);line-height:1.55">Last 10 days. The gold line marks the day the estradiol patch started.</p>
+      <div class="card" style="padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Nights without a 4 AM waking</div><span class="badge badge-sage">3 of last 5</span></div>
+        <div style="display:flex;align-items:flex-end;gap:5px;height:64px;margin-top:12px">
+          <div style="flex:1;height:14%;background:var(--accent-quiet);border-radius:4px"></div><div style="flex:1;height:14%;background:var(--accent-quiet);border-radius:4px"></div><div style="flex:1;height:28%;background:var(--accent-quiet);border-radius:4px"></div><div style="flex:1;height:14%;background:var(--accent-quiet);border-radius:4px"></div><div style="width:2px;height:100%;background:var(--gold)"></div><div style="flex:1;height:30%;background:var(--accent);border-radius:4px"></div><div style="flex:1;height:55%;background:var(--accent);border-radius:4px"></div><div style="flex:1;height:44%;background:var(--accent);border-radius:4px"></div><div style="flex:1;height:78%;background:var(--accent);border-radius:4px"></div><div style="flex:1;height:70%;background:var(--accent);border-radius:4px"></div>
+        </div>
+      </div>
+      <div class="card" style="padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Energy through the day</div><span class="badge badge-blue">Slowly up</span></div>
+        <div style="display:flex;align-items:flex-end;gap:5px;height:64px;margin-top:12px">
+          <div style="flex:1;height:22%;background:var(--accent-2-quiet);border-radius:4px"></div><div style="flex:1;height:18%;background:var(--accent-2-quiet);border-radius:4px"></div><div style="flex:1;height:30%;background:var(--accent-2-quiet);border-radius:4px"></div><div style="flex:1;height:26%;background:var(--accent-2-quiet);border-radius:4px"></div><div style="width:2px;height:100%;background:var(--gold)"></div><div style="flex:1;height:34%;background:var(--accent-2);border-radius:4px"></div><div style="flex:1;height:40%;background:var(--accent-2);border-radius:4px"></div><div style="flex:1;height:36%;background:var(--accent-2);border-radius:4px"></div><div style="flex:1;height:52%;background:var(--accent-2);border-radius:4px"></div><div style="flex:1;height:58%;background:var(--accent-2);border-radius:4px"></div>
+        </div>
+      </div>
+      <div class="card" style="padding:16px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline"><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Focus errors noticed</div><span class="badge badge-violet">No change yet</span></div>
+        <div style="display:flex;align-items:flex-end;gap:5px;height:64px;margin-top:12px">
+          <div style="flex:1;height:60%;background:var(--accent-3-quiet);border-radius:4px"></div><div style="flex:1;height:72%;background:var(--accent-3-quiet);border-radius:4px"></div><div style="flex:1;height:55%;background:var(--accent-3-quiet);border-radius:4px"></div><div style="flex:1;height:66%;background:var(--accent-3-quiet);border-radius:4px"></div><div style="width:2px;height:100%;background:var(--gold)"></div><div style="flex:1;height:62%;background:var(--accent-3);border-radius:4px"></div><div style="flex:1;height:58%;background:var(--accent-3);border-radius:4px"></div><div style="flex:1;height:64%;background:var(--accent-3);border-radius:4px"></div><div style="flex:1;height:55%;background:var(--accent-3);border-radius:4px"></div><div style="flex:1;height:60%;background:var(--accent-3);border-radius:4px"></div>
+        </div>
+        <p style="margin:12px 0 0;font-size:12px;color:var(--fg-muted);line-height:1.55">Thinking often lags sleep and hormones by several weeks. If it hasn't moved by the 6–8 week review, medications, sleep apnea, pain and mood get looked at before anything is added.</p>
+      </div>
+    </section>
+
+    <!-- ── Labs ────────────────────────────────────────────────────────── -->
+    <section data-screen="labs" style="display:flex;flex-direction:column;gap:14px">
+      <p style="margin:0;font-size:13px;color:var(--fg-muted);line-height:1.55">Plain language first. Tap any result for what your clinician sees.</p>
+      <div class="card" style="padding:16px">
+        <div class="row"><div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Thyroid antibodies high, thyroid working normally</div><div style="font-size:12px;color:var(--fg-muted)">Worth following, not treating today</div><details><summary>Clinical detail</summary><p style="margin:6px 0 0;font-size:12px;color:var(--fg-muted);line-height:1.6">Thyroid antibodies elevated with TSH, free T4 and free T3 all in range. Euthyroid — no indication for levothyroxine, no extra iodine or kelp, selenium at 55 mcg rather than a thyroid megadose.</p></details></div><span class="badge badge-gold">Watch</span></div>
+        <div class="row"><div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Protein pattern slightly off, nothing alarming</div><div style="font-size:12px;color:var(--fg-muted)">No abnormal protein spike</div><details><summary>Clinical detail</summary><p style="margin:6px 0 0;font-size:12px;color:var(--fg-muted);line-height:1.6">Isolated borderline alpha-2 elevation on protein electrophoresis, normal A/G ratio, no M-spike — not a full acute or chronic inflammatory pattern, not nephrotic. Correlate with hs-CRP and ESR and repeat before labelling it inflammation.</p></details></div><span class="badge badge-gold">Watch</span></div>
+        <div class="row"><div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Cholesterol is well controlled now</div><div style="font-size:12px;color:var(--fg-muted)">Keep taking it as prescribed</div><details><summary>Clinical detail</summary><p style="margin:6px 0 0;font-size:12px;color:var(--fg-muted);line-height:1.6">LDL well above target untreated, now at goal on a statin, with total cholesterol, HDL, triglycerides and non-HDL all in range. Code E78.00; E78.01 only if FH is formally established.</p></details></div><span class="badge badge-sage">Good</span></div>
+        <div class="row"><div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">One antibody type sits at the low end</div><div style="font-size:12px;color:var(--fg-muted)">Not a deficiency</div><details><summary>Clinical detail</summary><p style="margin:6px 0 0;font-size:12px;color:var(--fg-muted);line-height:1.6">Total IgA low-normal with low IgA1 and IgA2; C3/C4 elevated. Does not meet criteria for selective IgA deficiency. Repeat IgA, IgG and IgM at 3–4 months; refer for vaccine-response testing if recurrent bacterial sinus infections or pneumonia.</p></details></div><span class="badge badge-blue">Recheck</span></div>
+        <div class="row"><div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Vitamins and minerals are adequate</div><div style="font-size:12px;color:var(--fg-muted)">Maintenance doses only</div><details><summary>Clinical detail</summary><p style="margin:6px 0 0;font-size:12px;color:var(--fg-muted);line-height:1.6">Vitamin D, zinc, ferritin and B12 all in range; vitamin A and RBC magnesium high-normal. No repletion indicated; recheck vitamin D in 3–4 months.</p></details></div><span class="badge badge-sage">Good</span></div>
+        <div class="row"><div style="flex:1"><div style="font-size:13.5px;font-weight:600;color:var(--fg-strong)">Blood sugar, kidneys and liver look fine</div><div style="font-size:12px;color:var(--fg-muted)">All in range</div><details><summary>Clinical detail</summary><p style="margin:6px 0 0;font-size:12px;color:var(--fg-muted);line-height:1.6">Glucose, A1c, creatinine, eGFR, liver enzymes, albumin and calcium all in range. Does not meet prediabetes criteria. Watch glucose if further steroid treatment is given.</p></details></div><span class="badge badge-sage">Good</span></div>
+      </div>
+      <div data-care class="card" style="padding:16px;border-color:var(--border-strong)">
+        <div class="eyebrow" style="font-size:10px;margin-bottom:8px">Not coded at this visit</div>
+        <p style="margin:0;font-size:12px;color:var(--fg-muted);line-height:1.6">A set of candidate codes was considered and ruled out — none supported by current results.</p>
+      </div>
+    </section>
+
+    <!-- ── Questions for my next visit ─────────────────────────────────── -->
+    <section data-screen="questions" style="display:flex;flex-direction:column;gap:14px">
+      <p style="margin:0;font-size:13px;color:var(--fg-muted);line-height:1.55">Built from your last visit. Check what you want to cover and it goes into the visit summary.</p>
+      <div class="card" style="padding:16px">
+        <label style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--divider);font-size:13px;line-height:1.5;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--accent);margin-top:3px">What did my recent results show, and when is my next screening due?</label>
+        <label style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--divider);font-size:13px;line-height:1.5;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--accent);margin-top:3px">Am I meant to stay on both antidepressants?</label>
+        <label style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--divider);font-size:13px;line-height:1.5;cursor:pointer"><input type="checkbox" checked style="accent-color:var(--accent);margin-top:3px">Is it safe for me to swallow capsules, or do I need a different form?</label>
+        <label style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--divider);font-size:13px;line-height:1.5;cursor:pointer"><input type="checkbox" style="accent-color:var(--accent);margin-top:3px">Is my allergy medicine still doing something for me?</label>
+        <label style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--divider);font-size:13px;line-height:1.5;cursor:pointer"><input type="checkbox" style="accent-color:var(--accent);margin-top:3px">Which medicine was used in my last procedure, at what dose, and when?</label>
+        <label style="display:flex;gap:10px;align-items:flex-start;padding:10px 0;border-top:1px solid var(--divider);font-size:13px;line-height:1.5;cursor:pointer"><input type="checkbox" style="accent-color:var(--accent);margin-top:3px">Should my back and my walking be looked at together?</label>
+        <div id="ownQuestions"></div>
+        <input id="questionInput" class="input" placeholder="Add your own question, then press Enter" style="margin-top:14px;font-size:13px">
+      </div>
+    </section>
+
+    <!-- ── Messages ────────────────────────────────────────────────────── -->
+    <section data-screen="messages" style="display:flex;flex-direction:column;gap:14px">
+      <div class="card" style="padding:16px;display:flex;flex-direction:column;gap:12px">
+        <div style="align-self:flex-start;max-width:80%;background:var(--bg-muted);border-radius:16px 16px 16px 6px;padding:11px 14px;font-size:13px;line-height:1.5;color:var(--fg)">Your patch and nightly progesterone are ready at the pharmacy. Start the patch tomorrow morning and the capsule tomorrow night.<div style="font-size:10.5px;color:var(--fg-subtle);margin-top:6px">Care team · Mon 4:12 PM</div></div>
+        <div style="align-self:flex-end;max-width:80%;background:var(--accent-quiet);color:var(--accent-quiet-fg);border-radius:16px 16px 6px 16px;padding:11px 14px;font-size:13px;line-height:1.5">Got them. The capsule felt large — is there a smaller one?<div style="font-size:10.5px;opacity:.7;margin-top:6px">You · Mon 6:40 PM</div></div>
+        <div style="align-self:flex-start;max-width:80%;background:var(--bg-muted);border-radius:16px 16px 16px 6px;padding:11px 14px;font-size:13px;line-height:1.5;color:var(--fg)">Good that you told us. Hold the capsule and we'll ask Speech Pathology today. Keep the patch going.<div style="font-size:10.5px;color:var(--fg-subtle);margin-top:6px">Care team · Tue 8:05 AM</div></div>
+        <div id="thread"></div>
+        <div style="display:flex;gap:8px;align-items:center;margin-top:4px"><input id="msgInput" class="input" placeholder="Write a message" style="font-size:13px"><button type="button" id="msgSend" class="btn btn-primary" style="font-size:12px;flex:0 0 auto">Send</button></div>
+      </div>
+      <p style="margin:0;font-size:12px;color:var(--fg-muted);line-height:1.55">For chest pain, trouble breathing, heavy bleeding or choking, call 911 — don't message.</p>
+      <p style="margin:0;font-size:11px;color:var(--fg-subtle);line-height:1.55">Prototype — anything you write stays on this device and reaches no one.</p>
+    </section>
+
+    <!-- ── More ────────────────────────────────────────────────────────── -->
+    <section data-screen="more" class="card" style="padding:8px 16px">
+      <button type="button" data-go="trends" style="width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--divider);padding:15px 0;font:inherit;font-size:13.5px;font-weight:600;color:var(--fg-strong);cursor:pointer">Trends over time</button>
+      <button type="button" data-go="labs" style="width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--divider);padding:15px 0;font:inherit;font-size:13.5px;font-weight:600;color:var(--fg-strong);cursor:pointer">Lab results in plain language</button>
+      <button type="button" data-go="questions" style="width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--divider);padding:15px 0;font:inherit;font-size:13.5px;font-weight:600;color:var(--fg-strong);cursor:pointer">Questions for my next visit</button>
+      <button type="button" data-go="messages" style="width:100%;text-align:left;background:none;border:0;border-top:1px solid var(--divider);padding:15px 0;font:inherit;font-size:13.5px;font-weight:600;color:var(--fg-strong);cursor:pointer">Messages</button>
+    </section>
+
+    </div>
+
+    <!-- ── Tab bar. Extra bottom padding keeps the labels clear of the
+             home indicator, which floats above this bar. ─────────────── -->
+    <div style="display:flex;padding:0 8px 22px;border-top:1px solid var(--divider);background:var(--bg-elevated)">
+      <button type="button" data-go="today" data-tab="today" class="tb"><span class="dot"></span>Today</button>
+      <button type="button" data-go="plan" data-tab="plan" class="tb"><span class="dot"></span>Plan</button>
+      <button type="button" data-go="food" data-tab="food" class="tb"><span class="dot"></span>Food</button>
+      <button type="button" data-go="check" data-tab="check" class="tb"><span class="dot"></span>Check in</button>
+      <button type="button" data-go="more" data-tab="more" class="tb"><span class="dot"></span>More</button>
+    </div>
+  </div>
+  </div>
+  </div>
+
+  <div class="ios-home"><div></div></div>
+</div>
+</div>
+
+<p style="margin:22px 0 0;font-size:12px;color:var(--fg-muted);max-width:440px;text-align:center;line-height:1.6">Next: a bleeding-and-side-effect alert path, a 6–8 week review screen that assembles the check-in data, or a printable one-page plan for the fridge.</p>
+<p style="margin:14px 0 0;font-size:11px;color:var(--fg-subtle);max-width:440px;text-align:center;line-height:1.6">Demo only. Avery is a fictional patient; the plan, medicines and results here are illustrative and belong to no one.</p>
+</div>
+
+<script>
+(function () {
+  'use strict';
+
+  var SCREENS = ['today', 'plan', 'food', 'check', 'more', 'trends', 'labs', 'questions', 'messages'];
+  var UNDER_MORE = ['trends', 'labs', 'questions', 'messages', 'more'];
+  var TITLES = {
+    today: 'Good morning, Avery', plan: 'Your plan', food: 'Nutrition',
+    check: 'Daily check-in', more: 'More', trends: 'Trends', labs: 'Lab results',
+    questions: 'Next visit', messages: 'Messages'
+  };
+
+  var root = document.documentElement;
+  var params = new URLSearchParams(location.search);
+
+  // Prototype knobs, mirroring the design's `startScreen` and `careTeamView`
+  // props: ?screen=labs&care=1&theme=dark
+  var startScreen = params.get('screen');
+  var state = {
+    screen: SCREENS.indexOf(startScreen) > -1 ? startScreen : 'today',
+    care: params.get('care') === '1' || params.get('care') === 'true',
+    sent: false,
+    dark: params.get('theme')
+      ? params.get('theme') === 'dark'
+      : window.matchMedia('(prefers-color-scheme: dark)').matches
+  };
+
+  var els = {
+    title: document.getElementById('screenTitle'),
+    careToggle: document.getElementById('careToggle'),
+    themeToggle: document.getElementById('themeToggle'),
+    themeLabel: document.getElementById('themeLabel'),
+    sections: document.querySelectorAll('[data-screen]'),
+    tabs: document.querySelectorAll('[data-tab]'),
+    careOnly: document.querySelectorAll('[data-care]'),
+    sentOnly: document.querySelectorAll('[data-sent]'),
+    scroller: null
+  };
+  els.scroller = els.sections.length ? els.sections[0].parentNode : null;
+
+  function render() {
+    // Theme drives both the design-system tokens and the device frame.
+    root.setAttribute('data-theme', state.dark ? 'dark' : 'light');
+    els.themeLabel.textContent = state.dark ? 'Light' : 'Dark';
+
+    els.title.textContent = TITLES[state.screen] || 'Care Connect';
+    els.careToggle.textContent = state.care ? 'Care team' : 'Patient';
+    els.careToggle.setAttribute('aria-pressed', String(state.care));
+
+    els.sections.forEach(function (section) {
+      section.hidden = section.getAttribute('data-screen') !== state.screen;
+    });
+    els.careOnly.forEach(function (el) { el.hidden = !state.care; });
+    els.sentOnly.forEach(function (el) { el.hidden = !state.sent; });
+
+    els.tabs.forEach(function (tab) {
+      var key = tab.getAttribute('data-tab');
+      var on = key === state.screen ||
+        (key === 'more' && UNDER_MORE.indexOf(state.screen) > -1);
+      tab.className = 'tb' + (on ? ' tb-on' : '');
+      tab.setAttribute('aria-current', on ? 'page' : 'false');
+    });
+  }
+
+  function go(screen) {
+    if (SCREENS.indexOf(screen) === -1 || screen === state.screen) return;
+    state.screen = screen;
+    render();
+    if (els.scroller) els.scroller.scrollTop = 0;
+  }
+
+  document.addEventListener('click', function (e) {
+    var target = e.target.closest('[data-go]');
+    if (target) go(target.getAttribute('data-go'));
+  });
+
+  els.careToggle.addEventListener('click', function () {
+    state.care = !state.care;
+    render();
+  });
+
+  els.themeToggle.addEventListener('click', function () {
+    state.dark = !state.dark;
+    render();
+  });
+
+  // ── Nutrition ─────────────────────────────────────────────────────────────
+  // One store behind both ring sets, so a logged meal moves the Food screen
+  // and the Today summary together.
+  var NUTRITION = {
+    protein: { v: 62,  t: 75, unit: 'g',   label: 'Protein', color: 'var(--accent)' },
+    fiber:   { v: 18,  t: 28, unit: 'g',   label: 'Fiber',   color: 'var(--accent-2)' },
+    fluids:  { v: 1.4, t: 2,  unit: 'L',   label: 'Fluids',  color: 'var(--accent-3)' },
+    plants:  { v: 11,  t: 25, unit: '/wk', label: 'Plants',  color: 'var(--gold)' }
+  };
+  var KEYS = Object.keys(NUTRITION);
+
+  function amount(key) {
+    var v = NUTRITION[key].v;
+    return key === 'fluids' ? v.toFixed(1) : String(Math.round(v));
+  }
+
+  function renderRings() {
+    KEYS.forEach(function (key) {
+      var n = NUTRITION[key];
+      // floor, not round — keeps the percentages the design was drawn with
+      var pct = Math.max(0, Math.min(100, Math.floor(n.v / n.t * 100)));
+      document.querySelectorAll('[data-ring="' + key + '"]').forEach(function (ring) {
+        ring.style.background = 'conic-gradient(' + n.color + ' 0 ' + pct + '%,' +
+          'var(--bg-muted) ' + pct + '% 100%)';
+        ring.querySelector('[data-ring-val]').textContent =
+          ring.getAttribute('data-ring-show') === 'pct' ? pct : amount(key);
+        ring.setAttribute('role', 'img');
+        ring.setAttribute('aria-label',
+          n.label + ' ' + amount(key) + ' of ' + n.t + ' ' + n.unit + ' — ' + pct + '%');
+      });
+    });
+  }
+
+  // ── Log a meal ────────────────────────────────────────────────────────────
+  var mealPanel = document.getElementById('mealPanel');
+  var mealLog = document.getElementById('mealLog');
+  var logMealBtn = document.getElementById('logMealBtn');
+  var mealInputs = document.querySelectorAll('[data-meal]');
+  var meals = [];
+
+  function openMealPanel(open) {
+    mealPanel.hidden = !open;
+    logMealBtn.setAttribute('aria-expanded', String(open));
+    if (open) mealInputs[0].focus();
+    else mealInputs.forEach(function (i) { i.value = ''; });
+  }
+
+  function renderMealLog() {
+    mealLog.hidden = meals.length === 0;
+    mealLog.innerHTML = '';
+    meals.forEach(function (meal, i) {
+      var parts = KEYS.filter(function (k) { return meal[k]; }).map(function (k) {
+        return (k === 'fluids' ? meal[k].toFixed(1) : meal[k]) + ' ' +
+          (NUTRITION[k].unit === '/wk' ? 'plants' : NUTRITION[k].unit + ' ' + NUTRITION[k].label.toLowerCase());
+      });
+      var row = document.createElement('div');
+      row.style.cssText = 'display:flex;align-items:baseline;justify-content:space-between;gap:10px;' +
+        'padding:9px 0;border-top:1px solid var(--divider);font-size:12px;color:var(--fg-muted)';
+      var text = document.createElement('span');
+      text.textContent = parts.length ? parts.join(' · ') : 'Nothing recorded';
+      var undo = document.createElement('button');
+      undo.type = 'button';
+      undo.textContent = 'Undo';
+      undo.style.cssText = 'background:none;border:0;font:inherit;font-size:12px;font-weight:600;' +
+        'color:var(--accent-2);cursor:pointer;padding:0;flex:0 0 auto';
+      undo.addEventListener('click', function () {
+        KEYS.forEach(function (k) { NUTRITION[k].v = Math.max(0, NUTRITION[k].v - meal[k]); });
+        meals.splice(i, 1);
+        renderRings();
+        renderMealLog();
+      });
+      row.appendChild(text);
+      row.appendChild(undo);
+      mealLog.appendChild(row);
+    });
+  }
+
+  logMealBtn.addEventListener('click', function () { openMealPanel(mealPanel.hidden); });
+  document.getElementById('mealCancel').addEventListener('click', function () { openMealPanel(false); });
+  document.getElementById('mealAdd').addEventListener('click', function () {
+    var meal = {};
+    KEYS.forEach(function (k) {
+      var input = document.querySelector('[data-meal="' + k + '"]');
+      var n = parseFloat(input.value);
+      meal[k] = isFinite(n) && n > 0 ? n : 0;
+      NUTRITION[k].v += meal[k];
+    });
+    meals.unshift(meal);
+    openMealPanel(false);
+    renderRings();
+    renderMealLog();
+  });
+
+  // ── Mark as taken ─────────────────────────────────────────────────────────
+  var markTaken = document.getElementById('markTaken');
+  markTaken.addEventListener('click', function () {
+    var taken = markTaken.getAttribute('aria-pressed') !== 'true';
+    markTaken.setAttribute('aria-pressed', String(taken));
+    markTaken.textContent = taken ? 'Taken tonight · tap to undo' : 'Mark as taken';
+    markTaken.className = taken ? 'btn btn-outline' : 'btn btn-primary';
+  });
+
+  // ── Messages ──────────────────────────────────────────────────────────────
+  var thread = document.getElementById('thread');
+  var msgInput = document.getElementById('msgInput');
+
+  function sendMessage() {
+    var text = msgInput.value.trim();
+    if (!text) return;
+    var bubble = document.createElement('div');
+    bubble.style.cssText = 'align-self:flex-end;max-width:80%;background:var(--accent-quiet);' +
+      'color:var(--accent-quiet-fg);border-radius:16px 16px 6px 16px;padding:11px 14px;' +
+      'font-size:13px;line-height:1.5';
+    bubble.textContent = text;
+    var stamp = document.createElement('div');
+    stamp.style.cssText = 'font-size:10.5px;opacity:.7;margin-top:6px';
+    stamp.textContent = 'You · just now';
+    bubble.appendChild(stamp);
+    thread.parentNode.insertBefore(bubble, thread.nextSibling);
+    msgInput.value = '';
+    msgInput.focus();
+  }
+
+  document.getElementById('msgSend').addEventListener('click', sendMessage);
+  msgInput.addEventListener('keydown', function (e) {
+    if (e.key === 'Enter') { e.preventDefault(); sendMessage(); }
+  });
+
+  // ── Questions for the next visit ──────────────────────────────────────────
+  var ownQuestions = document.getElementById('ownQuestions');
+  var questionInput = document.getElementById('questionInput');
+  questionInput.addEventListener('keydown', function (e) {
+    if (e.key !== 'Enter') return;
+    e.preventDefault();
+    var text = questionInput.value.trim();
+    if (!text) return;
+    var label = document.createElement('label');
+    label.style.cssText = 'display:flex;gap:10px;align-items:flex-start;padding:10px 0;' +
+      'border-top:1px solid var(--divider);font-size:13px;line-height:1.5;cursor:pointer';
+    var box = document.createElement('input');
+    box.type = 'checkbox';
+    box.checked = true;
+    box.style.cssText = 'accent-color:var(--accent);margin-top:3px';
+    label.appendChild(box);
+    label.appendChild(document.createTextNode(text));
+    ownQuestions.appendChild(label);
+    questionInput.value = '';
+  });
+
+  // ── Daily check-in ────────────────────────────────────────────────────────
+  // Stands in for POST /.netlify/functions/checkin-save, and returns the shape
+  // that endpoint returns, so going live is a change inside this one function.
+  //
+  // It deliberately does NOT post yet. checkin-save falls back to a hard-coded
+  // DB id (_lib.js DB.checkins), so it always writes to the live 🩺 Care
+  // Check-ins — Data table — and this page is public, unauthenticated, and has
+  // a hard-coded sample patient, so every submit would land as an identical
+  // junk row in the clinical DB.
+  //
+  // To go live: give the page a real patient identity, then decide how these
+  // seven questions map onto checkin-save's `well` / `symptoms` schema — they
+  // are a different instrument, not a field rename — and post
+  //   { program, patient:{name,phone}, date, well:{…}, symptoms:[…], summary, hp:'' }
+  // The alert below already keys off `stored`, so it will start telling the
+  // truth about a real submission with no further change.
+  function submitCheckin(payload) {
+    void payload;
+    return Promise.resolve({ ok: true, stored: false, reason: 'prototype' });
+  }
+
+  var GROUPS = ['sleep', 'cog', 'fat', 'mood', 'gi', 'pain', 'se'];
+  var sendBtn = document.getElementById('sendCheckin');
+
+  sendBtn.addEventListener('click', function () {
+    var answered = GROUPS.filter(function (name) {
+      return document.querySelector('input[name="' + name + '"]:checked');
+    }).length;
+    var note = document.querySelector('[data-screen="check"] textarea').value.trim();
+
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Recording…';
+
+    submitCheckin({
+      date: new Date().toISOString().slice(0, 10),
+      answered: answered,
+      note: note
+    }).then(function (result) {
+      state.sent = true;
+      var stored = result.ok && result.stored;
+      document.getElementById('sentHeading').textContent =
+        stored ? 'Sent to your care team' : 'Recorded on this device';
+      document.getElementById('sentDetail').textContent = stored
+        ? 'Thank you — ' + answered + ' of 7 answered.'
+        : answered + ' of 7 answered. Nothing left this device — this is a prototype, ' +
+          'so no one has seen it.';
+      sendBtn.textContent = stored ? 'Sent' : 'Recorded';
+      render();
+    });
+  });
+
+  renderRings();
+  render();
+})();
+</script>
+</body>
+</html>
