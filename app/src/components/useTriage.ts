@@ -8,7 +8,7 @@ import {
   type Route,
   type RouteKey,
 } from '../data/triage'
-import { submitTriage } from '../lib/submit'
+import { createTriageSubmissionId, submitTriage } from '../lib/submit'
 
 export type TriageStatus = 'idle' | 'sending' | 'sent' | 'error'
 
@@ -27,6 +27,7 @@ export function useTriage() {
   >({})
   const [status, setStatus] = useState<TriageStatus>('idle')
   const [reference, setReference] = useState<string | null>(null)
+  const submissionIdRef = useRef<string | null>(null)
 
   /** So "Send it" can hand the patient off to the first form field. */
   const formRef = useRef<HTMLElement | null>(null)
@@ -44,17 +45,20 @@ export function useTriage() {
     setAsk(value)
     setPinnedRoute(null) // typing beats a previous manual override
     setStatus('idle')
+    submissionIdRef.current = null
   }, [])
 
   const pickChip = useCallback((label: string) => {
     setAsk(label)
     setPinnedRoute(null)
     setStatus('idle')
+    submissionIdRef.current = null
   }, [])
 
   const pinRoute = useCallback((key: RouteKey) => {
     setPinnedRoute(key)
     setStatus('idle')
+    submissionIdRef.current = null
   }, [])
 
   const setAnswer = useCallback(
@@ -64,6 +68,7 @@ export function useTriage() {
         [route.key]: { ...current[route.key], [fieldId]: value },
       }))
       setStatus('idle')
+      submissionIdRef.current = null
     },
     [route.key],
   )
@@ -85,7 +90,9 @@ export function useTriage() {
       .map((f) => `${f.label}: ${answers[f.id].trim()}`)
     const summary = [route.label, ask.trim(), ...detail].filter(Boolean).join(' · ')
     try {
+      submissionIdRef.current ||= createTriageSubmissionId()
       const receipt = await submitTriage({
+        submissionId: submissionIdRef.current,
         route: route.key,
         routeLabel: route.label,
         freeText: ask,

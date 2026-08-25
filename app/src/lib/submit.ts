@@ -5,11 +5,9 @@ import type { RouteKey } from '../data/triage'
  *  THE ONE PLACE PATIENT MESSAGES LEAVE THIS APP
  * ─────────────────────────────────────────────────────────────────────────────
  *
- *  Right now nothing leaves the browser: both functions below are stubs that
- *  resolve locally so the UI can be demoed end to end. To go live, replace the
- *  body of `submitTriage` / `submitVisitNotice` with a call to your intake
- *  endpoint. Nothing in the components needs to change — they only await these
- *  two promises and render whatever comes back.
+ *  Just Ask leaves the browser only through the same-origin Netlify function,
+ *  which holds the server-side Care Connect credential and forwards to the
+ *  Google-native intake. Transition-of-care notice is still a local demo.
  *
  *  Before wiring a real endpoint, please note:
  *
@@ -26,6 +24,8 @@ import type { RouteKey } from '../data/triage'
  */
 
 export interface TriageSubmission {
+  /** Stable across retries so the server can safely replay one request. */
+  submissionId: string
   /** Which queue the message routed to. */
   route: RouteKey
   routeLabel: string
@@ -64,28 +64,35 @@ function settle<T>(value: T): Promise<T> {
   return new Promise((resolve) => setTimeout(() => resolve(value), 350))
 }
 
+export function createTriageSubmissionId(): string {
+  const uuid = globalThis.crypto?.randomUUID?.()
+  const fallback = `${Date.now()}-${Math.random().toString(36).slice(2, 14)}`
+  return `care-connect:${uuid || fallback}`
+}
+
 /**
  * Send a Just Ask message to the care team. Posts to the triage-intake function
- * (which creates a row in the Patient Request Triage Queue); if that isn't
- * reachable — e.g. the local dev demo — it falls back to a local reference so
- * the flow still completes.
+ * (which creates the shared patient request, triage task, inbound communication,
+ * and metadata-only audit records). Production fails closed if delivery cannot
+ * be confirmed; only local Vite development uses a synthetic receipt.
  */
 export async function submitTriage(submission: TriageSubmission): Promise<TriageReceipt> {
   logForDevelopment('triage submission', submission)
   try {
-    const res = await fetch('/.netlify/functions/submit-triage', {
+    const res = await fetch('/api/patient-requests', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(submission),
     })
-    if (res.ok) {
-      const data = await res.json()
-      if (data.reference) return { reference: data.reference }
+    const data = await res.json().catch(() => ({}))
+    if (!res.ok || !data.reference) {
+      throw new Error(typeof data.error === 'string' ? data.error : 'The care team did not receive this request.')
     }
-  } catch {
-    /* fall through to a local reference */
+    return { reference: data.reference }
+  } catch (error) {
+    if (!import.meta.env.DEV) throw error
   }
-  return settle({ reference: 'BHW-2481' })
+  return settle({ reference: 'REQ-BHW0000-LOCAL' })
 }
 
 /**
