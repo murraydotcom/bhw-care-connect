@@ -47,7 +47,12 @@ the response time; the form below asks name, date of birth and Health Blueprint
 access first, then that queue's own questions. The clinical route shows a
 red-flag warning that warns but never blocks. Route chips let anyone override
 the guess, and answers are kept per route so switching doesn't lose typing.
-Submitting reveals three route-specific troubleshooting cards.
+Submitting uses one stable retry ID and the same-origin
+`/api/patient-requests` Netlify bridge to create the shared Google-native
+patient request. Production only shows success after
+the server confirms the request; local development uses a synthetic BHW0000
+receipt. A confirmed submission reveals three route-specific troubleshooting
+cards.
 
 Routing is keyword matching on purpose: it runs in the browser, it's readable,
 and a wrong guess costs nothing.

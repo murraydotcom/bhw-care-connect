@@ -2,7 +2,9 @@
 
 The **public, patient-facing** site for BHW Medical Group — a Vite/React hub
 (programs, the Personal Health Blueprint, resources, reviews, and Just Ask)
-plus a small set of Netlify Functions backed by Notion.
+plus a small set of Netlify Functions. Patient requests use the shared
+Google/Firestore operations API; remaining content and review functions are
+still backed by Notion during the transition.
 
 This repo is **deliberately separate** from the employee side. BHW HQ and
 crewOS (the internal ops app, staff tools, front desk, billing) live in the
@@ -40,7 +42,7 @@ readers/writers, and the HMAC session helpers `sign`/`verify`).
 | `patient-auth.js`  | Patient login (Stytch Email OTP, with a demo fallback). |
 | `hub-content.js`   | Reads the Care Connect Hub Content DB (announcements + resources). |
 | `submit-review.js` | Writes patient reviews (ratings + comments), with Google hand-off. |
-| `submit-triage.js` | "Just Ask" → the Patient Request Triage Queue. |
+| `submit-triage.mjs` | "Just Ask" → signed Google-native patient-request intake. |
 
 > The public **screeners** (`screener.html`) and **intake questionnaires**
 > (`bhw-questionnaire.html`) and their submit functions currently still live in
@@ -53,12 +55,17 @@ readers/writers, and the HMAC session helpers `sign`/`verify`).
 Core (required):
 - `NOTION_TOKEN` — Notion integration token (share the Data Layer DBs with it).
 - `SESSION_SECRET` — HMAC secret for patient session tokens.
+- `OPERATIONS_CLOUD_API_URL` — HTTPS base URL for `bhw-operations-api`.
+- `CARE_CONNECT_INTAKE_SECRET` — server-only intake credential; mark it secret
+  and scope it to Netlify Functions.
+- `CARE_CONNECT_CLIENT_ID` — optional; defaults to `care-connect`.
 
 Per-function:
 - `patient-auth`: `MASTER_DB_ID` (Patients Master List), and Stytch —
   `STYTCH_PROJECT_ID`, `STYTCH_SECRET`, `STYTCH_ENV` (falls back to a demo flow
   if unset).
-- `submit-triage`: `QUEUE_DB_ID` (falls back to the built-in queue DB id).
+- `submit-triage`: `/api/patient-requests` sends through the Cloud API. It does
+  not fall back to Notion after cutover, preventing duplicate split-system rows.
 - `hub-content`: `HUB_CONTENT_DB_ID` (falls back to the id in `_lib.js`).
 - `submit-review`: `REVIEWS_DB_ID` (falls back to the id in `_lib.js`),
   optional `GOOGLE_REVIEW_URL` for the "leave us a Google review" hand-off.
@@ -78,3 +85,7 @@ cd app && npm install && npm run dev      # hub only
 # or the whole thing (pages + functions):
 npm --prefix app run build && node build-merge.mjs && npx netlify dev
 ```
+
+The production Just Ask flow fails closed when Cloud delivery cannot be
+confirmed. Local Vite development uses a synthetic `REQ-BHW0000-LOCAL` receipt
+so the UI remains testable without sending patient data.
