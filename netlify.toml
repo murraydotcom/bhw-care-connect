@@ -12,6 +12,7 @@
 #
 #   /                                → Care Connect hub (app/ React build)
 #   /bhw-patient-portal-mockup.html  → Personal Health Blueprint
+#   /patient/                         → secure Google-native patient care space (release-gated)
 #   /bhw-charmed-patient-mockup.html → CharmEd program page
 #   /bhw-flow-patient-mockup.html    → Flow program page
 #   /bhw-mindmood-patient-mockup.html→ Mind & Mood program page
