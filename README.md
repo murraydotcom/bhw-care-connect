@@ -60,13 +60,18 @@ Core (required):
 - `OPERATIONS_CLOUD_API_URL` — HTTPS base URL for `bhw-operations-api`.
 - `CARE_CONNECT_INTAKE_SECRET` — server-only intake credential; mark it secret
   and scope it to Netlify Functions.
+- `CARE_CONNECT_PATIENT_IDENTITY_SECRET` — separate server-only credential for
+  matching a Stytch-verified direct contact plus DOB to the migrated Google
+  patient registry. Do not reuse the intake or Health Core credential.
 - `CARE_CONNECT_CLIENT_ID` — optional; defaults to `care-connect`.
 - `HEALTH_CORE_API_URL` — HTTPS base URL for the independent, read-only Health Core service.
 - `CARE_CONNECT_PATIENT_TOKEN_SECRET` — separate server-only HMAC credential shared only with Health Core's patient portal endpoint. Do not reuse the intake or staff credential.
 - `VITE_SECURE_PATIENT_PORTAL_ENABLED` — set to `true` only after Health Core and the Care Connect bridge pass release verification. Until then, Care Connect keeps its current portal link.
 
 Per-function:
-- `patient-auth`: `MASTER_DB_ID` (Patients Master List), and Stytch —
+- `patient-auth`: the new `/patient/` flow resolves identity through the
+  migrated Google registry; legacy portal pages temporarily retain
+  `MASTER_DB_ID`. Stytch uses
   `STYTCH_PROJECT_ID`, `STYTCH_SECRET`, `STYTCH_ENV`. Missing Stytch keys fail
   closed unless `ALLOW_DEMO_AUTH=1` is explicitly set for a local or preview
   environment.

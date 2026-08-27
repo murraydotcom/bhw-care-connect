@@ -135,7 +135,7 @@ async function submitLogin(event) {
       setStatus("Sending your BHW sign-in code…");
       const response = await fetch("/.netlify/functions/patient-auth", {
         method: "POST", headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ action: "send", ...identityPayload(), dob }),
+        body: JSON.stringify({ action: "send", portalContract: "google-v1", ...identityPayload(), dob }),
       });
       const body = await response.json().catch(() => ({}));
       if (!response.ok) throw new Error(body.error || "The code could not be sent.");
@@ -156,7 +156,7 @@ async function submitLogin(event) {
     setStatus("Opening your private care space…");
     const response = await fetch("/.netlify/functions/patient-auth", {
       method: "POST", headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ action: "verify", methodId: auth.methodId, code, dob, ...identityPayload() }),
+      body: JSON.stringify({ action: "verify", portalContract: "google-v1", methodId: auth.methodId, code, dob, ...identityPayload() }),
     });
     const body = await response.json().catch(() => ({}));
     if (!response.ok || !body.token) throw new Error(body.error || "That code did not match.");
@@ -192,11 +192,49 @@ $("login-form").addEventListener("submit", submitLogin);
 $("mode-button").addEventListener("click", toggleMode);
 $("signout-button").addEventListener("click", signOut);
 
-const existing = sessionStorage.getItem(SESSION_KEY);
-if (existing) {
-  setStatus("Opening your private care space…");
-  loadDashboard(existing).catch((error) => {
-    sessionStorage.removeItem(SESSION_KEY);
-    setStatus(error.message || "Please sign in again.");
+const localPreview = new URLSearchParams(location.search).get("preview") === "1"
+  && ["localhost", "127.0.0.1"].includes(location.hostname);
+
+if (localPreview) {
+  renderDashboard({
+    schemaVersion: "bhw.patient-portal.v1",
+    generatedAt: new Date().toISOString(),
+    patient: { preferredName: "Synthetic", programs: ["Primary Care", "APCM"] },
+    plan: {
+      status: "ready-to-share",
+      mainStory: "Your recent results show good momentum. This care space keeps today’s priorities and care-team updates together in plain language.",
+      today: ["Take your medication as directed.", "Complete a 10-minute walk after lunch.", "Bring your home readings to your next visit."],
+      priorities: ["Keep blood pressure in your target range.", "Build a consistent movement routine."],
+      systems: [
+        { label: "Heart & circulation", status: "improving", summary: "Your care team is watching blood pressure trends and daily movement." },
+        { label: "Energy & metabolism", status: "needs-attention", summary: "Small, consistent meal and activity steps remain the current focus." },
+        { label: "Mind & mood", status: "steady", summary: "Continue the routines that support sleep and stress recovery." },
+      ],
+    },
+    medications: [
+      {
+        name: "Synthetic medication",
+        clinicalStatus: "active",
+        instructions: "Take one tablet each morning as directed.",
+        request: { status: "sent-to-pharmacy", message: "Your refill request was reviewed and sent to the pharmacy." },
+      },
+      {
+        name: "Synthetic supplement",
+        clinicalStatus: "on-hold",
+        instructions: "Pause until your care team reviews your next result.",
+      },
+    ],
+    requests: [
+      { type: "referral", status: "clinical-review", message: "Your referral request is being reviewed by your care team." },
+    ],
   });
+} else {
+  const existing = sessionStorage.getItem(SESSION_KEY);
+  if (existing) {
+    setStatus("Opening your private care space…");
+    loadDashboard(existing).catch((error) => {
+      sessionStorage.removeItem(SESSION_KEY);
+      setStatus(error.message || "Please sign in again.");
+    });
+  }
 }
