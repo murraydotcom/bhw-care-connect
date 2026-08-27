@@ -1,6 +1,8 @@
 /**
  * Every place the practice's real-world details appear. Change them here.
  */
+const securePatientPortalEnabled = import.meta.env.VITE_SECURE_PATIENT_PORTAL_ENABLED === 'true'
+
 export const CONTACT = {
   practice: 'BHW Medical Group',
   brand: 'Baltimore Healthcare & Wellness',
@@ -22,6 +24,6 @@ export const CONTACT = {
    * profile, care plan, and programs. The Personal Health Blueprint is what
    * they see inside once signed in. Same page, two doors.
    */
-  portalUrl: 'bhw-patient-portal-mockup.html?next=dashboard',
-  blueprintUrl: 'bhw-patient-portal-mockup.html',
+  portalUrl: securePatientPortalEnabled ? '/patient/' : 'bhw-patient-portal-mockup.html?next=dashboard',
+  blueprintUrl: securePatientPortalEnabled ? '/patient/' : 'bhw-patient-portal-mockup.html',
 } as const

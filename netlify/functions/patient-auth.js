@@ -83,6 +83,10 @@ function shapePatient(pg) {
     patientPage: p["Patient Page"]?.url || "",
   };
 }
+function bhwPatientId(value) {
+  const normalized = String(value || "").trim().toUpperCase();
+  return /^BHW\d{4}$/.test(normalized) ? normalized : null;
+}
 function shapeMed(pg) {
   const p = pg.properties || {};
   return {
@@ -162,14 +166,14 @@ function demoMeds() {
 function demoFamily(email) {
   return {
     patient: {
-      name: "Amaris (Am) Murray", relationship: "Self", email, age: 39, dob: "1986-10-28",
-      mrn: "BHW0001", gender: "Female", payer: "Medicaid", medicaidMco: "CareFirst Community",
-      programs: ["APCM", "BHI"], allergies: "NKDA", chronicCount: 2, bhRisk: "Moderate",
-      lastVisit: "2026-07-14", nextVisit: "2026-08-20", seen12mo: true, meds: demoMeds(),
+      name: "Synthetic Patient", relationship: "Self", email, age: 40, dob: "1986-01-01",
+      mrn: "BHW0000", gender: "Unknown", payer: "Synthetic Plan", medicaidMco: "",
+      programs: ["Primary Care"], allergies: "Synthetic fixture", chronicCount: 0, bhRisk: "",
+      lastVisit: "2026-07-14", nextVisit: "2026-09-20", seen12mo: true, meds: demoMeds(),
     },
     dependents: [
-      { name: "Amari Murray", age: 9, relationship: "Child", gender: "Male", payer: "Medicaid",
-        programs: ["Primary Care"], allergies: "Peanuts — hives", lastVisit: "2026-06-30",
+      { name: "Synthetic Dependent", age: 9, relationship: "Child", gender: "Unknown", payer: "Synthetic Plan",
+        programs: ["Primary Care"], allergies: "Synthetic fixture", lastVisit: "2026-06-30",
         nextVisit: "2026-09-15", meds: [
           { name: "Cetirizine", dose: "5 mg", schedule: "Once daily for allergies", status: "Active" },
           { name: "Multivitamin (kids)", dose: "1 gummy", schedule: "Daily with breakfast", status: "Active" },
@@ -284,6 +288,7 @@ exports.handler = async (event) => {
           email,
           phone,
           patientId: family.patient.id || null,
+          bhwPatientId: bhwPatientId(family.patient.mrn),
           dependentIds,
           demo,
           exp: Date.now() + TTL_MS,

@@ -31,7 +31,15 @@ if (existsSync(fileURLToPath(pagesSrc))) {
   }
 }
 
-// 3) Care Connect health-dashboard support folders → dist root, so the
+// 3) Secure patient portal shell → dist/patient. Its data is always loaded
+//    through the same-origin Netlify Function; no clinical source is exposed
+//    to the browser.
+const patientSrc = new URL('./patient/', base)
+if (existsSync(fileURLToPath(patientSrc))) {
+  cpSync(patientSrc, new URL('./patient/', dist), { recursive: true })
+}
+
+// 4) Care Connect health-dashboard support folders → dist root, so the
 //    dashboard pages' relative `fonts/...` and `hm-assets/...` paths resolve.
 //    Drop patient body / hologram artwork into hm-assets (see hm-assets/README.txt).
 for (const dir of ['fonts', 'hm-assets']) {
@@ -41,4 +49,4 @@ for (const dir of ['fonts', 'hm-assets']) {
   }
 }
 
-console.log(`build-merge: copied ${copied} patient page(s) + assets + dashboard support folders into app/dist`)
+console.log(`build-merge: copied ${copied} legacy patient page(s) + secure patient portal + assets + dashboard support folders into app/dist`)
