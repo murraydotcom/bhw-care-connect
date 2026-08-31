@@ -25,6 +25,21 @@
 #   /bhw-neuro.html /bhw-immune.html /bhw-endocrine.html → per-system deep pages
 #   Patient body / hologram artwork drops into hm-assets/ (see hm-assets/README.txt)
 
+[[redirects]]
+  from = "/api/patient-requests"
+  to = "/.netlify/functions/submit-triage"
+  status = 200
+
+[[redirects]]
+  from = "/api/patient-portal/dashboard"
+  to = "/.netlify/functions/patient-portal"
+  status = 200
+
+[[redirects]]
+  from = "/api/patient-portal/check-ins"
+  to = "/.netlify/functions/patient-checkins"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]

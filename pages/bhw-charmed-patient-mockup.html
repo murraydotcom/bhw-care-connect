@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>CharmEd Minds — My Strategy Hub (Patient Page)</title>
+<title>CharmEd Minds — My Brain Health Blueprint (Patient Page)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 /* ============================================================
@@ -772,8 +772,8 @@ document.addEventListener('DOMContentLoaded',function(){
       </div>
       <div class="svc-pane" data-svc-pane="coach">
         <div>
-          <h3>Brain Health &amp; Cognition coaching</h3>
-          <p style="font-size:14.5px; color:#0B1228; line-height:1.65; margin-top:14px;">8 or 16-week skills programs. We work on real things from your week — not generic worksheets.</p>
+          <h3>Brain Health &amp; Neurodivergence support</h3>
+          <p style="font-size:14.5px; color:#0B1228; line-height:1.65; margin-top:14px;">8- or 16-week brain-health programs built around cognition, sensory processing, executive function, sleep, and the real demands of your week.</p>
         </div>
         <ul>
           <li><span class="n">A</span><span class="t">Task initiation + transitions</span></li>
@@ -894,8 +894,8 @@ document.addEventListener('DOMContentLoaded',function(){
   <section class="h-banner">
     <div class="container">
       <div>
-        <div class="eyebrow eyebrow--accent" style="color:#2CA7A6;">My strategy hub</div>
-        <div style="font-family:var(--font-sans); font-weight:300; font-size:30px; color:#0B1228; margin-top:4px;">Hi Theo — week <em style="color:#2CA7A6;">4</em> of your Brain Health &amp; Cognition program.</div>
+        <div class="eyebrow eyebrow--accent" style="color:#2CA7A6;">My Brain Health Blueprint</div>
+        <div style="font-family:var(--font-sans); font-weight:300; font-size:30px; color:#0B1228; margin-top:4px;">Hi Theo — week <em style="color:#2CA7A6;">4</em> of your Brain Health &amp; Neurodivergence program.</div>
       </div>
       <div style="display:flex; gap:10px;">
         <button class="btn btn--ghost">Message coach</button>
@@ -1072,7 +1072,7 @@ document.querySelectorAll('[data-pane-btn]').forEach(btn=>{
     btn.classList.add('active');
     const key = btn.getAttribute('data-pane-btn');
     document.querySelectorAll('[data-pane]').forEach(p=>p.classList.toggle('active', p.getAttribute('data-pane')===key));
-    document.getElementById('audLabel').textContent = key==='potential'?'For new clients':'My strategy hub';
+    document.getElementById('audLabel').textContent = key==='potential'?'For new clients':'My Brain Health Blueprint';
     window.scrollTo({top:0, behavior:'smooth'});
   });
 });

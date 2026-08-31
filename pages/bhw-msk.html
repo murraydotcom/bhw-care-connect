@@ -198,6 +198,9 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 .progs button.on{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;box-shadow:0 8px 15px -8px rgba(30,55,50,.4)}
 .progs .lab{align-self:center;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);padding:0 8px 0 4px}
 </style>
+<link rel="stylesheet" href="assets/bhw-dashboard-brand.css?v=7">
+<script defer src="assets/bhw-transparent-anatomy.js?v=2"></script>
+<script defer src="assets/bhw-program-brand.js?v=2"></script>
 </head>
 <body>
 <div class="app">
@@ -226,7 +229,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
       <div class="hd-r">
         <div class="srch">⌕ Search your record</div>
         <div class="ic">↺</div>
-        <div class="me"><div class="av">JR</div><div><b>Jordan Rivera</b><span>Patient · #10428</span></div></div>
+        <div class="me"><div class="av">SP</div><div><b>Synthetic Patient</b><span>Patient · BHW0000</span></div></div>
       </div>
     </div>
 
@@ -243,7 +246,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
         <div class="organtag" style="top:47%;left:calc(50% + 58px)"><span class="ln"></span>Lumbar spine</div>
         <div class="organtag" style="top:71%;left:calc(50% + 52px)"><span class="ln"></span>Knees · cartilage</div>
         <div class="bodywrap">
-          <img class="body" src="hm-assets/body-female.png" onerror="this.onerror=null;this.src='hm-assets/body-figure.svg'" alt="Whole-body view">
+          <img class="body" src="patient/assets/system-musculoskeletal-posterior-v1.png" alt="Detailed posterior musculoskeletal view of a brown-skinned adult emphasizing the complete spine">
         </div>
         <div class="zoom"><button>＋</button><button>－</button><button>⤢</button></div>
         <div class="insight">
@@ -264,7 +267,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 
         <div class="row2">
           <div class="card age">
-            <div class="ico">🦴</div>
+            <div class="ico"><span class="ui-icon" data-ui-icon="bone" aria-hidden="true"></span></div>
             <div class="b">
               <div><div class="lab">Bone density</div><div class="n">−1.4<small> T-score</small></div><div class="up" style="color:var(--alert)">▲ osteopenia</div></div>
               <div><div class="lab">Grip strength</div><div class="n">28<small> kg</small></div><div class="up" style="color:var(--gold)">— below age norm</div></div>
@@ -291,7 +294,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 
         <!-- recheck box -->
         <div class="card recheck2">
-          <div class="ic">🕑</div>
+          <div class="ic"><span class="ui-icon" data-ui-icon="clock" aria-hidden="true"></span></div>
           <div><b>Next recheck due</b><p>Vitamin D recheck after 12 wks · DEXA 24‑month interval</p></div>
           <div class="due"><div class="n">Wk 12</div><div class="l">Nov 2026</div></div>
         </div>
@@ -369,15 +372,15 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
         <div class="card pad">
           <div class="card-h"><h3>Blueprint · action items</h3><span class="ph-badge">from your MSK care plan</span></div>
           <div class="acts">
-            <div class="act"><div class="ico">🔥</div><h4>1 · Calm inflammation</h4><p>Anti-inflammatory nutrition, omega-3, and address Vitamin D to protect joints and bone.</p><div class="foot">Foundation</div></div>
-            <div class="act"><div class="ico">🤸</div><h4>2 · Restore mobility</h4><p>Daily hip &amp; thoracic mobility + PT movement screen — unlock range before load.</p><div class="foot">Mobility</div></div>
-            <div class="act"><div class="ico">🏋️</div><h4>3 · Build strength</h4><p>Progressive resistance ×2–3/wk (hinge, squat, carry) — grows bone &amp; muscle.</p><div class="foot">Strength</div></div>
+            <div class="act"><div class="ico"><span class="ui-icon" data-ui-icon="inflammation" aria-hidden="true"></span></div><h4>1 · Calm inflammation</h4><p>Anti-inflammatory nutrition, omega-3, and address Vitamin D to protect joints and bone.</p><div class="foot">Foundation</div></div>
+            <div class="act"><div class="ico"><span class="ui-icon" data-ui-icon="mobility" aria-hidden="true"></span></div><h4>2 · Restore mobility</h4><p>Daily hip &amp; thoracic mobility + PT movement screen — unlock range before load.</p><div class="foot">Mobility</div></div>
+            <div class="act"><div class="ico"><span class="ui-icon" data-ui-icon="strength" aria-hidden="true"></span></div><h4>3 · Build strength</h4><p>Progressive resistance ×2–3/wk (hinge, squat, carry) — grows bone &amp; muscle.</p><div class="foot">Strength</div></div>
           </div>
           <div class="ctext" style="margin-top:12px"><b>Checkpoints:</b> Baseline → Week 4 → Week 8 → Week 12 · <b>strength &amp; balance re-test</b> with PT</div>
         </div>
 
         <div class="card promo">
-          <div class="ico">🩺</div>
+          <div class="ico"><span class="ui-icon" data-ui-icon="clinician" aria-hidden="true"></span></div>
           <div class="tx"><b>Talk with your MSK clinician</b><p>Review your bone density, Vitamin D, and strength plan</p></div>
           <button class="go">Message ›</button>
         </div>

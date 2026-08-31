@@ -11,21 +11,23 @@
 //         note }  // note = short caveat / assumptions string
 //
 // PHI handling: the photo is held only in memory for the request and is NEVER
-// logged. It travels browser → this function → OpenAI. Real-patient use
-// requires a BAA covering the OpenAI *API* with zero data retention, and a
-// Netlify BAA for the compute layer — same posture as note-extract.js.
+// logged. It travels browser → this function → OpenAI only after the patient
+// session and the explicit privacy/BAA release flags are verified.
 //
-// Fails closed: returns 503 until OPENAI_API_KEY is set, so it never spends
-// against the API until you deliberately configure it. Cost/abuse note: this
-// is a public endpoint; add a session gate or rate-limit before opening it to
-// unauthenticated traffic at scale (see the header comment in bhw-checkin).
+// Fails closed: returns 401 without a valid Care Connect patient session and
+// 503 until every release flag plus OPENAI_API_KEY is configured.
 //
-// Config (Netlify env): OPENAI_API_KEY (required),
+// Config (Netlify env): SESSION_SECRET and OPENAI_API_KEY (required),
+//   FOOD_VISION_ENABLED=true, OPENAI_API_BAA_APPROVED=true,
+//   OPENAI_ZERO_DATA_RETENTION_APPROVED=true,
 //   OPENAI_VISION_MODEL (optional, default "gpt-4o-mini"),
 //   FOOD_VISION_MAX_MB (optional, default 8).
 
 const https = require("https");
 const { json } = require("./_lib");
+const patientSession = import("./_shared/patient-session.mjs");
+
+const enabled = (name) => String(process.env[name] || "").trim().toLowerCase() === "true";
 
 function openai(path, payload, apiKey) {
   return new Promise((resolve, reject) => {
@@ -76,6 +78,23 @@ Rules:
 
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") return json(405, { error: "POST only" });
+
+  const sessionSecret = String(process.env.SESSION_SECRET || "").trim();
+  if (!sessionSecret) return json(503, { error: "Photo estimates are not configured." });
+  const authorization = String(event.headers?.authorization || event.headers?.Authorization || "");
+  const token = authorization.replace(/^Bearer\s+/i, "");
+  const { verifyCareConnectPatientSession } = await patientSession;
+  const session = verifyCareConnectPatientSession(token, sessionSecret);
+  if (!session?.bhwPatientId) return json(401, { error: "Please sign in again before using a food photo." });
+
+  if (!enabled("FOOD_VISION_ENABLED")
+    || !enabled("OPENAI_API_BAA_APPROVED")
+    || !enabled("OPENAI_ZERO_DATA_RETENTION_APPROVED")) {
+    return json(503, {
+      releaseGate: true,
+      error: "Photo estimates are not enabled until the privacy and BAA review is approved.",
+    });
+  }
 
   const apiKey = (process.env.OPENAI_API_KEY || "").trim();
   if (!apiKey) return json(503, { needsKey: true, error: "Photo estimates aren't turned on yet — set OPENAI_API_KEY in Netlify (under a BAA that covers the API). Barcode & search still work." });

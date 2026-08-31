@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<title>Flow — Your Plan (Patient Page)</title>
+<title>Flow — My Blood &amp; Vascular Blueprint (Patient Page)</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <style>
 /* ============================================================
@@ -838,7 +838,7 @@ document.addEventListener('DOMContentLoaded',function(){
   <section class="h-banner">
     <div class="container">
       <div>
-        <div class="eyebrow eyebrow--accent">Flow program</div>
+        <div class="eyebrow eyebrow--accent">My Blood &amp; Vascular Blueprint</div>
         <div style="font-family:var(--font-sans); font-size:30px; font-weight:300; color:#0B3245; margin-top:4px;">Welcome back, Jen — week <em style="color:#167A9A;">26</em> of stabilization.</div>
       </div>
       <div style="display:flex; gap:10px;">
@@ -1052,7 +1052,7 @@ document.querySelectorAll('[data-pane-btn]').forEach(btn=>{
     btn.classList.add('active');
     const key = btn.getAttribute('data-pane-btn');
     document.querySelectorAll('[data-pane]').forEach(p=>p.classList.toggle('active', p.getAttribute('data-pane')===key));
-    document.getElementById('audLabel').textContent = key==='potential'?'For new patients':'Active program';
+    document.getElementById('audLabel').textContent = key==='potential'?'For new patients':'My Blood & Vascular Blueprint';
     window.scrollTo({top:0, behavior:'smooth'});
   });
 });

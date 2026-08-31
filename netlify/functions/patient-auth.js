@@ -2,7 +2,8 @@
 //
 // PHI note: this authenticates identity only. The 6-digit code, the email and
 // the session token must never be written to logs, analytics, or an error
-// tracker. Patient data itself lives in Notion (BAA-covered).
+// tracker. The new portal links identity through the protected Google patient
+// registry; legacy portal pages keep their transitional Notion family adapter.
 //
 // Environment variables (set in Netlify → Site settings → Environment):
 //   STYTCH_PROJECT_ID   from the Stytch dashboard (API keys)
@@ -21,6 +22,7 @@
 //   { action:"verify", methodId, code, email } -> { ok, token, patient:{ name, email }, demo? }
 
 const { sign, json, verify, queryDb, DB, P } = require("./_lib");
+const { operationsBase, resolveGooglePatientIdentity } = require("./_shared/google-patient-registry.cjs");
 
 // ---- Patient Index helpers (guardian / dependent resolution) -----------------
 // A child is linked to a parent by the child's "Guardian Email" (an existing
@@ -238,6 +240,10 @@ exports.handler = async (event) => {
 
     // ---- send a code (email or SMS) ---------------------------------------
     if (body.action === "send") {
+      if (body.portalContract === "google-v1"
+        && (!operationsBase(process.env.OPERATIONS_CLOUD_API_URL) || !process.env.CARE_CONNECT_PATIENT_IDENTITY_SECRET)) {
+        return json(503, { error: "Patient sign-in is not connected to the BHW patient registry yet." });
+      }
       if (phone) {
         if (DEMO_MODE) return json(200, { ok: true, demo: true, channel: "sms" });
         const r = await stytch("/otps/sms/login_or_create", { phone_number: phone });
@@ -267,16 +273,32 @@ exports.handler = async (event) => {
       }
       // (DEMO mode — no Stytch keys — accepts any 6-digit code above.)
 
-      // Resolve the family (self + dependents) from the Patients Master List by
-      // whichever channel the patient used.
+      // The new portal resolves only a unique direct-contact + DOB match in the
+      // migrated Google registry. Legacy pages retain their current family
+      // adapter until the explicit portal release flag is enabled.
       const idKey = phone ? { phone } : { email };
       const idLabel = email || phone;
       const dob = /^\d{4}-\d{2}-\d{2}$/.test(body.dob || "") ? body.dob : "";
-      let family = await loadFamily({ ...idKey, dob });
-      if (!family) {
-        family = DEMO_MODE
-          ? demoFamily(idLabel)
-          : { patient: { name: phone ? idLabel : email.split("@")[0], email, phone }, dependents: [] };
+      const googlePortal = body.portalContract === "google-v1";
+      let family;
+      if (googlePortal) {
+        if (DEMO_MODE) {
+          family = demoFamily(idLabel);
+          family.dependents = [];
+        } else {
+          const match = await resolveGooglePatientIdentity({ ...idKey, dateOfBirth: dob });
+          family = {
+            patient: { name: match.preferredName, mrn: match.bhwPatientId },
+            dependents: [],
+          };
+        }
+      } else {
+        family = await loadFamily({ ...idKey, dob });
+        if (!family) {
+          family = DEMO_MODE
+            ? demoFamily(idLabel)
+            : { patient: { name: phone ? idLabel : email.split("@")[0], email, phone }, dependents: [] };
+        }
       }
       const demo = DEMO_MODE || !!family.demo;
       const dependentIds = (family.dependents || []).map((d) => d.id).filter(Boolean);
@@ -294,7 +316,9 @@ exports.handler = async (event) => {
           exp: Date.now() + TTL_MS,
         });
       }
-      return json(200, { ok: true, token, patient: family.patient, dependents: family.dependents || [], demo });
+      const patient = googlePortal ? { name: family.patient.name } : family.patient;
+      const dependents = googlePortal ? [] : family.dependents || [];
+      return json(200, { ok: true, token, patient, dependents, demo });
     }
 
     // ---- medications for a patient (self or a linked dependent) -------------
@@ -314,6 +338,7 @@ exports.handler = async (event) => {
 
     return json(400, { error: "Unknown action" });
   } catch (err) {
-    return json(500, { error: err.message });
+    const status = [400, 401, 403, 429, 502, 503].includes(Number(err?.status)) ? Number(err.status) : 500;
+    return json(status, { error: status === 500 ? "Patient sign-in is unavailable right now." : err.message });
   }
 };

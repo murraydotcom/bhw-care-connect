@@ -169,6 +169,9 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 .progs button.on{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;box-shadow:0 8px 15px -8px rgba(30,55,50,.4)}
 .progs .lab{align-self:center;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);padding:0 8px 0 4px}
 </style>
+<link rel="stylesheet" href="assets/bhw-dashboard-brand.css?v=7">
+<script defer src="assets/bhw-transparent-anatomy.js?v=2"></script>
+<script defer src="assets/bhw-program-brand.js?v=2"></script>
 </head>
 <body>
 <div class="app">
@@ -197,7 +200,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
       <div class="hd-r">
         <div class="srch">⌕ Search your record</div>
         <div class="ic">↺</div>
-        <div class="me"><div class="av">JR</div><div><b>Jordan Rivera</b><span>Patient · #10428</span></div></div>
+        <div class="me"><div class="av">SP</div><div><b>Synthetic Patient</b><span>Patient · BHW0000</span></div></div>
       </div>
     </div>
 
@@ -207,7 +210,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
         <div class="scan"></div>
         <div class="vlabel" style="top:22%;right:24px"><span class="d" style="background:var(--heart)"></span>Heart · rhythm &amp; output</div>
         <div class="vlabel" style="bottom:30%;left:24px"><span class="d" style="background:var(--teal-lite)"></span>Arteries · flow</div>
-        <img class="hero" src="hm-assets/cardio-hero.png" onerror="this.onerror=null;this.src='hm-assets/body-figure.svg';this.style.filter='drop-shadow(0 20px 30px rgba(0,0,0,.4))'" alt="Cardiovascular holographic body view">
+        <img class="hero" src="patient/assets/system-cardiovascular-cutout-v1.png" alt="Detailed cardiovascular body map with major vessels and myocardial and cerebral microvasculature">
         <div class="insight">
           <div class="h"><span class="n">3</span><b>New heart<br>insights</b></div>
           <p>Your blood pressure is trending down — a couple of moves this week keep it going.</p>
@@ -225,7 +228,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 
         <div class="row2">
           <div class="card age">
-            <div class="ico">❤</div>
+            <div class="ico"><span class="ui-icon" data-ui-icon="heart" aria-hidden="true"></span></div>
             <div class="b">
               <div><div class="lab">10-yr heart risk</div><div class="n">12<small>.4 %</small></div><div class="up" style="color:var(--alert)">▲ Intermediate</div></div>
               <div><div class="lab">Blood pressure</div><div class="n">128<small>/82</small></div><div class="up">▼ trending down</div></div>
@@ -239,14 +242,14 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 
         <!-- recheck box -->
         <div class="card recheck">
-          <div class="ic">🕑</div>
+          <div class="ic"><span class="ui-icon" data-ui-icon="clock" aria-hidden="true"></span></div>
           <div><b>Next recheck due</b><p>NMR + CRP/Fibrinogen/Homocysteine/Lp(a) panel: q3–6 mo while titrating · Lp(a): once (done Aug 2026)</p></div>
           <div class="due"><div class="n">Nov 2026</div><div class="l">in ~12 weeks</div></div>
         </div>
 
         <!-- testing map link -->
         <a class="card promo" href="bhw-cardio-tests.html" style="text-decoration:none;color:inherit">
-          <div class="ico">🫀</div>
+          <div class="ico"><span class="ui-icon" data-ui-icon="cardiac" aria-hidden="true"></span></div>
           <div class="tx"><b>Cardiovascular testing map</b><p>EKG · echo · CAC score · stress test · carotid ultrasound &amp; the vessel tests we run for your heart</p></div>
           <span class="go">Open map ›</span>
         </a>
@@ -282,28 +285,28 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
           </table>
         </div>
 
-        <!-- IF IT BRANCHES HERE · Cardiometabolic / Vascular -->
+        <!-- Patient-facing next-step summary. Detailed ordering logic remains staff-side. -->
         <div class="card pad">
-          <div class="card-h"><h3>If it branches here</h3><span class="panlab">Cardiometabolic / vascular</span></div>
-          <div class="brow on"><span class="bd"></span><div class="x"><b>Baseline already covers it</b><small>NMR + Lp(a) + CRP/Fibrinogen/Homocysteine panel — no extra order needed</small></div><span class="cond ok">in baseline</span></div>
-          <div class="brow"><span class="bd"></span><div class="x"><b>APOE · cardiovascular</b><small>[125561] — order only if it would change the plan</small></div><span class="cond">conditional</span></div>
-          <div class="brow"><span class="bd"></span><div class="x"><b>ApoB</b><small>No added Physical order — covered by the NMR particle panel</small></div><span class="cond">not added</span></div>
-          <div class="brow"><span class="bd"></span><div class="x"><b>Vessel testing</b><small>ABI/TBI · carotid duplex · PWV · 24‑hr ABPM</small></div><span class="cond">on Flow</span></div>
+          <div class="card-h"><h3>Possible next steps</h3><span class="panlab">Based on your results</span></div>
+          <div class="brow on"><span class="bd"></span><div class="x"><b>Your current labs cover the main heart-risk markers</b><small>Your care team will review the complete pattern with you; no duplicate testing is needed.</small></div><span class="cond ok">already covered</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>Additional genetic testing</b><small>Your clinician may discuss this only if the result would meaningfully change your care plan.</small></div><span class="cond">if helpful</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>More detailed cholesterol testing</b><small>Your current particle panel already includes the information your team needs.</small></div><span class="cond">already covered</span></div>
+          <div class="brow"><span class="bd"></span><div class="x"><b>Vessel testing</b><small>Your care team may recommend blood-pressure or circulation testing when your results and symptoms indicate it.</small></div><span class="cond">if needed</span></div>
         </div>
 
         <div class="card pad">
           <div class="card-h"><h3>Customized Care Strategy</h3>
-            <div class="tabsw"><button class="on">⚙ Action Plan <span class="badge">3</span></button><button>Supplements</button><button>Lifestyle</button></div>
+            <div class="tabsw"><button class="on"><span class="ui-icon" data-ui-icon="settings" aria-hidden="true"></span> Action Plan <span class="badge">3</span></button><button>Supplements</button><button>Lifestyle</button></div>
           </div>
           <div class="acts">
-            <div class="act"><div class="ico">🩸</div><h4>Log blood pressure 3× a week</h4><p>Morning readings here help your team catch any drift early.</p><div class="foot">12 notes</div></div>
-            <div class="act"><div class="ico">🧪</div><h4>Lipid panel before Sep 23</h4><p>Checks small‑dense LDL, triglycerides &amp; hs‑CRP ahead of your visit.</p><div class="foot">4 flags</div></div>
-            <div class="act"><div class="ico">🐟</div><h4>Add Omega-3, discuss a statin</h4><p>Supports your heart and lowers triglycerides — we'll review at your visit.</p><div class="foot">8 concerns</div></div>
+            <div class="act"><div class="ico"><span class="ui-icon" data-ui-icon="pressure" aria-hidden="true"></span></div><h4>Log blood pressure 3× a week</h4><p>Morning readings here help your team catch any drift early.</p><div class="foot">12 notes</div></div>
+            <div class="act"><div class="ico"><span class="ui-icon" data-ui-icon="lab" aria-hidden="true"></span></div><h4>Lipid panel before Sep 23</h4><p>Checks small‑dense LDL, triglycerides &amp; hs‑CRP ahead of your visit.</p><div class="foot">4 flags</div></div>
+            <div class="act"><div class="ico"><span class="ui-icon" data-ui-icon="nutrition" aria-hidden="true"></span></div><h4>Add Omega-3, discuss a statin</h4><p>Supports your heart and lowers triglycerides — we'll review at your visit.</p><div class="foot">8 concerns</div></div>
           </div>
         </div>
 
         <div class="card promo">
-          <div class="ico">📅</div>
+          <div class="ico"><span class="ui-icon" data-ui-icon="calendar" aria-hidden="true"></span></div>
           <div class="tx"><b>Your Annual Wellness Visit is Sep 23</b><p>In person with NP Amaris · 10:30 AM · we'll go over your heart numbers</p></div>
           <button class="go">Confirm visit ›</button>
         </div>
