@@ -1,0 +1,515 @@
+@font-face {
+  font-family: "BHW Montserrat";
+  src: url("/patient/fonts/montserrat-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "BHW Lora";
+  src: url("/patient/fonts/lora-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+}
+
+/* Shared Care Connect skin. The original dashboard layout and content stay intact. */
+:root {
+  --ink: #2a3a40 !important;
+  --ink-soft: #6e6b62 !important;
+  --ink-mute: #8b887f !important;
+  --line: #dedbd2 !important;
+  --line-2: #ebe7de !important;
+  --card: #fefdfb !important;
+  --soft: #f3f0e8 !important;
+  --soft-2: #e8ece5 !important;
+  --sage: #4d7159 !important;
+  --sage-deep: #3c5946 !important;
+  --sage-dark: #2f4938 !important;
+  --sage-quiet: #e2e9e1 !important;
+  --sage-ink: #3c5946 !important;
+  --teal: #4d7159 !important;
+  --teal-lite: #9cb5a2 !important;
+  --teal-deep: #3c5946 !important;
+  --teal-ink: #3c5946 !important;
+  --teal-quiet: rgba(77, 113, 89, 0.14) !important;
+  --blue: #3d6e7e !important;
+  --violet: #6a5480 !important;
+  --gold: #c0a046 !important;
+  --amber: #c0a046 !important;
+  --amber-q: #f2ead1 !important;
+  --coral: #905b35 !important;
+  --coral-q: #f0e3d8 !important;
+  --heart: #905b35 !important;
+  --good: #4d7159 !important;
+  --ok: #4d7159 !important;
+  --good-q: #e2e9e1 !important;
+  --alert: #905b35 !important;
+  --ring: 77, 113, 89 !important;
+  --glow: 156, 181, 162 !important;
+  --warm2: 229, 222, 208 !important;
+  --program-accent: #3d6e7e;
+  --program-deep: #2f5967;
+  --program-ink: #284a56;
+  --program-soft: #e4eef1;
+  --program-secondary: #7f8f6f;
+  --program-glow: 61, 110, 126;
+  --program-bg-1: rgba(151, 186, 203, 0.32);
+  --program-bg-2: rgba(127, 143, 111, 0.16);
+  --program-bg-3: #edf2ec;
+  --program-bg-4: #f8f6f1;
+  --program-bg-5: #eee9df;
+}
+
+/* One Care Connect shell, four unmistakable program identities. */
+:root[data-program="primary"] {
+  --program-accent: #3d6e7e;
+  --program-deep: #2f5967;
+  --program-ink: #284a56;
+  --program-soft: #e4eef1;
+  --program-secondary: #7f8f6f;
+  --program-glow: 61, 110, 126;
+  --program-bg-1: rgba(151, 186, 203, 0.34);
+  --program-bg-2: rgba(127, 143, 111, 0.17);
+  --program-bg-3: #e9f0ef;
+  --program-bg-4: #f8f6f1;
+  --program-bg-5: #eee9df;
+}
+
+:root[data-program="mind"] {
+  --program-accent: #d6814c;
+  --program-deep: #a95e3d;
+  --program-ink: #81452f;
+  --program-soft: #f7e8dc;
+  --program-secondary: #8b7697;
+  --program-glow: 214, 129, 76;
+  --program-bg-1: rgba(224, 150, 92, 0.28);
+  --program-bg-2: rgba(139, 118, 151, 0.18);
+  --program-bg-3: #f7e9dc;
+  --program-bg-4: #f8f1ea;
+  --program-bg-5: #eee6ef;
+}
+
+:root[data-program="charmed"] {
+  --program-accent: #14184f;
+  --program-deep: #0d1038;
+  --program-ink: #14184f;
+  --program-soft: #e8e9f3;
+  --program-secondary: #e8a51d;
+  --program-glow: 75, 166, 165;
+  --program-bg-1: rgba(75, 166, 165, 0.25);
+  --program-bg-2: rgba(232, 165, 29, 0.2);
+  --program-bg-3: #e9f1f0;
+  --program-bg-4: #f7f5ef;
+  --program-bg-5: #e9e8f1;
+}
+
+:root[data-program="flow"] {
+  --program-accent: #176f96;
+  --program-deep: #0d5274;
+  --program-ink: #0d5274;
+  --program-soft: #e1edf4;
+  --program-secondary: #d4ad2f;
+  --program-glow: 23, 111, 150;
+  --program-bg-1: rgba(95, 147, 189, 0.3);
+  --program-bg-2: rgba(212, 173, 47, 0.16);
+  --program-bg-3: #e2edf5;
+  --program-bg-4: #f3f6f7;
+  --program-bg-5: #e8eef3;
+}
+
+:root[data-program] {
+  --sage: var(--program-accent) !important;
+  --sage-deep: var(--program-deep) !important;
+  --sage-dark: var(--program-deep) !important;
+  --sage-quiet: var(--program-soft) !important;
+  --sage-ink: var(--program-ink) !important;
+  --teal: var(--program-accent) !important;
+  --teal-lite: var(--program-secondary) !important;
+  --teal-deep: var(--program-deep) !important;
+  --teal-ink: var(--program-ink) !important;
+  --teal-quiet: var(--program-soft) !important;
+  --ring: var(--program-glow) !important;
+  --glow: var(--program-glow) !important;
+}
+
+html body,
+html body button,
+html body input,
+html body textarea,
+html body select {
+  font-family: "BHW Montserrat", Arial, sans-serif !important;
+}
+
+html body h1,
+html body h2,
+html body h3,
+html body h4,
+html body .hd-logo b,
+html body .pt .nm,
+html body .ov-title b {
+  font-family: "BHW Lora", Georgia, serif !important;
+  letter-spacing: -0.012em;
+}
+
+html body {
+  background:
+    radial-gradient(1050px 680px at 10% -8%, var(--program-bg-1), transparent 60%),
+    radial-gradient(980px 700px at 100% 112%, var(--program-bg-2), transparent 58%),
+    linear-gradient(158deg, var(--program-bg-3) 0%, var(--program-bg-4) 52%, var(--program-bg-5) 100%) !important;
+}
+
+html body .app {
+  background: rgba(254, 253, 251, 0.78) !important;
+  border-color: rgba(255, 255, 255, 0.9) !important;
+  box-shadow: 0 60px 120px -52px rgba(42, 58, 64, 0.45) !important;
+}
+
+html body .hdr,
+html body .rail {
+  background-color: rgba(254, 253, 251, 0.66) !important;
+}
+
+html body .progs button.on,
+html body .rail .i.on,
+html body .checkin,
+html body .appt .top,
+html body .msg-send,
+html body .promo .go {
+  background: linear-gradient(135deg, var(--program-accent), var(--program-deep)) !important;
+}
+
+html body .care-connect-brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 205px;
+}
+
+html body .program-mark,
+html body .program-rail-mark {
+  position: relative;
+  overflow: hidden;
+  color: var(--program-accent) !important;
+  background: var(--program-soft) !important;
+  border-color: color-mix(in srgb, var(--program-accent) 24%, transparent) !important;
+}
+
+html body .program-mark {
+  width: 36px;
+  height: 36px;
+  flex: 0 0 36px;
+  display: grid !important;
+  place-items: center;
+  border: 1px solid;
+  border-radius: 11px;
+}
+
+html body .program-logo-image {
+  position: absolute;
+  display: block;
+  max-width: none;
+  pointer-events: none;
+}
+
+html body .program-logo-primary {
+  background: #f8f5f1 !important;
+}
+
+html body .program-logo-primary .program-logo-image,
+html body .program-rail-mark .program-logo-primary {
+  inset: -2%;
+  width: 104%;
+  height: 104%;
+  object-fit: cover;
+}
+
+html body .program-logo-mind .program-logo-image,
+html body .program-rail-mark .program-logo-mind {
+  left: 50%;
+  top: 48%;
+  width: 188%;
+  height: 188%;
+  object-fit: cover;
+  transform: translate(-50%, -50%);
+}
+
+html body .program-logo-charmed .program-logo-image,
+html body .program-rail-mark .program-logo-charmed {
+  inset: -3%;
+  width: 106%;
+  height: 106%;
+  object-fit: cover;
+}
+
+html body .program-logo-flow .program-logo-image,
+html body .program-rail-mark .program-logo-flow {
+  left: -4%;
+  top: -2%;
+  width: 170%;
+  height: auto;
+  object-fit: initial;
+}
+
+html body .ui-icon svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  fill: none;
+}
+
+html body .hd-logo .program-subtitle {
+  color: var(--ink-mute) !important;
+  white-space: nowrap;
+}
+
+html body .hd-logo .program-subtitle strong {
+  color: var(--program-ink);
+  font-weight: 800;
+}
+
+html body .progs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+html body .program-tab-icon {
+  position: relative;
+  overflow: hidden;
+  width: 19px;
+  height: 19px;
+  display: grid !important;
+  place-items: center;
+  border-radius: 6px;
+  color: var(--tab-brand);
+  background: var(--tab-soft);
+}
+
+html body .progs button[data-program="primary"] { --tab-brand: #3d6e7e; --tab-soft: #e4eef1; }
+html body .progs button[data-program="mind"] { --tab-brand: #d6814c; --tab-soft: #f7e8dc; }
+html body .progs button[data-program="charmed"] { --tab-brand: #14184f; --tab-soft: #e8e9f3; }
+html body .progs button[data-program="flow"] { --tab-brand: #176f96; --tab-soft: #e1edf4; }
+
+html body .progs button.on {
+  background: linear-gradient(135deg, var(--tab-brand), color-mix(in srgb, var(--tab-brand) 74%, #000)) !important;
+}
+
+html body .progs button.on .program-tab-icon {
+  background: rgba(255, 255, 255, 0.9) !important;
+}
+
+html body .ui-icon {
+  width: 20px;
+  height: 20px;
+  display: inline-grid;
+  place-items: center;
+  color: currentColor;
+  vertical-align: -4px;
+}
+
+html body .ico > .ui-icon,
+html body .ic > .ui-icon {
+  width: 22px;
+  height: 22px;
+  vertical-align: 0;
+}
+
+html body .tabsw button > .ui-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 5px;
+  vertical-align: -3px;
+}
+
+html body .qopts.faces button .ui-icon {
+  width: 21px;
+  height: 21px;
+  vertical-align: 0;
+}
+
+html body .stage {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+}
+
+html body .stage::before,
+html body .stage::after,
+html body .stage .scan,
+html body .stage .rings,
+html body .stage .ring2,
+html body .stage .arc,
+html body .stage .floor,
+html body .stage .hot,
+html body .stage .vlabel,
+html body .stage .organtag,
+html body .stage .zoom,
+html body .stage .insight {
+  display: none !important;
+}
+
+html body .program-body-art {
+  display: block;
+  width: 168px;
+  height: 224px;
+  object-fit: contain;
+  filter: drop-shadow(0 16px 22px rgba(42, 58, 64, 0.2));
+}
+
+html body .stage .hero,
+html body .stage .body {
+  filter: drop-shadow(0 0 28px rgba(var(--program-glow), 0.26)) !important;
+}
+
+/* The original hologram stages are as tall as their data column; pin the art
+   near the top so it is visible immediately instead of halfway down the page. */
+html body .stage > img.hero {
+  position: absolute !important;
+  top: 92px;
+  left: 50%;
+  width: min(66%, 390px);
+  height: auto;
+  max-height: min(440px, calc(100vh - 190px));
+  object-fit: contain;
+  transform: translateX(-50%);
+}
+
+html body .stage .bodywrap img.body {
+  width: min(62%, 390px);
+  height: auto !important;
+  max-height: 440px !important;
+  object-fit: contain;
+}
+
+/* On a full-width dashboard, the scan is a compact reference panel rather
+   than half of the page. The clinical detail column receives the extra room. */
+@media (min-width: 1121px) {
+  html body .stagegrid {
+    grid-template-columns: minmax(230px, 22%) minmax(0, 1fr) !important;
+    column-gap: 10px;
+    align-items: start;
+  }
+
+  html body .stagegrid > .stage {
+    align-self: start;
+    width: 100%;
+    height: clamp(380px, 45vh, 430px);
+    min-height: 0 !important;
+    padding: 4px !important;
+  }
+
+  html body .stage > img.hero {
+    top: 18px;
+    width: min(88%, 290px);
+    max-height: 400px;
+  }
+
+  html body .stage .bodywrap {
+    align-items: flex-start !important;
+    padding-top: 10px;
+  }
+
+  html body .stage .bodywrap img.body {
+    width: min(88%, 290px);
+    max-height: 400px !important;
+  }
+}
+
+@media (min-width: 721px) and (max-width: 1120px) {
+  html body .hdr {
+    flex-wrap: wrap;
+    gap: 8px 12px;
+    padding: 10px 14px;
+  }
+
+  html body .care-connect-brand {
+    min-width: 240px;
+  }
+
+  html body .hdr .progs {
+    order: 3;
+    width: 100%;
+    margin-left: 0 !important;
+    justify-content: flex-start;
+    overflow-x: auto;
+    scrollbar-width: thin;
+  }
+
+  html body .stagegrid {
+    grid-template-columns: minmax(205px, 29%) minmax(0, 1fr) !important;
+    column-gap: 8px;
+    align-items: start;
+  }
+
+  html body .stagegrid > .stage {
+    align-self: start;
+    min-height: 0 !important;
+    height: 360px;
+    padding: 4px !important;
+  }
+
+  html body .stage > img.hero {
+    top: 8px;
+    width: min(92%, 255px);
+    max-height: 350px;
+  }
+
+  html body .stage .bodywrap {
+    align-items: flex-start !important;
+    padding-top: 8px;
+  }
+
+  html body .stage .bodywrap img.body {
+    width: min(92%, 255px);
+    max-height: 350px !important;
+  }
+}
+
+@media (max-width: 720px) {
+  html body .hdr {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  html body .hdr .progs {
+    order: 3;
+    width: 100%;
+    margin-left: 0 !important;
+    overflow-x: auto;
+  }
+
+  html body .stagegrid {
+    grid-template-columns: 1fr !important;
+  }
+
+  html body .stagegrid > .stage {
+    width: min(100%, 310px);
+    min-height: 0 !important;
+    height: 350px;
+    margin: 0 auto;
+    padding: 4px !important;
+  }
+
+  html body .stage > img.hero {
+    top: 6px;
+    width: min(92%, 255px);
+    max-height: 338px;
+  }
+
+  html body .stage .bodywrap {
+    align-items: flex-start !important;
+    padding-top: 6px;
+  }
+
+  html body .stage .bodywrap img.body {
+    width: min(92%, 255px);
+    max-height: 338px !important;
+  }
+}

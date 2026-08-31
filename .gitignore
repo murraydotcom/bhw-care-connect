@@ -2,5 +2,6 @@ node_modules/
 app/node_modules/
 app/dist/
 .netlify/
+.netlify-cli-profile/
 *.log
 .DS_Store

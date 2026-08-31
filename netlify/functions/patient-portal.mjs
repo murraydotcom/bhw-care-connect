@@ -2,6 +2,7 @@ import {
   signHealthCorePatientToken,
   verifyCareConnectPatientSession,
 } from "./_shared/patient-session.mjs";
+import { asLambdaHandler } from "./_shared/lambda-adapter.mjs";
 
 const headers = {
   "Content-Type": "application/json; charset=utf-8",
@@ -12,10 +13,11 @@ const headers = {
 const json = (status, body) => new Response(JSON.stringify(body), { status, headers });
 
 function netlifyEnvironment() {
+  const value = (name) => globalThis.Netlify?.env?.get?.(name) || process.env[name];
   return {
-    SESSION_SECRET: Netlify.env.get("SESSION_SECRET"),
-    HEALTH_CORE_API_URL: Netlify.env.get("HEALTH_CORE_API_URL"),
-    CARE_CONNECT_PATIENT_TOKEN_SECRET: Netlify.env.get("CARE_CONNECT_PATIENT_TOKEN_SECRET"),
+    SESSION_SECRET: value("SESSION_SECRET"),
+    HEALTH_CORE_API_URL: value("HEALTH_CORE_API_URL"),
+    CARE_CONNECT_PATIENT_TOKEN_SECRET: value("CARE_CONNECT_PATIENT_TOKEN_SECRET"),
   };
 }
 
@@ -76,6 +78,8 @@ export function createPatientPortalHandler({
   };
 }
 
-export default createPatientPortalHandler();
+const patientPortalHandler = createPatientPortalHandler();
+export default patientPortalHandler;
+export const handler = asLambdaHandler(patientPortalHandler);
 
 export const config = { path: "/api/patient-portal/dashboard" };

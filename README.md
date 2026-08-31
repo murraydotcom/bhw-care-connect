@@ -16,7 +16,12 @@ served from this domain.
 
 ```
 app/                         Vite + React Care Connect hub (the site root, /)
-patient/                     Secure patient portal shell copied to /patient/
+patient/                     Secure portal, shared page registry, and body maps:
+  index.html                 Patient overview and passwordless sign-in
+  program/                   Reusable, enrollment-gated program page
+  system/                    Reusable, Blueprint-gated body-system page
+  page-registry.mjs          Stable IDs, aliases, relationships, and detailed content
+design-assets/               Source/reference art and archived versions (not deployed)
 pages/                       Patient destination pages copied into the build:
   bhw-patient-portal-mockup.html    Personal Health Blueprint
   bhw-charmed-patient-mockup.html   CharmEd program
@@ -45,6 +50,7 @@ readers/writers, and the HMAC session helpers `sign`/`verify`).
 | `hub-content.js`   | Reads the Care Connect Hub Content DB (announcements + resources). |
 | `submit-review.js` | Writes patient reviews (ratings + comments), with Google hand-off. |
 | `submit-triage.mjs` | "Just Ask" → signed Google-native patient-request intake. |
+| `patient-checkins.mjs` | Authenticated daily check-in history/save bridge to Health Core. |
 
 > The public **screeners** (`screener.html`) and **intake questionnaires**
 > (`bhw-questionnaire.html`) and their submit functions currently still live in
@@ -64,7 +70,7 @@ Core (required):
   matching a Stytch-verified direct contact plus DOB to the migrated Google
   patient registry. Do not reuse the intake or Health Core credential.
 - `CARE_CONNECT_CLIENT_ID` — optional; defaults to `care-connect`.
-- `HEALTH_CORE_API_URL` — HTTPS base URL for the independent, read-only Health Core service.
+- `HEALTH_CORE_API_URL` — HTTPS base URL for the independent, patient-safe Health Core service.
 - `CARE_CONNECT_PATIENT_TOKEN_SECRET` — separate server-only HMAC credential shared only with Health Core's patient portal endpoint. Do not reuse the intake or staff credential.
 - `VITE_SECURE_PATIENT_PORTAL_ENABLED` — set to `true` only after Health Core and the Care Connect bridge pass release verification. Until then, Care Connect keeps its current portal link.
 
@@ -79,6 +85,9 @@ Per-function:
   a canonical `BHW0000`-style patient identifier, then retrieves only the
   patient-safe projection. The dashboard response never includes that
   identifier, and the browser never receives the server-to-server credential.
+- `patient-checkins`: uses that same signed patient session to retrieve the
+  selected program's nutrition targets and 30-day trends or save a bounded
+  daily check-in. Patient identity in the browser payload is ignored.
 - `submit-triage`: `/api/patient-requests` sends through the Cloud API. It does
   not fall back to Notion after cutover, preventing duplicate split-system rows.
 - `hub-content`: `HUB_CONTENT_DB_ID` (falls back to the id in `_lib.js`).
@@ -118,3 +127,42 @@ canonical BHW patient identifier are excluded from the browser response.
 Health Core is read-only. Future patient check-ins and messages remain write
 workflows for the shared operations API. RCM consumes downstream specialist
 data and does not own Care Connect's portal pages.
+
+### Living Health Blueprint home
+
+The signed-in `/patient/` experience begins with an interactive, connected
+physiology map rather than the printable Blueprint. Patients can switch among
+only the body systems their clinician shared, open the approved detailed system
+page, review today's care path, and launch Check in, Add vital signs, or View my
+summary. Program pages remain distinct and appear below the connected system
+map. The legacy printable Blueprint remains a separate, explicit action.
+
+Local `?preview=1` testing uses synthetic data only. Daily-path selections,
+synthetic check-ins, and synthetic vital signs are stored under the device-only
+`bhw_patient_blueprint_preview_state_v2` browser key, and the interface labels
+that state as `Saved on this device only`. Outside local preview, these actions
+fail closed and display `Not saved` until the shared operations API provides an
+authenticated BHW Cloud write contract. Do not connect this home to the legacy
+Notion-backed `checkin-save` function.
+
+### Program and body-system page rules
+
+The secure overview does not infer pages from diagnoses, medications, or RCM
+data:
+
+- A program page appears only when a value in dashboard.patient.programs
+  resolves to one of the four registered program IDs: primary-care,
+  mind-mood, charmed-minds, or flow.
+- A body-system page appears only when an entry in dashboard.plan.systems
+  resolves to one of the seven registered system IDs: cardiovascular,
+  respiratory, digestive, neurological, endocrine, immune-lymphatic, or
+  musculoskeletal.
+- Legacy labels such as Heart & circulation, blood-vessels-circulation, and
+  energy-metabolism are mapped to stable IDs. Unknown labels fail closed and
+  never create a route.
+- Detail routes reload the same session-protected dashboard and repeat the
+  assignment check; knowing a URL is not enough to open an unassigned page.
+
+All patient-facing examples and local preview content use the synthetic
+BHW0000 fixture. The body maps are educational artwork and require BHW
+clinical approval before a production release.

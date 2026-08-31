@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-program-context="flow">
 <head>
 <script>/* Care Connect gate: require a signed-in patient session (or ?preview=1 to demo) */
 (function(){try{if(/[?&]preview=1/.test(location.search))return;var t=sessionStorage.getItem('bhw_pt_session'),ok=false;if(t){var p=JSON.parse(atob(t.split('.')[0].replace(/-/g,'+').replace(/_/g,'/')));ok=p&&p.exp&&Date.now()<p.exp;}if(!ok)location.replace('bhw-patient-portal-mockup.html?next=dashboard');}catch(e){}})();</script>
@@ -141,6 +141,8 @@ a.sys:hover{transform:translateY(-2px);box-shadow:0 16px 26px -16px rgba(30,55,5
 .srch svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.8;vertical-align:-1px}
 .appt .bot svg{width:13px;height:13px;stroke:currentColor;fill:none;stroke-width:1.7;vertical-align:-2px}
 </style>
+<link rel="stylesheet" href="assets/bhw-dashboard-brand.css?v=7">
+<script defer src="assets/bhw-program-brand.js?v=2"></script>
 </head>
 <body>
 <div class="app">
@@ -166,7 +168,7 @@ a.sys:hover{transform:translateY(-2px);box-shadow:0 16px 26px -16px rgba(30,55,5
     <div class="hd-r">
       <button class="btn-msg" onclick="openMsg()"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 6.5l8 6 8-6"/></svg> Message the office</button>
       <div class="srch"><svg viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-3.2-3.2"/></svg> Search</div>
-      <div class="me"><div class="av">JR</div><div><b>Jordan Rivera</b><span>Patient · #10428</span></div></div>
+      <div class="me"><div class="av">SP</div><div><b>Synthetic Patient</b><span>Patient · BHW0000</span></div></div>
     </div>
   </div>
 
@@ -176,7 +178,7 @@ a.sys:hover{transform:translateY(-2px);box-shadow:0 16px 26px -16px rgba(30,55,5
       <div class="card qci">
         <div class="qci-h"><span class="e">Today</span><b>Quick check-in</b></div>
         <div class="qci-b">
-          <div class="qrow"><span class="ql">Feeling</span><div class="qopts faces" data-q="Feeling"><button type="button" data-v="Rough">😣</button><button type="button" data-v="Low">🙁</button><button type="button" data-v="OK">😐</button><button type="button" data-v="Good">🙂</button><button type="button" data-v="Great">😄</button></div></div>
+          <div class="qrow"><span class="ql">Feeling</span><div class="qopts faces" data-q="Feeling"><button type="button" data-v="Rough"><span class="ui-icon" data-ui-icon="mood-rough" aria-hidden="true"></span></button><button type="button" data-v="Low"><span class="ui-icon" data-ui-icon="mood-low" aria-hidden="true"></span></button><button type="button" data-v="OK"><span class="ui-icon" data-ui-icon="mood-ok" aria-hidden="true"></span></button><button type="button" data-v="Good"><span class="ui-icon" data-ui-icon="mood-good" aria-hidden="true"></span></button><button type="button" data-v="Great"><span class="ui-icon" data-ui-icon="mood-great" aria-hidden="true"></span></button></div></div>
           <div class="qrow"><span class="ql">Sleep</span><div class="qopts" data-q="Sleep"><button type="button">Rough</button><button type="button">OK</button><button type="button">Good</button><button type="button">Great</button></div></div>
           <div class="qrow"><span class="ql">Connection</span><div class="qopts" data-q="People"><button type="button">None</button><button type="button">A little</button><button type="button">Real time</button></div></div>
           <div class="qrow"><span class="ql">Water</span><div class="qopts" data-q="Water"><button type="button">&lt;4</button><button type="button">4–6</button><button type="button">6–8</button><button type="button">8+</button></div></div>
@@ -187,10 +189,10 @@ a.sys:hover{transform:translateY(-2px);box-shadow:0 16px 26px -16px rgba(30,55,5
       </div>
 
       <div class="card pt">
-        <div class="ph">JR</div>
+        <div class="ph">SP</div>
         <div style="flex:1">
-          <div class="nm">Jordan Rivera</div>
-          <div class="sub">Female · 57 · #10428</div>
+          <div class="nm">Synthetic Patient</div>
+          <div class="sub">Synthetic · 57 · BHW0000</div>
           <div class="kvline">CareFirst BCBS · NP Amaris</div>
         </div>
         <button class="office"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 6.5l8 6 8-6"/></svg> Office</button>
@@ -337,7 +339,7 @@ textarea.msg-in{resize:vertical;min-height:84px}
     <h3 id="msgT">Message the office</h3>
     <p class="msg-sub">Your care team sees this at the front desk and will follow up. For anything urgent or an emergency, call 911 or the office directly.</p>
     <form id="msgForm" onsubmit="return sendMsg(event)">
-      <input class="msg-in" id="msgName" placeholder="Your name" autocomplete="name" value="Jordan Rivera">
+      <input class="msg-in" id="msgName" placeholder="Your name" autocomplete="name" value="Synthetic Patient">
       <input class="msg-in" id="msgPhone" placeholder="Best callback number" autocomplete="tel" inputmode="tel" value="940-637-5470">
       <textarea class="msg-in" id="msgBody" placeholder="How can we help?" required></textarea>
       <input type="text" id="msgHp" tabindex="-1" autocomplete="off" aria-hidden="true" style="position:absolute;left:-9999px">

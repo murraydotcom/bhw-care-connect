@@ -207,6 +207,9 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 .brow .cond{margin-left:auto;align-self:center;font-size:9px;font-weight:700;color:var(--ink-mute);background:var(--soft);border:1px dashed var(--line);border-radius:999px;padding:3px 9px;white-space:nowrap}
 .brow .cond.ok{color:var(--ok);border-style:solid;border-color:var(--ok-q);background:var(--ok-q)}
 </style>
+<link rel="stylesheet" href="assets/bhw-dashboard-brand.css?v=7">
+<script defer src="assets/bhw-transparent-anatomy.js?v=2"></script>
+<script defer src="assets/bhw-program-brand.js?v=2"></script>
 </head>
 <body>
 <div class="app">
@@ -232,7 +235,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
       <div class="progs"><span class="lab">Programs</span><button class="on">Primary Care</button><button class="on">Mind &amp; Mood</button><button>CharmEd</button><button class="on">Flow</button></div>
       <div class="hd-r">
         <div class="srch">⌕ Search</div>
-        <div class="me"><div class="av">JR</div><div><b>Jordan Rivera</b><span>Patient · #10428</span></div></div>
+        <div class="me"><div class="av">SP</div><div><b>Synthetic Patient</b><span>Patient · BHW0000</span></div></div>
       </div>
     </div>
 
@@ -249,7 +252,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
         <div class="ntdetail" id="ntdetail"></div>
         <div class="bodywrap" style="align-items:center">
           <!-- whole-body endocrine map; swap src for a licensed diagram when ready -->
-          <img class="body" src="hm-assets/endocrine-figure.svg" alt="Endocrine system" style="max-height:none;height:min(70vh,620px)">
+          <img class="body" src="patient/assets/system-endocrine-v1.png" alt="Detailed endocrine system body map on a brown-skinned adult" style="max-height:none;height:min(70vh,620px)">
         </div>
         <div class="zoom"><button>＋</button><button>－</button><button>⤢</button></div>
         <div class="insight">
@@ -269,7 +272,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 
         <div class="row2">
           <div class="card age">
-            <div class="ico">🌡️</div>
+            <div class="ico"><span class="ui-icon" data-ui-icon="temperature" aria-hidden="true"></span></div>
             <div class="b">
               <div><div class="lab">Cortisol (AM)</div><div class="n">21<small> µg/dL</small></div><div class="up" style="color:var(--alert)">▲ Elevated</div></div>
               <div><div class="lab">Energy</div><div class="n">64<small> /100</small></div><div class="up">▲ +5 this month</div></div>
@@ -288,7 +291,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 
                 <!-- recheck box -->
         <div class="card recheck2">
-          <div class="ic">🕑</div>
+          <div class="ic"><span class="ui-icon" data-ui-icon="clock" aria-hidden="true"></span></div>
           <div><b>Next recheck due</b><p>Thyroid + metabolic recheck by phenotype · reproductive labs timed to cycle</p></div>
           <div class="due"><div class="n">Wk 8</div><div class="l">Nov 2026</div></div>
         </div>
@@ -326,17 +329,17 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 
         <div class="card pad">
           <div class="card-h"><h3>Customized Care Strategy</h3>
-            <div class="tabsw"><button class="on">⚙ Action Plan <span class="badge">3</span></button><button>Supplements</button><button>Lifestyle</button></div>
+            <div class="tabsw"><button class="on"><span class="ui-icon" data-ui-icon="settings" aria-hidden="true"></span> Action Plan <span class="badge">3</span></button><button>Supplements</button><button>Lifestyle</button></div>
           </div>
           <div class="acts">
-            <div class="act"><div class="ico">🌙</div><h4>Protect morning cortisol</h4><p>Steady sleep and morning light help reset your stress rhythm.</p><div class="foot">Lifestyle · 9 tips</div></div>
-            <div class="act"><div class="ico">🧪</div><h4>Thyroid panel (TSH, T4)</h4><p>Recheck before your visit to fine-tune energy and mood.</p><div class="foot">Lab · due Sep 23</div></div>
-            <div class="act"><div class="ico">🥗</div><h4>Balanced-plate meals</h4><p>Protein + fiber first keeps blood sugar and insulin steady.</p><div class="foot">Nutrition · 6 tips</div></div>
+            <div class="act"><div class="ico"><span class="ui-icon" data-ui-icon="sleep" aria-hidden="true"></span></div><h4>Protect morning cortisol</h4><p>Steady sleep and morning light help reset your stress rhythm.</p><div class="foot">Lifestyle · 9 tips</div></div>
+            <div class="act"><div class="ico"><span class="ui-icon" data-ui-icon="lab" aria-hidden="true"></span></div><h4>Thyroid panel (TSH, T4)</h4><p>Recheck before your visit to fine-tune energy and mood.</p><div class="foot">Lab · due Sep 23</div></div>
+            <div class="act"><div class="ico"><span class="ui-icon" data-ui-icon="nutrition" aria-hidden="true"></span></div><h4>Balanced-plate meals</h4><p>Protein + fiber first keeps blood sugar and insulin steady.</p><div class="foot">Nutrition · 6 tips</div></div>
           </div>
         </div>
 
         <div class="card promo">
-          <div class="ico">💬</div>
+          <div class="ico"><span class="ui-icon" data-ui-icon="message" aria-hidden="true"></span></div>
           <div class="tx"><b>Talk with your Mind &amp; Mood clinician</b><p>Review your cortisol, thyroid, and next steps together</p></div>
           <button class="go">Message ›</button>
         </div>

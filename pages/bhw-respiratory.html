@@ -198,6 +198,9 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 .progs button.on{background:linear-gradient(135deg,var(--teal),var(--teal-deep));color:#fff;box-shadow:0 8px 15px -8px rgba(30,55,50,.4)}
 .progs .lab{align-self:center;font-size:9px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-mute);padding:0 8px 0 4px}
 </style>
+<link rel="stylesheet" href="assets/bhw-dashboard-brand.css?v=7">
+<script defer src="assets/bhw-transparent-anatomy.js?v=2"></script>
+<script defer src="assets/bhw-program-brand.js?v=2"></script>
 </head>
 <body>
 <div class="app">
@@ -226,7 +229,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
       <div class="hd-r">
         <div class="srch">⌕ Search your record</div>
         <div class="ic">↺</div>
-        <div class="me"><div class="av">JR</div><div><b>Jordan Rivera</b><span>Patient · #10428</span></div></div>
+        <div class="me"><div class="av">SP</div><div><b>Synthetic Patient</b><span>Patient · BHW0000</span></div></div>
       </div>
     </div>
 
@@ -242,7 +245,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
         <div class="organtag" style="top:35%;left:calc(50% + 58px)"><span class="ln"></span>Lungs · airflow</div>
         <div class="organtag" style="top:46%;left:calc(50% + 52px)"><span class="ln"></span>Diaphragm</div>
         <div class="bodywrap">
-          <img class="body" src="hm-assets/body-female.png" onerror="this.onerror=null;this.src='hm-assets/body-figure.svg'" alt="Whole-body view">
+          <img class="body" src="patient/assets/system-respiratory-v1.png" alt="Detailed respiratory system body map on a brown-skinned adult">
         </div>
         <div class="zoom"><button>＋</button><button>－</button><button>⤢</button></div>
         <div class="insight">
@@ -263,7 +266,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 
         <div class="row2">
           <div class="card age">
-            <div class="ico">🌬️</div>
+            <div class="ico"><span class="ui-icon" data-ui-icon="air" aria-hidden="true"></span></div>
             <div class="b">
               <div><div class="lab">Lung age</div><div class="n">62<small> yrs</small></div><div class="up" style="color:var(--alert)">▲ 5 yrs older</div></div>
               <div><div class="lab">SpO₂ resting</div><div class="n">97<small> %</small></div><div class="up" style="color:var(--ok)">— normal</div></div>
@@ -290,7 +293,7 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
 
         <!-- recheck box -->
         <div class="card recheck2">
-          <div class="ic">🕑</div>
+          <div class="ic"><span class="ui-icon" data-ui-icon="clock" aria-hidden="true"></span></div>
           <div><b>Next recheck due</b><p>Spirometry + FeNO recheck after controller step · eosinophils with CBC</p></div>
           <div class="due"><div class="n">Wk 6</div><div class="l">Oct 2026</div></div>
         </div>
@@ -367,15 +370,15 @@ h1,h2,h3,h4,.big,.age .n,.kac .sc,.ov-title b{font-family:'Nunito','OpenSans',sa
         <div class="card pad">
           <div class="card-h"><h3>Blueprint · action items</h3><span class="ph-badge">from your respiratory care plan</span></div>
           <div class="acts">
-            <div class="act"><div class="ico">🫁</div><h4>1 · Reduce airway inflammation</h4><p>Daily controller inhaler + address eosinophils — the foundation of fewer flares.</p><div class="foot">Foundation</div></div>
-            <div class="act"><div class="ico">🌿</div><h4>2 · Control triggers</h4><p>Allergen testing, home air quality, avoid smoke &amp; cold-air triggers.</p><div class="foot">Environment</div></div>
-            <div class="act"><div class="ico">🏃</div><h4>3 · Build breathing capacity</h4><p>Breathing technique + graded aerobic training to raise tolerance.</p><div class="foot">Capacity</div></div>
+            <div class="act"><div class="ico"><span class="ui-icon" data-ui-icon="lungs" aria-hidden="true"></span></div><h4>1 · Reduce airway inflammation</h4><p>Daily controller inhaler + address eosinophils — the foundation of fewer flares.</p><div class="foot">Foundation</div></div>
+            <div class="act"><div class="ico"><span class="ui-icon" data-ui-icon="nutrition" aria-hidden="true"></span></div><h4>2 · Control triggers</h4><p>Allergen testing, home air quality, avoid smoke &amp; cold-air triggers.</p><div class="foot">Environment</div></div>
+            <div class="act"><div class="ico"><span class="ui-icon" data-ui-icon="activity" aria-hidden="true"></span></div><h4>3 · Build breathing capacity</h4><p>Breathing technique + graded aerobic training to raise tolerance.</p><div class="foot">Capacity</div></div>
           </div>
           <div class="ctext" style="margin-top:12px"><b>Checkpoints:</b> Baseline → Week 4 → Week 8 → Week 12 · <b>spirometry re-test</b> + asthma action plan</div>
         </div>
 
         <div class="card promo">
-          <div class="ico">🩺</div>
+          <div class="ico"><span class="ui-icon" data-ui-icon="clinician" aria-hidden="true"></span></div>
           <div class="tx"><b>Talk with your respiratory clinician</b><p>Review your spirometry, inhaler plan, and triggers</p></div>
           <button class="go">Message ›</button>
         </div>

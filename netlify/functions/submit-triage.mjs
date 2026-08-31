@@ -6,6 +6,7 @@ import {
   intakeConfigured,
   safeSubmissionId,
 } from "./_shared/operations.mjs";
+import { asLambdaHandler } from "./_shared/lambda-adapter.mjs";
 
 export const config = {
   path: "/api/patient-requests",
@@ -91,7 +92,7 @@ export function cloudBody({ route, name, dob, summary, submissionId }) {
   };
 }
 
-export default async function submitTriage(request) {
+export async function submitTriage(request) {
   if (request.method !== "POST") return json(405, { error: "POST only" });
 
   const rawBody = await request.text();
@@ -135,3 +136,6 @@ export default async function submitTriage(request) {
     return json(502, { error: "Could not send your message — please try again or call the office." });
   }
 }
+
+export default submitTriage;
+export const handler = asLambdaHandler(submitTriage);

@@ -148,6 +148,13 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
 .save{position:sticky;bottom:14px;margin-top:6px}
 .save button{width:100%;background:linear-gradient(135deg,var(--accent),var(--accent-deep));border:0;border-radius:14px;padding:16px;font-family:inherit;font-weight:800;font-size:15px;color:#fff;cursor:pointer;box-shadow:0 16px 30px -14px rgba(74,138,135,.8)}
 .done{margin-top:11px;text-align:center;font-size:12.5px;font-weight:700;color:var(--ok)}.done[hidden]{display:none}
+/* Care Connect readability scale */
+.top h1{font-size:25px}.top .sub{font-size:13px}.top .back{font-size:13px}
+.card>h2{font-size:20px}.card>.hint{font-size:13px;line-height:1.6}
+.q .lbl,.chk .nm{font-size:15px}.q .lbl em,.chk .nm span{font-size:13px}
+.opts button,.obtn{font-size:14px}.off-bar input{font-size:14px}
+.scan .t i,.off-status,.off-cam__bar,.done{font-size:13px}
+.trend .tl,.trend .tv,.micro{font-size:12.5px}
 </style>
 </head>
 <body>
@@ -174,7 +181,7 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
     <div class="off-bar" style="margin-top:8px">
       <input id="offCode" type="text" inputmode="numeric" placeholder="…or type / scan a barcode">
       <button class="obtn" id="offCodeGo" type="button">Look up</button>
-      <button class="obtn go" id="offScan" type="button">📷 Scan</button>
+      <button class="obtn go" id="offScan" type="button">Scan barcode</button>
     </div>
     <div class="off-cam" id="offCam" hidden>
       <video id="offVideo" playsinline muted></video>
@@ -200,6 +207,7 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
       <div class="lbl">Nutrition plan — last 24 hours</div>
       <div class="opts" data-q="Nutrition"><button type="button">Off track</button><button type="button">Some of it</button><button type="button">Mostly</button><button type="button">On plan</button></div>
     </div>
+    <div class="hint" id="nutritionPlanSource">Loading your clinician-shared nutrition targets…</div>
 
     <div class="fuel" id="fuel" hidden>
       <div class="fuel-h">Today so far · <span id="tallyItems">0 items</span></div>
@@ -228,11 +236,11 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   <!-- HYDRATION -->
   <div class="card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>Hydration</h2>
-    <div class="hint">Tap a cup as you drink — a full glass before each meal helps. Aim for 12 a day.</div>
+    <div class="hint">Tap a cup as you drink. Your shared target is <span id="waterGoalHint">8 cups</span> today.</div>
     <div class="hydro">
       <div class="hydro__v"><div class="hydro__f" id="waterFill"></div></div>
       <div class="hydro__b">
-        <div class="hydro__val"><span id="waterCups">0</span> of 12 <span>cups · <span id="waterOz">0</span> oz</span></div>
+        <div class="hydro__val"><span id="waterCups">0</span> of <span id="waterGoalText">8</span> <span>cups · <span id="waterOz">0</span> oz</span></div>
         <div class="hydro__cups" id="waterCupsRow"></div>
         <div class="hydro__ctrl"><button type="button" onclick="setWater(WATER-1)">–</button><button type="button" onclick="setWater(WATER+1)">+</button></div>
       </div>
@@ -249,7 +257,7 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   <!-- HOW YOU'RE DOING -->
   <div class="card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></span>How you&rsquo;re doing</h2>
-    <div class="q"><div class="lbl">How are you feeling today?</div><div class="opts faces" data-q="Feeling"><button type="button" data-v="Rough">😣</button><button type="button" data-v="Low">🙁</button><button type="button" data-v="OK">😐</button><button type="button" data-v="Good">🙂</button><button type="button" data-v="Great">😄</button></div></div>
+    <div class="q"><div class="lbl">How are you feeling today?</div><div class="opts" data-q="Feeling"><button type="button">Rough</button><button type="button">Low</button><button type="button">OK</button><button type="button">Good</button><button type="button">Great</button></div></div>
     <div class="q"><div class="lbl">Motivation</div><div class="opts" data-q="Motivation"><button type="button">Empty</button><button type="button">Low</button><button type="button">Steady</button><button type="button">Strong</button></div></div>
     <div class="q"><div class="lbl">How was your sleep? <em>hours &amp; quality</em></div><div class="opts" data-q="Sleep"><button type="button">Rough</button><button type="button">OK</button><button type="button">Good</button><button type="button">Great</button></div></div>
     <div class="q"><div class="lbl">Moved your body?</div><div class="opts" data-q="Movement"><button type="button">Not yet</button><button type="button">10 min</button><button type="button">20 min</button><button type="button">30+ min</button><button type="button">Workout</button></div></div>
@@ -267,14 +275,14 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   <!-- MEDICATION / VITAMIN COMPLIANCE -->
   <div class="card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M10.5 20.5 4 14a5 5 0 0 1 7-7l6.5 6.5a5 5 0 0 1-7 7z"/><path d="M7.5 7.5 16 16"/></svg></span>Medications &amp; vitamins</h2>
-    <div class="hint">Check off what you&rsquo;ve taken — straight from your care plan.</div>
+    <div class="hint">Check off what you&rsquo;ve taken from the medication list shared in your Health Blueprint.</div>
     <div id="meds"></div>
   </div>
 
   <!-- VITALS -->
   <div class="card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 14h4l2 5 4-10 2 5h4"/></svg></span>Vital signs</h2>
-    <div class="hint">Enter any you have — or connect a device below and these fill in for you.</div>
+    <div class="hint">Enter any readings you have today. Device values are not imported unless a verified connection is enabled for your account.</div>
     <div class="vitals">
       <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><path d="M4 14h3l2 4 3-8 2 4h6"/></svg>Blood pressure</div><input id="v_bp" inputmode="text" placeholder="120/80"><span class="u">mmHg</span></div>
       <div class="vt"><div class="k"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg>Heart rate</div><input id="v_hr" inputmode="numeric" placeholder="—"><span class="u">bpm</span></div>
@@ -288,23 +296,19 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
 
   <!-- DEVICES -->
   <div class="card">
-    <h2><span class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="3"/><path d="M11 6h2"/></svg></span>Connect your devices</h2>
-    <div class="hint">Link a device once and your vitals, glucose, sleep and steps sync automatically.</div>
+    <h2><span class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="3"/><path d="M11 6h2"/></svg></span>Device connections</h2>
+    <div class="hint">No device connection is active in this check-in yet. Enter readings above; verified Apple Health, Google Fit, Fitbit, Oura, Dexcom, or Withings connections can be added later.</div>
     <div class="dev" id="devices"></div>
   </div>
 
   <div class="save">
     <button onclick="saveAll()">Save today&rsquo;s check-in</button>
-    <div class="done" id="done" hidden>Saved — thank you. Your care team sees this. ✓</div>
+    <div class="done" id="done" hidden>Not saved yet.</div>
   </div>
 
 </div>
 
 <script>
-// Reuse the office endpoint (same one the "Message the office" button uses) so
-// the check-in reaches the care team / triage queue.
-const OFFICE_API='https://bhwcrewos.netlify.app/.netlify/functions/portal-message';
-
 // Nutrient targets per program (daily). Starting defaults the care team can
 // tune per patient: general baseline for Primary Care, then program-specific
 // tilts — Flow leans higher protein / lower sodium / more potassium (vascular,
@@ -313,44 +317,32 @@ const OFFICE_API='https://bhwcrewos.netlify.app/.netlify/functions/portal-messag
 const PROGRAMS={
   primary:{name:'Primary Care', back:'bhw-primary-care-demo.html', accent:'#5fa9a6', deep:'#4a8a87',
     symptoms:['Fatigue','Headache','Dizziness','Chest tightness','Shortness of breath','Joint pain','Digestive upset','Low mood','Poor sleep','Other'],
-    meds:[['Rosuvastatin 10 mg','Nightly · cholesterol'],['Vitamin D3 + K2','Daily'],['Iron','Every other morning, with vitamin C']],
-    targets:{p:90,c:225,f:65,fiber:28,sugar:50,sodium:2300,vitd:20,vitc:90,iron:18,calcium:1000,potassium:3400,magnesium:400}},
+    targets:{p:90,c:225,f:65,fiber:28,sugar:50,sodium:2300,vitd:20,vitc:90,iron:18,calcium:1000,potassium:3400,magnesium:400,waterCups:8}},
   flow:{name:'Flow · Vascular', back:'bhw-flow-program.html', accent:'#5f93bd', deep:'#436f92',
     symptoms:['Leg cramps','Cold hands/feet','Swelling','Chest tightness','Shortness of breath','Palpitations','Dizziness','Fatigue','Headache','Other'],
-    meds:[['Icosapent ethyl 2 g','Twice daily · triglycerides'],['Rosuvastatin 10 mg','Nightly'],['Vitamin D3 + K2','Daily'],['Omega-3','Daily']],
-    targets:{p:110,c:180,f:60,fiber:35,sugar:36,sodium:1500,vitd:25,vitc:120,iron:18,calcium:1000,potassium:4000,magnesium:420}},
+    targets:{p:110,c:180,f:60,fiber:35,sugar:36,sodium:1500,vitd:25,vitc:120,iron:18,calcium:1000,potassium:4000,magnesium:420,waterCups:10}},
   mind:{name:'Mind & Mood', back:'bhw-mindmood-program.html', accent:'#e0965c', deep:'#b9713a',
     symptoms:['Low mood','Anxiety','Irritability','Poor sleep','Low motivation','Racing thoughts','Cravings','Fatigue','Appetite change','Other'],
-    meds:[['Methyl-B12','Morning'],['Vitamin D3','Daily'],['Magnesium glycinate','Evening'],['Omega-3','Daily']],
-    targets:{p:100,c:200,f:65,fiber:30,sugar:40,sodium:2000,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450}},
+    targets:{p:100,c:200,f:65,fiber:30,sugar:40,sodium:2000,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450,waterCups:8}},
   charmed:{name:'CharmEd', back:'bhw-charmed-program.html', accent:'#3aa79b', deep:'#2c7f76',
     symptoms:['Brain fog','Memory slips','Word-finding','Poor focus','Low mood','Poor sleep','Fatigue','Headache','Other'],
-    meds:[['Methyl-B12','Morning'],['Vitamin D3','Daily'],['Omega-3','Daily'],['Magnesium threonate','Evening']],
-    targets:{p:100,c:180,f:65,fiber:30,sugar:36,sodium:1800,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450}},
+    targets:{p:100,c:180,f:65,fiber:30,sugar:36,sodium:1800,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450,waterCups:8}},
 };
-const DEVICES=[
-  ['Dexcom','CGM · glucose','#1a9c4a','DX'],
-  ['Apple Health','iPhone · Watch','#222','AH'],
-  ['Google Fit','Android','#4285f4','GF'],
-  ['Fitbit','Activity · sleep','#00b0b9','FB'],
-  ['Oura','Ring · sleep · HRV','#4b4f8a','OU'],
-  ['Withings','BP · scale','#20c1c9','WI'],
-];
-
 const params=new URLSearchParams(location.search);
+const LOCAL_PREVIEW=params.get('preview')==='1'&&['localhost','127.0.0.1'].includes(location.hostname);
 const P=PROGRAMS[params.get('program')]||PROGRAMS.primary;
 document.documentElement.style.setProperty('--accent',P.accent);
 document.documentElement.style.setProperty('--accent-deep',P.deep);
-document.getElementById('sub').textContent=P.name+' · log as much or as little as you like — it goes to your care team.';
-const back=document.getElementById('back'); back.href=P.back;
+document.getElementById('sub').textContent=LOCAL_PREVIEW?P.name+' · synthetic BHW0000 preview · entries stay on this device.':P.name+' · log as much or as little as you like — saved entries go to your care team.';
+const back=document.getElementById('back');
+back.href=params.get('return')==='portal'?'/patient/'+(LOCAL_PREVIEW?'?preview=1':''):P.back;
 document.getElementById('symProg').textContent='· '+P.name;
 
 // symptoms (program-specific, multi-select)
 document.getElementById('symptoms').innerHTML=P.symptoms.map(s=>`<button type="button">${s}</button>`).join('');
-// meds checklist
-document.getElementById('meds').innerHTML=P.meds.map((m,i)=>`<div class="chk" data-med="${i}" onclick="this.classList.toggle('on')"><span class="box"><svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg></span><span class="nm">${m[0]}<span>${m[1]}</span></span></div>`).join('');
-// devices
-document.getElementById('devices').innerHTML=DEVICES.map((d,i)=>`<div class="dv" data-dev="${i}" onclick="this.classList.toggle('on');this.querySelector('.st').textContent=this.classList.contains('on')?'Connected ✓':'Connect'"><span class="lg" style="background:${d[2]}">${d[3]}</span><span class="nm">${d[0]}<span>${d[1]}</span></span><span class="st">Connect</span></div>`).join('');
+// Device integrations are deliberately not simulated. A verified connection
+// will replace this empty state when the corresponding server integration exists.
+document.getElementById('devices').innerHTML='<div class="off-status">Manual entry is available above. No device is connected.</div>';
 
 const STATE={}; let MEALS=0;
 // single / multi option pickers
@@ -387,9 +379,10 @@ async function estimatePlate(e){
   status.textContent='Looking at your plate…';
   let dataUrl; try{ dataUrl=await readDataURL(f); }catch(err){ status.textContent='Couldn’t read that photo — try again.'; return; }
   try{
-    const r=await fetch(VISION_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl})});
+    const r=await fetch(VISION_API,{method:'POST',headers:{Authorization:'Bearer '+SESSION_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl})});
     const d=await r.json().catch(()=>({}));
-    if(r.status===503){ status.textContent='Photo estimates aren’t switched on yet — your photo was sent to your care team instead. (Search or scan a barcode above for exact numbers.)'; markCareTeam(box); return; }
+    if(r.status===401){ status.textContent='Please sign in again to use a food photo. The photo was not sent.'; return; }
+    if(r.status===503){ status.textContent=(d&&d.error)||'Photo estimates aren’t switched on yet. The photo was not sent; search or scan a barcode instead.'; return; }
     if(!r.ok){ status.textContent=(d&&d.error)||'Couldn’t estimate this photo — try search or a barcode above.'; return; }
     if(!d.items||!d.items.length){ status.textContent=(d&&d.note)||'Couldn’t spot foods in that photo — try search or a barcode above.'; return; }
     status.textContent=d.note||'Estimated — check the numbers, adjust if needed, then Add.';
@@ -407,6 +400,7 @@ const MICROS=['fiber','sugar','sodium','vitd','vitc','iron','calcium','potassium
 const KEYS=[...MACROS,...MICROS];
 const NUTRI={}; KEYS.forEach(k=>NUTRI[k]=0);
 let TARGET=Object.assign({},P.targets);  // program defaults; per-patient overrides merge in from the care plan
+let WATER_GOAL=Number(P.targets.waterCups)||8;
 const R=x=>Math.round(x||0);
 const cap=s=>s.charAt(0).toUpperCase()+s.slice(1);
 // show each program's goal numbers next to the vessels + bars
@@ -414,18 +408,45 @@ function applyTargets(){
   const set=(id,v)=>{const e=document.getElementById(id); if(e) e.textContent=v;};
   MACROS.forEach(k=>set('g'+k.toUpperCase(),TARGET[k]));
   MICROS.forEach(k=>set('g'+cap(k),TARGET[k]));
+  WATER_GOAL=Math.max(1,Math.min(16,Number(TARGET.waterCups)||WATER_GOAL));
+  set('waterGoalText',WATER_GOAL);
+  set('waterGoalHint',WATER_GOAL+' cup'+(WATER_GOAL===1?'':'s'));
 }
 applyTargets();
 
 /* ===== Storage: per-patient targets + trend (stored history) ===== */
-const HIST_API='/.netlify/functions/checkin-history';
-const SAVE_API='/.netlify/functions/checkin-save';
+const HIST_API='/api/patient-portal/check-ins';
+const SAVE_API='/api/patient-portal/check-ins';
+const LOCAL_CHECKIN_KEY='bhw_patient_checkins_preview_v1';
 // Prefer the signed-in patient (matched to the Master List by email/phone at login);
-// fall back to query params, then the demo identity.
+// preview uses only synthetic BHW0000 data; production identity comes from the signed session.
 const SESSION_PT=(function(){try{var f=JSON.parse(sessionStorage.getItem('bhw_pt_family')||'null');return (f&&f.patient)||null;}catch(e){return null;}})();
-const PATIENT={ name: params.get('name')||(SESSION_PT&&SESSION_PT.name)||'Jordan Rivera', phone: params.get('phone')||(SESSION_PT&&SESSION_PT.phone)||'940-637-5470', id: params.get('pid')||(SESSION_PT&&SESSION_PT.id)||'' };
+const SESSION_TOKEN=sessionStorage.getItem('bhw_pt_session')||'';
+const PATIENT={name:(SESSION_PT&&SESSION_PT.name)||(LOCAL_PREVIEW?'Synthetic Patient':'Patient'),phone:(SESSION_PT&&SESSION_PT.phone)||'',id:(SESSION_PT&&SESSION_PT.id)||(LOCAL_PREVIEW?'BHW0000':'')};
 const PROGKEY=params.get('program')||'primary';
 const FEEL={Rough:1,Low:2,OK:3,Good:4,Great:5}, SLEEPS={Rough:1,OK:2,Good:3,Great:4};
+function renderMedicationChecklist(medications){
+  const box=document.getElementById('meds'); box.innerHTML='';
+  const active=(Array.isArray(medications)?medications:[]).filter(m=>m&&m.name&&m.clinicalStatus==='active');
+  if(!active.length){ box.innerHTML='<div class="off-status">No active medication list is shared in this view. Use the medication profile for requests or corrections.</div>'; return; }
+  active.forEach((m,i)=>{
+    const row=document.createElement('div'); row.className='chk'; row.dataset.med=String(i);
+    row.addEventListener('click',()=>row.classList.toggle('on'));
+    const mark=document.createElement('span'); mark.className='box'; mark.innerHTML='<svg viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>';
+    const label=document.createElement('span'); label.className='nm'; label.append(document.createTextNode(m.name));
+    const detail=document.createElement('span'); detail.textContent=m.instructions||'Active medication'; label.append(detail);
+    row.append(mark,label); box.appendChild(row);
+  });
+}
+(async function loadMedications(){
+  if(LOCAL_PREVIEW){ renderMedicationChecklist([{name:'Synthetic medication',clinicalStatus:'active',instructions:'Synthetic directions'}]); return; }
+  if(!SESSION_TOKEN){ renderMedicationChecklist([]); return; }
+  try{
+    const r=await fetch('/api/patient-portal/dashboard',{headers:{Authorization:'Bearer '+SESSION_TOKEN,Accept:'application/json'}});
+    const d=await r.json().catch(()=>({}));
+    renderMedicationChecklist(d?.dashboard?.medications||[]);
+  }catch(e){ renderMedicationChecklist([]); }
+})();
 function spark(vals,color){
   const pts=[]; vals.forEach((v,i)=>{ if(v!=null&&!isNaN(v)) pts.push([i,+v]); });
   if(pts.length<2) return '<svg viewBox="0 0 100 34" preserveAspectRatio="none"></svg>';
@@ -454,12 +475,23 @@ function renderTrend(series){
   if(box.children.length){ document.getElementById('trendCard').hidden=false; document.getElementById('trendDays').textContent='· last '+series.length+' check-ins'; }
 }
 (async function loadHistory(){
+  if(LOCAL_PREVIEW){
+    document.getElementById('nutritionPlanSource').textContent='Synthetic program targets for BHW0000 preview.';
+    try{const local=JSON.parse(localStorage.getItem(LOCAL_CHECKIN_KEY)||'[]');if(local.length)renderTrend(local.slice(-30));}catch(e){}
+    return;
+  }
   try{
-    const r=await fetch(HIST_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({patient:PATIENT,program:PROGKEY,days:30})});
+    const r=await fetch(HIST_API+'?program='+encodeURIComponent(PROGKEY)+'&days=30',{headers:{Authorization:'Bearer '+SESSION_TOKEN,Accept:'application/json'}});
     const d=await r.json().catch(()=>({}));
-    if(d&&d.override&&Object.keys(d.override).length){ TARGET=Object.assign({},P.targets,d.override); applyTargets(); renderFuel(); }
+    const targets=d.targets||d.override;
+    if(targets&&Object.keys(targets).length){
+      TARGET=Object.assign({},P.targets,targets); applyTargets(); renderWaterCups(); renderFuel();
+      document.getElementById('nutritionPlanSource').textContent='Clinician-shared nutrition targets from your Health Blueprint.';
+    }else{
+      document.getElementById('nutritionPlanSource').textContent='No individualized nutrition targets have been shared yet. You can still track food and nutrients today.';
+    }
     if(d&&Array.isArray(d.series)&&d.series.length) renderTrend(d.series);
-  }catch(e){/* offline / not configured — page still works */}
+  }catch(e){ document.getElementById('nutritionPlanSource').textContent='Your nutrition targets could not be loaded. Food tracking is still available, but these starting values are not an individualized plan.'; }
 })();
 function plateAdd(name,n){
   n=n||{}; FOODS.push(name);
@@ -477,7 +509,6 @@ function renderFuel(){
 }
 
 /* ===== Hydration tracker ===== */
-const WATER_GOAL=12;
 let WATER=0;
 function setWater(n){
   WATER=Math.max(0,Math.min(16,n));
@@ -486,10 +517,13 @@ function setWater(n){
   document.getElementById('waterFill').style.height=Math.min(100,Math.round(WATER/WATER_GOAL*100))+'%';
   [...document.querySelectorAll('#waterCupsRow .cup')].forEach((c,i)=>c.classList.toggle('on',i<WATER));
 }
-(function(){
+function renderWaterCups(){
   const row=document.getElementById('waterCupsRow'); if(!row) return;
+  row.innerHTML='';
   for(let i=0;i<WATER_GOAL;i++){ const c=document.createElement('button'); c.type='button'; c.className='cup'; c.onclick=()=>setWater(i+1===WATER?i:i+1); row.appendChild(c); }
-})();
+  setWater(WATER);
+}
+renderWaterCups();
 
 /* ===== Open Food Facts — real food search + barcode lookup (free, no key) ===== */
 (function(){
@@ -580,20 +614,30 @@ async function saveAll(){
   if(MEALS) parts.push(MEALS+' meal photo'+(MEALS>1?'s':'')+' logged');
   const summary=`${P.name} check-in — `+(parts.length?parts.join(' · '):'opened, nothing logged');
   done.hidden=false; done.textContent='Saving…';
-  // Structured record → checkin-save (for trending). Inert until CHECKIN_DB_ID is set.
+  // Structured record → authenticated BHW Cloud check-in contract.
   const v=id=>{const e=document.getElementById(id); return e?e.value.trim():'';};
   const payload={
-    program:PROGKEY, patient:PATIENT, date:new Date().toISOString().slice(0,10), summary,
+    schemaVersion:'bhw.patient-checkin.v1',program:PROGKEY,date:new Date().toISOString().slice(0,10),summary,
     well:{feeling:STATE.Feeling,motivation:STATE.Motivation,sleep:STATE.Sleep,movement:STATE.Movement,outside:STATE.Outside,people:STATE.People,nutrition:STATE.Nutrition},
-    symptoms:STATE.Symptoms||[], meds, water:WATER,
-    nutrients:NUTRI,
+    symptoms:STATE.Symptoms||[],medicationsTaken:meds,waterCups:WATER,
+    foods:FOODS,mealPhotoCount:MEALS,nutrition:NUTRI,
     vitals:{bp:v('v_bp'),hr:v('v_hr'),wt:v('v_wt'),glu:v('v_glu'),temp:v('v_temp'),o2:v('v_o2'),steps:v('v_steps')},
   };
-  fetch(SAVE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)}).catch(()=>{});
+  if(LOCAL_PREVIEW){
+    try{
+      const local=JSON.parse(localStorage.getItem(LOCAL_CHECKIN_KEY)||'[]');
+      local.push(Object.assign({date:payload.date,feeling:payload.well.feeling,sleep:payload.well.sleep,water:payload.waterCups},payload.nutrition));
+      localStorage.setItem(LOCAL_CHECKIN_KEY,JSON.stringify(local.slice(-90)));
+      done.textContent='Saved on this device only at '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'. BHW Cloud was not changed.';
+    }catch(err){done.textContent='Not saved. This browser could not store the preview check-in.';}
+    return;
+  }
   try{
-    await fetch(OFFICE_API,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:PATIENT.name,phone:PATIENT.phone,message:summary})});
-    done.textContent='Saved — thank you. Your care team sees this. ✓';
-  }catch(err){ done.textContent='Saved on your device — will sync when you’re back online.'; }
+    const response=await fetch(SAVE_API,{method:'POST',headers:{Authorization:'Bearer '+SESSION_TOKEN,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(payload)});
+    const result=await response.json().catch(()=>({}));
+    if(!response.ok||result.ok!==true)throw new Error(result.error||'The check-in could not be saved.');
+    done.textContent='Saved to BHW Cloud at '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'.';
+  }catch(err){done.textContent='Not saved. '+(err.message||'Please try again.');}
 }
 </script>
 </body>
