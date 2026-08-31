@@ -1,7 +1,7 @@
 import crypto from "node:crypto";
 
 export function env(name) {
-  return Netlify.env.get(name) || "";
+  return globalThis.Netlify?.env?.get?.(name) || process.env[name] || "";
 }
 
 export function apiBase() {
