@@ -231,7 +231,16 @@ export function previewDashboard() {
       },
       { name: "Synthetic supplement", clinicalStatus: "on-hold", instructions: "Pause until your care team reviews your next result." },
     ],
-    requests: [{ type: "referral", status: "clinical-review", message: "Your synthetic referral request is being reviewed by your care team." }],
+    requests: [{
+      type: "referral",
+      status: "referral-sent",
+      message: "Your synthetic cardiology referral was sent. This does not mean an appointment is scheduled.",
+      destinationName: "Synthetic Cardiology Team",
+      specialty: "Cardiology",
+      organization: "BHW synthetic network",
+      phone: "(410) 555-0100",
+      statusChangedAt: "2026-08-20T14:00:00.000Z",
+    }],
   };
 }
 

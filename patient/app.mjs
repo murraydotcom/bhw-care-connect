@@ -118,7 +118,41 @@ function renderClinicalList(targetId, value, emptyMessage, type) {
   });
 }
 
-function renderPatientProfile(patient = {}) {
+const REFERRAL_TERMINAL_STATUSES = new Set(["completed", "referral-completed", "closed", "closed-without-scheduling", "cancelled"]);
+
+function activeReferrals(requests = []) {
+  return (Array.isArray(requests) ? requests : []).filter((request) => {
+    const type = String(request?.type || "").toLowerCase().replace(/[_ ]+/g, "-");
+    const status = String(request?.status || "").toLowerCase().replace(/[_ ]+/g, "-");
+    return type === "referral" && !REFERRAL_TERMINAL_STATUSES.has(status);
+  });
+}
+
+function renderActiveReferrals(requests = []) {
+  const target = $("patient-referrals");
+  target.replaceChildren();
+  const referrals = activeReferrals(requests);
+  if (!referrals.length) {
+    target.append(node("p", "profile-empty", "No active patient-visible referral is currently shared here. This does not mean a referral is absent from your clinical record."));
+    return;
+  }
+  referrals.forEach((referral) => {
+    const card = node("article", "clinical-entry clinical-entry-referral");
+    const head = node("div", "clinical-entry-head");
+    head.append(
+      node("strong", "", referral.destinationName || referral.specialty || referral.organization || "Referral in progress"),
+      node("span", "chip", formatStatus(referral.status)),
+    );
+    card.append(head);
+    const details = [referral.specialty, referral.organization, referral.phone].filter(Boolean);
+    if (details.length) card.append(node("p", "", details.join(" · ")));
+    if (referral.message) card.append(node("p", "referral-message", referral.message));
+    if (referral.statusChangedAt) card.append(node("small", "", `Updated ${readableDate(referral.statusChangedAt)}`));
+    target.append(card);
+  });
+}
+
+function renderPatientProfile(patient = {}, requests = []) {
   const verification = patient.verification || {};
   const fieldStatus = verification.fields || {};
   renderProfileVerification(verification);
@@ -126,6 +160,7 @@ function renderPatientProfile(patient = {}) {
   renderClinicalList("patient-allergies", patient.allergies, profileEmptyCopy("allergies", fieldStatus.allergies), "allergy");
   renderClinicalList("patient-intolerances", patient.intolerances, profileEmptyCopy("intolerances", fieldStatus.intolerances), "intolerance");
   renderClinicalList("patient-specialists", patient.specialists, profileEmptyCopy("specialists", fieldStatus.specialists), "specialist");
+  renderActiveReferrals(requests);
 }
 
 const PROFILE_STATUS_LABELS = {
@@ -251,7 +286,7 @@ function applyPendingProfileRequest(request, savedAt) {
     submittedAt: savedAt,
   };
   for (const field of request.fields || []) patient.verification.fields[field] = "changes-pending";
-  renderPatientProfile(patient);
+  renderPatientProfile(patient, currentDashboard.requests);
 }
 
 async function submitProfileChanges(event) {
@@ -487,8 +522,9 @@ function renderMedications(medications) {
 function renderRequests(requests) {
   const target = $("requests");
   target.replaceChildren();
-  if (!requests?.length) return empty(target, "No other patient-visible requests are open.");
-  requests.forEach((request) => {
+  const otherRequests = (Array.isArray(requests) ? requests : []).filter((request) => !activeReferrals([request]).length);
+  if (!otherRequests.length) return empty(target, "No other patient-visible requests are open.");
+  otherRequests.forEach((request) => {
     const item = node("article", "item");
     const head = node("div", "item-head");
     head.append(node("h3", "", formatStatus(request.type)), node("span", "chip", formatStatus(request.status)));
@@ -815,7 +851,7 @@ function renderDashboard(dashboard) {
   $("updated").textContent = Number.isNaN(generated.getTime()) ? "" : `Blueprint updated ${generated.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`;
   $("printable-blueprint-link").href = patientHref("/bhw-patient-portal-mockup.html");
   $("summary-printable-link").href = patientHref("/bhw-patient-portal-mockup.html");
-  renderPatientProfile(dashboard.patient);
+  renderPatientProfile(dashboard.patient, dashboard.requests);
   renderPrograms(dashboard);
   renderSystems(dashboard);
   renderPlan(dashboard.plan);

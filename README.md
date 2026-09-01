@@ -120,11 +120,13 @@ so the UI remains testable without sending patient data.
 
 ## Secure patient portal release boundary
 
-The `/patient/` shell separates clinical medication state (`active`, `on-hold`,
-`stopped`, and related states) from patient request workflow state (`received`,
-`clinical-review`, `needs-information`, `waiting-on-payer`,
-`sent-to-pharmacy`, `ready`, `completed`). Only tasks explicitly marked
-`patientVisible: true` with a patient-safe message can appear. Internal task
+The `/patient/` shell combines verified specialists with active patient-visible
+referrals in the coordinated-care profile card, while keeping completed or
+closed referral updates in care-team history. It separates clinical medication
+state (`active`, `on-hold`, `stopped`, and related states) from patient request
+workflow state. Only requests with an explicit patient-safe message or linked
+patient-visible communication can appear. Referral milestones remain distinct:
+sent is not ready to schedule, and ready to schedule is not scheduled. Internal task
 titles, staff identities, diagnoses, observations, encounters, DOB, and the
 canonical BHW patient identifier are excluded from the browser response.
 

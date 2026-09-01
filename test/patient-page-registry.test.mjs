@@ -63,7 +63,7 @@ test("the main portal shares patient profile details and routes to the full life
   const controller = readFileSync(new URL("../patient/app.mjs", import.meta.url), "utf8");
   const preview = readFileSync(new URL("../patient/portal-data.mjs", import.meta.url), "utf8");
   const checkin = readFileSync(new URL("../pages/bhw-checkin.html", import.meta.url), "utf8");
-  for (const id of ["patient-demographics", "patient-allergies", "patient-intolerances", "patient-specialists"]) {
+  for (const id of ["patient-demographics", "patient-allergies", "patient-intolerances", "patient-specialists", "patient-referrals"]) {
     assert.match(source, new RegExp(`id="${id}"`));
   }
   for (const id of ["profile-overall-status", "demographics-verification", "allergies-verification", "intolerances-verification", "specialists-verification", "profile-dialog", "profile-form"]) {
@@ -75,10 +75,14 @@ test("the main portal shares patient profile details and routes to the full life
   assert.match(controller, /submitProfileChanges/);
   assert.match(controller, /Saved to BHW Cloud/);
   assert.match(controller, /changes-pending/);
+  assert.match(controller, /renderActiveReferrals/);
+  assert.match(controller, /REFERRAL_TERMINAL_STATUSES/);
   assert.match(preview, /bhwPatientId: "BHW0000"/);
   assert.match(preview, /allergies:/);
   assert.match(preview, /intolerances:/);
   assert.match(preview, /specialists:/);
+  assert.match(preview, /status: "referral-sent"/);
+  assert.match(preview, /does not mean an appointment is scheduled/);
   assert.match(preview, /verification:/);
   for (const capability of ["Open Food Facts", "BarcodeDetector", "waterCups", "Movement", "Sleep", "nutrition plan"]) {
     assert.match(checkin, new RegExp(capability, "i"));

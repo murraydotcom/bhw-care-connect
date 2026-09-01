@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#f8f6f1">
   <title>Your BHW Care Space</title>
   <link rel="stylesheet" href="./fonts/bhw-playfair-display.css?v=care-connect-1">
-  <link rel="stylesheet" href="./styles.css?v=profile-verification-1">
+  <link rel="stylesheet" href="./styles.css?v=referrals-profile-1">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to your care space</a>
@@ -100,9 +100,9 @@
           </article>
           <article class="patient-profile-card">
             <p class="profile-card-label">Coordinated care</p>
-            <h3>Specialists</h3>
-            <p id="specialists-verification" class="profile-section-status"></p>
-            <div id="patient-specialists" class="clinical-list specialist-list"></div>
+            <h3>Specialists &amp; active referrals</h3>
+            <div class="clinical-list-group"><div class="clinical-list-title"><h4>Specialists</h4><span id="specialists-verification" class="profile-section-status"></span></div><div id="patient-specialists" class="clinical-list specialist-list"></div></div>
+            <div class="clinical-list-group"><div class="clinical-list-title"><h4>Active referrals</h4></div><div id="patient-referrals" class="clinical-list referral-list"></div></div>
           </article>
         </div>
       </section>
@@ -238,6 +238,6 @@
   </main>
   <footer class="site-footer">BHW Medical Group · 2131 Maryland Ave, Baltimore, MD 21218 · 443.762.5343</footer>
   <script defer src="../assets/bhw-transparent-anatomy.js?v=4"></script>
-  <script type="module" src="./app.mjs?v=profile-verification-1"></script>
+  <script type="module" src="./app.mjs?v=referrals-profile-1"></script>
 </body>
 </html>

@@ -708,6 +708,8 @@ body.portal-open .shell {
 .clinical-entry strong { color: var(--ink-strong); font-size: 13px; line-height: 1.35; }
 .clinical-entry p { margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .clinical-entry small { display: block; margin-top: 5px; color: var(--blue-deep); font-size: 10px; }
+.clinical-entry-referral { border-left: 3px solid var(--blue); background: linear-gradient(135deg, white, rgba(131, 178, 194, .09)); }
+.clinical-entry-referral .referral-message { color: var(--ink); }
 .profile-empty { color: var(--muted); font-size: 12px; font-style: italic; line-height: 1.55; }
 .profile-dialog { width: min(920px, calc(100vw - 32px)); }
 .profile-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
