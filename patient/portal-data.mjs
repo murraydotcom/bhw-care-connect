@@ -37,6 +37,20 @@ export function previewDashboard() {
         { name: "Synthetic Cardiology Team", specialty: "Cardiology", organization: "BHW synthetic network", status: "Active" },
         { name: "Synthetic Sleep Team", specialty: "Sleep medicine", organization: "BHW synthetic network", status: "Consulting" },
       ],
+      verification: {
+        schemaVersion: "bhw.patient-profile-verification.v1",
+        overallStatus: "verified",
+        clinicianReviewRequired: false,
+        lastVerifiedAt: "2026-08-20T12:00:00.000Z",
+        fields: {
+          sexAtBirth: "verified",
+          pronouns: "verified",
+          preferredLanguage: "verified",
+          allergies: "verified",
+          intolerances: "verified",
+          specialists: "verified",
+        },
+      },
     },
     plan: {
       status: "ready-to-share",

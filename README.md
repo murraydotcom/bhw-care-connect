@@ -51,6 +51,7 @@ readers/writers, and the HMAC session helpers `sign`/`verify`).
 | `submit-review.js` | Writes patient reviews (ratings + comments), with Google hand-off. |
 | `submit-triage.mjs` | "Just Ask" → signed Google-native patient-request intake. |
 | `patient-checkins.mjs` | Authenticated daily check-in history/save bridge to Health Core. |
+| `patient-profile.mjs` | Authenticated profile correction bridge; saves proposed values in Health Core and sends only a review reference to CrewOS. |
 
 > The public **screeners** (`screener.html`) and **intake questionnaires**
 > (`bhw-questionnaire.html`) and their submit functions currently still live in
@@ -88,6 +89,9 @@ Per-function:
 - `patient-checkins`: uses that same signed patient session to retrieve the
   selected program's nutrition targets and 30-day trends or save a bounded
   daily check-in. Patient identity in the browser payload is ignored.
+- `patient-profile`: submits only the six approved Registry profile fields,
+  binds identity from the signed session, requires an idempotency key, and
+  creates a metadata-only clinical review task after Health Core confirms save.
 - `submit-triage`: `/api/patient-requests` sends through the Cloud API. It does
   not fall back to Notion after cutover, preventing duplicate split-system rows.
 - `hub-content`: `HUB_CONTENT_DB_ID` (falls back to the id in `_lib.js`).
@@ -124,9 +128,11 @@ The `/patient/` shell separates clinical medication state (`active`, `on-hold`,
 titles, staff identities, diagnoses, observations, encounters, DOB, and the
 canonical BHW patient identifier are excluded from the browser response.
 
-Health Core is read-only. Future patient check-ins and messages remain write
-workflows for the shared operations API. RCM consumes downstream specialist
-data and does not own Care Connect's portal pages.
+Health Core owns bounded patient check-ins and pending profile correction
+requests. Profile values never change directly from the browser: an authorized
+BHW clinician must review them first. CrewOS receives a task reference and
+field names only; it does not become a second clinical-data store. RCM remains
+a downstream specialist consumer and does not own Care Connect's portal pages.
 
 ### Living Health Blueprint home
 

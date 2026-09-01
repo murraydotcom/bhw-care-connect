@@ -66,13 +66,20 @@ test("the main portal shares patient profile details and routes to the full life
   for (const id of ["patient-demographics", "patient-allergies", "patient-intolerances", "patient-specialists"]) {
     assert.match(source, new RegExp(`id="${id}"`));
   }
+  for (const id of ["profile-overall-status", "demographics-verification", "allergies-verification", "intolerances-verification", "specialists-verification", "profile-dialog", "profile-form"]) {
+    assert.match(source, new RegExp(`id="${id}"`));
+  }
   assert.match(source, /Nutrition plan · food and barcode scan · water · movement · sleep/);
   assert.match(controller, /CHECKIN_PROGRAM_IDS/);
   assert.match(controller, /renderPatientProfile/);
+  assert.match(controller, /submitProfileChanges/);
+  assert.match(controller, /Saved to BHW Cloud/);
+  assert.match(controller, /changes-pending/);
   assert.match(preview, /bhwPatientId: "BHW0000"/);
   assert.match(preview, /allergies:/);
   assert.match(preview, /intolerances:/);
   assert.match(preview, /specialists:/);
+  assert.match(preview, /verification:/);
   for (const capability of ["Open Food Facts", "BarcodeDetector", "waterCups", "Movement", "Sleep", "nutrition plan"]) {
     assert.match(checkin, new RegExp(capability, "i"));
   }

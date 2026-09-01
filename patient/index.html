@@ -7,7 +7,7 @@
   <meta name="theme-color" content="#f8f6f1">
   <title>Your BHW Care Space</title>
   <link rel="stylesheet" href="./fonts/bhw-playfair-display.css?v=care-connect-1">
-  <link rel="stylesheet" href="./styles.css?v=profile-checkin-1">
+  <link rel="stylesheet" href="./styles.css?v=profile-verification-1">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to your care space</a>
@@ -73,7 +73,11 @@
           <div>
             <p class="eyebrow">Your patient profile</p>
             <h2 id="health-profile-title">The health information coordinating your care</h2>
-            <p>This is the information currently shared from your BHW record. Contact your care team if something is missing or needs correction.</p>
+            <p>This is the information currently shared from your BHW record. “Not reviewed” is different from “none reported.” Corrections are reviewed before they change the clinical record.</p>
+            <div class="profile-review-actions">
+              <span id="profile-overall-status" class="verification-badge" data-status="not-reviewed">Not yet reviewed</span>
+              <button class="profile-correction-button" type="button" data-open-dialog="profile-dialog">Review or request a correction</button>
+            </div>
           </div>
           <a class="checkin-launch" data-checkin-link href="/bhw-checkin.html?program=primary&amp;return=portal">
             <span>Daily health check-in</span>
@@ -85,17 +89,19 @@
           <article class="patient-profile-card demographics-card">
             <p class="profile-card-label">Identity &amp; contact</p>
             <h3>Demographics</h3>
+            <p id="demographics-verification" class="profile-section-status"></p>
             <dl id="patient-demographics" class="profile-facts"></dl>
           </article>
           <article class="patient-profile-card">
             <p class="profile-card-label">Medication and nutrition safety</p>
             <h3>Allergies &amp; intolerances</h3>
-            <div class="clinical-list-group"><h4>Allergies</h4><div id="patient-allergies" class="clinical-list"></div></div>
-            <div class="clinical-list-group"><h4>Intolerances</h4><div id="patient-intolerances" class="clinical-list"></div></div>
+            <div class="clinical-list-group"><div class="clinical-list-title"><h4>Allergies</h4><span id="allergies-verification" class="profile-section-status"></span></div><div id="patient-allergies" class="clinical-list"></div></div>
+            <div class="clinical-list-group"><div class="clinical-list-title"><h4>Intolerances</h4><span id="intolerances-verification" class="profile-section-status"></span></div><div id="patient-intolerances" class="clinical-list"></div></div>
           </article>
           <article class="patient-profile-card">
             <p class="profile-card-label">Coordinated care</p>
             <h3>Specialists</h3>
+            <p id="specialists-verification" class="profile-section-status"></p>
             <div id="patient-specialists" class="clinical-list specialist-list"></div>
           </article>
         </div>
@@ -192,6 +198,37 @@
         </form>
       </dialog>
 
+      <dialog id="profile-dialog" class="portal-dialog profile-dialog" aria-labelledby="profile-dialog-title">
+        <form id="profile-form">
+          <div class="dialog-head"><div><p class="eyebrow">Patient profile review</p><h2 id="profile-dialog-title">Tell us what needs review</h2></div><button class="dialog-close" type="button" data-close-dialog aria-label="Close patient-profile review">Close</button></div>
+          <p class="dialog-intro">Submit only information that should be added or corrected. Your entry will be saved as a pending request; a BHW clinician must review it before clinical fields change.</p>
+          <div class="profile-form-grid">
+            <div class="field"><label for="profile-sex-at-birth">Sex assigned at birth</label><input id="profile-sex-at-birth" name="sexAtBirth" type="text" maxlength="160" autocomplete="off"></div>
+            <div class="field"><label for="profile-pronouns">Pronouns</label><input id="profile-pronouns" name="pronouns" type="text" maxlength="160" autocomplete="off"></div>
+            <div class="field"><label for="profile-language">Preferred language</label><input id="profile-language" name="preferredLanguage" type="text" maxlength="160" autocomplete="language"></div>
+          </div>
+          <div class="profile-clinical-fields">
+            <div class="field">
+              <label for="profile-allergies">Allergies</label>
+              <textarea id="profile-allergies" name="allergies" rows="4" placeholder="One per line: substance | reaction | severity"></textarea>
+              <label class="confirm-empty"><input id="profile-no-allergies" type="checkbox"> I am reporting no allergies for clinician review.</label>
+            </div>
+            <div class="field">
+              <label for="profile-intolerances">Intolerances</label>
+              <textarea id="profile-intolerances" name="intolerances" rows="4" placeholder="One per line: substance | reaction | severity"></textarea>
+              <label class="confirm-empty"><input id="profile-no-intolerances" type="checkbox"> I am reporting no intolerances for clinician review.</label>
+            </div>
+            <div class="field">
+              <label for="profile-specialists">Specialists</label>
+              <textarea id="profile-specialists" name="specialists" rows="4" placeholder="One per line: name | specialty | practice | phone"></textarea>
+              <label class="confirm-empty"><input id="profile-no-specialists" type="checkbox"> I am reporting no current specialists for review.</label>
+            </div>
+          </div>
+          <p class="form-boundary">Do not use this form for urgent symptoms or medication instructions. Call BHW for time-sensitive clinical concerns.</p>
+          <div class="dialog-actions"><p id="profile-form-status" class="dialog-status" role="status" aria-live="polite"></p><button id="profile-submit-button" class="button" type="submit">Send for BHW review</button></div>
+        </form>
+      </dialog>
+
       <dialog id="summary-dialog" class="portal-dialog summary-dialog" aria-labelledby="summary-title">
         <div class="dialog-head"><div><p class="eyebrow">Your Health Blueprint</p><h2 id="summary-title">Your current care summary</h2></div><button class="dialog-close" type="button" data-close-dialog aria-label="Close summary">Close</button></div>
         <div id="plan"></div>
@@ -201,6 +238,6 @@
   </main>
   <footer class="site-footer">BHW Medical Group · 2131 Maryland Ave, Baltimore, MD 21218 · 443.762.5343</footer>
   <script defer src="../assets/bhw-transparent-anatomy.js?v=4"></script>
-  <script type="module" src="./app.mjs?v=profile-checkin-1"></script>
+  <script type="module" src="./app.mjs?v=profile-verification-1"></script>
 </body>
 </html>

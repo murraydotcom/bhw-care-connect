@@ -23,6 +23,7 @@ let activeSystemId = null;
 let activeMappingId = null;
 let atlasPopoverOpen = false;
 let interactionState = loadInteractionState();
+let profileSubmissionKey = null;
 
 function patientFirstName(patient = {}) {
   return String(patient.preferredName || patient.firstName || "").trim();
@@ -118,10 +119,195 @@ function renderClinicalList(targetId, value, emptyMessage, type) {
 }
 
 function renderPatientProfile(patient = {}) {
+  const verification = patient.verification || {};
+  const fieldStatus = verification.fields || {};
+  renderProfileVerification(verification);
   renderDemographics(patient);
-  renderClinicalList("patient-allergies", patient.allergies, "No allergy entries were included in the shared portal record.", "allergy");
-  renderClinicalList("patient-intolerances", patient.intolerances, "No intolerance entries were included in the shared portal record.", "intolerance");
-  renderClinicalList("patient-specialists", patient.specialists, "No specialist list has been shared in this portal view yet.", "specialist");
+  renderClinicalList("patient-allergies", patient.allergies, profileEmptyCopy("allergies", fieldStatus.allergies), "allergy");
+  renderClinicalList("patient-intolerances", patient.intolerances, profileEmptyCopy("intolerances", fieldStatus.intolerances), "intolerance");
+  renderClinicalList("patient-specialists", patient.specialists, profileEmptyCopy("specialists", fieldStatus.specialists), "specialist");
+}
+
+const PROFILE_STATUS_LABELS = {
+  verified: "Verified",
+  "not-reviewed": "Not yet reviewed",
+  "changes-pending": "Changes awaiting review",
+  "needs-information": "More information needed",
+  "partially-verified": "Partially verified",
+};
+
+function profileStatusLabel(value) {
+  return PROFILE_STATUS_LABELS[value] || "Not yet reviewed";
+}
+
+function sectionVerificationStatus(fields, names) {
+  const statuses = names.map((name) => fields?.[name] || "not-reviewed");
+  if (statuses.includes("needs-information")) return "needs-information";
+  if (statuses.includes("changes-pending")) return "changes-pending";
+  if (statuses.every((status) => status === "verified")) return "verified";
+  if (statuses.some((status) => status === "verified")) return "partially-verified";
+  return "not-reviewed";
+}
+
+function renderVerificationBadge(id, status) {
+  const target = $(id);
+  if (!target) return;
+  target.textContent = profileStatusLabel(status);
+  target.dataset.status = status;
+}
+
+function renderProfileVerification(verification = {}) {
+  const fields = verification.fields || {};
+  renderVerificationBadge("profile-overall-status", verification.overallStatus || "not-reviewed");
+  renderVerificationBadge("demographics-verification", sectionVerificationStatus(fields, ["sexAtBirth", "pronouns", "preferredLanguage"]));
+  renderVerificationBadge("allergies-verification", fields.allergies || "not-reviewed");
+  renderVerificationBadge("intolerances-verification", fields.intolerances || "not-reviewed");
+  renderVerificationBadge("specialists-verification", fields.specialists || "not-reviewed");
+}
+
+function profileEmptyCopy(field, status) {
+  const label = field === "specialists" ? "specialists" : field;
+  if (status === "verified") return `No ${label} are currently recorded in the verified profile.`;
+  if (status === "changes-pending") return `Your submitted ${label} changes are awaiting clinician review.`;
+  if (status === "needs-information") return `Your care team needs more information before confirming ${label}.`;
+  return `${label[0].toUpperCase()}${label.slice(1)} have not been reviewed yet.`;
+}
+
+function clinicalEditorLines(value, type) {
+  return clinicalItems(value).map((item) => {
+    if (typeof item === "string") return item;
+    if (type === "specialist") return [item.name, item.specialty, item.organization || item.practice, item.phone].filter(Boolean).join(" | ");
+    return [item.substance || item.name, item.reaction, item.severity].filter(Boolean).join(" | ");
+  }).filter(Boolean).join("\n");
+}
+
+function prepareProfileForm() {
+  const patient = currentDashboard?.patient || {};
+  $("profile-sex-at-birth").value = patient.sexAtBirth || "";
+  $("profile-pronouns").value = patient.pronouns || "";
+  $("profile-language").value = patient.preferredLanguage || "";
+  $("profile-allergies").value = clinicalEditorLines(patient.allergies, "allergy");
+  $("profile-intolerances").value = clinicalEditorLines(patient.intolerances, "intolerance");
+  $("profile-specialists").value = clinicalEditorLines(patient.specialists, "specialist");
+  for (const id of ["profile-no-allergies", "profile-no-intolerances", "profile-no-specialists"]) $(id).checked = false;
+  const pending = patient.verification?.pendingRequest;
+  $("profile-form-status").textContent = pending?.status === "pending-review"
+    ? "Your previous correction request is saved and awaiting clinician review."
+    : pending?.status === "needs-information"
+      ? "Your care team needs more information. Update the applicable fields and send again."
+      : isLocalPreview
+        ? "Preview only: synthetic changes stay on this device."
+        : "Nothing has been submitted yet.";
+}
+
+function parseClinicalLines(value, type) {
+  return String(value || "").split(/\n+/).map((line) => line.trim()).filter(Boolean).map((line) => {
+    const parts = line.split("|").map((part) => part.trim());
+    if (type === "specialist") {
+      const [name, specialty, organization, phone] = parts;
+      return Object.fromEntries(Object.entries({ name, specialty, organization, phone }).filter(([, entry]) => entry));
+    }
+    const [substance, reaction, severity] = parts;
+    return Object.fromEntries(Object.entries({ substance, reaction, severity }).filter(([, entry]) => entry));
+  });
+}
+
+function profileChangesFromForm() {
+  const patient = currentDashboard?.patient || {};
+  const changes = {};
+  const scalars = [
+    ["sexAtBirth", $("profile-sex-at-birth").value],
+    ["pronouns", $("profile-pronouns").value],
+    ["preferredLanguage", $("profile-language").value],
+  ];
+  for (const [field, raw] of scalars) {
+    const value = raw.trim();
+    if (value && value !== String(patient[field] || "").trim()) changes[field] = value;
+  }
+  const lists = [
+    ["allergies", "profile-allergies", "profile-no-allergies", "allergy"],
+    ["intolerances", "profile-intolerances", "profile-no-intolerances", "intolerance"],
+    ["specialists", "profile-specialists", "profile-no-specialists", "specialist"],
+  ];
+  for (const [field, inputId, emptyId, type] of lists) {
+    const raw = $(inputId).value.trim();
+    const confirmedEmpty = $(emptyId).checked;
+    const current = parseClinicalLines(clinicalEditorLines(patient[field], type), type);
+    if (!raw && !confirmedEmpty && current.length) throw new Error(`Select the no-${field} confirmation if you intend to clear that list.`);
+    const next = confirmedEmpty ? [] : parseClinicalLines(raw, type);
+    if (confirmedEmpty || JSON.stringify(next) !== JSON.stringify(current)) changes[field] = next;
+  }
+  return changes;
+}
+
+function applyPendingProfileRequest(request, savedAt) {
+  const patient = currentDashboard.patient;
+  patient.verification ||= { fields: {} };
+  patient.verification.overallStatus = "changes-pending";
+  patient.verification.pendingRequest = {
+    requestId: request.requestId,
+    status: request.status || "pending-review",
+    fields: request.fields || [],
+    submittedAt: savedAt,
+  };
+  for (const field of request.fields || []) patient.verification.fields[field] = "changes-pending";
+  renderPatientProfile(patient);
+}
+
+async function submitProfileChanges(event) {
+  event.preventDefault();
+  const button = $("profile-submit-button");
+  const status = $("profile-form-status");
+  let changes;
+  try {
+    changes = profileChangesFromForm();
+  } catch (error) {
+    status.textContent = error.message;
+    return;
+  }
+  if (!Object.keys(changes).length) {
+    status.textContent = "No changes were entered.";
+    return;
+  }
+  button.disabled = true;
+  profileSubmissionKey ||= `profile:${crypto.randomUUID()}`;
+  try {
+    if (isLocalPreview) {
+      const savedAt = new Date().toISOString();
+      const request = { requestId: "PVR-SYNTHETIC-PREVIEW", status: "pending-review", fields: Object.keys(changes) };
+      applyPendingProfileRequest(request, savedAt);
+      status.textContent = "Preview only · not saved. This temporary screen state clears when the preview reloads; no BHW record or staff queue changed.";
+      profileSubmissionKey = null;
+      return;
+    }
+    const token = sessionStorage.getItem(SESSION_KEY);
+    if (!token) throw new Error("Please sign in again.");
+    status.textContent = "Saving your correction request to BHW Cloud…";
+    const response = await fetch("/api/patient-portal/profile-change-requests", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "Idempotency-Key": profileSubmissionKey,
+      },
+      body: JSON.stringify({ changes }),
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok || body.ok !== true) {
+      if (body.saved) {
+        status.textContent = `Saved to BHW Cloud at ${formatSavedTime(body.savedAt)}. The staff review queue was not confirmed; use Send again without changing the form.`;
+        return;
+      }
+      throw new Error(body.error || "The correction request was not saved.");
+    }
+    applyPendingProfileRequest(body.request, body.savedAt);
+    status.textContent = `Saved to BHW Cloud at ${formatSavedTime(body.savedAt)}. Your BHW clinician review is pending.`;
+    profileSubmissionKey = null;
+  } catch (error) {
+    status.textContent = `Not saved. ${error.message || "Please try again."}`;
+  } finally {
+    button.disabled = false;
+  }
 }
 
 function blueprintSummary(plan = {}) {
@@ -647,6 +833,7 @@ function openDialog(id) {
   if (!dialog) return;
   const status = id === "vitals-dialog" ? $("vitals-status") : null;
   if (status) status.textContent = isLocalPreview ? "Preview only: use synthetic information. Nothing has been saved yet." : "Secure BHW Cloud saving is not connected yet.";
+  if (id === "profile-dialog") prepareProfileForm();
   dialog.showModal();
 }
 
@@ -757,6 +944,7 @@ $("login-form").addEventListener("submit", submitLogin);
 $("mode-button").addEventListener("click", toggleMode);
 $("signout-button").addEventListener("click", signOut);
 $("vitals-form").addEventListener("submit", submitVitals);
+$("profile-form").addEventListener("submit", submitProfileChanges);
 document.querySelectorAll("[data-open-dialog]").forEach((button) => button.addEventListener("click", () => openDialog(button.dataset.openDialog)));
 document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => closeDialog(button)));
 document.addEventListener("keydown", (event) => {
