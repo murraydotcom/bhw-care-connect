@@ -1,0 +1,5 @@
+# Baltimore Healthcare and Wellness — patient site (myBHW.com)
+User-agent: *
+Allow: /
+
+Sitemap: https://mybhw.com/sitemap.xml

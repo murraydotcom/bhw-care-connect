@@ -3,11 +3,25 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>BHW Care Connect — Baltimore Healthcare &amp; Wellness</title>
+    <title>Baltimore Healthcare and Wellness | Primary Care in Baltimore, MD</title>
     <meta
       name="description"
-      content="One page for reaching your BHW care team, finding a resource, or opening your Personal Health Blueprint."
+      content="Baltimore Healthcare and Wellness (BHW Medical Group) — primary care, behavioral health, and chronic-care programs in Baltimore, MD. Reach your care team, find a resource, or open your Personal Health Blueprint."
     />
+    <link rel="canonical" href="https://mybhw.com/" />
+    <meta name="robots" content="index, follow" />
+
+    <!-- Open Graph / social share -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Baltimore Healthcare and Wellness" />
+    <meta property="og:title" content="Baltimore Healthcare and Wellness | Primary Care in Baltimore, MD" />
+    <meta property="og:description" content="Primary care, behavioral health, and chronic-care programs in Baltimore, MD. Reach your care team or open your Personal Health Blueprint." />
+    <meta property="og:url" content="https://mybhw.com/" />
+    <meta property="og:image" content="https://mybhw.com/assets/brand/bhw-wellness.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Baltimore Healthcare and Wellness | Primary Care in Baltimore, MD" />
+    <meta name="twitter:description" content="Primary care, behavioral health, and chronic-care programs in Baltimore, MD." />
+    <meta name="twitter:image" content="https://mybhw.com/assets/brand/bhw-wellness.png" />
     <meta name="theme-color" content="#F8F6F1" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0A1822" media="(prefers-color-scheme: dark)" />
 
@@ -34,6 +48,61 @@
           document.documentElement.setAttribute('data-theme', 'light')
         }
       })()
+    </script>
+
+    <!--
+      Local-business structured data — puts the practice into Google's local
+      pack / map results and feeds AI answer engines. NAP confirmed against the
+      practice; geo lat/long is approximate (fine — Google uses the verified
+      address + GBP for the map pin). Add the Google Business Profile URL to
+      "sameAs" when handy.
+    -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "MedicalClinic",
+      "name": "Baltimore Healthcare and Wellness",
+      "alternateName": ["BHW Medical Group", "Baltimore Healthcare and Wellness (Primary Care)"],
+      "url": "https://mybhw.com/",
+      "logo": "https://mybhw.com/assets/brand/bhw-wellness.png",
+      "image": "https://mybhw.com/assets/brand/bhw-wellness.png",
+      "email": "info@baltimorehealthcare.org",
+      "telephone": "+1-443-762-5343",
+      "priceRange": "$$",
+      "medicalSpecialty": ["PrimaryCare", "Psychiatric"],
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "2131 Maryland Ave",
+        "addressLocality": "Baltimore",
+        "addressRegion": "MD",
+        "postalCode": "21218",
+        "addressCountry": "US"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": 39.3169,
+        "longitude": -76.6160
+      },
+      "areaServed": [
+        { "@type": "City", "name": "Baltimore" },
+        { "@type": "AdministrativeArea", "name": "Baltimore County, MD" },
+        { "@type": "AdministrativeArea", "name": "Anne Arundel County, MD" },
+        { "@type": "AdministrativeArea", "name": "Howard County, MD" },
+        { "@type": "AdministrativeArea", "name": "Carroll County, MD" },
+        { "@type": "AdministrativeArea", "name": "Harford County, MD" }
+      ],
+      "openingHoursSpecification": [
+        {
+          "@type": "OpeningHoursSpecification",
+          "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+          "opens": "09:00",
+          "closes": "16:00"
+        }
+      ],
+      "sameAs": [
+        "https://www.baltimorehealthcare.org"
+      ]
+    }
     </script>
   </head>
   <body>
