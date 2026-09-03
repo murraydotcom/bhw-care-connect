@@ -12,6 +12,8 @@ import { logoCharmedMinds, logoFlow, logoMindMood, logoPrimaryCare } from '../as
 /** Iridescence: three brand-hue pools, same recipe as the Just Ask block. */
 const IRIS = {
   clay: 'radial-gradient(88% 70% at 12% 8%, rgba(178,124,84,.16), transparent 62%), radial-gradient(80% 66% at 92% 22%, rgba(140,164,178,.20), transparent 64%), radial-gradient(96% 80% at 74% 100%, rgba(150,168,138,.18), transparent 66%)',
+  sunrise:
+    'radial-gradient(88% 70% at 10% 6%, rgba(244,192,99,.28), transparent 62%), radial-gradient(78% 64% at 94% 26%, rgba(229,143,94,.24), transparent 64%), radial-gradient(96% 80% at 70% 100%, rgba(143,182,178,.20), transparent 66%)',
   violet:
     'radial-gradient(88% 70% at 10% 6%, rgba(142,114,168,.20), transparent 62%), radial-gradient(78% 64% at 94% 26%, rgba(140,164,178,.18), transparent 64%), radial-gradient(96% 80% at 70% 100%, rgba(196,164,132,.16), transparent 66%)',
   blue: 'radial-gradient(88% 70% at 12% 8%, rgba(96,158,180,.20), transparent 62%), radial-gradient(80% 66% at 92% 24%, rgba(150,168,138,.18), transparent 64%), radial-gradient(96% 80% at 72% 100%, rgba(178,124,84,.14), transparent 66%)',
@@ -70,12 +72,12 @@ export const PROGRAMS: Program[] = [
   {
     key: 'mm',
     num: '02',
-    name: 'Mind & Mood',
-    tint: 'var(--accent-3)',
-    veil: 'var(--accent-3-quiet)',
-    iris: IRIS.violet,
-    back: 'var(--c-lavender-800)',
-    backTint: 'var(--c-lavender-400)',
+    name: 'Mind & Mood Recovery',
+    tint: '#D6814C',
+    veil: '#F7E8DC',
+    iris: IRIS.sunrise,
+    back: '#9A5236',
+    backTint: '#F2BE84',
     logo: logoMindMood,
     blurb:
       'Psychiatry and medication management for depression, anxiety, ADHD and bipolar care.',

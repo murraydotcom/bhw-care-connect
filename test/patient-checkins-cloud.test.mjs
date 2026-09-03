@@ -37,11 +37,14 @@ test("check-in bridge forwards a normalized record without patient identity fiel
         ok: true,
         savedAt: "2026-08-30T12:00:01.000Z",
         monitoring: {
-          checkInId: "2026-08-30-primary",
-          program: "primary",
+          checkInId: "2026-08-30-mind",
+          program: "mind",
           checkInDate: "2026-08-30",
           submittedAt: "2026-08-30T12:00:01.000Z",
           reviewState: "pending-clinician-review",
+          reviewPriority: "same-day",
+          signalCount: 1,
+          monitoringPlanVersion: 2,
         },
       });
     },
@@ -50,8 +53,8 @@ test("check-in bridge forwards a normalized record without patient identity fiel
     method: "POST",
     headers: { ...auth(), "Content-Type": "application/json" },
     body: JSON.stringify({
-      schemaVersion: "bhw.patient-checkin.v1",
-      program: "primary",
+      schemaVersion: "bhw.patient-checkin.v2",
+      program: "mind",
       date: "2026-08-30",
       patient: { id: "BHW0000", name: "Must not forward" },
       well: { sleep: "Good", movement: "20 min" },
@@ -60,19 +63,31 @@ test("check-in bridge forwards a normalized record without patient identity fiel
       foods: ["Synthetic oatmeal"],
       nutrition: { p: 25, sodium: 120 },
       vitals: { bp: "120/80" },
+      monitoringPlanId: "mind-monitoring-plan",
+      monitoringPlanVersion: 2,
+      moduleResponses: [{
+        moduleId: "mind-daily-recovery",
+        answers: { "mind-treatment-change": "Uncomfortable change", "bad key": "omit" },
+      }],
     }),
   });
   const response = await handler(request);
   assert.equal(response.status, 200);
   assert.equal(captured.url, "https://health-core.synthetic.test/v1/patient-portal/BHW0000/check-ins");
-  assert.equal(captured.body.schemaVersion, "bhw.patient-checkin.v1");
+  assert.equal(captured.body.schemaVersion, "bhw.patient-checkin.v2");
   assert.equal(captured.body.waterCups, 6);
   assert.equal(captured.body.patient, undefined);
+  assert.equal(captured.body.moduleResponses[0].answers["mind-treatment-change"], "Uncomfortable change");
+  assert.equal(captured.body.moduleResponses[0].answers["bad key"], undefined);
   assert.doesNotMatch(JSON.stringify(captured.body), /Must not forward|BHW0000/);
   assert.equal(queued.body.requestType, "clinical-review");
   assert.equal(queued.body.routing.assignedTeam, "clinical");
   assert.equal(queued.body.notificationMode, "none");
-  assert.match(queued.submissionId, /BHW0000:2026-08-30-primary/);
+  assert.equal(queued.body.priority, "high");
+  assert.equal(queued.body.sourceMetadata.reviewPriority, "same-day");
+  assert.equal(queued.body.sourceMetadata.signalCount, 1);
+  assert.equal(queued.body.sourceMetadata.monitoringPlanVersion, 2);
+  assert.match(queued.submissionId, /BHW0000:2026-08-30-mind/);
   assert.doesNotMatch(JSON.stringify(queued.body), /fatigue|oatmeal|120\/80/i);
 });
 
@@ -110,13 +125,23 @@ test("check-in history uses the signed patient route and bounded query", async (
     now: () => NOW,
     fetchImpl: async (url, options) => {
       captured = { url, options };
-      return Response.json({ ok: true, targets: { p: 90 }, series: [{ date: "2026-08-30", water: 6 }] });
+      return Response.json({
+        ok: true,
+        targets: { p: 90 },
+        series: [{ date: "2026-08-30", water: 6 }],
+        monitoringPlan: { planId: "flow-monitoring-plan", program: "flow" },
+      });
     },
   });
   const response = await handler(new Request("https://care.synthetic.test/api/patient-portal/check-ins?program=flow&days=999", { headers: auth() }));
   assert.equal(response.status, 200);
   assert.equal(captured.url, "https://health-core.synthetic.test/v1/patient-portal/BHW0000/check-ins?program=flow&days=90");
-  assert.deepEqual(await response.json(), { ok: true, targets: { p: 90 }, series: [{ date: "2026-08-30", water: 6 }] });
+  assert.deepEqual(await response.json(), {
+    ok: true,
+    targets: { p: 90 },
+    series: [{ date: "2026-08-30", water: 6 }],
+    monitoringPlan: { planId: "flow-monitoring-plan", program: "flow" },
+  });
 });
 
 test("check-in bridge fails closed for missing auth, configuration, invalid programs, and large payloads", async () => {

@@ -2,8 +2,11 @@ import { PROGRAMS, SYSTEMS } from "./page-registry.mjs?v=interactive-atlas-1";
 
 export const SESSION_KEY = "bhw_pt_session";
 
+const isLocalHost = ["localhost", "127.0.0.1"].includes(location.hostname);
+const isNetlifyDraftHost = /^[a-z0-9-]+--bhw-care-connect\.netlify\.app$/i.test(location.hostname);
+
 export const isLocalPreview = new URLSearchParams(location.search).get("preview") === "1"
-  && ["localhost", "127.0.0.1"].includes(location.hostname);
+  && (isLocalHost || isNetlifyDraftHost);
 
 export function patientHref(path, id) {
   const url = new URL(path, location.origin);

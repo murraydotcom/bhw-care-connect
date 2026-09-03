@@ -846,7 +846,7 @@ function renderDashboard(dashboard) {
   currentDashboard = dashboard;
   document.body.classList.add("portal-open");
   const firstName = patientFirstName(dashboard.patient);
-  $("preferred-name").textContent = firstName || "Your";
+  $("preferred-name").textContent = firstName || "Patient";
   const generated = new Date(dashboard.generatedAt);
   $("updated").textContent = Number.isNaN(generated.getTime()) ? "" : `Blueprint updated ${generated.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`;
   $("printable-blueprint-link").href = patientHref("/bhw-patient-portal-mockup.html");

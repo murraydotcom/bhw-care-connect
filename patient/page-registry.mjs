@@ -216,11 +216,11 @@ export const PROGRAMS = Object.freeze([
     theme: { ink: "#102a3b", accent: "#82b6b6", glow: "#bdd8dc", signal: "#e6c98a" },
   }),
   program({
-    id: "mind-mood", href: "/bhw-mindmood-program.html", patientHref: "/bhw-mindmood-patient-mockup.html", name: "Mind & Mood", eyebrow: "Psychiatry & medication management", aliases: ["mind mood", "mind and mood", "mind & mood", "mind-mood", "psychiatry"],
+    id: "mind-mood", href: "/bhw-mindmood-program.html", patientHref: "/bhw-mindmood-patient-mockup.html", name: "Mind & Mood Recovery", eyebrow: "Psychiatry & medication management", aliases: ["mind mood", "mind and mood", "mind & mood", "mind-mood", "mind & mood recovery", "psychiatry"],
     overview: "Mind & Mood brings psychiatric evaluation and medication management into the same coordinated health picture, including sleep, cognition, physical health, laboratory context, and treatment response.",
     services: ["Comprehensive psychiatric assessment", "Careful medication starts, changes, and monitoring", "Symptom, sleep, function, and side-effect follow-up", "Coordination with primary care, therapy, and specialists"],
     systemIds: CORE_SYSTEM_IDS,
-    theme: { ink: "#2d2438", accent: "#9b7da5", glow: "#ddc8e3", signal: "#d69c60" },
+    theme: { ink: "#5c4b3f", accent: "#e09a5c", glow: "#f6d9c0", signal: "#f4c063" },
   }),
   program({
     id: "charmed-minds", href: "/bhw-charmed-program.html", patientHref: "/bhw-charmed-patient-mockup.html", name: "CharmEd Minds", eyebrow: "Brain Health & Neurodivergence", aliases: ["charmed", "charmed minds", "charmed-minds", "charmed mind", "brain health", "neurodivergence"],

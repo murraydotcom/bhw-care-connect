@@ -145,7 +145,8 @@ page, review today's care path, and launch Check in, Add vital signs, or View my
 summary. Program pages remain distinct and appear below the connected system
 map. The legacy printable Blueprint remains a separate, explicit action.
 
-Local `?preview=1` testing uses synthetic data only. Daily-path selections,
+Local and Netlify draft-deploy `?preview=1` testing use synthetic data only. The
+host gate does not enable this mode on `mybhw.com` or the canonical Netlify site. Daily-path selections,
 synthetic check-ins, and synthetic vital signs are stored under the device-only
 `bhw_patient_blueprint_preview_state_v2` browser key, and the interface labels
 that state as `Saved on this device only`. Outside local preview, these actions

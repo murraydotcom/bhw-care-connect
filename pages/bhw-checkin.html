@@ -185,6 +185,7 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   <nav class="section-jump" aria-label="Check-in sections">
     <a href="#nutrition-card">Nutrition</a>
     <a href="#wellbeing-card">Sleep &amp; movement</a>
+    <a href="#program-focus-card" id="programFocusJump" hidden>Program focus</a>
     <a href="#symptoms-card">Symptoms</a>
     <a href="#vitals-card">Readings</a>
   </nav>
@@ -280,6 +281,17 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
     <div class="q"><div class="lbl">Time with people you care about?</div><div class="opts" data-q="People"><button type="button">None</button><button type="button">A little</button><button type="button">Real time</button></div></div>
   </div>
 
+  <!-- CLINICIAN-SELECTED PROGRAM QUESTIONS -->
+  <div class="card card-wide program-focus-card" id="program-focus-card" hidden>
+    <div class="program-focus-heading">
+      <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 12h3l2-5 4 10 2-5h3"/><circle cx="12" cy="12" r="9"/></svg></span><span id="programFocusTitle">Questions selected for you</span></h2>
+      <span class="clinician-selected">Clinician selected</span>
+    </div>
+    <div class="hint" id="programFocusHint">A brief set of questions chosen for your current plan.</div>
+    <div class="monitoring-questions" id="monitoringQuestions"></div>
+    <div class="monitoring-footnote" id="monitoringFootnote"></div>
+  </div>
+
   <!-- SYMPTOMS (program-specific) -->
   <div class="card" id="symptoms-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></span>Symptoms <span id="symProg" style="font-size:11px;font-weight:600;color:var(--ink-soft)"></span></h2>
@@ -338,12 +350,53 @@ const PROGRAMS={
   flow:{name:'Flow · Blood & Vascular Care', back:'bhw-flow-program.html', accent:'#1789aa', deep:'#0f667f',
     symptoms:['Leg cramps','Cold hands/feet','Swelling','Chest tightness','Shortness of breath','Palpitations','Dizziness','Fatigue','Headache','Other'],
     targets:{p:110,c:180,f:60,fiber:35,sugar:36,sodium:1500,vitd:25,vitc:120,iron:18,calcium:1000,potassium:4000,magnesium:420,waterCups:10}},
-  mind:{name:'Mind & Mood', back:'bhw-mindmood-program.html', accent:'#9b7da5', deep:'#6a5480',
+  mind:{name:'Mind & Mood Recovery', back:'bhw-mindmood-program.html', accent:'#E09A5C', deep:'#9A5236',
     symptoms:['Low mood','Anxiety','Irritability','Poor sleep','Low motivation','Racing thoughts','Cravings','Fatigue','Appetite change','Other'],
     targets:{p:100,c:200,f:65,fiber:30,sugar:40,sodium:2000,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450,waterCups:8}},
   charmed:{name:'CharmEd Minds · Brain Health & Neurodivergence', back:'bhw-charmed-program.html', accent:'#2babab', deep:'#197c7c',
     symptoms:['Brain fog','Memory slips','Word-finding','Poor focus','Low mood','Poor sleep','Fatigue','Headache','Other'],
     targets:{p:100,c:180,f:65,fiber:30,sugar:36,sodium:1800,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450,waterCups:8}},
+};
+const PREVIEW_MONITORING_PLANS={
+  mind:{
+    schemaVersion:'bhw.patient-monitoring-plan.v1',planId:'mind-monitoring-plan',version:1,program:'mind',programLabel:'Mind & Mood Recovery',dailyQuestionLimit:5,briefMode:true,
+    modules:[
+      {id:'mind-daily-recovery',title:'Daily recovery pulse',description:'A brief view of mood, activation, restorative sleep, function, and treatment experience.',cadence:'daily',dueToday:true,questions:[
+        {id:'mind-mood-today',prompt:'How has your overall mood felt today?',responseType:'single-choice',options:['Lower than usual','About usual','Brighter than usual']},
+        {id:'mind-activation-impact',prompt:'How much did anxiety or internal activation affect you today?',responseType:'single-choice',options:['Not at all','A little','Some','A lot']},
+        {id:'mind-sleep-restored',prompt:'How restored did you feel after sleep?',responseType:'single-choice',options:['Not restored','A little restored','Mostly restored','Fully restored']},
+        {id:'mind-function-impact',prompt:'How much did mood or mental energy affect what you needed to do?',responseType:'single-choice',options:['Not at all','A little','Some','A lot']},
+        {id:'mind-treatment-change',prompt:'Any new or changed treatment effect you want your care team to review?',responseType:'single-choice',options:['No change','Helpful change','Uncomfortable change','I am not sure']},
+      ]},
+      {id:'mind-weekly-pattern',title:'Weekly recovery pattern',description:'A rotating deeper look at recovery patterns and your current goal.',cadence:'weekly',dueToday:new Date().getDay()===4,questions:[
+        {id:'mind-motivation-week',prompt:'Across this week, how available was your motivation?',responseType:'single-choice',options:['Very limited','Inconsistent','Usually available','Strong']},
+        {id:'mind-concentration-week',prompt:'How much did concentration interfere with daily life this week?',responseType:'single-choice',options:['Not at all','A little','Some','A lot']},
+        {id:'mind-appetite-week',prompt:'How different was your appetite from your usual pattern?',responseType:'single-choice',options:['Much lower','A little lower','About usual','A little higher','Much higher']},
+        {id:'mind-connection-week',prompt:'How connected did you feel to people who matter to you?',responseType:'single-choice',options:['Disconnected','A little connected','Mostly connected','Very connected']},
+        {id:'mind-goal-note',prompt:'What changed around the recovery goal you are working on?',responseType:'short-text'},
+      ]},
+    ],interventions:[],approval:{state:'clinician-approved'}
+  },
+  charmed:{
+    schemaVersion:'bhw.patient-monitoring-plan.v1',planId:'charmed-monitoring-plan',version:1,program:'charmed',programLabel:'CharmEd Minds · Brain Health & Neurodivergence',dailyQuestionLimit:6,briefMode:true,
+    modules:[
+      {id:'charmed-daily-regulation',title:'Daily brain-and-body pulse',description:'A neurodiversity-affirming view of cognitive energy, initiation, sensory load, recovery, and support use.',cadence:'daily',dueToday:true,questions:[
+        {id:'charmed-cognitive-energy',prompt:'How available was your thinking energy today?',responseType:'single-choice',options:['Very limited','Limited','Mostly available','Strong']},
+        {id:'charmed-task-initiation',prompt:'How hard was it to begin what you intended to do?',responseType:'single-choice',options:['Not hard','A little hard','Quite hard','Could not begin']},
+        {id:'charmed-sensory-load',prompt:'How much sensory load did you carry today?',responseType:'single-choice',options:['Low','Manageable','Heavy','Overwhelming']},
+        {id:'charmed-recovery-access',prompt:'Were you able to recover after overload or sustained effort?',responseType:'single-choice',options:['Did not need recovery','Yes','Partly','Not yet']},
+        {id:'charmed-support-used',prompt:'Which support helped you today?',responseType:'multi-choice',options:['Movement or body break','Reduced sensory input','Written or visual support','Body doubling','Extra recovery time','Another support']},
+        {id:'charmed-support-effect',prompt:'How well did the support fit what your brain needed?',responseType:'single-choice',options:['Did not fit','Helped a little','Helped','Helped a lot']},
+      ]},
+      {id:'charmed-weekly-executive',title:'Weekly executive-function pattern',description:'A rotating deeper look at strategy fit and executive-function patterns.',cadence:'weekly',dueToday:new Date().getDay()===4,questions:[
+        {id:'charmed-working-memory',prompt:'How much did holding information in mind affect you this week?',responseType:'single-choice',options:['Not at all','A little','Some','A lot']},
+        {id:'charmed-time-awareness',prompt:'How predictable did time feel this week?',responseType:'single-choice',options:['Very unpredictable','Sometimes predictable','Mostly predictable','Predictable']},
+        {id:'charmed-interoception',prompt:'How easy was it to notice body signals such as hunger, thirst, tension, or fatigue?',responseType:'single-choice',options:['Very hard','Sometimes hard','Usually possible','Easy']},
+        {id:'charmed-communication-load',prompt:'How much energy did communication require this week?',responseType:'single-choice',options:['A little','Moderate','High','Very high']},
+        {id:'charmed-strategy-note',prompt:'What support should we keep, change, or try next?',responseType:'short-text'},
+      ]},
+    ],interventions:[],approval:{state:'clinician-approved'}
+  }
 };
 const params=new URLSearchParams(location.search);
 const LOCAL_PREVIEW=params.get('preview')==='1'&&['localhost','127.0.0.1'].includes(location.hostname);
@@ -410,6 +463,66 @@ const LOCAL_CHECKIN_KEY='bhw_patient_checkins_preview_v1';
 const SESSION_PT=(function(){try{var f=JSON.parse(sessionStorage.getItem('bhw_pt_family')||'null');return (f&&f.patient)||null;}catch(e){return null;}})();
 const SESSION_TOKEN=sessionStorage.getItem('bhw_pt_session')||'';
 const PATIENT={name:(SESSION_PT&&SESSION_PT.name)||(LOCAL_PREVIEW?'Synthetic Patient':'Patient'),phone:(SESSION_PT&&SESSION_PT.phone)||'',id:(SESSION_PT&&SESSION_PT.id)||(LOCAL_PREVIEW?'BHW0000':'')};
+let ACTIVE_MONITORING_PLAN=null;
+const MONITORING_ANSWERS={};
+
+function rotateQuestions(questions,count,offset){
+  if(!questions.length||count<1)return [];
+  const start=Math.abs(offset)%questions.length;
+  return Array.from({length:Math.min(count,questions.length)},(_,index)=>questions[(start+index)%questions.length]);
+}
+function questionsForToday(plan){
+  const due=(Array.isArray(plan?.modules)?plan.modules:[]).filter(module=>module&&module.dueToday!==false);
+  const daily=due.filter(module=>module.cadence==='daily').flatMap(module=>(module.questions||[]).map(question=>({module,question})));
+  const weekly=due.filter(module=>module.cadence==='weekly').flatMap(module=>(module.questions||[]).map(question=>({module,question})));
+  const limit=Math.max(3,Math.min(8,Number(plan?.dailyQuestionLimit)||5));
+  const day=Math.floor(Date.now()/86400000);
+  const weeklyCount=weekly.length?Math.min(2,Math.max(1,limit-3)):0;
+  return [...rotateQuestions(daily,limit-weeklyCount,day),...rotateQuestions(weekly,weeklyCount,Math.floor(day/7))].slice(0,limit);
+}
+function selectMonitoringAnswer(moduleId,questionId,value,multi,button,wrap){
+  MONITORING_ANSWERS[moduleId]=MONITORING_ANSWERS[moduleId]||{};
+  if(multi){
+    const values=new Set(Array.isArray(MONITORING_ANSWERS[moduleId][questionId])?MONITORING_ANSWERS[moduleId][questionId]:[]);
+    values.has(value)?values.delete(value):values.add(value);
+    MONITORING_ANSWERS[moduleId][questionId]=[...values];
+    button.classList.toggle('sel',values.has(value));
+  }else{
+    MONITORING_ANSWERS[moduleId][questionId]=value;
+    wrap.querySelectorAll('button').forEach(item=>item.classList.toggle('sel',item===button));
+  }
+}
+function renderMonitoringPlan(plan){
+  ACTIVE_MONITORING_PLAN=plan&&plan.program===PROGKEY&&plan.approval?.state==='clinician-approved'?plan:null;
+  const card=document.getElementById('program-focus-card'), jump=document.getElementById('programFocusJump'), box=document.getElementById('monitoringQuestions');
+  card.hidden=!ACTIVE_MONITORING_PLAN; jump.hidden=!ACTIVE_MONITORING_PLAN; box.innerHTML='';
+  if(!ACTIVE_MONITORING_PLAN)return;
+  const selected=questionsForToday(ACTIVE_MONITORING_PLAN);
+  document.getElementById('programFocusTitle').textContent=ACTIVE_MONITORING_PLAN.program==='charmed'?'Your brain-and-body focus':'Your recovery focus';
+  document.getElementById('programFocusHint').textContent='These questions were selected from your current '+P.name+' monitoring plan. Your care team can change the focus as your needs change.';
+  selected.forEach(({module,question},index)=>{
+    const item=document.createElement('fieldset'); item.className='monitoring-question';
+    const legend=document.createElement('legend');
+    const count=document.createElement('span'); count.className='monitoring-number'; count.textContent=String(index+1).padStart(2,'0');
+    const prompt=document.createElement('span'); prompt.textContent=question.prompt;
+    const cadence=document.createElement('small'); cadence.textContent=module.cadence==='weekly'?'This week':'Today';
+    legend.append(count,prompt,cadence); item.appendChild(legend);
+    if(question.responseType==='short-text'){
+      const input=document.createElement('textarea'); input.rows=3; input.maxLength=500; input.placeholder='Add a short note';
+      input.addEventListener('input',()=>{MONITORING_ANSWERS[module.id]=MONITORING_ANSWERS[module.id]||{};MONITORING_ANSWERS[module.id][question.id]=input.value.trim();});
+      item.appendChild(input);
+    }else{
+      const choices=document.createElement('div'); choices.className='opts monitoring-options';
+      (question.options||[]).forEach(value=>{const button=document.createElement('button');button.type='button';button.textContent=value;button.addEventListener('click',()=>selectMonitoringAnswer(module.id,question.id,value,question.responseType==='multi-choice',button,choices));choices.appendChild(button);});
+      item.appendChild(choices);
+    }
+    box.appendChild(item);
+  });
+  document.getElementById('monitoringFootnote').textContent=selected.length+' focused question'+(selected.length===1?'':'s')+' today · deeper questions rotate without making every check-in long.';
+}
+function monitoringResponses(){
+  return Object.entries(MONITORING_ANSWERS).map(([moduleId,answers])=>({moduleId,answers:Object.fromEntries(Object.entries(answers).filter(([,answer])=>Array.isArray(answer)?answer.length:String(answer||'').trim()))})).filter(entry=>Object.keys(entry.answers).length);
+}
 const FEEL={Rough:1,Low:2,OK:3,Good:4,Great:5}, SLEEPS={Rough:1,OK:2,Good:3,Great:4};
 function renderMedicationChecklist(medications){
   const box=document.getElementById('meds'); box.innerHTML='';
@@ -463,6 +576,7 @@ function renderTrend(series){
 (async function loadHistory(){
   if(LOCAL_PREVIEW){
     document.getElementById('nutritionPlanSource').textContent='Synthetic program targets for BHW0000 preview.';
+    renderMonitoringPlan(PREVIEW_MONITORING_PLANS[PROGKEY]||null);
     try{const local=JSON.parse(localStorage.getItem(LOCAL_CHECKIN_KEY)||'[]');if(local.length)renderTrend(local.slice(-30));}catch(e){}
     return;
   }
@@ -477,7 +591,8 @@ function renderTrend(series){
       document.getElementById('nutritionPlanSource').textContent='No individualized nutrition targets have been shared yet. You can still track food and nutrients today.';
     }
     if(d&&Array.isArray(d.series)&&d.series.length) renderTrend(d.series);
-  }catch(e){ document.getElementById('nutritionPlanSource').textContent='Your nutrition targets could not be loaded. Food tracking is still available, but these starting values are not an individualized plan.'; }
+    renderMonitoringPlan(d.monitoringPlan||null);
+  }catch(e){ document.getElementById('nutritionPlanSource').textContent='Your nutrition targets could not be loaded. Food tracking is still available, but these starting values are not an individualized plan.'; renderMonitoringPlan(null); }
 })();
 function plateAdd(name,n){
   n=n||{}; FOODS.push(name);
@@ -605,10 +720,11 @@ async function saveAll(){
   // Structured record → authenticated BHW Cloud check-in contract.
   const v=id=>{const e=document.getElementById(id); return e?e.value.trim():'';};
   const payload={
-    schemaVersion:'bhw.patient-checkin.v1',program:PROGKEY,date:new Date().toISOString().slice(0,10),summary,
+    schemaVersion:'bhw.patient-checkin.v2',program:PROGKEY,date:new Date().toISOString().slice(0,10),summary,
     well:{feeling:STATE.Feeling,motivation:STATE.Motivation,sleep:STATE.Sleep,movement:STATE.Movement,outside:STATE.Outside,people:STATE.People,nutrition:STATE.Nutrition},
     symptoms:STATE.Symptoms||[],medicationsTaken:meds,waterCups:WATER,
     foods:FOODS,mealPhotoCount:MEALS,nutrition:NUTRI,
+    monitoringPlanId:ACTIVE_MONITORING_PLAN?.planId||'',monitoringPlanVersion:ACTIVE_MONITORING_PLAN?.version||null,moduleResponses:monitoringResponses(),
     vitals:{bp:v('v_bp'),hr:v('v_hr'),wt:v('v_wt'),glu:v('v_glu'),temp:v('v_temp'),o2:v('v_o2'),steps:v('v_steps')},
   };
   if(LOCAL_PREVIEW){

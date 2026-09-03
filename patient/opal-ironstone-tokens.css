@@ -203,29 +203,29 @@
       var(--c-pearl-50)     0%,
       var(--c-sage-100)     28%,
       var(--c-blue-100)     56%,
-      var(--c-blue-200)     84%,
-      var(--c-pearl-0)      100%);
+      var(--c-lavender-100) 84%,
+      var(--c-pearl-0)      100%); /* @kind color */
   --opal-veil: radial-gradient(120% 140% at 12% 0%,
       rgba(151,186,203,0.24), transparent 55%),
     radial-gradient(120% 140% at 92% 20%,
-      rgba(78,135,152,0.22), transparent 55%),
+      rgba(185,166,201,0.22), transparent 55%),
     radial-gradient(130% 150% at 100% 100%,
-      rgba(156,181,162,0.28), transparent 55%);
+      rgba(156,181,162,0.26), transparent 55%); /* @kind color */
 
   /* Opal stone — the real thing. A milky cream body with visible pools of
      blue, violet, sage, rose and a gold core, the way light plays inside an
      opal. Richer than the veil; for hero and feature moments. */
   --opal-stone:
-    radial-gradient(58% 78% at 18% 22%, rgba(110,158,179,0.50), transparent 60%),
-    radial-gradient(54% 74% at 82% 18%, rgba(78,135,152,0.44), transparent 60%),
-    radial-gradient(64% 82% at 74% 82%, rgba(125,155,134,0.50), transparent 62%),
-    radial-gradient(48% 66% at 30% 88%, rgba(156,134,178,0.14), transparent 60%),
-    radial-gradient(42% 58% at 52% 46%, rgba(230,201,138,0.28), transparent 66%),
-    linear-gradient(135deg, var(--c-porcelain-50) 0%, #E7F1F0 50%, #E9F1EE 100%);
+    radial-gradient(58% 78% at 18% 22%, rgba(110,158,179,0.44), transparent 60%),
+    radial-gradient(54% 74% at 82% 18%, rgba(156,134,178,0.40), transparent 60%),
+    radial-gradient(64% 82% at 74% 82%, rgba(125,155,134,0.44), transparent 62%),
+    radial-gradient(48% 66% at 30% 88%, rgba(212,174,174,0.32), transparent 60%),
+    radial-gradient(42% 58% at 52% 46%, rgba(230,201,138,0.30), transparent 66%),
+    linear-gradient(135deg, var(--c-porcelain-50) 0%, #F0ECF3 50%, #E9F1EE 100%); /* @kind color */
   /* A hair-thin play-of-colour sheen for glassy card edges (overlay use) */
   --opal-sheen: linear-gradient(125deg,
       rgba(255,255,255,0.55) 0%, rgba(255,255,255,0) 34%,
-      rgba(125,155,134,0.12) 62%, rgba(110,158,179,0.14) 100%);
+      rgba(185,166,201,0.10) 62%, rgba(110,158,179,0.12) 100%); /* @kind color */
 }
 
 
@@ -297,34 +297,36 @@
   /* Fire-in-black-stone: darker, with violet fire and a gold seam */
   --opal-wash: linear-gradient(135deg,
       var(--c-obsidian-950) 0%,
-      var(--c-sage-900)     26%,
-      var(--c-blue-900)     52%,
-      var(--c-blue-800)     76%,
-      var(--c-boulder-900)  100%);
+      var(--c-sage-900)     18%,
+      #16303A               38%,
+      #1B2C33               52%,
+      #2A2038               70%,
+      #12222F               88%,
+      var(--c-boulder-900) 100%); /* @kind color */
   --opal-veil: radial-gradient(120% 140% at 12% 0%,
       rgba(78,135,152,0.30), transparent 55%),
     radial-gradient(110% 130% at 88% 18%,
-      rgba(78,135,152,0.22), transparent 55%),
+      rgba(130,105,154,0.26), transparent 55%),
     radial-gradient(130% 150% at 100% 100%,
       rgba(97,137,111,0.28), transparent 55%),
     radial-gradient(90% 120% at 60% 40%,
-      rgba(214,178,92,0.10), transparent 60%);
+      rgba(214,178,92,0.10), transparent 60%); /* @kind color */
 
   /* Opal stone on deep blue — fire glowing out of black-opal stone */
   --opal-stone:
-    radial-gradient(58% 78% at 20% 24%, rgba(96,158,180,0.50), transparent 62%),
-    radial-gradient(54% 74% at 82% 20%, rgba(142,114,168,0.14), transparent 62%),
-    radial-gradient(64% 82% at 74% 82%, rgba(104,150,120,0.46), transparent 62%),
+    radial-gradient(58% 78% at 20% 24%, rgba(96,158,180,0.42), transparent 62%),
+    radial-gradient(54% 74% at 82% 20%, rgba(142,114,168,0.36), transparent 62%),
+    radial-gradient(64% 82% at 74% 82%, rgba(104,150,120,0.36), transparent 62%),
     radial-gradient(46% 62% at 46% 50%, rgba(214,178,92,0.16), transparent 66%),
-    linear-gradient(135deg, #0A1822 0%, #11253A 52%, #0C1E2E 100%);
+    linear-gradient(135deg, #0A1822 0%, #11253A 52%, #0C1E2E 100%); /* @kind color */
   --opal-sheen: linear-gradient(125deg,
       rgba(180,210,223,0.18) 0%, rgba(255,255,255,0) 32%,
-      rgba(104,150,120,0.12) 64%, rgba(96,158,180,0.16) 100%);
+      rgba(142,114,168,0.12) 64%, rgba(96,158,180,0.14) 100%); /* @kind color */
 }
 
 /* Same dark values when the OS asks for dark and no theme is pinned. */
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root {
     color-scheme: dark;
 
     --bg:            var(--c-obsidian-950);
@@ -384,28 +386,30 @@
 
     --opal-wash: linear-gradient(135deg,
         var(--c-obsidian-950) 0%,
-        var(--c-sage-900)     26%,
-        var(--c-blue-900)     52%,
-        var(--c-blue-800)     76%,
-        var(--c-boulder-900)  100%);
+        var(--c-sage-900)     18%,
+        #16303A               38%,
+        #1B2C33               52%,
+        #2A2038               70%,
+        #12222F               88%,
+        var(--c-boulder-900) 100%); /* @kind color */
     --opal-veil: radial-gradient(120% 140% at 12% 0%,
         rgba(78,135,152,0.30), transparent 55%),
       radial-gradient(110% 130% at 88% 18%,
-        rgba(78,135,152,0.22), transparent 55%),
+        rgba(130,105,154,0.26), transparent 55%),
       radial-gradient(130% 150% at 100% 100%,
         rgba(97,137,111,0.28), transparent 55%),
       radial-gradient(90% 120% at 60% 40%,
-        rgba(214,178,92,0.10), transparent 60%);
+        rgba(214,178,92,0.10), transparent 60%); /* @kind color */
 
     --opal-stone:
-      radial-gradient(58% 78% at 20% 24%, rgba(96,158,180,0.50), transparent 62%),
+      radial-gradient(58% 78% at 20% 24%, rgba(96,158,180,0.42), transparent 62%),
       radial-gradient(54% 74% at 82% 20%, rgba(142,114,168,0.36), transparent 62%),
       radial-gradient(64% 82% at 74% 82%, rgba(104,150,120,0.36), transparent 62%),
       radial-gradient(46% 62% at 46% 50%, rgba(214,178,92,0.16), transparent 66%),
-      linear-gradient(135deg, #0A1822 0%, #11253A 52%, #0C1E2E 100%);
+      linear-gradient(135deg, #0A1822 0%, #11253A 52%, #0C1E2E 100%); /* @kind color */
     --opal-sheen: linear-gradient(125deg,
         rgba(180,210,223,0.18) 0%, rgba(255,255,255,0) 32%,
-        rgba(104,150,120,0.12) 64%, rgba(96,158,180,0.16) 100%);
+        rgba(142,114,168,0.12) 64%, rgba(96,158,180,0.14) 100%); /* @kind color */
   }
 }
 
@@ -420,7 +424,7 @@
   --font-display: 'Playfair Display', Georgia, 'Times New Roman', serif;
   --font-sans:    'Montserrat', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-serif:   'Lora', Georgia, 'Times New Roman', serif;   /* body long-form */
-  --font-script:  'Caveat', ui-serif, cursive;                 /* accent, sparing */
+  --font-script:  'Dancing Script', 'Caveat', ui-serif, cursive; /* accent, sparing */
   --font-mono:    ui-monospace, 'SFMono-Regular', 'Menlo', 'Consolas', monospace;
 
   /* Type scale — 1.200 minor third, base 1rem = 16px */
@@ -519,7 +523,7 @@
   --shadow-gold: 0 14px 36px -16px rgba(214, 178, 92, 0.30);
 }
 @media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]) {
+  :root {
     --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.40);
     --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.45);
     --shadow-md: 0 14px 30px -14px rgba(0, 0, 0, 0.60);
@@ -534,19 +538,19 @@
    6 · MOTION — calm, eased, and respectful of reduced-motion
    -------------------------------------------------------------------------- */
 :root {
-  --duration-fast:   120ms;
-  --duration-base:   220ms;
-  --duration-slow:   380ms;
-  --duration-slower: 640ms;
+  --duration-fast:   120ms; /* @kind other */
+  --duration-base:   220ms; /* @kind other */
+  --duration-slow:   380ms; /* @kind other */
+  --duration-slower: 640ms; /* @kind other */
 
-  --ease-out:    cubic-bezier(0.16, 1, 0.30, 1);   /* the house easing        */
-  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --ease-soft:   cubic-bezier(0.33, 1, 0.68, 1);
+  --ease-out:    cubic-bezier(0.16, 1, 0.30, 1); /* @kind other */   /* the house easing        */
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1); /* @kind other */
+  --ease-soft:   cubic-bezier(0.33, 1, 0.68, 1); /* @kind other */
 }
 @media (prefers-reduced-motion: reduce) {
   :root {
-    --duration-fast: 0ms; --duration-base: 0ms;
-    --duration-slow: 0ms; --duration-slower: 0ms;
+    --duration-fast: 0ms; /* @kind other */ --duration-base: 0ms; /* @kind other */
+    --duration-slow: 0ms; /* @kind other */ --duration-slower: 0ms; /* @kind other */
   }
 }
 
@@ -555,14 +559,14 @@
    7 · Z-INDEX — a named stacking order
    -------------------------------------------------------------------------- */
 :root {
-  --z-base:     0;
-  --z-raised:   10;
-  --z-sticky:   100;
-  --z-header:   200;
-  --z-overlay:  800;
-  --z-modal:    900;
-  --z-toast:    1000;
-  --z-tooltip:  1100;
+  --z-base:     0; /* @kind other */
+  --z-raised:   10; /* @kind other */
+  --z-sticky:   100; /* @kind other */
+  --z-header:   200; /* @kind other */
+  --z-overlay:  800; /* @kind other */
+  --z-modal:    900; /* @kind other */
+  --z-toast:    1000; /* @kind other */
+  --z-tooltip:  1100; /* @kind other */
 }
 
 
