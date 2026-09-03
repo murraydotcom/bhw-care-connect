@@ -78,6 +78,8 @@ test("profile bridge saves to Health Core and queues only a metadata reference i
   assert.doesNotMatch(queued, /they\/them|Synthetic allergen|Synthetic reaction|Do not forward|omit@example/);
   assert.equal(queue.body.routing.assignedTeam, "clinical");
   assert.equal(queue.body.routing.ownerRole, "provider");
+  assert.equal(queue.body.requestType, "clinical-review");
+  assert.equal(queue.body.notificationMode, "none");
   assert.equal((await response.json()).queueReference, "REQ-synthetic-profile-0001");
 });
 
@@ -119,4 +121,3 @@ test("profile bridge fails closed for missing auth, identity, key, and unsupport
   assert.equal((await handler(profileRequest({ changes: { email: "unsupported@example.test" } }))).status, 400);
   assert.equal(calls, 0);
 });
-

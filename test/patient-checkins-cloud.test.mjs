@@ -23,12 +23,27 @@ const auth = (token = sessionToken()) => ({ Authorization: `Bearer ${token}` });
 
 test("check-in bridge forwards a normalized record without patient identity fields", async () => {
   let captured;
+  let queued;
   const handler = createPatientCheckinsHandler({
     environment: ENV,
     now: () => NOW,
+    queueImpl: async (input) => {
+      queued = input;
+      return { patientRequest: { id: "synthetic-checkin-review" } };
+    },
     fetchImpl: async (url, options) => {
       captured = { url, options, body: JSON.parse(options.body) };
-      return Response.json({ ok: true, savedAt: "2026-08-30T12:00:01.000Z" });
+      return Response.json({
+        ok: true,
+        savedAt: "2026-08-30T12:00:01.000Z",
+        monitoring: {
+          checkInId: "2026-08-30-primary",
+          program: "primary",
+          checkInDate: "2026-08-30",
+          submittedAt: "2026-08-30T12:00:01.000Z",
+          reviewState: "pending-clinician-review",
+        },
+      });
     },
   });
   const request = new Request("https://care.synthetic.test/api/patient-portal/check-ins", {
@@ -54,6 +69,38 @@ test("check-in bridge forwards a normalized record without patient identity fiel
   assert.equal(captured.body.waterCups, 6);
   assert.equal(captured.body.patient, undefined);
   assert.doesNotMatch(JSON.stringify(captured.body), /Must not forward|BHW0000/);
+  assert.equal(queued.body.requestType, "clinical-review");
+  assert.equal(queued.body.routing.assignedTeam, "clinical");
+  assert.equal(queued.body.notificationMode, "none");
+  assert.match(queued.submissionId, /BHW0000:2026-08-30-primary/);
+  assert.doesNotMatch(JSON.stringify(queued.body), /fatigue|oatmeal|120\/80/i);
+});
+
+test("reports a saved check-in accurately when CrewHQ review queuing is not confirmed", async () => {
+  const handler = createPatientCheckinsHandler({
+    environment: ENV,
+    now: () => NOW,
+    queueImpl: async () => { throw new Error("synthetic queue outage"); },
+    fetchImpl: async () => Response.json({
+      ok: true,
+      savedAt: "2026-08-30T12:00:01.000Z",
+      monitoring: {
+        checkInId: "2026-08-30-primary",
+        program: "primary",
+        checkInDate: "2026-08-30",
+        submittedAt: "2026-08-30T12:00:01.000Z",
+      },
+    }),
+  });
+  const response = await handler(new Request("https://care.synthetic.test/api/patient-portal/check-ins", {
+    method: "POST",
+    headers: { ...auth(), "Content-Type": "application/json" },
+    body: JSON.stringify({ program: "primary", date: "2026-08-30" }),
+  }));
+  assert.equal(response.status, 502);
+  const body = await response.json();
+  assert.equal(body.saved, true);
+  assert.match(body.error, /saved to BHW Cloud/i);
 });
 
 test("check-in history uses the signed patient route and bounded query", async () => {

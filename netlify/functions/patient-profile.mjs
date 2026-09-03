@@ -59,11 +59,15 @@ function queueBody(session, profileRequest) {
   return {
     bhwPatientId: session.bhwPatientId,
     patientMatchStatus: "matched",
-    requestType: "other",
+    requestType: "clinical-review",
     priority: fields.some((field) => ["allergies", "intolerances"].includes(field)) ? "high" : "routine",
     summary: "Patient profile correction requires clinician review",
     message: `Review Health Core profile request ${profileRequest.requestId}. Submitted fields: ${fields.join(", ")}. Values remain in Health Core and are not copied into the operations queue.`,
     requester: { preferredChannel: "portal" },
+    source: "care-connect",
+    sourceReference: profileRequest.requestId,
+    manualNotifyOnly: true,
+    notificationMode: "none",
     routing: {
       targetSystem: "crewos",
       assignedTeam: "clinical",
@@ -138,7 +142,7 @@ export function createPatientProfileHandler({
         submissionId: key,
         body: queueBody(session, profileRequest),
       });
-      const queueReference = queued?.patientRequest?.patientRequestId;
+      const queueReference = queued?.patientRequest?.patientRequestId || queued?.patientRequest?.id || queued?.request?.id;
       if (!queueReference) throw new Error("operations queue returned no request reference");
       return json(replayed ? 200 : 201, {
         ok: true,
@@ -167,4 +171,3 @@ const patientProfileHandler = createPatientProfileHandler();
 export default patientProfileHandler;
 export const handler = asLambdaHandler(patientProfileHandler);
 export const config = { path: "/api/patient-portal/profile-change-requests" };
-

@@ -156,21 +156,43 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
 .scan .t i,.off-status,.off-cam__bar,.done{font-size:13px}
 .trend .tl,.trend .tv,.micro{font-size:12.5px}
 </style>
+<link rel="stylesheet" href="bhw-checkin-care-connect.css">
 </head>
 <body>
-<div class="wrap">
+<a class="skip-link" href="#main-content">Skip to check-in</a>
+<header class="care-connect-bar">
+  <a class="care-connect-brand" href="/patient/" aria-label="BHW Care Connect home">
+    <img src="../patient/assets/bhw-medical-logo.png" alt="BHW Medical">
+    <span><b>Care Connect</b><small>Your Health Blueprint</small></span>
+  </a>
+  <span class="secure-label">Patient portal</span>
+</header>
+<main class="wrap" id="main-content">
 
-  <div class="top">
-    <div class="mk"><svg viewBox="0 0 48 48" width="24" height="24"><path d="M10 24h6l3-8 5 16 4-8h10" fill="none" stroke="#4a8a87" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div>
+  <section class="checkin-hero">
+    <div class="checkin-hero-copy">
+      <span class="hero-kicker">Your daily pattern</span>
       <h1>Today&rsquo;s check-in</h1>
-      <div class="sub" id="sub">Log as much or as little as you like — it goes to your care team.</div>
+      <div class="sub" id="sub">A quick snapshot for your Health Blueprint.</div>
+      <div class="program-pill" id="programPill">Primary Care</div>
     </div>
-    <a class="back" id="back" href="bhw-primary-care-demo.html">← Back</a>
-  </div>
+    <div class="checkin-hero-actions">
+      <span id="todayDate"></span>
+      <a class="back" id="back" href="bhw-primary-care-demo.html">Back to your Blueprint</a>
+    </div>
+  </section>
+
+  <nav class="section-jump" aria-label="Check-in sections">
+    <a href="#nutrition-card">Nutrition</a>
+    <a href="#wellbeing-card">Sleep &amp; movement</a>
+    <a href="#symptoms-card">Symptoms</a>
+    <a href="#vitals-card">Readings</a>
+  </nav>
+
+  <div class="checkin-grid">
 
   <!-- FOOD -->
-  <div class="card">
+  <div class="card card-wide" id="nutrition-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>Food &amp; nutrition</h2>
     <div class="hint">Search a food or scan its barcode — nutrition facts come from <b>Open Food Facts</b>, a free open database — and it adds to today&rsquo;s totals.</div>
 
@@ -190,18 +212,11 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
     <div class="off-status" id="offStatus"></div>
     <div class="off-results" id="offResults"></div>
 
-    <details class="homecook">
-      <summary>Home-cooked or fresh meal? Snap a photo for an instant estimate</summary>
-      <label class="scan" for="plate">
-        <span class="ico"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>
-        <span class="t"><b>Snap your plate</b><i>We estimate the foods &amp; macros — you confirm before it counts</i></span>
-        <span class="go">Open camera →</span>
-        <input id="plate" type="file" accept="image/*" capture="environment" hidden onchange="estimatePlate(event)">
-      </label>
-      <div class="meals" id="meals"></div>
-      <div class="off-status" id="plateStatus"></div>
-      <div class="off-results" id="plateEst"></div>
-    </details>
+    <div class="release-gate" id="platePhotoGate">
+      <span>Plate-photo analysis</span>
+      <b>Coming after the authenticated privacy and BAA release review</b>
+      <p>Food search and barcode scanning are ready now.</p>
+    </div>
 
     <div class="q" style="border-top:1px solid var(--line-2);margin-top:12px">
       <div class="lbl">Nutrition plan — last 24 hours</div>
@@ -234,7 +249,7 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   </div>
 
   <!-- HYDRATION -->
-  <div class="card">
+  <div class="card card-wide" id="hydration-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>Hydration</h2>
     <div class="hint">Tap a cup as you drink. Your shared target is <span id="waterGoalHint">8 cups</span> today.</div>
     <div class="hydro">
@@ -248,14 +263,14 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   </div>
 
   <!-- TREND (stored history) -->
-  <div class="card" id="trendCard" hidden>
+  <div class="card card-wide" id="trendCard" hidden>
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 18l5-6 4 3 6-8"/><path d="M4 21h16"/></svg></span>Your trend <span id="trendDays" style="font-size:11px;font-weight:600;color:var(--ink-soft)"></span></h2>
     <div class="hint">Your recent check-ins — the more you log, the clearer the pattern for you and your care team.</div>
     <div id="trends"></div>
   </div>
 
   <!-- HOW YOU'RE DOING -->
-  <div class="card">
+  <div class="card card-wide" id="wellbeing-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></span>How you&rsquo;re doing</h2>
     <div class="q"><div class="lbl">How are you feeling today?</div><div class="opts" data-q="Feeling"><button type="button">Rough</button><button type="button">Low</button><button type="button">OK</button><button type="button">Good</button><button type="button">Great</button></div></div>
     <div class="q"><div class="lbl">Motivation</div><div class="opts" data-q="Motivation"><button type="button">Empty</button><button type="button">Low</button><button type="button">Steady</button><button type="button">Strong</button></div></div>
@@ -266,21 +281,21 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   </div>
 
   <!-- SYMPTOMS (program-specific) -->
-  <div class="card">
+  <div class="card" id="symptoms-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></span>Symptoms <span id="symProg" style="font-size:11px;font-weight:600;color:var(--ink-soft)"></span></h2>
     <div class="hint">Tap anything you&rsquo;ve noticed today — this is tailored to your program.</div>
     <div class="opts" id="symptoms" data-q="Symptoms" data-multi="1"></div>
   </div>
 
   <!-- MEDICATION / VITAMIN COMPLIANCE -->
-  <div class="card">
+  <div class="card" id="medications-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M10.5 20.5 4 14a5 5 0 0 1 7-7l6.5 6.5a5 5 0 0 1-7 7z"/><path d="M7.5 7.5 16 16"/></svg></span>Medications &amp; vitamins</h2>
     <div class="hint">Check off what you&rsquo;ve taken from the medication list shared in your Health Blueprint.</div>
     <div id="meds"></div>
   </div>
 
   <!-- VITALS -->
-  <div class="card">
+  <div class="card card-wide" id="vitals-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 14h4l2 5 4-10 2 5h4"/></svg></span>Vital signs</h2>
     <div class="hint">Enter any readings you have today. Device values are not imported unless a verified connection is enabled for your account.</div>
     <div class="vitals">
@@ -295,18 +310,20 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   </div>
 
   <!-- DEVICES -->
-  <div class="card">
+  <div class="card card-wide checkin-muted" id="devices-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="3"/><path d="M11 6h2"/></svg></span>Device connections</h2>
     <div class="hint">No device connection is active in this check-in yet. Enter readings above; verified Apple Health, Google Fit, Fitbit, Oura, Dexcom, or Withings connections can be added later.</div>
     <div class="dev" id="devices"></div>
   </div>
 
-  <div class="save">
-    <button onclick="saveAll()">Save today&rsquo;s check-in</button>
-    <div class="done" id="done" hidden>Not saved yet.</div>
   </div>
 
-</div>
+  <div class="save">
+    <button id="saveButton" type="button" onclick="saveAll()">Save today&rsquo;s check-in</button>
+    <div class="done" id="done" role="status" aria-live="polite">Not saved.</div>
+  </div>
+
+</main>
 
 <script>
 // Nutrient targets per program (daily). Starting defaults the care team can
@@ -315,25 +332,29 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
 // GLP-1 muscle preservation); Mind & Mood and CharmEd lean higher magnesium /
 // vitamin D / lower sugar (mood & cognition).
 const PROGRAMS={
-  primary:{name:'Primary Care', back:'bhw-primary-care-demo.html', accent:'#5fa9a6', deep:'#4a8a87',
+  primary:{name:'Primary Care', back:'bhw-primary-care-demo.html', accent:'#82b6b6', deep:'#4d7159',
     symptoms:['Fatigue','Headache','Dizziness','Chest tightness','Shortness of breath','Joint pain','Digestive upset','Low mood','Poor sleep','Other'],
     targets:{p:90,c:225,f:65,fiber:28,sugar:50,sodium:2300,vitd:20,vitc:90,iron:18,calcium:1000,potassium:3400,magnesium:400,waterCups:8}},
-  flow:{name:'Flow · Vascular', back:'bhw-flow-program.html', accent:'#5f93bd', deep:'#436f92',
+  flow:{name:'Flow · Blood & Vascular Care', back:'bhw-flow-program.html', accent:'#1789aa', deep:'#0f667f',
     symptoms:['Leg cramps','Cold hands/feet','Swelling','Chest tightness','Shortness of breath','Palpitations','Dizziness','Fatigue','Headache','Other'],
     targets:{p:110,c:180,f:60,fiber:35,sugar:36,sodium:1500,vitd:25,vitc:120,iron:18,calcium:1000,potassium:4000,magnesium:420,waterCups:10}},
-  mind:{name:'Mind & Mood', back:'bhw-mindmood-program.html', accent:'#e0965c', deep:'#b9713a',
+  mind:{name:'Mind & Mood', back:'bhw-mindmood-program.html', accent:'#9b7da5', deep:'#6a5480',
     symptoms:['Low mood','Anxiety','Irritability','Poor sleep','Low motivation','Racing thoughts','Cravings','Fatigue','Appetite change','Other'],
     targets:{p:100,c:200,f:65,fiber:30,sugar:40,sodium:2000,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450,waterCups:8}},
-  charmed:{name:'CharmEd', back:'bhw-charmed-program.html', accent:'#3aa79b', deep:'#2c7f76',
+  charmed:{name:'CharmEd Minds · Brain Health & Neurodivergence', back:'bhw-charmed-program.html', accent:'#2babab', deep:'#197c7c',
     symptoms:['Brain fog','Memory slips','Word-finding','Poor focus','Low mood','Poor sleep','Fatigue','Headache','Other'],
     targets:{p:100,c:180,f:65,fiber:30,sugar:36,sodium:1800,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450,waterCups:8}},
 };
 const params=new URLSearchParams(location.search);
 const LOCAL_PREVIEW=params.get('preview')==='1'&&['localhost','127.0.0.1'].includes(location.hostname);
-const P=PROGRAMS[params.get('program')]||PROGRAMS.primary;
+const PROGKEY=PROGRAMS[params.get('program')]?params.get('program'):'primary';
+const P=PROGRAMS[PROGKEY];
 document.documentElement.style.setProperty('--accent',P.accent);
 document.documentElement.style.setProperty('--accent-deep',P.deep);
-document.getElementById('sub').textContent=LOCAL_PREVIEW?P.name+' · synthetic BHW0000 preview · entries stay on this device.':P.name+' · log as much or as little as you like — saved entries go to your care team.';
+document.body.dataset.checkinProgram=PROGKEY;
+document.getElementById('programPill').textContent=P.name;
+document.getElementById('todayDate').textContent=new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
+document.getElementById('sub').textContent=LOCAL_PREVIEW?'Synthetic BHW0000 preview · entries stay on this device.':'A quick snapshot for your Health Blueprint and care team.';
 const back=document.getElementById('back');
 back.href=params.get('return')==='portal'?'/patient/'+(LOCAL_PREVIEW?'?preview=1':''):P.back;
 document.getElementById('symProg').textContent='· '+P.name;
@@ -344,7 +365,10 @@ document.getElementById('symptoms').innerHTML=P.symptoms.map(s=>`<button type="b
 // will replace this empty state when the corresponding server integration exists.
 document.getElementById('devices').innerHTML='<div class="off-status">Manual entry is available above. No device is connected.</div>';
 
-const STATE={}; let MEALS=0;
+const STATE={};
+// Plate-photo AI remains intentionally unavailable until the separate
+// authenticated privacy and BAA release gate is approved.
+const MEALS=0;
 // single / multi option pickers
 document.querySelectorAll('.opts[data-q]').forEach(wrap=>{
   const key=wrap.dataset.q, multi=wrap.dataset.multi;
@@ -356,43 +380,6 @@ document.querySelectorAll('.opts[data-q]').forEach(wrap=>{
     });
   });
 });
-/* ===== Snap your plate — OpenAI-vision estimate, patient confirms ===== */
-const VISION_API='/.netlify/functions/food-vision';
-const escH=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-function readDataURL(f){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(f); }); }
-function markCareTeam(box){ if(!box.querySelector('.tag')){ const t=document.createElement('span'); t.className='tag'; t.textContent='Sent to your care team'; box.appendChild(t); } }
-function estRow(it){
-  const el=document.createElement('div'); el.className='off-item';
-  const meta=(it.portion?it.portion+' · ':'')+'estimate';
-  el.innerHTML='<div class="off-item__b"><div class="off-item__n">'+escH(it.name)+'</div><div class="off-item__m">'+escH(meta)+'</div>'
-    +'<div class="est-macros">P <input type="number" min="0" value="'+it.protein+'"> C <input type="number" min="0" value="'+it.carbs+'"> F <input type="number" min="0" value="'+it.fat+'"></div></div>';
-  const ins=el.querySelectorAll('.est-macros input');
-  const b=document.createElement('button'); b.className='obtn go'; b.type='button'; b.textContent='Add';
-  b.onclick=()=>{ plateAdd(it.name,{p:+ins[0].value||0,c:+ins[1].value||0,f:+ins[2].value||0,fiber:+it.fiber||0,sugar:+it.sugar||0,sodium:+it.sodium||0,vitd:+it.vitd||0,vitc:+it.vitc||0,iron:+it.iron||0,calcium:+it.calcium||0,potassium:+it.potassium||0,magnesium:+it.magnesium||0}); b.textContent='Added ✓'; b.disabled=true; };
-  el.appendChild(b); return el;
-}
-async function estimatePlate(e){
-  const f=(e.target.files||[])[0]; if(!f) return;
-  const box=document.getElementById('meals'), status=document.getElementById('plateStatus'), est=document.getElementById('plateEst');
-  est.innerHTML=''; box.innerHTML='';
-  const img=document.createElement('img'); img.src=URL.createObjectURL(f); box.appendChild(img); MEALS++;
-  status.textContent='Looking at your plate…';
-  let dataUrl; try{ dataUrl=await readDataURL(f); }catch(err){ status.textContent='Couldn’t read that photo — try again.'; return; }
-  try{
-    const r=await fetch(VISION_API,{method:'POST',headers:{Authorization:'Bearer '+SESSION_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl})});
-    const d=await r.json().catch(()=>({}));
-    if(r.status===401){ status.textContent='Please sign in again to use a food photo. The photo was not sent.'; return; }
-    if(r.status===503){ status.textContent=(d&&d.error)||'Photo estimates aren’t switched on yet. The photo was not sent; search or scan a barcode instead.'; return; }
-    if(!r.ok){ status.textContent=(d&&d.error)||'Couldn’t estimate this photo — try search or a barcode above.'; return; }
-    if(!d.items||!d.items.length){ status.textContent=(d&&d.note)||'Couldn’t spot foods in that photo — try search or a barcode above.'; return; }
-    status.textContent=d.note||'Estimated — check the numbers, adjust if needed, then Add.';
-    d.items.forEach(it=>est.appendChild(estRow(it)));
-    const all=document.createElement('button'); all.className='obtn go'; all.type='button'; all.style.marginTop='8px'; all.textContent='Add all to today';
-    all.onclick=()=>{ est.querySelectorAll('.off-item .obtn').forEach(b=>{ if(!b.disabled) b.click(); }); all.disabled=true; all.textContent='Added ✓'; };
-    est.appendChild(all);
-  }catch(err){ status.textContent='Couldn’t reach the estimator — check your connection, or use search/barcode above.'; }
-}
-
 /* ===== Nutrition tally — fuel vessels + nutrient bars ===== */
 const FOODS=[];
 const MACROS=['p','c','f'];
@@ -423,7 +410,6 @@ const LOCAL_CHECKIN_KEY='bhw_patient_checkins_preview_v1';
 const SESSION_PT=(function(){try{var f=JSON.parse(sessionStorage.getItem('bhw_pt_family')||'null');return (f&&f.patient)||null;}catch(e){return null;}})();
 const SESSION_TOKEN=sessionStorage.getItem('bhw_pt_session')||'';
 const PATIENT={name:(SESSION_PT&&SESSION_PT.name)||(LOCAL_PREVIEW?'Synthetic Patient':'Patient'),phone:(SESSION_PT&&SESSION_PT.phone)||'',id:(SESSION_PT&&SESSION_PT.id)||(LOCAL_PREVIEW?'BHW0000':'')};
-const PROGKEY=params.get('program')||'primary';
 const FEEL={Rough:1,Low:2,OK:3,Good:4,Great:5}, SLEEPS={Rough:1,OK:2,Good:3,Great:4};
 function renderMedicationChecklist(medications){
   const box=document.getElementById('meds'); box.innerHTML='';
@@ -599,6 +585,7 @@ renderWaterCups();
 
 async function saveAll(){
   const done=document.getElementById('done');
+  const saveButton=document.getElementById('saveButton');
   const parts=[];
   Object.entries(STATE).forEach(([k,v])=>{ if(v&&(!Array.isArray(v)||v.length)) parts.push(`${k}: ${Array.isArray(v)?v.join(', '):v}`); });
   const vt={BP:'v_bp',HR:'v_hr',Weight:'v_wt',Glucose:'v_glu',Temp:'v_temp',O2:'v_o2',Steps:'v_steps'};
@@ -614,6 +601,7 @@ async function saveAll(){
   if(MEALS) parts.push(MEALS+' meal photo'+(MEALS>1?'s':'')+' logged');
   const summary=`${P.name} check-in — `+(parts.length?parts.join(' · '):'opened, nothing logged');
   done.hidden=false; done.textContent='Saving…';
+  saveButton.disabled=true; saveButton.setAttribute('aria-busy','true');
   // Structured record → authenticated BHW Cloud check-in contract.
   const v=id=>{const e=document.getElementById(id); return e?e.value.trim():'';};
   const payload={
@@ -630,14 +618,20 @@ async function saveAll(){
       localStorage.setItem(LOCAL_CHECKIN_KEY,JSON.stringify(local.slice(-90)));
       done.textContent='Saved on this device only at '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'. BHW Cloud was not changed.';
     }catch(err){done.textContent='Not saved. This browser could not store the preview check-in.';}
+    saveButton.disabled=false; saveButton.removeAttribute('aria-busy');
     return;
   }
   try{
     const response=await fetch(SAVE_API,{method:'POST',headers:{Authorization:'Bearer '+SESSION_TOKEN,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(payload)});
     const result=await response.json().catch(()=>({}));
+    if(!response.ok&&result.saved===true){
+      done.textContent='Saved to BHW Cloud at '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'. The CrewHQ review notice is not confirmed yet; please try Save again.';
+      return;
+    }
     if(!response.ok||result.ok!==true)throw new Error(result.error||'The check-in could not be saved.');
-    done.textContent='Saved to BHW Cloud at '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'.';
+    done.textContent='Saved to BHW Cloud at '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+' · ready for clinician review in CrewHQ.';
   }catch(err){done.textContent='Not saved. '+(err.message||'Please try again.');}
+  finally{saveButton.disabled=false; saveButton.removeAttribute('aria-busy');}
 }
 </script>
 </body>
