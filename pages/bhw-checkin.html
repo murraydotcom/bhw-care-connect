@@ -156,21 +156,44 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
 .scan .t i,.off-status,.off-cam__bar,.done{font-size:13px}
 .trend .tl,.trend .tv,.micro{font-size:12.5px}
 </style>
+<link rel="stylesheet" href="bhw-checkin-care-connect.css">
 </head>
 <body>
-<div class="wrap">
+<a class="skip-link" href="#main-content">Skip to check-in</a>
+<header class="care-connect-bar">
+  <a class="care-connect-brand" href="/patient/" aria-label="BHW Care Connect home">
+    <img src="../patient/assets/bhw-medical-logo.png" alt="BHW Medical">
+    <span><b>Care Connect</b><small>Your Health Blueprint</small></span>
+  </a>
+  <span class="secure-label">Patient portal</span>
+</header>
+<main class="wrap" id="main-content">
 
-  <div class="top">
-    <div class="mk"><svg viewBox="0 0 48 48" width="24" height="24"><path d="M10 24h6l3-8 5 16 4-8h10" fill="none" stroke="#4a8a87" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
-    <div>
+  <section class="checkin-hero">
+    <div class="checkin-hero-copy">
+      <span class="hero-kicker">Your daily pattern</span>
       <h1>Today&rsquo;s check-in</h1>
-      <div class="sub" id="sub">Log as much or as little as you like — it goes to your care team.</div>
+      <div class="sub" id="sub">A quick snapshot for your Health Blueprint.</div>
+      <div class="program-pill" id="programPill">Primary Care</div>
     </div>
-    <a class="back" id="back" href="bhw-primary-care-demo.html">← Back</a>
-  </div>
+    <div class="checkin-hero-actions">
+      <span id="todayDate"></span>
+      <a class="back" id="back" href="bhw-primary-care-demo.html">Back to your Blueprint</a>
+    </div>
+  </section>
+
+  <nav class="section-jump" aria-label="Check-in sections">
+    <a href="#nutrition-card">Nutrition</a>
+    <a href="#wellbeing-card">Sleep &amp; movement</a>
+    <a href="#program-focus-card" id="programFocusJump" hidden>Program focus</a>
+    <a href="#symptoms-card">Symptoms</a>
+    <a href="#vitals-card">Readings</a>
+  </nav>
+
+  <div class="checkin-grid">
 
   <!-- FOOD -->
-  <div class="card">
+  <div class="card card-wide" id="nutrition-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>Food &amp; nutrition</h2>
     <div class="hint">Search a food or scan its barcode — nutrition facts come from <b>Open Food Facts</b>, a free open database — and it adds to today&rsquo;s totals.</div>
 
@@ -190,18 +213,11 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
     <div class="off-status" id="offStatus"></div>
     <div class="off-results" id="offResults"></div>
 
-    <details class="homecook">
-      <summary>Home-cooked or fresh meal? Snap a photo for an instant estimate</summary>
-      <label class="scan" for="plate">
-        <span class="ico"><svg viewBox="0 0 24 24"><path d="M14.5 4h-5L7 7H4a2 2 0 0 0-2 2v9a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2h-3l-2.5-3z"/><circle cx="12" cy="13" r="3.2"/></svg></span>
-        <span class="t"><b>Snap your plate</b><i>We estimate the foods &amp; macros — you confirm before it counts</i></span>
-        <span class="go">Open camera →</span>
-        <input id="plate" type="file" accept="image/*" capture="environment" hidden onchange="estimatePlate(event)">
-      </label>
-      <div class="meals" id="meals"></div>
-      <div class="off-status" id="plateStatus"></div>
-      <div class="off-results" id="plateEst"></div>
-    </details>
+    <div class="release-gate" id="platePhotoGate">
+      <span>Plate-photo analysis</span>
+      <b>Coming after the authenticated privacy and BAA release review</b>
+      <p>Food search and barcode scanning are ready now.</p>
+    </div>
 
     <div class="q" style="border-top:1px solid var(--line-2);margin-top:12px">
       <div class="lbl">Nutrition plan — last 24 hours</div>
@@ -234,7 +250,7 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   </div>
 
   <!-- HYDRATION -->
-  <div class="card">
+  <div class="card card-wide" id="hydration-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg></span>Hydration</h2>
     <div class="hint">Tap a cup as you drink. Your shared target is <span id="waterGoalHint">8 cups</span> today.</div>
     <div class="hydro">
@@ -248,14 +264,14 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   </div>
 
   <!-- TREND (stored history) -->
-  <div class="card" id="trendCard" hidden>
+  <div class="card card-wide" id="trendCard" hidden>
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 18l5-6 4 3 6-8"/><path d="M4 21h16"/></svg></span>Your trend <span id="trendDays" style="font-size:11px;font-weight:600;color:var(--ink-soft)"></span></h2>
     <div class="hint">Your recent check-ins — the more you log, the clearer the pattern for you and your care team.</div>
     <div id="trends"></div>
   </div>
 
   <!-- HOW YOU'RE DOING -->
-  <div class="card">
+  <div class="card card-wide" id="wellbeing-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M8 14s1.5 2 4 2 4-2 4-2M9 9h.01M15 9h.01"/></svg></span>How you&rsquo;re doing</h2>
     <div class="q"><div class="lbl">How are you feeling today?</div><div class="opts" data-q="Feeling"><button type="button">Rough</button><button type="button">Low</button><button type="button">OK</button><button type="button">Good</button><button type="button">Great</button></div></div>
     <div class="q"><div class="lbl">Motivation</div><div class="opts" data-q="Motivation"><button type="button">Empty</button><button type="button">Low</button><button type="button">Steady</button><button type="button">Strong</button></div></div>
@@ -265,22 +281,33 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
     <div class="q"><div class="lbl">Time with people you care about?</div><div class="opts" data-q="People"><button type="button">None</button><button type="button">A little</button><button type="button">Real time</button></div></div>
   </div>
 
+  <!-- CLINICIAN-SELECTED PROGRAM QUESTIONS -->
+  <div class="card card-wide program-focus-card" id="program-focus-card" hidden>
+    <div class="program-focus-heading">
+      <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M5 12h3l2-5 4 10 2-5h3"/><circle cx="12" cy="12" r="9"/></svg></span><span id="programFocusTitle">Questions selected for you</span></h2>
+      <span class="clinician-selected">Clinician selected</span>
+    </div>
+    <div class="hint" id="programFocusHint">A brief set of questions chosen for your current plan.</div>
+    <div class="monitoring-questions" id="monitoringQuestions"></div>
+    <div class="monitoring-footnote" id="monitoringFootnote"></div>
+  </div>
+
   <!-- SYMPTOMS (program-specific) -->
-  <div class="card">
+  <div class="card" id="symptoms-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg></span>Symptoms <span id="symProg" style="font-size:11px;font-weight:600;color:var(--ink-soft)"></span></h2>
     <div class="hint">Tap anything you&rsquo;ve noticed today — this is tailored to your program.</div>
     <div class="opts" id="symptoms" data-q="Symptoms" data-multi="1"></div>
   </div>
 
   <!-- MEDICATION / VITAMIN COMPLIANCE -->
-  <div class="card">
+  <div class="card" id="medications-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M10.5 20.5 4 14a5 5 0 0 1 7-7l6.5 6.5a5 5 0 0 1-7 7z"/><path d="M7.5 7.5 16 16"/></svg></span>Medications &amp; vitamins</h2>
     <div class="hint">Check off what you&rsquo;ve taken from the medication list shared in your Health Blueprint.</div>
     <div id="meds"></div>
   </div>
 
   <!-- VITALS -->
-  <div class="card">
+  <div class="card card-wide" id="vitals-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M4 14h4l2 5 4-10 2 5h4"/></svg></span>Vital signs</h2>
     <div class="hint">Enter any readings you have today. Device values are not imported unless a verified connection is enabled for your account.</div>
     <div class="vitals">
@@ -295,18 +322,20 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   </div>
 
   <!-- DEVICES -->
-  <div class="card">
+  <div class="card card-wide checkin-muted" id="devices-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><rect x="7" y="2" width="10" height="20" rx="3"/><path d="M11 6h2"/></svg></span>Device connections</h2>
     <div class="hint">No device connection is active in this check-in yet. Enter readings above; verified Apple Health, Google Fit, Fitbit, Oura, Dexcom, or Withings connections can be added later.</div>
     <div class="dev" id="devices"></div>
   </div>
 
-  <div class="save">
-    <button onclick="saveAll()">Save today&rsquo;s check-in</button>
-    <div class="done" id="done" hidden>Not saved yet.</div>
   </div>
 
-</div>
+  <div class="save">
+    <button id="saveButton" type="button" onclick="saveAll()">Save today&rsquo;s check-in</button>
+    <div class="done" id="done" role="status" aria-live="polite">Not saved.</div>
+  </div>
+
+</main>
 
 <script>
 // Nutrient targets per program (daily). Starting defaults the care team can
@@ -315,25 +344,70 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
 // GLP-1 muscle preservation); Mind & Mood and CharmEd lean higher magnesium /
 // vitamin D / lower sugar (mood & cognition).
 const PROGRAMS={
-  primary:{name:'Primary Care', back:'bhw-primary-care-demo.html', accent:'#5fa9a6', deep:'#4a8a87',
+  primary:{name:'Primary Care', back:'bhw-primary-care-demo.html', accent:'#82b6b6', deep:'#4d7159',
     symptoms:['Fatigue','Headache','Dizziness','Chest tightness','Shortness of breath','Joint pain','Digestive upset','Low mood','Poor sleep','Other'],
     targets:{p:90,c:225,f:65,fiber:28,sugar:50,sodium:2300,vitd:20,vitc:90,iron:18,calcium:1000,potassium:3400,magnesium:400,waterCups:8}},
-  flow:{name:'Flow · Vascular', back:'bhw-flow-program.html', accent:'#5f93bd', deep:'#436f92',
+  flow:{name:'Flow · Blood & Vascular Care', back:'bhw-flow-program.html', accent:'#1789aa', deep:'#0f667f',
     symptoms:['Leg cramps','Cold hands/feet','Swelling','Chest tightness','Shortness of breath','Palpitations','Dizziness','Fatigue','Headache','Other'],
     targets:{p:110,c:180,f:60,fiber:35,sugar:36,sodium:1500,vitd:25,vitc:120,iron:18,calcium:1000,potassium:4000,magnesium:420,waterCups:10}},
-  mind:{name:'Mind & Mood', back:'bhw-mindmood-program.html', accent:'#e0965c', deep:'#b9713a',
+  mind:{name:'Mind & Mood Recovery', back:'bhw-mindmood-program.html', accent:'#E09A5C', deep:'#9A5236',
     symptoms:['Low mood','Anxiety','Irritability','Poor sleep','Low motivation','Racing thoughts','Cravings','Fatigue','Appetite change','Other'],
     targets:{p:100,c:200,f:65,fiber:30,sugar:40,sodium:2000,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450,waterCups:8}},
-  charmed:{name:'CharmEd', back:'bhw-charmed-program.html', accent:'#3aa79b', deep:'#2c7f76',
+  charmed:{name:'CharmEd Minds · Brain Health & Neurodivergence', back:'bhw-charmed-program.html', accent:'#2babab', deep:'#197c7c',
     symptoms:['Brain fog','Memory slips','Word-finding','Poor focus','Low mood','Poor sleep','Fatigue','Headache','Other'],
     targets:{p:100,c:180,f:65,fiber:30,sugar:36,sodium:1800,vitd:25,vitc:120,iron:18,calcium:1000,potassium:3600,magnesium:450,waterCups:8}},
 };
+const PREVIEW_MONITORING_PLANS={
+  mind:{
+    schemaVersion:'bhw.patient-monitoring-plan.v1',planId:'mind-monitoring-plan',version:1,program:'mind',programLabel:'Mind & Mood Recovery',dailyQuestionLimit:5,briefMode:true,
+    modules:[
+      {id:'mind-daily-recovery',title:'Daily recovery pulse',description:'A brief view of mood, activation, restorative sleep, function, and treatment experience.',cadence:'daily',dueToday:true,questions:[
+        {id:'mind-mood-today',prompt:'How has your overall mood felt today?',responseType:'single-choice',options:['Lower than usual','About usual','Brighter than usual']},
+        {id:'mind-activation-impact',prompt:'How much did anxiety or internal activation affect you today?',responseType:'single-choice',options:['Not at all','A little','Some','A lot']},
+        {id:'mind-sleep-restored',prompt:'How restored did you feel after sleep?',responseType:'single-choice',options:['Not restored','A little restored','Mostly restored','Fully restored']},
+        {id:'mind-function-impact',prompt:'How much did mood or mental energy affect what you needed to do?',responseType:'single-choice',options:['Not at all','A little','Some','A lot']},
+        {id:'mind-treatment-change',prompt:'Any new or changed treatment effect you want your care team to review?',responseType:'single-choice',options:['No change','Helpful change','Uncomfortable change','I am not sure']},
+      ]},
+      {id:'mind-weekly-pattern',title:'Weekly recovery pattern',description:'A rotating deeper look at recovery patterns and your current goal.',cadence:'weekly',dueToday:new Date().getDay()===4,questions:[
+        {id:'mind-motivation-week',prompt:'Across this week, how available was your motivation?',responseType:'single-choice',options:['Very limited','Inconsistent','Usually available','Strong']},
+        {id:'mind-concentration-week',prompt:'How much did concentration interfere with daily life this week?',responseType:'single-choice',options:['Not at all','A little','Some','A lot']},
+        {id:'mind-appetite-week',prompt:'How different was your appetite from your usual pattern?',responseType:'single-choice',options:['Much lower','A little lower','About usual','A little higher','Much higher']},
+        {id:'mind-connection-week',prompt:'How connected did you feel to people who matter to you?',responseType:'single-choice',options:['Disconnected','A little connected','Mostly connected','Very connected']},
+        {id:'mind-goal-note',prompt:'What changed around the recovery goal you are working on?',responseType:'short-text'},
+      ]},
+    ],interventions:[],approval:{state:'clinician-approved'}
+  },
+  charmed:{
+    schemaVersion:'bhw.patient-monitoring-plan.v1',planId:'charmed-monitoring-plan',version:1,program:'charmed',programLabel:'CharmEd Minds · Brain Health & Neurodivergence',dailyQuestionLimit:6,briefMode:true,
+    modules:[
+      {id:'charmed-daily-regulation',title:'Daily brain-and-body pulse',description:'A neurodiversity-affirming view of cognitive energy, initiation, sensory load, recovery, and support use.',cadence:'daily',dueToday:true,questions:[
+        {id:'charmed-cognitive-energy',prompt:'How available was your thinking energy today?',responseType:'single-choice',options:['Very limited','Limited','Mostly available','Strong']},
+        {id:'charmed-task-initiation',prompt:'How hard was it to begin what you intended to do?',responseType:'single-choice',options:['Not hard','A little hard','Quite hard','Could not begin']},
+        {id:'charmed-sensory-load',prompt:'How much sensory load did you carry today?',responseType:'single-choice',options:['Low','Manageable','Heavy','Overwhelming']},
+        {id:'charmed-recovery-access',prompt:'Were you able to recover after overload or sustained effort?',responseType:'single-choice',options:['Did not need recovery','Yes','Partly','Not yet']},
+        {id:'charmed-support-used',prompt:'Which support helped you today?',responseType:'multi-choice',options:['Movement or body break','Reduced sensory input','Written or visual support','Body doubling','Extra recovery time','Another support']},
+        {id:'charmed-support-effect',prompt:'How well did the support fit what your brain needed?',responseType:'single-choice',options:['Did not fit','Helped a little','Helped','Helped a lot']},
+      ]},
+      {id:'charmed-weekly-executive',title:'Weekly executive-function pattern',description:'A rotating deeper look at strategy fit and executive-function patterns.',cadence:'weekly',dueToday:new Date().getDay()===4,questions:[
+        {id:'charmed-working-memory',prompt:'How much did holding information in mind affect you this week?',responseType:'single-choice',options:['Not at all','A little','Some','A lot']},
+        {id:'charmed-time-awareness',prompt:'How predictable did time feel this week?',responseType:'single-choice',options:['Very unpredictable','Sometimes predictable','Mostly predictable','Predictable']},
+        {id:'charmed-interoception',prompt:'How easy was it to notice body signals such as hunger, thirst, tension, or fatigue?',responseType:'single-choice',options:['Very hard','Sometimes hard','Usually possible','Easy']},
+        {id:'charmed-communication-load',prompt:'How much energy did communication require this week?',responseType:'single-choice',options:['A little','Moderate','High','Very high']},
+        {id:'charmed-strategy-note',prompt:'What support should we keep, change, or try next?',responseType:'short-text'},
+      ]},
+    ],interventions:[],approval:{state:'clinician-approved'}
+  }
+};
 const params=new URLSearchParams(location.search);
 const LOCAL_PREVIEW=params.get('preview')==='1'&&['localhost','127.0.0.1'].includes(location.hostname);
-const P=PROGRAMS[params.get('program')]||PROGRAMS.primary;
+const PROGKEY=PROGRAMS[params.get('program')]?params.get('program'):'primary';
+const P=PROGRAMS[PROGKEY];
 document.documentElement.style.setProperty('--accent',P.accent);
 document.documentElement.style.setProperty('--accent-deep',P.deep);
-document.getElementById('sub').textContent=LOCAL_PREVIEW?P.name+' · synthetic BHW0000 preview · entries stay on this device.':P.name+' · log as much or as little as you like — saved entries go to your care team.';
+document.body.dataset.checkinProgram=PROGKEY;
+document.getElementById('programPill').textContent=P.name;
+document.getElementById('todayDate').textContent=new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
+document.getElementById('sub').textContent=LOCAL_PREVIEW?'Synthetic BHW0000 preview · entries stay on this device.':'A quick snapshot for your Health Blueprint and care team.';
 const back=document.getElementById('back');
 back.href=params.get('return')==='portal'?'/patient/'+(LOCAL_PREVIEW?'?preview=1':''):P.back;
 document.getElementById('symProg').textContent='· '+P.name;
@@ -344,7 +418,10 @@ document.getElementById('symptoms').innerHTML=P.symptoms.map(s=>`<button type="b
 // will replace this empty state when the corresponding server integration exists.
 document.getElementById('devices').innerHTML='<div class="off-status">Manual entry is available above. No device is connected.</div>';
 
-const STATE={}; let MEALS=0;
+const STATE={};
+// Plate-photo AI remains intentionally unavailable until the separate
+// authenticated privacy and BAA release gate is approved.
+const MEALS=0;
 // single / multi option pickers
 document.querySelectorAll('.opts[data-q]').forEach(wrap=>{
   const key=wrap.dataset.q, multi=wrap.dataset.multi;
@@ -356,43 +433,6 @@ document.querySelectorAll('.opts[data-q]').forEach(wrap=>{
     });
   });
 });
-/* ===== Snap your plate — OpenAI-vision estimate, patient confirms ===== */
-const VISION_API='/.netlify/functions/food-vision';
-const escH=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-function readDataURL(f){ return new Promise((res,rej)=>{ const r=new FileReader(); r.onload=()=>res(r.result); r.onerror=rej; r.readAsDataURL(f); }); }
-function markCareTeam(box){ if(!box.querySelector('.tag')){ const t=document.createElement('span'); t.className='tag'; t.textContent='Sent to your care team'; box.appendChild(t); } }
-function estRow(it){
-  const el=document.createElement('div'); el.className='off-item';
-  const meta=(it.portion?it.portion+' · ':'')+'estimate';
-  el.innerHTML='<div class="off-item__b"><div class="off-item__n">'+escH(it.name)+'</div><div class="off-item__m">'+escH(meta)+'</div>'
-    +'<div class="est-macros">P <input type="number" min="0" value="'+it.protein+'"> C <input type="number" min="0" value="'+it.carbs+'"> F <input type="number" min="0" value="'+it.fat+'"></div></div>';
-  const ins=el.querySelectorAll('.est-macros input');
-  const b=document.createElement('button'); b.className='obtn go'; b.type='button'; b.textContent='Add';
-  b.onclick=()=>{ plateAdd(it.name,{p:+ins[0].value||0,c:+ins[1].value||0,f:+ins[2].value||0,fiber:+it.fiber||0,sugar:+it.sugar||0,sodium:+it.sodium||0,vitd:+it.vitd||0,vitc:+it.vitc||0,iron:+it.iron||0,calcium:+it.calcium||0,potassium:+it.potassium||0,magnesium:+it.magnesium||0}); b.textContent='Added ✓'; b.disabled=true; };
-  el.appendChild(b); return el;
-}
-async function estimatePlate(e){
-  const f=(e.target.files||[])[0]; if(!f) return;
-  const box=document.getElementById('meals'), status=document.getElementById('plateStatus'), est=document.getElementById('plateEst');
-  est.innerHTML=''; box.innerHTML='';
-  const img=document.createElement('img'); img.src=URL.createObjectURL(f); box.appendChild(img); MEALS++;
-  status.textContent='Looking at your plate…';
-  let dataUrl; try{ dataUrl=await readDataURL(f); }catch(err){ status.textContent='Couldn’t read that photo — try again.'; return; }
-  try{
-    const r=await fetch(VISION_API,{method:'POST',headers:{Authorization:'Bearer '+SESSION_TOKEN,'Content-Type':'application/json'},body:JSON.stringify({image:dataUrl})});
-    const d=await r.json().catch(()=>({}));
-    if(r.status===401){ status.textContent='Please sign in again to use a food photo. The photo was not sent.'; return; }
-    if(r.status===503){ status.textContent=(d&&d.error)||'Photo estimates aren’t switched on yet. The photo was not sent; search or scan a barcode instead.'; return; }
-    if(!r.ok){ status.textContent=(d&&d.error)||'Couldn’t estimate this photo — try search or a barcode above.'; return; }
-    if(!d.items||!d.items.length){ status.textContent=(d&&d.note)||'Couldn’t spot foods in that photo — try search or a barcode above.'; return; }
-    status.textContent=d.note||'Estimated — check the numbers, adjust if needed, then Add.';
-    d.items.forEach(it=>est.appendChild(estRow(it)));
-    const all=document.createElement('button'); all.className='obtn go'; all.type='button'; all.style.marginTop='8px'; all.textContent='Add all to today';
-    all.onclick=()=>{ est.querySelectorAll('.off-item .obtn').forEach(b=>{ if(!b.disabled) b.click(); }); all.disabled=true; all.textContent='Added ✓'; };
-    est.appendChild(all);
-  }catch(err){ status.textContent='Couldn’t reach the estimator — check your connection, or use search/barcode above.'; }
-}
-
 /* ===== Nutrition tally — fuel vessels + nutrient bars ===== */
 const FOODS=[];
 const MACROS=['p','c','f'];
@@ -423,7 +463,66 @@ const LOCAL_CHECKIN_KEY='bhw_patient_checkins_preview_v1';
 const SESSION_PT=(function(){try{var f=JSON.parse(sessionStorage.getItem('bhw_pt_family')||'null');return (f&&f.patient)||null;}catch(e){return null;}})();
 const SESSION_TOKEN=sessionStorage.getItem('bhw_pt_session')||'';
 const PATIENT={name:(SESSION_PT&&SESSION_PT.name)||(LOCAL_PREVIEW?'Synthetic Patient':'Patient'),phone:(SESSION_PT&&SESSION_PT.phone)||'',id:(SESSION_PT&&SESSION_PT.id)||(LOCAL_PREVIEW?'BHW0000':'')};
-const PROGKEY=params.get('program')||'primary';
+let ACTIVE_MONITORING_PLAN=null;
+const MONITORING_ANSWERS={};
+
+function rotateQuestions(questions,count,offset){
+  if(!questions.length||count<1)return [];
+  const start=Math.abs(offset)%questions.length;
+  return Array.from({length:Math.min(count,questions.length)},(_,index)=>questions[(start+index)%questions.length]);
+}
+function questionsForToday(plan){
+  const due=(Array.isArray(plan?.modules)?plan.modules:[]).filter(module=>module&&module.dueToday!==false);
+  const daily=due.filter(module=>module.cadence==='daily').flatMap(module=>(module.questions||[]).map(question=>({module,question})));
+  const weekly=due.filter(module=>module.cadence==='weekly').flatMap(module=>(module.questions||[]).map(question=>({module,question})));
+  const limit=Math.max(3,Math.min(8,Number(plan?.dailyQuestionLimit)||5));
+  const day=Math.floor(Date.now()/86400000);
+  const weeklyCount=weekly.length?Math.min(2,Math.max(1,limit-3)):0;
+  return [...rotateQuestions(daily,limit-weeklyCount,day),...rotateQuestions(weekly,weeklyCount,Math.floor(day/7))].slice(0,limit);
+}
+function selectMonitoringAnswer(moduleId,questionId,value,multi,button,wrap){
+  MONITORING_ANSWERS[moduleId]=MONITORING_ANSWERS[moduleId]||{};
+  if(multi){
+    const values=new Set(Array.isArray(MONITORING_ANSWERS[moduleId][questionId])?MONITORING_ANSWERS[moduleId][questionId]:[]);
+    values.has(value)?values.delete(value):values.add(value);
+    MONITORING_ANSWERS[moduleId][questionId]=[...values];
+    button.classList.toggle('sel',values.has(value));
+  }else{
+    MONITORING_ANSWERS[moduleId][questionId]=value;
+    wrap.querySelectorAll('button').forEach(item=>item.classList.toggle('sel',item===button));
+  }
+}
+function renderMonitoringPlan(plan){
+  ACTIVE_MONITORING_PLAN=plan&&plan.program===PROGKEY&&plan.approval?.state==='clinician-approved'?plan:null;
+  const card=document.getElementById('program-focus-card'), jump=document.getElementById('programFocusJump'), box=document.getElementById('monitoringQuestions');
+  card.hidden=!ACTIVE_MONITORING_PLAN; jump.hidden=!ACTIVE_MONITORING_PLAN; box.innerHTML='';
+  if(!ACTIVE_MONITORING_PLAN)return;
+  const selected=questionsForToday(ACTIVE_MONITORING_PLAN);
+  document.getElementById('programFocusTitle').textContent=ACTIVE_MONITORING_PLAN.program==='charmed'?'Your brain-and-body focus':'Your recovery focus';
+  document.getElementById('programFocusHint').textContent='These questions were selected from your current '+P.name+' monitoring plan. Your care team can change the focus as your needs change.';
+  selected.forEach(({module,question},index)=>{
+    const item=document.createElement('fieldset'); item.className='monitoring-question';
+    const legend=document.createElement('legend');
+    const count=document.createElement('span'); count.className='monitoring-number'; count.textContent=String(index+1).padStart(2,'0');
+    const prompt=document.createElement('span'); prompt.textContent=question.prompt;
+    const cadence=document.createElement('small'); cadence.textContent=module.cadence==='weekly'?'This week':'Today';
+    legend.append(count,prompt,cadence); item.appendChild(legend);
+    if(question.responseType==='short-text'){
+      const input=document.createElement('textarea'); input.rows=3; input.maxLength=500; input.placeholder='Add a short note';
+      input.addEventListener('input',()=>{MONITORING_ANSWERS[module.id]=MONITORING_ANSWERS[module.id]||{};MONITORING_ANSWERS[module.id][question.id]=input.value.trim();});
+      item.appendChild(input);
+    }else{
+      const choices=document.createElement('div'); choices.className='opts monitoring-options';
+      (question.options||[]).forEach(value=>{const button=document.createElement('button');button.type='button';button.textContent=value;button.addEventListener('click',()=>selectMonitoringAnswer(module.id,question.id,value,question.responseType==='multi-choice',button,choices));choices.appendChild(button);});
+      item.appendChild(choices);
+    }
+    box.appendChild(item);
+  });
+  document.getElementById('monitoringFootnote').textContent=selected.length+' focused question'+(selected.length===1?'':'s')+' today · deeper questions rotate without making every check-in long.';
+}
+function monitoringResponses(){
+  return Object.entries(MONITORING_ANSWERS).map(([moduleId,answers])=>({moduleId,answers:Object.fromEntries(Object.entries(answers).filter(([,answer])=>Array.isArray(answer)?answer.length:String(answer||'').trim()))})).filter(entry=>Object.keys(entry.answers).length);
+}
 const FEEL={Rough:1,Low:2,OK:3,Good:4,Great:5}, SLEEPS={Rough:1,OK:2,Good:3,Great:4};
 function renderMedicationChecklist(medications){
   const box=document.getElementById('meds'); box.innerHTML='';
@@ -477,6 +576,7 @@ function renderTrend(series){
 (async function loadHistory(){
   if(LOCAL_PREVIEW){
     document.getElementById('nutritionPlanSource').textContent='Synthetic program targets for BHW0000 preview.';
+    renderMonitoringPlan(PREVIEW_MONITORING_PLANS[PROGKEY]||null);
     try{const local=JSON.parse(localStorage.getItem(LOCAL_CHECKIN_KEY)||'[]');if(local.length)renderTrend(local.slice(-30));}catch(e){}
     return;
   }
@@ -491,7 +591,8 @@ function renderTrend(series){
       document.getElementById('nutritionPlanSource').textContent='No individualized nutrition targets have been shared yet. You can still track food and nutrients today.';
     }
     if(d&&Array.isArray(d.series)&&d.series.length) renderTrend(d.series);
-  }catch(e){ document.getElementById('nutritionPlanSource').textContent='Your nutrition targets could not be loaded. Food tracking is still available, but these starting values are not an individualized plan.'; }
+    renderMonitoringPlan(d.monitoringPlan||null);
+  }catch(e){ document.getElementById('nutritionPlanSource').textContent='Your nutrition targets could not be loaded. Food tracking is still available, but these starting values are not an individualized plan.'; renderMonitoringPlan(null); }
 })();
 function plateAdd(name,n){
   n=n||{}; FOODS.push(name);
@@ -599,6 +700,7 @@ renderWaterCups();
 
 async function saveAll(){
   const done=document.getElementById('done');
+  const saveButton=document.getElementById('saveButton');
   const parts=[];
   Object.entries(STATE).forEach(([k,v])=>{ if(v&&(!Array.isArray(v)||v.length)) parts.push(`${k}: ${Array.isArray(v)?v.join(', '):v}`); });
   const vt={BP:'v_bp',HR:'v_hr',Weight:'v_wt',Glucose:'v_glu',Temp:'v_temp',O2:'v_o2',Steps:'v_steps'};
@@ -614,13 +716,15 @@ async function saveAll(){
   if(MEALS) parts.push(MEALS+' meal photo'+(MEALS>1?'s':'')+' logged');
   const summary=`${P.name} check-in — `+(parts.length?parts.join(' · '):'opened, nothing logged');
   done.hidden=false; done.textContent='Saving…';
+  saveButton.disabled=true; saveButton.setAttribute('aria-busy','true');
   // Structured record → authenticated BHW Cloud check-in contract.
   const v=id=>{const e=document.getElementById(id); return e?e.value.trim():'';};
   const payload={
-    schemaVersion:'bhw.patient-checkin.v1',program:PROGKEY,date:new Date().toISOString().slice(0,10),summary,
+    schemaVersion:'bhw.patient-checkin.v2',program:PROGKEY,date:new Date().toISOString().slice(0,10),summary,
     well:{feeling:STATE.Feeling,motivation:STATE.Motivation,sleep:STATE.Sleep,movement:STATE.Movement,outside:STATE.Outside,people:STATE.People,nutrition:STATE.Nutrition},
     symptoms:STATE.Symptoms||[],medicationsTaken:meds,waterCups:WATER,
     foods:FOODS,mealPhotoCount:MEALS,nutrition:NUTRI,
+    monitoringPlanId:ACTIVE_MONITORING_PLAN?.planId||'',monitoringPlanVersion:ACTIVE_MONITORING_PLAN?.version||null,moduleResponses:monitoringResponses(),
     vitals:{bp:v('v_bp'),hr:v('v_hr'),wt:v('v_wt'),glu:v('v_glu'),temp:v('v_temp'),o2:v('v_o2'),steps:v('v_steps')},
   };
   if(LOCAL_PREVIEW){
@@ -630,14 +734,20 @@ async function saveAll(){
       localStorage.setItem(LOCAL_CHECKIN_KEY,JSON.stringify(local.slice(-90)));
       done.textContent='Saved on this device only at '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'. BHW Cloud was not changed.';
     }catch(err){done.textContent='Not saved. This browser could not store the preview check-in.';}
+    saveButton.disabled=false; saveButton.removeAttribute('aria-busy');
     return;
   }
   try{
     const response=await fetch(SAVE_API,{method:'POST',headers:{Authorization:'Bearer '+SESSION_TOKEN,'Content-Type':'application/json',Accept:'application/json'},body:JSON.stringify(payload)});
     const result=await response.json().catch(()=>({}));
+    if(!response.ok&&result.saved===true){
+      done.textContent='Saved to BHW Cloud at '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'. The CrewHQ review notice is not confirmed yet; please try Save again.';
+      return;
+    }
     if(!response.ok||result.ok!==true)throw new Error(result.error||'The check-in could not be saved.');
-    done.textContent='Saved to BHW Cloud at '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+'.';
+    done.textContent='Saved to BHW Cloud at '+new Date().toLocaleTimeString([],{hour:'numeric',minute:'2-digit'})+' · ready for clinician review in CrewHQ.';
   }catch(err){done.textContent='Not saved. '+(err.message||'Please try again.');}
+  finally{saveButton.disabled=false; saveButton.removeAttribute('aria-busy');}
 }
 </script>
 </body>

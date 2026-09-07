@@ -33,7 +33,7 @@ test("registry contains the four approved programs and seven approved systems", 
   ]);
 });
 
-test("the patient journey starts with the interactive living Blueprint", () => {
+test("Health Core starts with the interactive living Blueprint", () => {
   const source = readFileSync(new URL("../patient/index.html", import.meta.url), "utf8");
   const blueprint = source.indexOf('id="blueprint-title"');
   const checkin = source.indexOf("data-checkin-link", blueprint);
@@ -43,7 +43,10 @@ test("the patient journey starts with the interactive living Blueprint", () => {
   assert.ok(blueprint > -1, "living Blueprint is missing");
   assert.ok(blueprint < checkin && checkin < programs && programs < systems, "the program lens, connected body map, and patient actions should lead the portal");
   assert.ok(vitals > blueprint && vitals < systems, "vital-sign entry should be available in the first Blueprint viewport");
-  assert.match(source, /<h1><span id="preferred-name">Your<\/span>\. Your medical story\. Your Health Blueprint\.<\/h1>/);
+  assert.match(source, /<span>BHW Health Core<\/span><strong>Clinician-shared<\/strong>/);
+  assert.match(source, /Welcome back, <span id="preferred-name">Patient<\/span>/);
+  assert.match(source, /<h1>Your health record, <em>connected\.<\/em><\/h1>/);
+  assert.match(source, /aria-label="Health Core sections"/);
   assert.doesNotMatch(source, /evolving story|health story/i);
   assert.equal((source.match(/id="plan"/g) || []).length, 1, "the Health Blueprint summary should not be duplicated");
   assert.match(source, /Printable Blueprint/);
@@ -63,16 +66,27 @@ test("the main portal shares patient profile details and routes to the full life
   const controller = readFileSync(new URL("../patient/app.mjs", import.meta.url), "utf8");
   const preview = readFileSync(new URL("../patient/portal-data.mjs", import.meta.url), "utf8");
   const checkin = readFileSync(new URL("../pages/bhw-checkin.html", import.meta.url), "utf8");
-  for (const id of ["patient-demographics", "patient-allergies", "patient-intolerances", "patient-specialists"]) {
+  for (const id of ["patient-demographics", "patient-allergies", "patient-intolerances", "patient-specialists", "patient-referrals"]) {
+    assert.match(source, new RegExp(`id="${id}"`));
+  }
+  for (const id of ["profile-overall-status", "demographics-verification", "allergies-verification", "intolerances-verification", "specialists-verification", "profile-dialog", "profile-form"]) {
     assert.match(source, new RegExp(`id="${id}"`));
   }
   assert.match(source, /Nutrition plan · food and barcode scan · water · movement · sleep/);
   assert.match(controller, /CHECKIN_PROGRAM_IDS/);
   assert.match(controller, /renderPatientProfile/);
+  assert.match(controller, /submitProfileChanges/);
+  assert.match(controller, /Saved to BHW Cloud/);
+  assert.match(controller, /changes-pending/);
+  assert.match(controller, /renderActiveReferrals/);
+  assert.match(controller, /REFERRAL_TERMINAL_STATUSES/);
   assert.match(preview, /bhwPatientId: "BHW0000"/);
   assert.match(preview, /allergies:/);
   assert.match(preview, /intolerances:/);
   assert.match(preview, /specialists:/);
+  assert.match(preview, /status: "referral-sent"/);
+  assert.match(preview, /does not mean an appointment is scheduled/);
+  assert.match(preview, /verification:/);
   for (const capability of ["Open Food Facts", "BarcodeDetector", "waterCups", "Movement", "Sleep", "nutrition plan"]) {
     assert.match(checkin, new RegExp(capability, "i"));
   }
@@ -86,11 +100,14 @@ test("the main portal shares patient profile details and routes to the full life
 
 test("preview interactions persist only synthetic local state and fail closed for cloud writes", () => {
   const source = readFileSync(new URL("../patient/app.mjs", import.meta.url), "utf8");
+  const portalData = readFileSync(new URL("../patient/portal-data.mjs", import.meta.url), "utf8");
   assert.match(source, /bhw_patient_blueprint_preview_state_v2/);
   assert.match(source, /if \(!isLocalPreview\)/);
   assert.match(source, /Saved on this device only/);
   assert.match(source, /secure BHW Cloud write connection required/);
   assert.doesNotMatch(source, /checkin-save|CHECKIN_DB|Notion/i);
+  assert.match(portalData, /--bhw-care-connect\\\.netlify\\\.app/);
+  assert.match(portalData, /bhwPatientId: "BHW0000"/);
 });
 
 test("the registry routes to the eleven original full dashboard pages", () => {

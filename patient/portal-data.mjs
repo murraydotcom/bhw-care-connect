@@ -2,8 +2,11 @@ import { PROGRAMS, SYSTEMS } from "./page-registry.mjs?v=interactive-atlas-1";
 
 export const SESSION_KEY = "bhw_pt_session";
 
+const isLocalHost = ["localhost", "127.0.0.1"].includes(location.hostname);
+const isNetlifyDraftHost = /^[a-z0-9-]+--bhw-care-connect\.netlify\.app$/i.test(location.hostname);
+
 export const isLocalPreview = new URLSearchParams(location.search).get("preview") === "1"
-  && ["localhost", "127.0.0.1"].includes(location.hostname);
+  && (isLocalHost || isNetlifyDraftHost);
 
 export function patientHref(path, id) {
   const url = new URL(path, location.origin);
@@ -37,6 +40,20 @@ export function previewDashboard() {
         { name: "Synthetic Cardiology Team", specialty: "Cardiology", organization: "BHW synthetic network", status: "Active" },
         { name: "Synthetic Sleep Team", specialty: "Sleep medicine", organization: "BHW synthetic network", status: "Consulting" },
       ],
+      verification: {
+        schemaVersion: "bhw.patient-profile-verification.v1",
+        overallStatus: "verified",
+        clinicianReviewRequired: false,
+        lastVerifiedAt: "2026-08-20T12:00:00.000Z",
+        fields: {
+          sexAtBirth: "verified",
+          pronouns: "verified",
+          preferredLanguage: "verified",
+          allergies: "verified",
+          intolerances: "verified",
+          specialists: "verified",
+        },
+      },
     },
     plan: {
       status: "ready-to-share",
@@ -217,7 +234,16 @@ export function previewDashboard() {
       },
       { name: "Synthetic supplement", clinicalStatus: "on-hold", instructions: "Pause until your care team reviews your next result." },
     ],
-    requests: [{ type: "referral", status: "clinical-review", message: "Your synthetic referral request is being reviewed by your care team." }],
+    requests: [{
+      type: "referral",
+      status: "referral-sent",
+      message: "Your synthetic cardiology referral was sent. This does not mean an appointment is scheduled.",
+      destinationName: "Synthetic Cardiology Team",
+      specialty: "Cardiology",
+      organization: "BHW synthetic network",
+      phone: "(410) 555-0100",
+      statusChangedAt: "2026-08-20T14:00:00.000Z",
+    }],
   };
 }
 

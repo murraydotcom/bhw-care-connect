@@ -2,6 +2,7 @@ import {
   signHealthCorePatientToken,
   verifyCareConnectPatientSession,
 } from "./_shared/patient-session.mjs";
+import { createCloudIntake } from "./_shared/operations.mjs";
 import { asLambdaHandler } from "./_shared/lambda-adapter.mjs";
 
 const responseHeaders = {
@@ -55,6 +56,22 @@ function selectedObject(value, allowedKeys, max = 120) {
   return selected;
 }
 
+function moduleResponses(value) {
+  return (Array.isArray(value) ? value : []).slice(0, 12).map((entry) => {
+    const moduleId = text(entry?.moduleId, 80);
+    if (!/^[a-z0-9-]+$/.test(moduleId)) return null;
+    const source = entry?.answers && typeof entry.answers === "object" && !Array.isArray(entry.answers) ? entry.answers : {};
+    const answers = {};
+    for (const [rawQuestionId, rawAnswer] of Object.entries(source).slice(0, 30)) {
+      const questionId = text(rawQuestionId, 80);
+      if (!/^[a-z0-9-]+$/.test(questionId)) continue;
+      const answer = Array.isArray(rawAnswer) ? strings(rawAnswer, 12, 100) : text(rawAnswer, 500);
+      if ((Array.isArray(answer) && answer.length) || (!Array.isArray(answer) && answer)) answers[questionId] = answer;
+    }
+    return Object.keys(answers).length ? { moduleId, answers } : null;
+  }).filter(Boolean);
+}
+
 function normalizeCheckin(body) {
   const program = text(body?.program, 20).toLowerCase();
   if (!PROGRAMS.has(program)) return null;
@@ -65,7 +82,7 @@ function normalizeCheckin(body) {
   const waterCups = number(body.waterCups, 0, 40);
   const mealPhotoCount = number(body.mealPhotoCount, 0, 20);
   return {
-    schemaVersion: "bhw.patient-checkin.v1",
+    schemaVersion: "bhw.patient-checkin.v2",
     program,
     date,
     well: selectedObject(body.well, WELL_KEYS, 80),
@@ -76,6 +93,9 @@ function normalizeCheckin(body) {
     mealPhotoCount: mealPhotoCount ?? 0,
     nutrition,
     vitals: selectedObject(body.vitals, VITAL_KEYS, 40),
+    monitoringPlanId: text(body.monitoringPlanId, 80),
+    monitoringPlanVersion: number(body.monitoringPlanVersion, 1, 100000),
+    moduleResponses: moduleResponses(body.moduleResponses),
     summary: text(body.summary, 5000),
   };
 }
@@ -91,9 +111,46 @@ function authContext(request, env, now) {
   return { baseUrl, session, upstreamToken };
 }
 
+function monitoringQueueBody(session, monitoring) {
+  const checkInId = text(monitoring?.checkInId, 80);
+  const program = text(monitoring?.program, 20).toLowerCase();
+  const checkInDate = /^\d{4}-\d{2}-\d{2}$/.test(String(monitoring?.checkInDate || "")) ? monitoring.checkInDate : "";
+  const submittedAt = Number.isFinite(new Date(monitoring?.submittedAt).getTime()) ? new Date(monitoring.submittedAt).toISOString() : "";
+  const reviewPriority = monitoring?.reviewPriority === "same-day" ? "same-day" : "routine";
+  const signalCount = number(monitoring?.signalCount, 0, 20) ?? 0;
+  const monitoringPlanVersion = number(monitoring?.monitoringPlanVersion, 1, 100000);
+  if (!checkInId || !PROGRAMS.has(program) || !checkInDate || !submittedAt) return null;
+  return {
+    bhwPatientId: session.bhwPatientId,
+    patientMatchStatus: "matched",
+    requestType: "clinical-review",
+    priority: reviewPriority === "same-day" ? "high" : "routine",
+    summary: "Daily check-in ready for clinician review",
+    message: `Review Health Core check-in ${checkInId}. Program: ${program}. Submitted: ${submittedAt}. Clinical values remain in Health Core and are not copied into the operations queue.`,
+    source: "care-connect",
+    sourceReference: checkInId,
+    manualNotifyOnly: true,
+    notificationMode: "none",
+    routing: {
+      targetSystem: "crewos",
+      assignedTeam: "clinical",
+      ownerRole: "provider",
+      downstreamReference: checkInId,
+    },
+    sourceMetadata: {
+      sourceRecordId: checkInId,
+      sourcePage: "care-connect-daily-checkin",
+      reviewPriority,
+      signalCount,
+      ...(monitoringPlanVersion ? { monitoringPlanVersion } : {}),
+    },
+  };
+}
+
 export function createPatientCheckinsHandler({
   environment = environmentFromNetlify,
   fetchImpl = fetch,
+  queueImpl = createCloudIntake,
   now = Date.now,
 } = {}) {
   return async function patientCheckins(request) {
@@ -115,7 +172,12 @@ export function createPatientCheckinsHandler({
         });
         const body = await response.json().catch(() => null);
         if (!response.ok || body?.ok !== true) return json(502, { ok: false, error: "Check-in history could not be loaded." });
-        return json(200, { ok: true, targets: body.targets || {}, series: Array.isArray(body.series) ? body.series.slice(-90) : [] });
+        return json(200, {
+          ok: true,
+          targets: body.targets || {},
+          series: Array.isArray(body.series) ? body.series.slice(-90) : [],
+          monitoringPlan: body.monitoringPlan || null,
+        });
       }
 
       const raw = await request.text();
@@ -132,7 +194,30 @@ export function createPatientCheckinsHandler({
       });
       const body = await response.json().catch(() => null);
       if (!response.ok || body?.ok !== true) return json(502, { ok: false, error: "The check-in could not be saved." });
-      return json(200, { ok: true, savedAt: body.savedAt || new Date(now()).toISOString() });
+      const savedAt = body.savedAt || new Date(now()).toISOString();
+      const queueBody = monitoringQueueBody(context.session, body.monitoring);
+      if (!queueBody) return json(502, {
+        ok: false,
+        saved: true,
+        savedAt,
+        error: "Your check-in was saved to BHW Cloud, but the clinician review reference could not be confirmed.",
+      });
+      try {
+        const queued = await queueImpl({
+          submissionId: `care-connect-checkin:${context.session.bhwPatientId}:${queueBody.sourceReference}`,
+          body: queueBody,
+        });
+        const queueReference = queued?.patientRequest?.patientRequestId || queued?.patientRequest?.id || queued?.request?.id;
+        if (!queueReference) throw new Error("operations queue returned no request reference");
+        return json(200, { ok: true, savedAt, queueReference });
+      } catch {
+        return json(502, {
+          ok: false,
+          saved: true,
+          savedAt,
+          error: "Your check-in was saved to BHW Cloud, but the CrewHQ clinician review queue could not be confirmed. Please try again.",
+        });
+      }
     } catch {
       return json(502, { ok: false, error: request.method === "GET" ? "Check-in history could not be loaded." : "The check-in could not be saved." });
     }

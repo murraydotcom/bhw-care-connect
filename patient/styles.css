@@ -22,36 +22,38 @@
   font-display: swap;
 }
 
+@font-face {
+  font-family: "Shadows Into Light";
+  src: url("./fonts/shadows-into-light-latin.woff2") format("woff2");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
 :root {
-  color-scheme: light;
-  --pearl: #f8f6f1;
-  --porcelain: #fefdfb;
-  --cream: #f7f3ea;
-  --linen: #f0eadd;
-  --sand: #e5dac6;
-  --ink: #2a3a40;
-  --ink-strong: #1b2a30;
-  --muted: #6e6b62;
-  --clay: #905b35;
-  --sage: #4d7159;
-  --sage-deep: #3c5946;
-  --sage-quiet: #dde7dd;
-  --blue: #3d6e7e;
-  --blue-deep: #2f5663;
-  --blue-quiet: #dbe8ed;
-  --violet: #6a5480;
-  --violet-quiet: #e6ddec;
-  --gold: #c0a046;
-  --gold-quiet: #f0ddaf;
-  --danger: #98462f;
-  --border: rgba(43, 58, 64, 0.11);
-  --border-strong: rgba(43, 58, 64, 0.19);
-  --shadow: 0 18px 48px rgba(44, 35, 27, 0.09);
-  --shadow-soft: 0 8px 25px rgba(44, 35, 27, 0.07);
-  --radius: 22px;
-  --radius-small: 13px;
-  --opal: radial-gradient(58% 78% at 18% 22%, rgba(110, 158, 179, .3), transparent 60%), radial-gradient(64% 82% at 74% 82%, rgba(125, 155, 134, .31), transparent 62%), radial-gradient(42% 58% at 52% 46%, rgba(230, 201, 138, .2), transparent 66%), linear-gradient(135deg, #fbf9f4 0%, #e7f1f0 52%, #e9f1ee 100%);
-  font-family: "Montserrat", Avenir, "Segoe UI", sans-serif;
+  --pearl: var(--bg);
+  --porcelain: var(--bg-elevated);
+  --cream: var(--c-cream-100);
+  --linen: var(--bg-muted);
+  --sand: var(--c-sand-300);
+  --ink: var(--fg);
+  --ink-strong: var(--fg-strong);
+  --muted: var(--fg-muted);
+  --clay: var(--brand-clay);
+  --sage: var(--accent);
+  --sage-deep: var(--accent-hover);
+  --sage-quiet: var(--accent-quiet);
+  --blue: var(--accent-2);
+  --blue-deep: var(--accent-2-hover);
+  --blue-quiet: var(--accent-2-quiet);
+  --violet: var(--accent-3);
+  --violet-quiet: var(--accent-3-quiet);
+  --shadow: var(--shadow-lg);
+  --shadow-soft: var(--shadow-sm);
+  --radius: var(--radius-xl);
+  --radius-small: var(--radius-md);
+  --opal: var(--opal-stone);
+  font-family: var(--font-sans);
 }
 
 * { box-sizing: border-box; }
@@ -264,7 +266,7 @@ body.portal-open .topbar-inner { max-width: 1440px; }
 .program-card { --card-accent:#82b6b6; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,.1); border-radius:14px; background:linear-gradient(145deg,color-mix(in srgb,var(--card-accent) 16%,transparent),rgba(255,255,255,.025)); }
 .program-card::before { content:""; position:absolute; width:105px; height:105px; right:-55px; top:-55px; border:1px solid color-mix(in srgb,var(--card-accent) 32%,transparent); border-radius:50%; box-shadow:0 0 0 22px color-mix(in srgb,var(--card-accent) 5%,transparent); pointer-events:none; }
 .program-primary-care { --card-accent:#82b6b6; }
-.program-mind-mood { --card-accent:#9b7da5; }
+.program-mind-mood { --card-accent:#e09a5c; }
 .program-charmed-minds { --card-accent:#2babab; }
 .program-flow { --card-accent:#1789aa; }
 .program-selector { position:relative; z-index:1; width:100%; min-height:88px; display:grid; grid-template-columns:34px 1fr; align-items:center; gap:9px; border:0; padding:11px; color:rgba(247,243,234,.72); text-align:left; background:transparent; }
@@ -578,10 +580,10 @@ body.portal-open .shell {
 .welcome-lockup .eyebrow {
   margin-bottom: 10px;
   color: var(--sage);
-  font-family: "Caveat", "Segoe Print", cursive;
-  font-size: clamp(27px, 2.6vw, 38px);
-  font-weight: 600;
-  line-height: 1;
+  font-family: "Shadows Into Light", "Segoe Print", cursive;
+  font-size: clamp(34px, 3.4vw, 48px);
+  font-weight: 400;
+  line-height: 1.08;
   letter-spacing: .01em;
   text-transform: none;
 }
@@ -636,6 +638,37 @@ body.portal-open .shell {
 }
 .patient-profile-head h2 { margin-top: 5px; font-size: clamp(29px, 3vw, 39px); }
 .patient-profile-head > div > p:last-child { max-width: 720px; margin-top: 8px; color: var(--muted); font-size: 14px; line-height: 1.65; }
+.profile-review-actions { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
+.verification-badge,
+.profile-section-status {
+  width: fit-content;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 5px 9px;
+  color: var(--muted);
+  background: #f5f2ec;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  line-height: 1.2;
+}
+.verification-badge[data-status="verified"],
+.profile-section-status[data-status="verified"] { border-color: rgba(73, 128, 92, .24); color: #356747; background: #edf5ef; }
+.verification-badge[data-status="changes-pending"],
+.profile-section-status[data-status="changes-pending"] { border-color: rgba(192, 160, 70, .3); color: #765f1f; background: #fbf4dc; }
+.verification-badge[data-status="needs-information"],
+.profile-section-status[data-status="needs-information"] { border-color: rgba(164, 93, 58, .28); color: #8a462b; background: #fbede7; }
+.profile-correction-button {
+  border: 0;
+  border-bottom: 1px solid var(--sage);
+  padding: 3px 0;
+  color: var(--sage-deep);
+  background: transparent;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
 .checkin-launch {
   display: grid;
   gap: 4px;
@@ -670,13 +703,22 @@ body.portal-open .shell {
 .clinical-list-group { margin-top: 14px; }
 .clinical-list-group + .clinical-list-group { border-top: 1px solid var(--border); padding-top: 13px; }
 .clinical-list-group h4 { color: var(--muted); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+.clinical-list-title { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
 .clinical-list { display: grid; gap: 8px; margin-top: 8px; }
 .clinical-entry { border: 1px solid var(--border); border-radius: 12px; padding: 10px 11px; background: white; }
 .clinical-entry-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 8px; }
 .clinical-entry strong { color: var(--ink-strong); font-size: 13px; line-height: 1.35; }
 .clinical-entry p { margin-top: 4px; color: var(--muted); font-size: 11px; line-height: 1.5; }
 .clinical-entry small { display: block; margin-top: 5px; color: var(--blue-deep); font-size: 10px; }
+.clinical-entry-referral { border-left: 3px solid var(--blue); background: linear-gradient(135deg, white, rgba(131, 178, 194, .09)); }
+.clinical-entry-referral .referral-message { color: var(--ink); }
 .profile-empty { color: var(--muted); font-size: 12px; font-style: italic; line-height: 1.55; }
+.profile-dialog { width: min(920px, calc(100vw - 32px)); }
+.profile-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.profile-clinical-fields { display: grid; gap: 14px; margin-top: 16px; }
+.profile-dialog textarea { width: 100%; resize: vertical; min-height: 88px; }
+.confirm-empty { display: flex; align-items: flex-start; gap: 8px; margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.45; }
+.confirm-empty input { flex: 0 0 auto; width: 16px; height: 16px; margin-top: 1px; }
 .quick-action { text-decoration: none; }
 
 .blueprint-studio {
@@ -1027,6 +1069,7 @@ body.portal-open .shell {
 @media (max-width: 1180px) {
   .patient-profile-head { grid-template-columns: 1fr; }
   .patient-profile-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .profile-form-grid { grid-template-columns: 1fr; }
   .demographics-card { grid-column: 1 / -1; }
   .blueprint-studio-head { grid-template-columns: 1fr; }
   .quick-actions { max-width: none; justify-self: stretch; }
@@ -1068,4 +1111,165 @@ body.portal-open .shell {
   .atlas-popover,
   .atlas-popover[data-side="left"] { top: auto; right: 14px; bottom: 76px; left: 14px; width: auto; max-height: 360px; }
   .portal-lower-grid .section { padding: 24px 20px; }
+}
+
+/* Health Core product layer
+   Opal & Ironstone stays intact; the added structure makes the secure portal
+   read like a calm clinical workspace instead of a general wellness page. */
+.brand { gap: 18px; }
+.product-lockup {
+  display: grid;
+  gap: 1px;
+  border-left: 1px solid var(--border-strong);
+  padding-left: 18px;
+  line-height: 1.15;
+}
+.product-lockup small {
+  color: var(--fg-muted);
+  font-size: var(--text-2xs);
+  font-weight: var(--weight-semibold);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+.product-lockup strong {
+  color: var(--fg-strong);
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: var(--weight-medium);
+}
+.secure-portal-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border-right: 1px solid var(--border);
+  padding-right: 18px;
+  color: var(--fg-muted);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+}
+.secure-portal-status > span {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--success);
+  box-shadow: 0 0 0 4px color-mix(in srgb, var(--success) 14%, transparent);
+}
+
+.portal-homebar {
+  position: relative;
+  overflow: hidden;
+  align-items: flex-end;
+  margin: 0 0 14px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-xl);
+  padding: clamp(24px, 3vw, 36px);
+  background-image: var(--opal-stone);
+  box-shadow: var(--shadow-md), var(--edge-gold);
+}
+.portal-homebar::after {
+  position: absolute;
+  top: 18%;
+  right: 20%;
+  width: 1px;
+  height: 72%;
+  content: "";
+  pointer-events: none;
+  background: linear-gradient(transparent, color-mix(in srgb, var(--gold) 50%, transparent), transparent);
+  transform: rotate(24deg);
+}
+.welcome-lockup,
+.portal-homebar-actions { position: relative; z-index: 1; }
+.welcome-lockup .eyebrow {
+  margin-bottom: 12px;
+  color: var(--accent-3-hover);
+  font-size: clamp(23px, 2.4vw, 31px);
+  line-height: 1.1;
+}
+.health-core-identity {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+}
+.health-core-identity > span {
+  color: var(--fg-muted);
+  font-size: var(--text-xs);
+  font-weight: var(--weight-bold);
+  letter-spacing: var(--tracking-eyebrow);
+  text-transform: uppercase;
+}
+.health-core-identity > strong {
+  border: 1px solid color-mix(in srgb, var(--success) 28%, transparent);
+  border-radius: var(--radius-pill);
+  padding: 5px 9px;
+  color: var(--success);
+  background: color-mix(in srgb, var(--success-bg) 74%, transparent);
+  font-size: 10px;
+  letter-spacing: .04em;
+}
+.welcome-lockup h1 {
+  max-width: 780px;
+  font-size: clamp(40px, 5vw, 62px);
+  line-height: 1;
+}
+.welcome-lockup h1 em { color: var(--accent-hover); font-weight: inherit; }
+.portal-intro {
+  max-width: 720px;
+  margin-top: 13px;
+  color: var(--fg-muted);
+  font-size: 15px;
+  line-height: 1.65;
+}
+.portal-homebar .quiet-action,
+.portal-homebar .portal-signout { background: color-mix(in srgb, var(--bg-elevated) 78%, transparent); }
+
+.portal-section-nav {
+  position: sticky;
+  z-index: 40;
+  top: 76px;
+  display: flex;
+  gap: 4px;
+  overflow-x: auto;
+  margin: 0 0 14px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  padding: 5px;
+  background: color-mix(in srgb, var(--bg-elevated) 90%, transparent);
+  box-shadow: var(--shadow-xs);
+  backdrop-filter: blur(16px) saturate(1.1);
+  scrollbar-width: none;
+}
+.portal-section-nav::-webkit-scrollbar { display: none; }
+.portal-section-nav a {
+  flex: 0 0 auto;
+  border-radius: var(--radius-pill);
+  padding: 9px 14px;
+  color: var(--fg-muted);
+  font-size: 11px;
+  font-weight: var(--weight-semibold);
+  text-decoration: none;
+}
+.portal-section-nav a:hover,
+.portal-section-nav a:focus-visible {
+  color: var(--accent-quiet-fg);
+  background: var(--accent-quiet);
+}
+#health-profile,
+#health-blueprint,
+#lab-results,
+#medication-requests,
+#care-team-updates { scroll-margin-top: 146px; }
+
+@media (max-width: 900px) {
+  .product-lockup { display: none; }
+  .portal-homebar { align-items: flex-start; flex-direction: column; }
+  .portal-homebar-actions { width: 100%; justify-content: flex-start; }
+}
+
+@media (max-width: 720px) {
+  .secure-portal-status { display: none; }
+  .portal-section-nav { top: 68px; border-radius: var(--radius-md); }
+  .portal-homebar { padding: 24px 20px; }
+  .welcome-lockup h1 { font-size: clamp(36px, 12vw, 46px); }
 }

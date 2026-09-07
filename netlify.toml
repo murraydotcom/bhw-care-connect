@@ -40,6 +40,11 @@
   to = "/.netlify/functions/patient-checkins"
   status = 200
 
+[[redirects]]
+  from = "/api/patient-portal/profile-change-requests"
+  to = "/.netlify/functions/patient-profile"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]

@@ -51,6 +51,7 @@ readers/writers, and the HMAC session helpers `sign`/`verify`).
 | `submit-review.js` | Writes patient reviews (ratings + comments), with Google hand-off. |
 | `submit-triage.mjs` | "Just Ask" → signed Google-native patient-request intake. |
 | `patient-checkins.mjs` | Authenticated daily check-in history/save bridge to Health Core. |
+| `patient-profile.mjs` | Authenticated profile correction bridge; saves proposed values in Health Core and sends only a review reference to CrewOS. |
 
 > The public **screeners** (`screener.html`) and **intake questionnaires**
 > (`bhw-questionnaire.html`) and their submit functions currently still live in
@@ -88,6 +89,9 @@ Per-function:
 - `patient-checkins`: uses that same signed patient session to retrieve the
   selected program's nutrition targets and 30-day trends or save a bounded
   daily check-in. Patient identity in the browser payload is ignored.
+- `patient-profile`: submits only the six approved Registry profile fields,
+  binds identity from the signed session, requires an idempotency key, and
+  creates a metadata-only clinical review task after Health Core confirms save.
 - `submit-triage`: `/api/patient-requests` sends through the Cloud API. It does
   not fall back to Notion after cutover, preventing duplicate split-system rows.
 - `hub-content`: `HUB_CONTENT_DB_ID` (falls back to the id in `_lib.js`).
@@ -116,17 +120,21 @@ so the UI remains testable without sending patient data.
 
 ## Secure patient portal release boundary
 
-The `/patient/` shell separates clinical medication state (`active`, `on-hold`,
-`stopped`, and related states) from patient request workflow state (`received`,
-`clinical-review`, `needs-information`, `waiting-on-payer`,
-`sent-to-pharmacy`, `ready`, `completed`). Only tasks explicitly marked
-`patientVisible: true` with a patient-safe message can appear. Internal task
+The `/patient/` shell combines verified specialists with active patient-visible
+referrals in the coordinated-care profile card, while keeping completed or
+closed referral updates in care-team history. It separates clinical medication
+state (`active`, `on-hold`, `stopped`, and related states) from patient request
+workflow state. Only requests with an explicit patient-safe message or linked
+patient-visible communication can appear. Referral milestones remain distinct:
+sent is not ready to schedule, and ready to schedule is not scheduled. Internal task
 titles, staff identities, diagnoses, observations, encounters, DOB, and the
 canonical BHW patient identifier are excluded from the browser response.
 
-Health Core is read-only. Future patient check-ins and messages remain write
-workflows for the shared operations API. RCM consumes downstream specialist
-data and does not own Care Connect's portal pages.
+Health Core owns bounded patient check-ins and pending profile correction
+requests. Profile values never change directly from the browser: an authorized
+BHW clinician must review them first. CrewOS receives a task reference and
+field names only; it does not become a second clinical-data store. RCM remains
+a downstream specialist consumer and does not own Care Connect's portal pages.
 
 ### Living Health Blueprint home
 
@@ -137,7 +145,8 @@ page, review today's care path, and launch Check in, Add vital signs, or View my
 summary. Program pages remain distinct and appear below the connected system
 map. The legacy printable Blueprint remains a separate, explicit action.
 
-Local `?preview=1` testing uses synthetic data only. Daily-path selections,
+Local and Netlify draft-deploy `?preview=1` testing use synthetic data only. The
+host gate does not enable this mode on `mybhw.com` or the canonical Netlify site. Daily-path selections,
 synthetic check-ins, and synthetic vital signs are stored under the device-only
 `bhw_patient_blueprint_preview_state_v2` browser key, and the interface labels
 that state as `Saved on this device only`. Outside local preview, these actions
