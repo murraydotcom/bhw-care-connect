@@ -2,9 +2,9 @@
 
 The **public, patient-facing** site for BHW Medical Group — a Vite/React hub
 (programs, the Personal Health Blueprint, resources, reviews, and Just Ask)
-plus a small set of Netlify Functions. Patient requests use the shared
-Google/Firestore operations API; remaining content and review functions are
-still backed by Notion during the transition.
+plus a small set of Netlify Functions. Patient requests and public website
+content use the shared Google/Firestore operations API; remaining review
+functions are still backed by Notion during the transition.
 
 This repo is **deliberately separate** from the employee side. BHW HQ and
 crewOS (the internal ops app, staff tools, front desk, billing) live in the
@@ -47,7 +47,7 @@ readers/writers, and the HMAC session helpers `sign`/`verify`).
 |----------|---------|
 | `patient-auth.js`  | Patient login (Stytch Email/SMS OTP, with an explicitly enabled synthetic preview). |
 | `patient-portal.mjs` | Same-origin, patient-session-protected bridge to Health Core's patient-safe read model. |
-| `hub-content.js`   | Reads the Care Connect Hub Content DB (announcements + resources). |
+| `hub-content.js`   | Reads published announcements, resources, and practice details from the public Google Operations projection. |
 | `submit-review.js` | Writes patient reviews (ratings + comments), with Google hand-off. |
 | `submit-triage.mjs` | "Just Ask" → signed Google-native patient-request intake. |
 | `patient-checkins.mjs` | Authenticated daily check-in history/save bridge to Health Core. |
@@ -95,7 +95,7 @@ Per-function:
   creates a metadata-only clinical review task after Health Core confirms save.
 - `submit-triage`: `/api/patient-requests` sends through the Cloud API. It does
   not fall back to Notion after cutover, preventing duplicate split-system rows.
-- `hub-content`: `HUB_CONTENT_DB_ID` (falls back to the id in `_lib.js`).
+- `hub-content`: uses `OPERATIONS_CLOUD_API_URL`; it sends no credential and can read only the public, published `care-connect` projection.
 - `submit-review`: `REVIEWS_DB_ID` (falls back to the id in `_lib.js`),
   optional `GOOGLE_REVIEW_URL` for the "leave us a Google review" hand-off.
 

@@ -64,7 +64,6 @@ const DB = {
   medications: "3bf3446ee6d143d7b4162af20a6b09e1",
   masterList: "2cf580758d3080f0825de4bbfb6c7528", // 🧑🏽‍⚕️ Patients Master List (canonical patient records)
   reviews: "5df92dd164174529a771f099e5db6f1d", // ⭐ Patient Reviews (ratings + comments from the site)
-  hubContent: "4880de2f764d4ccfb1061ca3790b2696", // 🗞️ Care Connect Hub Content (announcements + resources)
   queue: "de7906906a134b65bb0fc6966ba20b13", // 📥 Patient Request Triage Queue (default; QUEUE_DB_ID overrides)
   checkins: "fbbb4a68096c43029fe426c35dd693f8", // 🩺 Care Check-ins — Data (Care Connect daily check-ins; CHECKIN_DB_ID overrides)
 };

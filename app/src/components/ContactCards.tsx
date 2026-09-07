@@ -32,9 +32,7 @@ export function ContactCards() {
       </section>
 
       <div className={styles.hours}>
-        <span>
-          <strong>Mon–Thu</strong> 8:30–5:00 · <strong>Fri</strong> 8:30–1:00
-        </span>
+        <span>{CONTACT.hours}</span>
         <span>
           {CONTACT.street}, {CONTACT.cityStateZip}
         </span>

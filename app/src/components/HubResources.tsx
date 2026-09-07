@@ -6,9 +6,8 @@ interface HubResourcesProps {
 }
 
 /**
- * Forms, handouts and PDFs the practice publishes from the Care Connect Hub
- * Content database. Renders nothing until there's at least one active resource,
- * so an empty database leaves the hub unchanged.
+ * Public forms, handouts and links approved through CrewHQ Website Content.
+ * Renders nothing until there is at least one currently published resource.
  */
 export function HubResources({ resources }: HubResourcesProps) {
   if (!resources.length) return null

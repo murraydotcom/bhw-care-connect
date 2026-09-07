@@ -3,7 +3,28 @@
  */
 const securePatientPortalEnabled = import.meta.env.VITE_SECURE_PATIENT_PORTAL_ENABLED === 'true'
 
-export const CONTACT = {
+export interface ContactDetails {
+  practice: string
+  brand: string
+  street: string
+  cityStateZip: string
+  phone: string
+  phoneHref: string
+  fax: string
+  hours: string
+  frontDeskHours: string
+  openStatus: string
+  newsUpdated: string
+  crisisLine: string
+  baltimoreCrisisResponse: string
+  portalUrl: string
+  blueprintUrl: string
+}
+
+export type PublicSiteInformation = Partial<Pick<ContactDetails,
+  'street' | 'cityStateZip' | 'phone' | 'fax' | 'hours' | 'frontDeskHours' | 'openStatus'>>
+
+export const CONTACT: ContactDetails = {
   practice: 'BHW Medical Group',
   brand: 'Baltimore Healthcare & Wellness',
   street: '2131 Maryland Ave',
@@ -26,4 +47,39 @@ export const CONTACT = {
    */
   portalUrl: securePatientPortalEnabled ? '/patient/' : 'bhw-patient-portal-mockup.html?next=dashboard',
   blueprintUrl: securePatientPortalEnabled ? '/patient/' : 'bhw-patient-portal-mockup.html',
-} as const
+}
+
+const PUBLIC_KEYS: (keyof PublicSiteInformation)[] = [
+  'street',
+  'cityStateZip',
+  'phone',
+  'fax',
+  'hours',
+  'frontDeskHours',
+  'openStatus',
+]
+
+/** Apply only the public, approved fields the Website Content contract allows. */
+export function applyPublicSiteInformation(
+  values: PublicSiteInformation = {},
+  publishedAt = '',
+) {
+  for (const key of PUBLIC_KEYS) {
+    const value = typeof values[key] === 'string' ? values[key]!.trim().slice(0, 500) : ''
+    if (value) CONTACT[key] = value
+  }
+
+  const phoneDigits = CONTACT.phone.replace(/\D/g, '')
+  if (phoneDigits.length === 10) CONTACT.phoneHref = `tel:+1${phoneDigits}`
+  else if (phoneDigits.length === 11 && phoneDigits.startsWith('1')) CONTACT.phoneHref = `tel:+${phoneDigits}`
+
+  const updated = Date.parse(publishedAt)
+  if (Number.isFinite(updated)) {
+    const date = new Date(updated).toLocaleDateString('en-US', {
+      month: 'short',
+      day: 'numeric',
+      timeZone: 'America/New_York',
+    })
+    CONTACT.newsUpdated = `From the office · updated ${date}`
+  }
+}

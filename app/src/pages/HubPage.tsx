@@ -13,7 +13,7 @@ import { ShareYourExperience } from '../components/ShareYourExperience'
 import { TellUsYouWereSeen } from '../components/TellUsYouWereSeen'
 import { TriageForm } from '../components/TriageForm'
 import type { Triage } from '../components/useTriage'
-import { useHubContent } from '../lib/useHubContent'
+import type { HubContent } from '../lib/useHubContent'
 import type { Theme } from '../lib/useTheme'
 
 interface HubPageProps {
@@ -21,20 +21,20 @@ interface HubPageProps {
   theme: Theme
   askRef: Ref<HTMLElement>
   onOpenResources: () => void
+  hubContent: HubContent
 }
 
 /** Section order is deliberate — don't reorder without asking. */
-export function HubPage({ triage, theme, askRef, onOpenResources }: HubPageProps) {
-  const { announcements, resources } = useHubContent()
+export function HubPage({ triage, theme, askRef, onOpenResources, hubContent }: HubPageProps) {
   return (
     <main className="page" id="main">
-      <Masthead announcements={announcements} />
+      <Masthead announcements={hubContent.managedContentTypes.includes('announcement') ? hubContent.announcements : undefined} />
       <PortalCallout />
       <JustAsk triage={triage} sectionRef={askRef} />
       <TriageForm triage={triage} />
       <ProgramCards theme={theme} />
       <NewPatients />
-      <HubResources resources={resources} />
+      <HubResources resources={hubContent.ready ? hubContent.resources : []} />
       <ResourcesPromo onOpenResources={onOpenResources} />
       <CrisisStrip variant="hub" />
       <ErOrUrgentCare />
