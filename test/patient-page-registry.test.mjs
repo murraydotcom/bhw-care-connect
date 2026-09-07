@@ -44,8 +44,8 @@ test("Health Core starts with the interactive living Blueprint", () => {
   assert.ok(blueprint < checkin && checkin < programs && programs < systems, "the program lens, connected body map, and patient actions should lead the portal");
   assert.ok(vitals > blueprint && vitals < systems, "vital-sign entry should be available in the first Blueprint viewport");
   assert.match(source, /<span>BHW Health Core<\/span><strong>Clinician-shared<\/strong>/);
-  assert.match(source, /Welcome back, <span id="preferred-name">Patient<\/span>/);
-  assert.match(source, /<h1>Your health record, <em>connected\.<\/em><\/h1>/);
+  assert.match(source, /<p class="eyebrow">Glad to see you back<\/p>/);
+  assert.match(source, /<h1><span id="preferred-name">Patient<\/span>\. Your medical story\. Your Health Blueprint\.<\/h1>/);
   assert.match(source, /aria-label="Health Core sections"/);
   assert.doesNotMatch(source, /evolving story|health story/i);
   assert.equal((source.match(/id="plan"/g) || []).length, 1, "the Health Blueprint summary should not be duplicated");
