@@ -6,12 +6,14 @@ import { HubPage } from './pages/HubPage'
 import { NewPatientsPage } from './pages/NewPatientsPage'
 import { ResourcesPage } from './pages/ResourcesPage'
 import { useHashRoute } from './lib/useHashRoute'
+import { useHubContent } from './lib/useHubContent'
 import { useTheme } from './lib/useTheme'
 
 export default function App() {
   const { page, navigate } = useHashRoute()
   const { theme, toggleTheme, label } = useTheme()
   const triage = useTriage()
+  const hubContent = useHubContent()
 
   const askRef = useRef<HTMLElement | null>(null)
 
@@ -48,6 +50,7 @@ export default function App() {
           theme={theme}
           askRef={askRef}
           onOpenResources={openResources}
+          hubContent={hubContent}
         />
       ) : page === 'new-patients' ? (
         <NewPatientsPage onBack={() => navigate('hub')} />

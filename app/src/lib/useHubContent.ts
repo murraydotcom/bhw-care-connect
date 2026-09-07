@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { applyPublicSiteInformation, type PublicSiteInformation } from '../data/contact'
 import type { Announcement } from '../data/news'
 
 /** A downloadable/linkable resource shown on the hub (PDF, form, page). */
@@ -12,7 +13,10 @@ export interface HubResource {
 export interface HubContent {
   announcements: Announcement[]
   resources: HubResource[]
-  /** True once a successful fetch has resolved (so callers can prefer defaults until then). */
+  siteInformation: PublicSiteInformation
+  managedContentTypes: string[]
+  updatedAt: string
+  /** True only when at least one reviewed Google Cloud item is currently published. */
   ready: boolean
 }
 
@@ -30,8 +34,8 @@ const TAG_TINT: Record<string, string> = {
 const ENDPOINT = '/.netlify/functions/hub-content'
 
 /**
- * Pulls the hub's editable content (announcements + resources) from Notion at
- * runtime, so the practice can change it without a rebuild. On any failure the
+ * Pulls reviewed announcements, resources, and practice details from the
+ * Google-backed CrewHQ Website Content workflow. On any failure the
  * hook simply returns empty arrays and `ready:false`, and callers fall back to
  * the built-in defaults compiled into the app.
  */
@@ -39,6 +43,9 @@ export function useHubContent(): HubContent {
   const [content, setContent] = useState<HubContent>({
     announcements: [],
     resources: [],
+    siteInformation: {},
+    managedContentTypes: [],
+    updatedAt: '',
     ready: false,
   })
 
@@ -60,7 +67,17 @@ export function useHubContent(): HubContent {
         const resources: HubResource[] = (data.resources || []).filter(
           (r: HubResource) => r.title || r.url,
         )
-        setContent({ announcements, resources, ready: true })
+        const siteInformation: PublicSiteInformation = data.siteInformation || {}
+        const managedContentTypes: string[] = Array.isArray(data.managedContentTypes)
+          ? data.managedContentTypes
+          : []
+        const updatedAt = typeof data.updatedAt === 'string' ? data.updatedAt : ''
+        const ready = data.available === true
+        if (ready) applyPublicSiteInformation(
+          siteInformation,
+          managedContentTypes.includes('announcement') ? updatedAt : '',
+        )
+        setContent({ announcements, resources, siteInformation, managedContentTypes, updatedAt, ready })
       })
       .catch(() => {
         /* keep defaults — the app still works fully offline */
