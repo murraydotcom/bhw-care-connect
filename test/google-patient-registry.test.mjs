@@ -13,6 +13,20 @@ const ENV = {
   CARE_CONNECT_PATIENT_IDENTITY_SECRET: "synthetic-identity-secret",
   CARE_CONNECT_CLIENT_ID: "care-connect",
 };
+const AUTHORIZATION = {
+  schemaVersion: "bhw.patient-portal-access.v1",
+  accessType: "self",
+  proxyAccessAllowed: false,
+  pilotCohort: "primary-care-adult-v1",
+  programs: ["primary"],
+  portalAccessStatus: "active",
+  preferredChannel: "email",
+  verifiedChannel: "email",
+  contactVerifiedAt: "2026-09-06T12:00:00.000Z",
+  consentedAt: "2026-09-06T12:00:00.000Z",
+  portalInvitedAt: "2026-09-06T12:00:00.000Z",
+  authorizationUpdatedAt: "2026-09-06T12:00:00.000Z",
+};
 
 test("Google registry adapter sends only verified contact and DOB with its separate credential", async () => {
   let captured;
@@ -23,10 +37,10 @@ test("Google registry adapter sends only verified contact and DOB with its separ
     environment: ENV,
     fetchImpl: async (url, options) => {
       captured = { url, options };
-      return Response.json({ ok: true, patient: { bhwPatientId: "BHW0000", preferredName: "Synthetic" } });
+      return Response.json({ ok: true, patient: { bhwPatientId: "BHW0000", preferredName: "Synthetic", portalAuthorization: AUTHORIZATION } });
     },
   });
-  assert.deepEqual(match, { bhwPatientId: "BHW0000", preferredName: "Synthetic" });
+  assert.deepEqual(match, { bhwPatientId: "BHW0000", preferredName: "Synthetic", portalAuthorization: AUTHORIZATION });
   assert.equal(captured.url, "https://operations.synthetic.test/v1/patient-identity/resolve");
   assert.equal(captured.options.headers.Authorization, "Bearer synthetic-identity-secret");
   assert.equal(captured.options.headers["X-BHW-Client-Id"], "care-connect");
@@ -57,5 +71,25 @@ test("Google registry adapter fails closed for missing configuration, ambiguous 
       fetchImpl: async () => Response.json({ ok: true, patient: { bhwPatientId: "bad" } }),
     }),
     (error) => error.status === 502,
+  );
+  await assert.rejects(
+    resolveGooglePatientIdentity({ email: "synthetic@example.test", dateOfBirth: "1980-01-02" }, {
+      environment: ENV,
+      fetchImpl: async () => Response.json({ ok: true, patient: { bhwPatientId: "BHW0000", portalAuthorization: { ...AUTHORIZATION, proxyAccessAllowed: true } } }),
+    }),
+    (error) => error.status === 502 && /authorization/i.test(error.message),
+  );
+  await assert.rejects(
+    resolveGooglePatientIdentity({ email: "synthetic@example.test", dateOfBirth: "1980-01-02" }, {
+      environment: ENV,
+      fetchImpl: async () => Response.json({
+        ok: true,
+        patient: {
+          bhwPatientId: "BHW0000",
+          portalAuthorization: { ...AUTHORIZATION, portalInvitedAt: "2999-01-01T00:00:00.000Z" },
+        },
+      }),
+    }),
+    (error) => error.status === 502 && /authorization/i.test(error.message),
   );
 });

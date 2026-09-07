@@ -7,9 +7,22 @@ const require = createRequire(import.meta.url);
 const { handler } = require("../netlify/functions/food-vision.js");
 
 function sessionToken(secret, overrides = {}) {
+  const now = new Date().toISOString();
   const claims = {
     kind: "patient",
     bhwPatientId: "BHW0000",
+    schemaVersion: "bhw.patient-portal-access.v1",
+    accessType: "self",
+    proxyAccessAllowed: false,
+    pilotCohort: "primary-care-adult-v1",
+    programs: ["primary"],
+    portalAccessStatus: "active",
+    preferredChannel: "email",
+    verifiedChannel: "email",
+    contactVerifiedAt: now,
+    consentedAt: now,
+    portalInvitedAt: now,
+    authorizationUpdatedAt: now,
     exp: Date.now() + 60_000,
     ...overrides,
   };

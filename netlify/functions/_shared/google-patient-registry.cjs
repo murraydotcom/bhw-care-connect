@@ -44,15 +44,42 @@ async function resolveGooglePatientIdentity(input, {
     if (response.status === 429) {
       throw serviceError(429, "Sign-in matching is temporarily locked. Please try again later or call the office.");
     }
+    if (response.status === 503) {
+      throw serviceError(503, "Patient portal access is not available right now. Please call the office for help.");
+    }
     throw serviceError(502, "The BHW patient registry could not be reached. Please try again.");
   }
   const bhwPatientId = String(body.patient?.bhwPatientId || "").toUpperCase();
   if (!/^BHW\d{4}$/.test(bhwPatientId)) {
     throw serviceError(502, "The BHW patient registry returned an invalid match.");
   }
+  const authorization = body.patient?.portalAuthorization;
+  const now = Date.now();
+  const currentTime = (value) => {
+    const parsed = new Date(value).getTime();
+    return Number.isFinite(parsed) && parsed <= now;
+  };
+  const validAuthorization = authorization
+    && authorization.schemaVersion === "bhw.patient-portal-access.v1"
+    && authorization.accessType === "self"
+    && authorization.proxyAccessAllowed === false
+    && authorization.pilotCohort === "primary-care-adult-v1"
+    && authorization.portalAccessStatus === "active"
+    && Array.isArray(authorization.programs)
+    && authorization.programs.includes("primary")
+    && ["email", "sms"].includes(authorization.preferredChannel)
+    && authorization.verifiedChannel === authorization.preferredChannel
+    && currentTime(authorization.contactVerifiedAt)
+    && currentTime(authorization.consentedAt)
+    && currentTime(authorization.portalInvitedAt)
+    && currentTime(authorization.authorizationUpdatedAt);
+  if (!validAuthorization) {
+    throw serviceError(502, "The BHW patient registry did not return a current patient portal authorization.");
+  }
   return {
     bhwPatientId,
     preferredName: String(body.patient?.preferredName || "Patient").trim().slice(0, 100) || "Patient",
+    portalAuthorization: authorization,
   };
 }
 

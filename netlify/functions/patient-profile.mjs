@@ -109,7 +109,7 @@ export function createPatientProfileHandler({
     const changes = safeChanges(submitted.changes);
     if (!Object.keys(changes).length) return json(400, { ok: false, error: "Choose at least one profile section to update." });
 
-    const upstreamToken = signHealthCorePatientToken(session.bhwPatientId, env.CARE_CONNECT_PATIENT_TOKEN_SECRET, now());
+    const upstreamToken = signHealthCorePatientToken(session, env.CARE_CONNECT_PATIENT_TOKEN_SECRET, now());
     let profileRequest;
     let replayed = false;
     try {

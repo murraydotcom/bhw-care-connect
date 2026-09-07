@@ -16,6 +16,18 @@ function patientSession(overrides = {}) {
   const claims = {
     kind: "patient",
     bhwPatientId: "BHW0000",
+    schemaVersion: "bhw.patient-portal-access.v1",
+    accessType: "self",
+    proxyAccessAllowed: false,
+    pilotCohort: "primary-care-adult-v1",
+    programs: ["primary"],
+    portalAccessStatus: "active",
+    preferredChannel: "email",
+    verifiedChannel: "email",
+    contactVerifiedAt: new Date(NOW).toISOString(),
+    consentedAt: new Date(NOW).toISOString(),
+    portalInvitedAt: new Date(NOW).toISOString(),
+    authorizationUpdatedAt: new Date(NOW).toISOString(),
     exp: NOW + 60_000,
     ...overrides,
   };

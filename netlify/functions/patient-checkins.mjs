@@ -107,7 +107,7 @@ function authContext(request, env, now) {
   const session = verifyCareConnectPatientSession(sessionToken, env.SESSION_SECRET, now());
   if (!session) return { error: json(401, { ok: false, error: "Please sign in again." }) };
   if (!session.bhwPatientId) return { error: json(409, { ok: false, error: "Your patient profile is not linked yet." }) };
-  const upstreamToken = signHealthCorePatientToken(session.bhwPatientId, env.CARE_CONNECT_PATIENT_TOKEN_SECRET, now());
+  const upstreamToken = signHealthCorePatientToken(session, env.CARE_CONNECT_PATIENT_TOKEN_SECRET, now());
   return { baseUrl, session, upstreamToken };
 }
 
