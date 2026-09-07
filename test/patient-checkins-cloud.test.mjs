@@ -13,7 +13,24 @@ const ENV = {
 };
 
 function sessionToken(overrides = {}) {
-  const claims = { kind: "patient", bhwPatientId: "BHW0000", exp: NOW + 60_000, ...overrides };
+  const claims = {
+    kind: "patient",
+    bhwPatientId: "BHW0000",
+    schemaVersion: "bhw.patient-portal-access.v1",
+    accessType: "self",
+    proxyAccessAllowed: false,
+    pilotCohort: "primary-care-adult-v1",
+    programs: ["primary"],
+    portalAccessStatus: "active",
+    preferredChannel: "email",
+    verifiedChannel: "email",
+    contactVerifiedAt: new Date(NOW).toISOString(),
+    consentedAt: new Date(NOW).toISOString(),
+    portalInvitedAt: new Date(NOW).toISOString(),
+    authorizationUpdatedAt: new Date(NOW).toISOString(),
+    exp: NOW + 60_000,
+    ...overrides,
+  };
   const payload = Buffer.from(JSON.stringify(claims)).toString("base64url");
   const signature = crypto.createHmac("sha256", SESSION_SECRET).update(payload).digest("base64url");
   return `${payload}.${signature}`;

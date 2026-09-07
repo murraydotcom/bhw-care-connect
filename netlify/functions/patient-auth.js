@@ -219,6 +219,24 @@ async function stytch(path, payload) {
 const isEmail = (e) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(String(e || "").trim());
 const TTL_MS = 12 * 60 * 60 * 1000; // 12h session
 
+function syntheticPortalAuthorization(channel) {
+  const now = new Date().toISOString();
+  return {
+    schemaVersion: "bhw.patient-portal-access.v1",
+    accessType: "self",
+    proxyAccessAllowed: false,
+    pilotCohort: "primary-care-adult-v1",
+    programs: ["primary"],
+    portalAccessStatus: "active",
+    preferredChannel: channel,
+    verifiedChannel: channel,
+    contactVerifiedAt: now,
+    consentedAt: now,
+    portalInvitedAt: now,
+    authorizationUpdatedAt: now,
+  };
+}
+
 exports.handler = async (event) => {
   if (event.httpMethod !== "POST") return json(405, { error: "POST only" });
   let body;
@@ -240,7 +258,12 @@ exports.handler = async (event) => {
 
     // ---- send a code (email or SMS) ---------------------------------------
     if (body.action === "send") {
-      if (body.portalContract === "google-v1"
+      const googlePortal = body.portalContract === "google-v1";
+      if (googlePortal && !DEMO_MODE
+        && String(process.env.PATIENT_PORTAL_PILOT_ENABLED || "false").trim().toLowerCase() !== "true") {
+        return json(503, { error: "Patient portal access is not available right now — please call the office." });
+      }
+      if (googlePortal
         && (!operationsBase(process.env.OPERATIONS_CLOUD_API_URL) || !process.env.CARE_CONNECT_PATIENT_IDENTITY_SECRET)) {
         return json(503, { error: "Patient sign-in is not connected to the BHW patient registry yet." });
       }
@@ -280,15 +303,24 @@ exports.handler = async (event) => {
       const idLabel = email || phone;
       const dob = /^\d{4}-\d{2}-\d{2}$/.test(body.dob || "") ? body.dob : "";
       const googlePortal = body.portalContract === "google-v1";
+      if (googlePortal && !DEMO_MODE
+        && String(process.env.PATIENT_PORTAL_PILOT_ENABLED || "false").trim().toLowerCase() !== "true") {
+        return json(503, { error: "Patient portal access is not available right now — please call the office." });
+      }
       let family;
       if (googlePortal) {
         if (DEMO_MODE) {
           family = demoFamily(idLabel);
           family.dependents = [];
+          family.patient.portalAuthorization = syntheticPortalAuthorization(phone ? "sms" : "email");
         } else {
           const match = await resolveGooglePatientIdentity({ ...idKey, dateOfBirth: dob });
           family = {
-            patient: { name: match.preferredName, mrn: match.bhwPatientId },
+            patient: {
+              name: match.preferredName,
+              mrn: match.bhwPatientId,
+              portalAuthorization: match.portalAuthorization,
+            },
             dependents: [],
           };
         }
@@ -311,6 +343,7 @@ exports.handler = async (event) => {
           phone,
           patientId: family.patient.id || null,
           bhwPatientId: bhwPatientId(family.patient.mrn),
+          ...(googlePortal ? family.patient.portalAuthorization : {}),
           dependentIds,
           demo,
           exp: Date.now() + TTL_MS,

@@ -73,6 +73,7 @@ Core (required):
 - `CARE_CONNECT_CLIENT_ID` — optional; defaults to `care-connect`.
 - `HEALTH_CORE_API_URL` — HTTPS base URL for the independent, patient-safe Health Core service.
 - `CARE_CONNECT_PATIENT_TOKEN_SECRET` — separate server-only HMAC credential shared only with Health Core's patient portal endpoint. Do not reuse the intake or staff credential.
+- `PATIENT_PORTAL_PILOT_ENABLED` — organization kill switch for real Google-registry patient sign-in; leave unset or `false` until the reviewed adult Primary Care pilot is released.
 - `VITE_SECURE_PATIENT_PORTAL_ENABLED` — set to `true` only after Health Core and the Care Connect bridge pass release verification. Until then, Care Connect keeps its current portal link.
 
 Per-function:
@@ -119,6 +120,8 @@ confirmed. Local Vite development uses a synthetic `REQ-BHW0000-LOCAL` receipt
 so the UI remains testable without sending patient data.
 
 ## Secure patient portal release boundary
+
+The first real-patient cohort is limited to 5–10 personally selected adult Primary Care patients using self access. Each patient must have exactly one verified direct contact method, DOB, current portal consent evidence, explicit allowlisting, and recorded invitation delivery in CrewHQ. Proxy and guardian access remain disabled. Organization switches in Care Connect, Operations API, and Health Core default off; an individual pause or revocation invalidates an existing session at Health Core. The API can preview generic invitation wording but does not send an invitation.
 
 The `/patient/` shell combines verified specialists with active patient-visible
 referrals in the coordinated-care profile card, while keeping completed or

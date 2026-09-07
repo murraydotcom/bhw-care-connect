@@ -16,6 +16,18 @@ function patientSession(overrides = {}) {
   const claims = {
     kind: "patient",
     bhwPatientId: "BHW0000",
+    schemaVersion: "bhw.patient-portal-access.v1",
+    accessType: "self",
+    proxyAccessAllowed: false,
+    pilotCohort: "primary-care-adult-v1",
+    programs: ["primary"],
+    portalAccessStatus: "active",
+    preferredChannel: "email",
+    verifiedChannel: "email",
+    contactVerifiedAt: new Date(NOW).toISOString(),
+    consentedAt: new Date(NOW).toISOString(),
+    portalInvitedAt: new Date(NOW).toISOString(),
+    authorizationUpdatedAt: new Date(NOW).toISOString(),
     exp: NOW + 60_000,
     ...overrides,
   };
@@ -60,6 +72,8 @@ test("secure bridge exchanges a patient session for a 60-second Health Core toke
   assert.equal(claims.iss, "bhw-care-connect");
   assert.equal(claims.role, "patient-portal");
   assert.equal(claims.bhwPatientId, "BHW0000");
+  assert.equal(claims.accessType, "self");
+  assert.equal(claims.proxyAccessAllowed, false);
   assert.equal(claims.exp - claims.iat, 60);
 
   const body = await response.json();
@@ -74,6 +88,7 @@ test("secure bridge fails closed for missing, expired, or unlinked sessions", as
 
   assert.equal((await handler(new Request("https://care.synthetic.test/api/patient-portal/dashboard"))).status, 401);
   assert.equal((await handler(request(patientSession({ exp: NOW - 1 })))).status, 401);
+  assert.equal((await handler(request(patientSession({ proxyAccessAllowed: true })))).status, 401);
   const unlinked = await handler(request(patientSession({ bhwPatientId: null })));
   assert.equal(unlinked.status, 409);
   assert.match((await unlinked.json()).error, /not linked/);

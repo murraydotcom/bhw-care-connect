@@ -53,7 +53,7 @@ export function createPatientPortalHandler({
     }
 
     const upstreamToken = signHealthCorePatientToken(
-      session.bhwPatientId,
+      session,
       env.CARE_CONNECT_PATIENT_TOKEN_SECRET,
       now(),
     );
