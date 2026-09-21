@@ -74,6 +74,7 @@
       <nav class="portal-section-nav" aria-label="Health Core sections">
         <a href="#health-profile">Health profile</a>
         <a href="#health-blueprint">Health Blueprint</a>
+        <a href="#nutrition-intelligence">Nutrition</a>
         <a href="#lab-results">Results</a>
         <a href="#medication-requests">Medications</a>
         <a href="#care-team-updates">Care updates</a>
@@ -188,6 +189,35 @@
         </footer>
       </section>
 
+      <section id="nutrition-intelligence" class="card section nutrition-intake-app" aria-labelledby="nutrition-intelligence-title">
+        <header class="nutrition-intake-head">
+          <div>
+            <p class="eyebrow">Whole-person nutrition decision support</p>
+            <h2 id="nutrition-intelligence-title">Tell us what eating is really like for you</h2>
+            <p class="section-intro">Complete this when you have time—at home or before your visit. Your answers are saved as patient-reported information for your BHW clinician to reconcile with your chart, labs, medications, and physiology.</p>
+          </div>
+          <div class="nutrition-intake-progress" aria-live="polite">
+            <strong id="nutrition-progress-count">0 answered</strong>
+            <span id="nutrition-save-state" data-state="not-saved">Not saved</span>
+          </div>
+        </header>
+        <div class="nutrition-intake-boundary">
+          <strong>This is a screening and preparation tool—not a diagnosis.</strong>
+          <span>Your answers do not create a diagnosis, medication change, supplement order, or nutrition prescription until a clinician reviews them. Blood or black stool, inability to swallow, severe or worsening abdominal pain, persistent vomiting, dehydration, jaundice, or other urgent symptoms need prompt medical evaluation.</span>
+        </div>
+        <div id="nutrition-load-status" class="nutrition-load-status" role="status" aria-live="polite">Loading your nutrition questionnaire…</div>
+        <form id="nutrition-questionnaire-form" class="nutrition-questionnaire-form" novalidate hidden>
+          <div id="nutrition-questionnaire"></div>
+          <footer class="nutrition-form-actions">
+            <p id="nutrition-form-message" role="status" aria-live="polite">You can save your progress and finish later.</p>
+            <div>
+              <button id="nutrition-save-button" class="quiet-action" type="button">Save and finish later</button>
+              <button id="nutrition-submit-button" class="button" type="button">Submit to my care team</button>
+            </div>
+          </footer>
+        </form>
+      </section>
+
       <div class="dashboard-layout portal-lower-grid">
         <section id="lab-results" class="card section portal-span-two"><p class="eyebrow">Health Core results</p><h2>Labs &amp; clinician-shared interpretation</h2><p class="section-intro">Select a shared result to see how your care team connected it to your Health Blueprint.</p><div id="labs" class="lab-grid"></div></section>
         <section id="medication-requests" class="card section"><p class="eyebrow">Health Core medication view</p><h2>Medications &amp; request status</h2><p class="section-intro">Medication status and request status are shown separately, so “sent to pharmacy” never means a medication was approved by insurance.</p><div id="medications" class="list"></div></section>
@@ -250,6 +280,6 @@
   </main>
   <footer class="site-footer">BHW Medical Group · 2131 Maryland Ave, Baltimore, MD 21218 · 443.762.5343</footer>
   <script defer src="../assets/bhw-transparent-anatomy.js?v=4"></script>
-  <script type="module" src="./app.mjs?v=referrals-profile-1"></script>
+  <script type="module" src="./app.mjs?v=nutrition-intake-2"></script>
 </body>
 </html>

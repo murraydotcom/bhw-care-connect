@@ -1,8 +1,18 @@
 import { getProgramSystemContext, resolveProgramId, visiblePrograms, visibleSystems } from "./page-registry.mjs?v=interactive-atlas-1";
 import { SESSION_KEY, formatStatus, isLocalPreview, loadPortalDashboard, node, patientHref, previewDashboard } from "./portal-data.mjs?v=interactive-atlas-1";
+import {
+  collectNutritionQuestionnaire,
+  handleNutritionQuestionnaireAction,
+  mergeNutritionQuestionnaireModules,
+  populateNutritionQuestionnaire,
+  renderNutritionQuestionnaire,
+  updateNutritionQuestionnaireVisibility,
+} from "./nutrition-questionnaire-v14.mjs?v=care-connect-2";
+import { NUTRITION_PREVIEW_CONTRACT } from "./nutrition-preview-contract.mjs?v=care-connect-2";
 
 const auth = { mode: "email", sent: false, methodId: null };
 const PREVIEW_STATE_KEY = "bhw_patient_blueprint_preview_state_v2";
+const NUTRITION_PREVIEW_STATE_KEY = "bhw_patient_nutrition_preview_state_v1";
 const PROGRAM_MARKS = {
   "primary-care": "/hm-assets/bhw-emblem.png",
   "mind-mood": "/assets/mind-mood-logo.png",
@@ -24,6 +34,10 @@ let activeMappingId = null;
 let atlasPopoverOpen = false;
 let interactionState = loadInteractionState();
 let profileSubmissionKey = null;
+let nutritionContract = null;
+let nutritionQuestionnaire = null;
+let nutritionIntake = null;
+let nutritionLoading = false;
 
 function patientFirstName(patient = {}) {
   return String(patient.preferredName || patient.firstName || "").trim();
@@ -842,6 +856,166 @@ function renderSystems(dashboard) {
   selectSystem(sharedSystems[0].id, true);
 }
 
+function nutritionSavedLabel(value, prefix) {
+  const date = new Date(value || "");
+  return Number.isNaN(date.getTime()) ? prefix : `${prefix} · ${date.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`;
+}
+
+function setNutritionState(message, state = "not-saved") {
+  const status = $("nutrition-save-state");
+  status.textContent = message;
+  status.dataset.state = state;
+}
+
+function updateNutritionProgress() {
+  if (!nutritionQuestionnaire) return;
+  const container = $("nutrition-questionnaire");
+  const { questionnaireResponses } = collectNutritionQuestionnaire(container, nutritionQuestionnaire);
+  const answered = Object.keys(questionnaireResponses).length;
+  const visible = [...container.querySelectorAll(".question-card")].filter((card) => !card.hidden).length;
+  $("nutrition-progress-count").textContent = `${answered} answered · ${visible} currently shown`;
+}
+
+function applyNutritionContract(contract, intake = null) {
+  nutritionContract = contract;
+  nutritionQuestionnaire = mergeNutritionQuestionnaireModules(
+    contract.questionnaire,
+    contract.giPatternScreen,
+    contract.kidneyQuestionnaire,
+  );
+  nutritionIntake = intake;
+  const container = $("nutrition-questionnaire");
+  container.innerHTML = renderNutritionQuestionnaire(nutritionQuestionnaire);
+  if (intake?.questionnaireResponses) populateNutritionQuestionnaire(container, nutritionQuestionnaire, intake);
+  else updateNutritionQuestionnaireVisibility(container, nutritionQuestionnaire);
+  $("nutrition-questionnaire-form").hidden = false;
+  $("nutrition-load-status").hidden = true;
+  updateNutritionProgress();
+  if (intake?.savedAt) {
+    const prefix = isLocalPreview ? "Saved on this device only" : "Saved to BHW Cloud";
+    setNutritionState(nutritionSavedLabel(intake.savedAt, prefix), isLocalPreview ? "device-only" : "cloud-saved");
+    $("nutrition-form-message").textContent = intake.status === "submitted-for-clinician-reconciliation"
+      ? isLocalPreview ? "Preview only—this was not sent to a care team." : "Submitted for BHW clinician reconciliation."
+      : "Your saved progress is ready when you return.";
+  } else {
+    setNutritionState("Not saved", "not-saved");
+  }
+}
+
+function nutritionLoadFailure(message) {
+  const status = $("nutrition-load-status");
+  status.hidden = false;
+  status.replaceChildren(
+    node("strong", "", "Nutrition questionnaire temporarily unavailable"),
+    node("span", "", message),
+  );
+  const retry = node("button", "quiet-action", "Try again");
+  retry.type = "button";
+  retry.addEventListener("click", () => loadNutritionIntake(true));
+  status.append(retry);
+}
+
+async function loadNutritionIntake(force = false) {
+  if (nutritionLoading || (nutritionQuestionnaire && !force)) return;
+  nutritionLoading = true;
+  const status = $("nutrition-load-status");
+  status.hidden = false;
+  status.textContent = "Loading your nutrition questionnaire…";
+  $("nutrition-questionnaire-form").hidden = true;
+  try {
+    if (isLocalPreview) {
+      let intake = null;
+      try { intake = JSON.parse(localStorage.getItem(NUTRITION_PREVIEW_STATE_KEY) || "null"); } catch { intake = null; }
+      applyNutritionContract(NUTRITION_PREVIEW_CONTRACT, intake);
+      return;
+    }
+    const token = sessionStorage.getItem(SESSION_KEY);
+    if (!token) throw new Error("Please sign in again to load the questionnaire.");
+    const response = await fetch("/api/patient-portal/nutrition-intake", {
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok || body.ok !== true) throw new Error(body.error || "The questionnaire could not be loaded.");
+    applyNutritionContract(body, body.intake || null);
+  } catch (error) {
+    nutritionLoadFailure(error.message || "Please try again.");
+  } finally {
+    nutritionLoading = false;
+  }
+}
+
+function setNutritionBusy(busy) {
+  $("nutrition-save-button").disabled = busy;
+  $("nutrition-submit-button").disabled = busy;
+}
+
+async function saveNutritionIntake(action) {
+  if (!nutritionQuestionnaire || !nutritionContract) return;
+  const submit = action === "submit";
+  const { questionnaireResponses } = collectNutritionQuestionnaire($("nutrition-questionnaire"), nutritionQuestionnaire);
+  if (submit && !Object.keys(questionnaireResponses).length) {
+    $("nutrition-form-message").textContent = "Answer at least one question before submitting.";
+    return;
+  }
+  const payload = {
+    action,
+    expectedRevision: Number(nutritionIntake?.revision) || 0,
+    questionnaireVersion: nutritionContract.questionnaire.version,
+    questionnaireModuleVersions: nutritionQuestionnaire.module_versions || {},
+    questionnaireResponses,
+  };
+  setNutritionBusy(true);
+  setNutritionState("Saving…", "saving");
+  $("nutrition-form-message").textContent = submit ? "Submitting for clinician reconciliation…" : "Saving your progress…";
+  try {
+    if (isLocalPreview) {
+      const savedAt = new Date().toISOString();
+      nutritionIntake = {
+        schemaVersion: "bhw.patient-reported-nutrition-intake.preview.v1",
+        questionnaireVersion: payload.questionnaireVersion,
+        questionnaireModuleVersions: payload.questionnaireModuleVersions,
+        questionnaireResponses,
+        answerCount: Object.keys(questionnaireResponses).length,
+        revision: payload.expectedRevision + 1,
+        status: submit ? "submitted-preview-only" : "in-progress-preview-only",
+        savedAt,
+      };
+      localStorage.setItem(NUTRITION_PREVIEW_STATE_KEY, JSON.stringify(nutritionIntake));
+      setNutritionState(nutritionSavedLabel(savedAt, "Saved on this device only"), "device-only");
+      $("nutrition-form-message").textContent = submit
+        ? "Preview only—saved on this device, but not sent to a care team."
+        : "Preview progress saved on this device only.";
+      return;
+    }
+    const token = sessionStorage.getItem(SESSION_KEY);
+    if (!token) throw new Error("Please sign in again before saving.");
+    const response = await fetch("/api/patient-portal/nutrition-intake", {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const body = await response.json().catch(() => ({}));
+    if (body.saved === true && body.intake) {
+      nutritionIntake = body.intake;
+      setNutritionState(nutritionSavedLabel(body.savedAt, "Saved to BHW Cloud"), "cloud-saved");
+      $("nutrition-form-message").textContent = body.error || "Saved to BHW Cloud; clinician review notification needs another attempt.";
+      return;
+    }
+    if (!response.ok || body.ok !== true || body.readBackVerified !== true) throw new Error(body.error || "Your questionnaire was not saved.");
+    nutritionIntake = body.intake;
+    setNutritionState(nutritionSavedLabel(body.savedAt, "Saved to BHW Cloud"), "cloud-saved");
+    $("nutrition-form-message").textContent = submit
+      ? "Submitted for BHW clinician reconciliation. Your answers remain patient-reported until reviewed."
+      : "Progress saved to BHW Cloud. You can safely return later.";
+  } catch (error) {
+    setNutritionState("Not saved", "not-saved");
+    $("nutrition-form-message").textContent = error.message || "Your questionnaire was not saved. Please try again.";
+  } finally {
+    setNutritionBusy(false);
+    updateNutritionProgress();
+  }
+}
+
 function renderDashboard(dashboard) {
   currentDashboard = dashboard;
   document.body.classList.add("portal-open");
@@ -862,6 +1036,7 @@ function renderDashboard(dashboard) {
   reflectPersistence();
   $("login-view").hidden = true;
   $("dashboard-view").hidden = false;
+  void loadNutritionIntake();
 }
 
 function openDialog(id) {
@@ -981,6 +1156,21 @@ $("mode-button").addEventListener("click", toggleMode);
 $("signout-button").addEventListener("click", signOut);
 $("vitals-form").addEventListener("submit", submitVitals);
 $("profile-form").addEventListener("submit", submitProfileChanges);
+$("nutrition-questionnaire").addEventListener("input", () => {
+  if (!nutritionQuestionnaire) return;
+  updateNutritionQuestionnaireVisibility($("nutrition-questionnaire"), nutritionQuestionnaire);
+  updateNutritionProgress();
+});
+$("nutrition-questionnaire").addEventListener("change", () => {
+  if (!nutritionQuestionnaire) return;
+  updateNutritionQuestionnaireVisibility($("nutrition-questionnaire"), nutritionQuestionnaire);
+  updateNutritionProgress();
+});
+$("nutrition-questionnaire").addEventListener("click", (event) => {
+  if (nutritionQuestionnaire && handleNutritionQuestionnaireAction(event, $("nutrition-questionnaire"), nutritionQuestionnaire)) updateNutritionProgress();
+});
+$("nutrition-save-button").addEventListener("click", () => saveNutritionIntake("save-progress"));
+$("nutrition-submit-button").addEventListener("click", () => saveNutritionIntake("submit"));
 document.querySelectorAll("[data-open-dialog]").forEach((button) => button.addEventListener("click", () => openDialog(button.dataset.openDialog)));
 document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => closeDialog(button)));
 document.addEventListener("keydown", (event) => {
