@@ -1,8 +1,18 @@
 import { getProgramSystemContext, resolveProgramId, visiblePrograms, visibleSystems } from "./page-registry.mjs?v=interactive-atlas-1";
 import { SESSION_KEY, formatStatus, isLocalPreview, loadPortalDashboard, node, patientHref, previewDashboard } from "./portal-data.mjs?v=interactive-atlas-1";
+import {
+  collectNutritionQuestionnaire,
+  handleNutritionQuestionnaireAction,
+  mergeNutritionQuestionnaireModules,
+  populateNutritionQuestionnaire,
+  renderNutritionQuestionnaire,
+  updateNutritionQuestionnaireVisibility,
+} from "./nutrition-questionnaire-v14.mjs?v=care-connect-2";
+import { NUTRITION_PREVIEW_CONTRACT } from "./nutrition-preview-contract.mjs?v=care-connect-2";
 
 const auth = { mode: "email", sent: false, methodId: null };
 const PREVIEW_STATE_KEY = "bhw_patient_blueprint_preview_state_v2";
+const NUTRITION_PREVIEW_STATE_KEY = "bhw_patient_nutrition_preview_state_v1";
 const PROGRAM_MARKS = {
   "primary-care": "/hm-assets/bhw-emblem.png",
   "mind-mood": "/assets/mind-mood-logo.png",
@@ -24,6 +34,10 @@ let activeMappingId = null;
 let atlasPopoverOpen = false;
 let interactionState = loadInteractionState();
 let profileSubmissionKey = null;
+let nutritionContract = null;
+let nutritionQuestionnaire = null;
+let nutritionIntake = null;
+let nutritionLoading = false;
 
 function patientFirstName(patient = {}) {
   return String(patient.preferredName || patient.firstName || "").trim();
@@ -118,6 +132,54 @@ function renderClinicalList(targetId, value, emptyMessage, type) {
   });
 }
 
+function renderInsurance(value) {
+  const target = $("patient-insurance");
+  target.replaceChildren();
+  const items = clinicalItems(value);
+  if (!items.length) {
+    target.append(node("p", "profile-empty", "No insurance information is currently shared in this portal view."));
+    return;
+  }
+  items.forEach((coverage) => {
+    const card = node("article", "clinical-entry clinical-entry-insurance");
+    if (typeof coverage === "string") card.append(node("strong", "", coverage));
+    else {
+      const head = node("div", "clinical-entry-head");
+      head.append(node("strong", "", coverage.payerName || coverage.planName || "Insurance coverage"));
+      if (coverage.status) head.append(node("span", "chip", formatStatus(coverage.status)));
+      card.append(head);
+      const details = [coverage.planName, coverage.memberId ? `Member ${coverage.memberId}` : "", coverage.groupNumber ? `Group ${coverage.groupNumber}` : ""].filter(Boolean);
+      if (details.length) card.append(node("p", "", details.join(" · ")));
+      const subscriber = [coverage.subscriberRelationship, coverage.effectiveDate ? `Effective ${readableDate(coverage.effectiveDate)}` : ""].filter(Boolean);
+      if (subscriber.length) card.append(node("small", "", subscriber.join(" · ")));
+    }
+    target.append(card);
+  });
+}
+
+function renderMedicationProfileList(targetId, value, label) {
+  const target = $(targetId);
+  target.replaceChildren();
+  const items = clinicalItems(value);
+  if (!items.length) {
+    target.append(node("p", "profile-empty", `No ${label} are currently shared in this portal view.`));
+    return;
+  }
+  items.forEach((entry) => {
+    const card = node("article", "clinical-entry clinical-entry-medication");
+    if (typeof entry === "string") card.append(node("strong", "", entry));
+    else {
+      const head = node("div", "clinical-entry-head");
+      head.append(node("strong", "", entry.name || "Recorded item"));
+      if (entry.clinicalStatus || entry.status) head.append(node("span", "chip", formatStatus(entry.clinicalStatus || entry.status)));
+      card.append(head);
+      const details = [entry.dose, entry.frequency, entry.instructions].filter(Boolean);
+      if (details.length) card.append(node("p", "", details.join(" · ")));
+    }
+    target.append(card);
+  });
+}
+
 const REFERRAL_TERMINAL_STATUSES = new Set(["completed", "referral-completed", "closed", "closed-without-scheduling", "cancelled"]);
 
 function activeReferrals(requests = []) {
@@ -152,14 +214,17 @@ function renderActiveReferrals(requests = []) {
   });
 }
 
-function renderPatientProfile(patient = {}, requests = []) {
+function renderPatientProfile(patient = {}, requests = [], medications = [], supplements = []) {
   const verification = patient.verification || {};
   const fieldStatus = verification.fields || {};
   renderProfileVerification(verification);
   renderDemographics(patient);
+  renderInsurance(patient.insurance);
   renderClinicalList("patient-allergies", patient.allergies, profileEmptyCopy("allergies", fieldStatus.allergies), "allergy");
   renderClinicalList("patient-intolerances", patient.intolerances, profileEmptyCopy("intolerances", fieldStatus.intolerances), "intolerance");
   renderClinicalList("patient-specialists", patient.specialists, profileEmptyCopy("specialists", fieldStatus.specialists), "specialist");
+  renderMedicationProfileList("patient-medication-profile", medications, "medications");
+  renderMedicationProfileList("patient-supplements", supplements, "supplements");
   renderActiveReferrals(requests);
 }
 
@@ -194,10 +259,13 @@ function renderVerificationBadge(id, status) {
 function renderProfileVerification(verification = {}) {
   const fields = verification.fields || {};
   renderVerificationBadge("profile-overall-status", verification.overallStatus || "not-reviewed");
-  renderVerificationBadge("demographics-verification", sectionVerificationStatus(fields, ["sexAtBirth", "pronouns", "preferredLanguage"]));
+  renderVerificationBadge("demographics-verification", sectionVerificationStatus(fields, ["legalFirstName", "legalLastName", "preferredName", "dateOfBirth", "sexAtBirth", "genderIdentity", "pronouns", "preferredLanguage", "phone", "email", "address"]));
+  renderVerificationBadge("insurance-verification", fields.insurance || "not-reviewed");
   renderVerificationBadge("allergies-verification", fields.allergies || "not-reviewed");
   renderVerificationBadge("intolerances-verification", fields.intolerances || "not-reviewed");
   renderVerificationBadge("specialists-verification", fields.specialists || "not-reviewed");
+  renderVerificationBadge("medications-verification", fields.medications || "not-reviewed");
+  renderVerificationBadge("supplements-verification", fields.supplements || "not-reviewed");
 }
 
 function profileEmptyCopy(field, status) {
@@ -212,19 +280,33 @@ function clinicalEditorLines(value, type) {
   return clinicalItems(value).map((item) => {
     if (typeof item === "string") return item;
     if (type === "specialist") return [item.name, item.specialty, item.organization || item.practice, item.phone].filter(Boolean).join(" | ");
+    if (type === "insurance") return [item.payerName || item.payer, item.planName || item.plan, item.memberId, item.groupNumber, item.subscriberRelationship, item.status].filter(Boolean).join(" | ");
+    if (["medication", "supplement"].includes(type)) return [item.name, item.dose || item.instructions, item.clinicalStatus || item.status].filter(Boolean).join(" | ");
     return [item.substance || item.name, item.reaction, item.severity].filter(Boolean).join(" | ");
   }).filter(Boolean).join("\n");
 }
 
 function prepareProfileForm() {
   const patient = currentDashboard?.patient || {};
+  $("profile-first-name").value = patient.firstName || "";
+  $("profile-last-name").value = patient.lastName || "";
+  $("profile-preferred-name").value = patient.preferredName || "";
+  $("profile-date-of-birth").value = patient.dateOfBirth || "";
   $("profile-sex-at-birth").value = patient.sexAtBirth || "";
+  $("profile-gender-identity").value = patient.genderIdentity || "";
   $("profile-pronouns").value = patient.pronouns || "";
   $("profile-language").value = patient.preferredLanguage || "";
+  $("profile-phone").value = patient.phone || "";
+  $("profile-email").value = patient.email || "";
+  $("profile-address").value = typeof patient.address === "string" ? patient.address : patient.address?.formatted || "";
+  $("profile-insurance").value = clinicalEditorLines(patient.insurance, "insurance");
   $("profile-allergies").value = clinicalEditorLines(patient.allergies, "allergy");
   $("profile-intolerances").value = clinicalEditorLines(patient.intolerances, "intolerance");
+  $("profile-medications").value = clinicalEditorLines(currentDashboard?.medications, "medication");
+  $("profile-supplements").value = clinicalEditorLines(currentDashboard?.supplements, "supplement");
   $("profile-specialists").value = clinicalEditorLines(patient.specialists, "specialist");
-  for (const id of ["profile-no-allergies", "profile-no-intolerances", "profile-no-specialists"]) $(id).checked = false;
+  $("profile-reason").value = "";
+  for (const id of ["profile-no-insurance", "profile-no-allergies", "profile-no-intolerances", "profile-no-medications", "profile-no-supplements", "profile-no-specialists"]) $(id).checked = false;
   const pending = patient.verification?.pendingRequest;
   $("profile-form-status").textContent = pending?.status === "pending-review"
     ? "Your previous correction request is saved and awaiting clinician review."
@@ -242,6 +324,14 @@ function parseClinicalLines(value, type) {
       const [name, specialty, organization, phone] = parts;
       return Object.fromEntries(Object.entries({ name, specialty, organization, phone }).filter(([, entry]) => entry));
     }
+    if (type === "insurance") {
+      const [payerName, planName, memberId, groupNumber, subscriberRelationship, status] = parts;
+      return Object.fromEntries(Object.entries({ payerName, planName, memberId, groupNumber, subscriberRelationship, status }).filter(([, entry]) => entry));
+    }
+    if (["medication", "supplement"].includes(type)) {
+      const [name, instructions, status] = parts;
+      return Object.fromEntries(Object.entries({ name, instructions, status }).filter(([, entry]) => entry));
+    }
     const [substance, reaction, severity] = parts;
     return Object.fromEntries(Object.entries({ substance, reaction, severity }).filter(([, entry]) => entry));
   });
@@ -251,23 +341,34 @@ function profileChangesFromForm() {
   const patient = currentDashboard?.patient || {};
   const changes = {};
   const scalars = [
-    ["sexAtBirth", $("profile-sex-at-birth").value],
-    ["pronouns", $("profile-pronouns").value],
-    ["preferredLanguage", $("profile-language").value],
+    ["legalFirstName", $("profile-first-name").value, patient.firstName],
+    ["legalLastName", $("profile-last-name").value, patient.lastName],
+    ["preferredName", $("profile-preferred-name").value, patient.preferredName],
+    ["dateOfBirth", $("profile-date-of-birth").value, patient.dateOfBirth],
+    ["sexAtBirth", $("profile-sex-at-birth").value, patient.sexAtBirth],
+    ["genderIdentity", $("profile-gender-identity").value, patient.genderIdentity],
+    ["pronouns", $("profile-pronouns").value, patient.pronouns],
+    ["preferredLanguage", $("profile-language").value, patient.preferredLanguage],
+    ["phone", $("profile-phone").value, patient.phone],
+    ["email", $("profile-email").value, patient.email],
+    ["address", $("profile-address").value, typeof patient.address === "string" ? patient.address : patient.address?.formatted],
   ];
-  for (const [field, raw] of scalars) {
+  for (const [field, raw, currentValue] of scalars) {
     const value = raw.trim();
-    if (value && value !== String(patient[field] || "").trim()) changes[field] = value;
+    if (value !== String(currentValue || "").trim()) changes[field] = value;
   }
   const lists = [
-    ["allergies", "profile-allergies", "profile-no-allergies", "allergy"],
-    ["intolerances", "profile-intolerances", "profile-no-intolerances", "intolerance"],
-    ["specialists", "profile-specialists", "profile-no-specialists", "specialist"],
+    ["insurance", "profile-insurance", "profile-no-insurance", "insurance", patient.insurance],
+    ["allergies", "profile-allergies", "profile-no-allergies", "allergy", patient.allergies],
+    ["intolerances", "profile-intolerances", "profile-no-intolerances", "intolerance", patient.intolerances],
+    ["medications", "profile-medications", "profile-no-medications", "medication", currentDashboard?.medications],
+    ["supplements", "profile-supplements", "profile-no-supplements", "supplement", currentDashboard?.supplements],
+    ["specialists", "profile-specialists", "profile-no-specialists", "specialist", patient.specialists],
   ];
-  for (const [field, inputId, emptyId, type] of lists) {
+  for (const [field, inputId, emptyId, type, currentValue] of lists) {
     const raw = $(inputId).value.trim();
     const confirmedEmpty = $(emptyId).checked;
-    const current = parseClinicalLines(clinicalEditorLines(patient[field], type), type);
+    const current = parseClinicalLines(clinicalEditorLines(currentValue, type), type);
     if (!raw && !confirmedEmpty && current.length) throw new Error(`Select the no-${field} confirmation if you intend to clear that list.`);
     const next = confirmedEmpty ? [] : parseClinicalLines(raw, type);
     if (confirmedEmpty || JSON.stringify(next) !== JSON.stringify(current)) changes[field] = next;
@@ -286,7 +387,7 @@ function applyPendingProfileRequest(request, savedAt) {
     submittedAt: savedAt,
   };
   for (const field of request.fields || []) patient.verification.fields[field] = "changes-pending";
-  renderPatientProfile(patient, currentDashboard.requests);
+  renderPatientProfile(patient, currentDashboard.requests, currentDashboard.medications, currentDashboard.supplements);
 }
 
 async function submitProfileChanges(event) {
@@ -325,7 +426,7 @@ async function submitProfileChanges(event) {
         "Content-Type": "application/json",
         "Idempotency-Key": profileSubmissionKey,
       },
-      body: JSON.stringify({ changes }),
+      body: JSON.stringify({ changes, reason: $("profile-reason").value.trim() }),
     });
     const body = await response.json().catch(() => ({}));
     if (!response.ok || body.ok !== true) {
@@ -842,6 +943,166 @@ function renderSystems(dashboard) {
   selectSystem(sharedSystems[0].id, true);
 }
 
+function nutritionSavedLabel(value, prefix) {
+  const date = new Date(value || "");
+  return Number.isNaN(date.getTime()) ? prefix : `${prefix} · ${date.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`;
+}
+
+function setNutritionState(message, state = "not-saved") {
+  const status = $("nutrition-save-state");
+  status.textContent = message;
+  status.dataset.state = state;
+}
+
+function updateNutritionProgress() {
+  if (!nutritionQuestionnaire) return;
+  const container = $("nutrition-questionnaire");
+  const { questionnaireResponses } = collectNutritionQuestionnaire(container, nutritionQuestionnaire);
+  const answered = Object.keys(questionnaireResponses).length;
+  const visible = [...container.querySelectorAll(".question-card")].filter((card) => !card.hidden).length;
+  $("nutrition-progress-count").textContent = `${answered} answered · ${visible} currently shown`;
+}
+
+function applyNutritionContract(contract, intake = null) {
+  nutritionContract = contract;
+  nutritionQuestionnaire = mergeNutritionQuestionnaireModules(
+    contract.questionnaire,
+    contract.giPatternScreen,
+    contract.kidneyQuestionnaire,
+  );
+  nutritionIntake = intake;
+  const container = $("nutrition-questionnaire");
+  container.innerHTML = renderNutritionQuestionnaire(nutritionQuestionnaire);
+  if (intake?.questionnaireResponses) populateNutritionQuestionnaire(container, nutritionQuestionnaire, intake);
+  else updateNutritionQuestionnaireVisibility(container, nutritionQuestionnaire);
+  $("nutrition-questionnaire-form").hidden = false;
+  $("nutrition-load-status").hidden = true;
+  updateNutritionProgress();
+  if (intake?.savedAt) {
+    const prefix = isLocalPreview ? "Saved on this device only" : "Saved to BHW Cloud";
+    setNutritionState(nutritionSavedLabel(intake.savedAt, prefix), isLocalPreview ? "device-only" : "cloud-saved");
+    $("nutrition-form-message").textContent = intake.status === "submitted-for-clinician-reconciliation"
+      ? isLocalPreview ? "Preview only—this was not sent to a care team." : "Submitted for BHW clinician reconciliation."
+      : "Your saved progress is ready when you return.";
+  } else {
+    setNutritionState("Not saved", "not-saved");
+  }
+}
+
+function nutritionLoadFailure(message) {
+  const status = $("nutrition-load-status");
+  status.hidden = false;
+  status.replaceChildren(
+    node("strong", "", "Nutrition questionnaire temporarily unavailable"),
+    node("span", "", message),
+  );
+  const retry = node("button", "quiet-action", "Try again");
+  retry.type = "button";
+  retry.addEventListener("click", () => loadNutritionIntake(true));
+  status.append(retry);
+}
+
+async function loadNutritionIntake(force = false) {
+  if (nutritionLoading || (nutritionQuestionnaire && !force)) return;
+  nutritionLoading = true;
+  const status = $("nutrition-load-status");
+  status.hidden = false;
+  status.textContent = "Loading your nutrition questionnaire…";
+  $("nutrition-questionnaire-form").hidden = true;
+  try {
+    if (isLocalPreview) {
+      let intake = null;
+      try { intake = JSON.parse(localStorage.getItem(NUTRITION_PREVIEW_STATE_KEY) || "null"); } catch { intake = null; }
+      applyNutritionContract(NUTRITION_PREVIEW_CONTRACT, intake);
+      return;
+    }
+    const token = sessionStorage.getItem(SESSION_KEY);
+    if (!token) throw new Error("Please sign in again to load the questionnaire.");
+    const response = await fetch("/api/patient-portal/nutrition-intake", {
+      headers: { Authorization: `Bearer ${token}`, Accept: "application/json" },
+    });
+    const body = await response.json().catch(() => ({}));
+    if (!response.ok || body.ok !== true) throw new Error(body.error || "The questionnaire could not be loaded.");
+    applyNutritionContract(body, body.intake || null);
+  } catch (error) {
+    nutritionLoadFailure(error.message || "Please try again.");
+  } finally {
+    nutritionLoading = false;
+  }
+}
+
+function setNutritionBusy(busy) {
+  $("nutrition-save-button").disabled = busy;
+  $("nutrition-submit-button").disabled = busy;
+}
+
+async function saveNutritionIntake(action) {
+  if (!nutritionQuestionnaire || !nutritionContract) return;
+  const submit = action === "submit";
+  const { questionnaireResponses } = collectNutritionQuestionnaire($("nutrition-questionnaire"), nutritionQuestionnaire);
+  if (submit && !Object.keys(questionnaireResponses).length) {
+    $("nutrition-form-message").textContent = "Answer at least one question before submitting.";
+    return;
+  }
+  const payload = {
+    action,
+    expectedRevision: Number(nutritionIntake?.revision) || 0,
+    questionnaireVersion: nutritionContract.questionnaire.version,
+    questionnaireModuleVersions: nutritionQuestionnaire.module_versions || {},
+    questionnaireResponses,
+  };
+  setNutritionBusy(true);
+  setNutritionState("Saving…", "saving");
+  $("nutrition-form-message").textContent = submit ? "Submitting for clinician reconciliation…" : "Saving your progress…";
+  try {
+    if (isLocalPreview) {
+      const savedAt = new Date().toISOString();
+      nutritionIntake = {
+        schemaVersion: "bhw.patient-reported-nutrition-intake.preview.v1",
+        questionnaireVersion: payload.questionnaireVersion,
+        questionnaireModuleVersions: payload.questionnaireModuleVersions,
+        questionnaireResponses,
+        answerCount: Object.keys(questionnaireResponses).length,
+        revision: payload.expectedRevision + 1,
+        status: submit ? "submitted-preview-only" : "in-progress-preview-only",
+        savedAt,
+      };
+      localStorage.setItem(NUTRITION_PREVIEW_STATE_KEY, JSON.stringify(nutritionIntake));
+      setNutritionState(nutritionSavedLabel(savedAt, "Saved on this device only"), "device-only");
+      $("nutrition-form-message").textContent = submit
+        ? "Preview only—saved on this device, but not sent to a care team."
+        : "Preview progress saved on this device only.";
+      return;
+    }
+    const token = sessionStorage.getItem(SESSION_KEY);
+    if (!token) throw new Error("Please sign in again before saving.");
+    const response = await fetch("/api/patient-portal/nutrition-intake", {
+      method: "PUT",
+      headers: { Authorization: `Bearer ${token}`, "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(payload),
+    });
+    const body = await response.json().catch(() => ({}));
+    if (body.saved === true && body.intake) {
+      nutritionIntake = body.intake;
+      setNutritionState(nutritionSavedLabel(body.savedAt, "Saved to BHW Cloud"), "cloud-saved");
+      $("nutrition-form-message").textContent = body.error || "Saved to BHW Cloud; clinician review notification needs another attempt.";
+      return;
+    }
+    if (!response.ok || body.ok !== true || body.readBackVerified !== true) throw new Error(body.error || "Your questionnaire was not saved.");
+    nutritionIntake = body.intake;
+    setNutritionState(nutritionSavedLabel(body.savedAt, "Saved to BHW Cloud"), "cloud-saved");
+    $("nutrition-form-message").textContent = submit
+      ? "Submitted for BHW clinician reconciliation. Your answers remain patient-reported until reviewed."
+      : "Progress saved to BHW Cloud. You can safely return later.";
+  } catch (error) {
+    setNutritionState("Not saved", "not-saved");
+    $("nutrition-form-message").textContent = error.message || "Your questionnaire was not saved. Please try again.";
+  } finally {
+    setNutritionBusy(false);
+    updateNutritionProgress();
+  }
+}
+
 function renderDashboard(dashboard) {
   currentDashboard = dashboard;
   document.body.classList.add("portal-open");
@@ -851,7 +1112,7 @@ function renderDashboard(dashboard) {
   $("updated").textContent = Number.isNaN(generated.getTime()) ? "" : `Blueprint updated ${generated.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`;
   $("printable-blueprint-link").href = patientHref("/bhw-patient-portal-mockup.html");
   $("summary-printable-link").href = patientHref("/bhw-patient-portal-mockup.html");
-  renderPatientProfile(dashboard.patient, dashboard.requests);
+  renderPatientProfile(dashboard.patient, dashboard.requests, dashboard.medications, dashboard.supplements);
   renderPrograms(dashboard);
   renderSystems(dashboard);
   renderPlan(dashboard.plan);
@@ -862,6 +1123,7 @@ function renderDashboard(dashboard) {
   reflectPersistence();
   $("login-view").hidden = true;
   $("dashboard-view").hidden = false;
+  void loadNutritionIntake();
 }
 
 function openDialog(id) {
@@ -981,6 +1243,21 @@ $("mode-button").addEventListener("click", toggleMode);
 $("signout-button").addEventListener("click", signOut);
 $("vitals-form").addEventListener("submit", submitVitals);
 $("profile-form").addEventListener("submit", submitProfileChanges);
+$("nutrition-questionnaire").addEventListener("input", () => {
+  if (!nutritionQuestionnaire) return;
+  updateNutritionQuestionnaireVisibility($("nutrition-questionnaire"), nutritionQuestionnaire);
+  updateNutritionProgress();
+});
+$("nutrition-questionnaire").addEventListener("change", () => {
+  if (!nutritionQuestionnaire) return;
+  updateNutritionQuestionnaireVisibility($("nutrition-questionnaire"), nutritionQuestionnaire);
+  updateNutritionProgress();
+});
+$("nutrition-questionnaire").addEventListener("click", (event) => {
+  if (nutritionQuestionnaire && handleNutritionQuestionnaireAction(event, $("nutrition-questionnaire"), nutritionQuestionnaire)) updateNutritionProgress();
+});
+$("nutrition-save-button").addEventListener("click", () => saveNutritionIntake("save-progress"));
+$("nutrition-submit-button").addEventListener("click", () => saveNutritionIntake("submit"));
 document.querySelectorAll("[data-open-dialog]").forEach((button) => button.addEventListener("click", () => openDialog(button.dataset.openDialog)));
 document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => closeDialog(button)));
 document.addEventListener("keydown", (event) => {

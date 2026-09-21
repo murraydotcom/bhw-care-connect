@@ -41,6 +41,11 @@
   status = 200
 
 [[redirects]]
+  from = "/api/patient-portal/nutrition-intake"
+  to = "/.netlify/functions/patient-nutrition-intake"
+  status = 200
+
+[[redirects]]
   from = "/api/patient-portal/profile-change-requests"
   to = "/.netlify/functions/patient-profile"
   status = 200

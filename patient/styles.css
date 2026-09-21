@@ -694,6 +694,18 @@ body.portal-open .shell {
   padding: 18px;
   background: var(--pearl);
 }
+.profile-card-action {
+  margin-top: 14px;
+  border: 0;
+  border-bottom: 1px solid var(--sage);
+  padding: 2px 0;
+  color: var(--sage-deep);
+  background: transparent;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
 .profile-card-label { color: var(--sage); font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .patient-profile-card h3 { margin-top: 4px; color: var(--ink-strong); font-size: 22px; }
 .profile-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px 16px; margin-top: 15px; }
@@ -716,9 +728,14 @@ body.portal-open .shell {
 .profile-dialog { width: min(920px, calc(100vw - 32px)); }
 .profile-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .profile-clinical-fields { display: grid; gap: 14px; margin-top: 16px; }
+.profile-editor-section { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 18px; }
+.profile-editor-heading { margin-bottom: 13px; }
+.profile-editor-heading h3 { margin-top: 3px; color: var(--ink-strong); font-size: 23px; }
+.profile-field-wide { grid-column: span 2; }
 .profile-dialog textarea { width: 100%; resize: vertical; min-height: 88px; }
 .confirm-empty { display: flex; align-items: flex-start; gap: 8px; margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.45; }
 .confirm-empty input { flex: 0 0 auto; width: 16px; height: 16px; margin-top: 1px; }
+.section-action { display: inline-flex; margin: 12px 0 4px; }
 .quick-action { text-decoration: none; }
 
 .blueprint-studio {
@@ -1070,6 +1087,7 @@ body.portal-open .shell {
   .patient-profile-head { grid-template-columns: 1fr; }
   .patient-profile-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .profile-form-grid { grid-template-columns: 1fr; }
+  .profile-field-wide { grid-column: auto; }
   .demographics-card { grid-column: 1 / -1; }
   .blueprint-studio-head { grid-template-columns: 1fr; }
   .quick-actions { max-width: none; justify-self: stretch; }
@@ -1257,6 +1275,7 @@ body.portal-open .shell {
 }
 #health-profile,
 #health-blueprint,
+#nutrition-intelligence,
 #lab-results,
 #medication-requests,
 #care-team-updates { scroll-margin-top: 146px; }
@@ -1272,4 +1291,293 @@ body.portal-open .shell {
   .portal-section-nav { top: 68px; border-radius: var(--radius-md); }
   .portal-homebar { padding: 24px 20px; }
   .welcome-lockup h1 { font-size: clamp(36px, 12vw, 46px); }
+}
+
+/* Patient Nutrition Intelligence — Care Connect intake and reconciliation */
+.nutrition-intake-app {
+  margin-top: 28px;
+  padding: clamp(24px, 4vw, 38px);
+}
+.nutrition-intake-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+.nutrition-intake-head > div:first-child { max-width: 780px; }
+.nutrition-intake-head h2 { margin-top: 5px; font-size: clamp(30px, 4vw, 42px); }
+.nutrition-intake-progress {
+  flex: 0 0 auto;
+  display: grid;
+  justify-items: end;
+  gap: 7px;
+  color: var(--fg-muted);
+  font-size: 11px;
+}
+.nutrition-intake-progress strong { color: var(--accent-2); font-size: 12px; }
+.nutrition-intake-progress span {
+  display: inline-flex;
+  border-radius: var(--radius-pill);
+  padding: 7px 10px;
+  background: var(--bg-muted);
+  font-weight: var(--weight-bold);
+}
+.nutrition-intake-progress span[data-state="saving"] { color: var(--accent-2-quiet-fg); background: var(--accent-2-quiet); }
+.nutrition-intake-progress span[data-state="cloud-saved"] { color: var(--success); background: var(--success-bg); }
+.nutrition-intake-progress span[data-state="device-only"] { color: var(--accent-3-quiet-fg); background: var(--accent-3-quiet); }
+.nutrition-intake-boundary {
+  display: grid;
+  gap: 5px;
+  margin: 20px 0;
+  border: 1px solid color-mix(in srgb, var(--accent-2) 25%, var(--border));
+  border-left: 4px solid var(--accent-2);
+  border-radius: var(--radius-md);
+  padding: 14px 16px;
+  color: var(--fg-muted);
+  background: color-mix(in srgb, var(--accent-2-quiet) 68%, var(--bg-elevated));
+  font-size: 12px;
+  line-height: 1.6;
+}
+.nutrition-intake-boundary strong { color: var(--fg-strong); }
+.nutrition-load-status {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  margin-top: 16px;
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-md);
+  padding: 22px;
+  color: var(--fg-muted);
+}
+.nutrition-questionnaire-form { margin-top: 18px; }
+.questionnaire-runtime-note {
+  display: grid;
+  gap: 3px;
+  margin: 14px 0;
+  border: 1px solid color-mix(in srgb, var(--accent-2) 28%, var(--border));
+  border-left: 4px solid var(--accent-2);
+  border-radius: var(--radius-md);
+  padding: 12px 14px;
+  color: var(--fg-muted);
+  background: var(--accent-2-quiet);
+  font-size: 12px;
+}
+.questionnaire-runtime-note b { color: var(--accent-2-quiet-fg); }
+.questionnaire-section {
+  overflow: hidden;
+  margin: 10px 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--bg-elevated);
+}
+.questionnaire-section > summary {
+  display: grid;
+  grid-template-columns: auto 1fr auto auto;
+  align-items: center;
+  gap: 12px;
+  padding: 16px;
+  cursor: pointer;
+  list-style: none;
+}
+.questionnaire-section > summary::-webkit-details-marker { display: none; }
+.questionnaire-section > summary small {
+  display: block;
+  margin-top: 3px;
+  color: var(--fg-muted);
+  font-weight: var(--weight-regular);
+  line-height: 1.45;
+}
+.questionnaire-section > summary::after {
+  display: grid;
+  place-items: center;
+  width: 27px;
+  height: 27px;
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  color: var(--accent-2);
+  background: var(--bg-elevated);
+  content: "+";
+  font-weight: var(--weight-bold);
+}
+.questionnaire-section[open] > summary::after { content: "−"; }
+.section-number {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: var(--accent-2-quiet-fg);
+  background: var(--accent-2-quiet);
+  font-weight: var(--weight-bold);
+}
+.section-count { color: var(--fg-muted); font-size: 11px; }
+.questionnaire-question-list { display: grid; gap: 12px; padding: 0 14px 14px; }
+.questionnaire-branch-note {
+  display: grid;
+  gap: 6px;
+  border-left: 4px solid var(--accent-2);
+  border-radius: var(--radius-md);
+  padding: 14px;
+  color: var(--fg-muted);
+  background: var(--accent-2-quiet);
+  font-size: 12px;
+}
+.questionnaire-branch-note[hidden],
+.question-card[hidden] { display: none; }
+.question-card {
+  min-width: 0;
+  margin: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 15px;
+  background: color-mix(in srgb, var(--bg-elevated) 88%, var(--bg-sunken));
+}
+.question-card legend {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  padding: 0 5px;
+  color: var(--fg-strong);
+  font-size: 13px;
+  font-weight: var(--weight-bold);
+  line-height: 1.45;
+}
+.question-help { margin: 4px 0 10px; color: var(--fg-muted); font-size: 12px; }
+.required-marker {
+  display: inline-flex;
+  border-radius: var(--radius-pill);
+  padding: 2px 7px;
+  color: var(--accent-3-quiet-fg);
+  background: var(--accent-3-quiet);
+  font-size: 10px;
+  white-space: nowrap;
+}
+.question-choice-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+.question-choice-grid label {
+  display: flex;
+  align-items: flex-start;
+  gap: 7px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 9px;
+  background: var(--bg-sunken);
+  font-size: 13px;
+  line-height: 1.35;
+}
+.question-choice-grid label:has(input:checked) { border-color: var(--accent-2); background: var(--accent-2-quiet); }
+.question-choice-grid input { margin-top: 2px; }
+.paired-control,
+.repeatable-item { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 9px; }
+.question-card input[type="text"],
+.question-card input[type="number"],
+.question-card select,
+.question-card textarea {
+  width: 100%;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 10px;
+  color: var(--fg);
+  background: var(--bg-elevated);
+}
+.question-card input:focus-visible,
+.question-card select:focus-visible,
+.question-card textarea:focus-visible { outline: 3px solid color-mix(in srgb, var(--accent-2) 35%, transparent); outline-offset: 1px; }
+.question-card label > span { display: block; margin-bottom: 5px; font-size: 12px; font-weight: var(--weight-semibold); }
+.question-detail { display: block; margin-top: 8px; }
+.repeatable-list { display: grid; gap: 9px; }
+.repeatable-item { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 10px; background: var(--bg-sunken); }
+.nutrition-intake-app .btn {
+  justify-self: start;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  padding: 8px 11px;
+  color: var(--accent-2-quiet-fg);
+  background: var(--bg-elevated);
+  font-size: 11px;
+  font-weight: var(--weight-bold);
+}
+.question-table-wrap { max-width: 100%; overflow-x: auto; }
+.question-grid-table { width: 100%; min-width: 620px; border-collapse: collapse; }
+.question-grid-table th,
+.question-grid-table td { border-bottom: 1px solid var(--border); padding: 8px; text-align: left; font-size: 12px; }
+.question-grid-table th { color: var(--fg-muted); }
+.gi-pattern-matrix { display: grid; gap: 12px; }
+.gi-pattern-group {
+  border: 1px solid var(--border);
+  border-left: 3px solid var(--accent-2);
+  border-radius: var(--radius-md);
+  padding: 11px;
+  background: var(--accent-2-quiet);
+}
+.gi-pattern-group h4 { margin: 0 0 9px; }
+.gi-pattern-scale {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 5px;
+  margin: 0 0 7px 44%;
+  color: var(--fg-muted);
+  font-size: 10px;
+  font-weight: var(--weight-bold);
+  text-align: center;
+}
+.gi-pattern-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(280px, 1.25fr);
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+  border: 0;
+  border-top: 1px solid var(--border);
+  padding: 8px 0;
+}
+.gi-pattern-options { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 5px; }
+.gi-pattern-options label { display: block; cursor: pointer; }
+.gi-pattern-options input { position: absolute; opacity: 0; pointer-events: none; }
+.gi-pattern-options span {
+  display: grid;
+  place-items: center;
+  min-height: 43px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 5px;
+  background: var(--bg-elevated);
+  text-align: center;
+}
+.gi-pattern-options small { display: none; }
+.gi-pattern-options input:checked + span { border-color: var(--accent-2); background: var(--accent-2-quiet); box-shadow: inset 0 0 0 1px var(--accent-2); }
+.nutrition-form-actions {
+  position: sticky;
+  z-index: 35;
+  bottom: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  margin-top: 18px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 13px;
+  background: color-mix(in srgb, var(--bg-elevated) 94%, transparent);
+  box-shadow: var(--shadow-md);
+  backdrop-filter: blur(14px);
+}
+.nutrition-form-actions p { margin: 0; color: var(--fg-muted); font-size: 12px; }
+.nutrition-form-actions > div { display: flex; flex: 0 0 auto; gap: 9px; }
+
+@media (max-width: 850px) {
+  .nutrition-intake-head { display: block; }
+  .nutrition-intake-progress { justify-items: start; margin-top: 14px; }
+  .question-choice-grid,
+  .paired-control,
+  .repeatable-item { grid-template-columns: 1fr; }
+  .gi-pattern-scale { display: none; }
+  .gi-pattern-row { grid-template-columns: 1fr; align-items: start; }
+  .gi-pattern-options small { display: block; font-size: 9px; }
+  .questionnaire-section > summary { grid-template-columns: auto 1fr auto; }
+  .section-count { display: none; }
+  .nutrition-form-actions { position: static; align-items: stretch; flex-direction: column; }
+  .nutrition-form-actions > div { flex-direction: column; }
+  .nutrition-form-actions .button,
+  .nutrition-form-actions .quiet-action { width: 100%; justify-content: center; }
 }

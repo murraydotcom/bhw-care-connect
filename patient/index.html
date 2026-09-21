@@ -56,8 +56,8 @@
     <section id="dashboard-view" class="portal-home" hidden>
       <div class="portal-homebar">
         <div class="welcome-lockup">
-          <p class="eyebrow">Glad to see you back</p>
           <div class="health-core-identity"><span>BHW Health Core</span><strong>Clinician-shared</strong></div>
+          <p class="eyebrow">Glad to see you back</p>
           <h1><span id="preferred-name">Patient</span>. Your medical story. Your Health Blueprint.</h1>
           <p class="portal-intro">One clear view of your verified health profile, Health Blueprint, results, medications, and care-team updates.</p>
           <div class="portal-metadata">
@@ -74,6 +74,7 @@
       <nav class="portal-section-nav" aria-label="Health Core sections">
         <a href="#health-profile">Health profile</a>
         <a href="#health-blueprint">Health Blueprint</a>
+        <a href="#nutrition-intelligence">Nutrition</a>
         <a href="#lab-results">Results</a>
         <a href="#medication-requests">Medications</a>
         <a href="#care-team-updates">Care updates</a>
@@ -88,7 +89,7 @@
             <h2 id="health-profile-title">The health information coordinating your care</h2>
             <div class="profile-review-actions">
               <span id="profile-overall-status" class="verification-badge" data-status="not-reviewed">Not yet reviewed</span>
-              <button class="profile-correction-button" type="button" data-open-dialog="profile-dialog">Review or request a correction</button>
+              <button class="profile-correction-button" type="button" data-open-dialog="profile-dialog">Review or update my information</button>
             </div>
           </div>
           <a class="checkin-launch" data-checkin-link href="/bhw-checkin.html?program=primary&amp;return=portal">
@@ -103,18 +104,35 @@
             <h3>Demographics</h3>
             <p id="demographics-verification" class="profile-section-status"></p>
             <dl id="patient-demographics" class="profile-facts"></dl>
+            <button class="profile-card-action" type="button" data-open-dialog="profile-dialog">Review or update</button>
+          </article>
+          <article class="patient-profile-card">
+            <p class="profile-card-label">Coverage on file</p>
+            <h3>Insurance</h3>
+            <p id="insurance-verification" class="profile-section-status"></p>
+            <div id="patient-insurance" class="clinical-list"></div>
+            <button class="profile-card-action" type="button" data-open-dialog="profile-dialog">Review or update</button>
           </article>
           <article class="patient-profile-card">
             <p class="profile-card-label">Medication and nutrition safety</p>
             <h3>Allergies &amp; intolerances</h3>
             <div class="clinical-list-group"><div class="clinical-list-title"><h4>Allergies</h4><span id="allergies-verification" class="profile-section-status"></span></div><div id="patient-allergies" class="clinical-list"></div></div>
             <div class="clinical-list-group"><div class="clinical-list-title"><h4>Intolerances</h4><span id="intolerances-verification" class="profile-section-status"></span></div><div id="patient-intolerances" class="clinical-list"></div></div>
+            <button class="profile-card-action" type="button" data-open-dialog="profile-dialog">Review or update</button>
+          </article>
+          <article class="patient-profile-card">
+            <p class="profile-card-label">What you take now</p>
+            <h3>Medications &amp; supplements</h3>
+            <div class="clinical-list-group"><div class="clinical-list-title"><h4>Medications</h4><span id="medications-verification" class="profile-section-status"></span></div><div id="patient-medication-profile" class="clinical-list"></div></div>
+            <div class="clinical-list-group"><div class="clinical-list-title"><h4>Supplements</h4><span id="supplements-verification" class="profile-section-status"></span></div><div id="patient-supplements" class="clinical-list"></div></div>
+            <button class="profile-card-action" type="button" data-open-dialog="profile-dialog">Review or update</button>
           </article>
           <article class="patient-profile-card">
             <p class="profile-card-label">Coordinated care</p>
             <h3>Specialists &amp; active referrals</h3>
             <div class="clinical-list-group"><div class="clinical-list-title"><h4>Specialists</h4><span id="specialists-verification" class="profile-section-status"></span></div><div id="patient-specialists" class="clinical-list specialist-list"></div></div>
             <div class="clinical-list-group"><div class="clinical-list-title"><h4>Active referrals</h4></div><div id="patient-referrals" class="clinical-list referral-list"></div></div>
+            <button class="profile-card-action" type="button" data-open-dialog="profile-dialog">Review or update</button>
           </article>
         </div>
       </section>
@@ -188,9 +206,38 @@
         </footer>
       </section>
 
+      <section id="nutrition-intelligence" class="card section nutrition-intake-app" aria-labelledby="nutrition-intelligence-title">
+        <header class="nutrition-intake-head">
+          <div>
+            <p class="eyebrow">Whole-person nutrition decision support</p>
+            <h2 id="nutrition-intelligence-title">Tell us what eating is really like for you</h2>
+            <p class="section-intro">Complete this when you have time—at home or before your visit. Your answers are saved as patient-reported information for your BHW clinician to reconcile with your chart, labs, medications, and physiology.</p>
+          </div>
+          <div class="nutrition-intake-progress" aria-live="polite">
+            <strong id="nutrition-progress-count">0 answered</strong>
+            <span id="nutrition-save-state" data-state="not-saved">Not saved</span>
+          </div>
+        </header>
+        <div class="nutrition-intake-boundary">
+          <strong>This is a screening and preparation tool—not a diagnosis.</strong>
+          <span>Your answers do not create a diagnosis, medication change, supplement order, or nutrition prescription until a clinician reviews them. Blood or black stool, inability to swallow, severe or worsening abdominal pain, persistent vomiting, dehydration, jaundice, or other urgent symptoms need prompt medical evaluation.</span>
+        </div>
+        <div id="nutrition-load-status" class="nutrition-load-status" role="status" aria-live="polite">Loading your nutrition questionnaire…</div>
+        <form id="nutrition-questionnaire-form" class="nutrition-questionnaire-form" novalidate hidden>
+          <div id="nutrition-questionnaire"></div>
+          <footer class="nutrition-form-actions">
+            <p id="nutrition-form-message" role="status" aria-live="polite">You can save your progress and finish later.</p>
+            <div>
+              <button id="nutrition-save-button" class="quiet-action" type="button">Save and finish later</button>
+              <button id="nutrition-submit-button" class="button" type="button">Submit to my care team</button>
+            </div>
+          </footer>
+        </form>
+      </section>
+
       <div class="dashboard-layout portal-lower-grid">
         <section id="lab-results" class="card section portal-span-two"><p class="eyebrow">Health Core results</p><h2>Labs &amp; clinician-shared interpretation</h2><p class="section-intro">Select a shared result to see how your care team connected it to your Health Blueprint.</p><div id="labs" class="lab-grid"></div></section>
-        <section id="medication-requests" class="card section"><p class="eyebrow">Health Core medication view</p><h2>Medications &amp; request status</h2><p class="section-intro">Medication status and request status are shown separately, so “sent to pharmacy” never means a medication was approved by insurance.</p><div id="medications" class="list"></div></section>
+        <section id="medication-requests" class="card section"><p class="eyebrow">Health Core medication view</p><h2>Medications &amp; request status</h2><p class="section-intro">Medication status and request status are shown separately, so “sent to pharmacy” never means a medication was approved by insurance. If this list is incomplete or incorrect, send a patient-reported update for BHW review.</p><button class="quiet-action section-action" type="button" data-open-dialog="profile-dialog">Update my medication or supplement list</button><div id="medications" class="list"></div></section>
         <section id="care-team-updates" class="card section"><p class="eyebrow">Health Core care coordination</p><h2>Care-team updates</h2><div id="requests" class="list"></div></section>
       </div>
 
@@ -213,13 +260,34 @@
       <dialog id="profile-dialog" class="portal-dialog profile-dialog" aria-labelledby="profile-dialog-title">
         <form id="profile-form">
           <div class="dialog-head"><div><p class="eyebrow">Patient profile review</p><h2 id="profile-dialog-title">Tell us what needs review</h2></div><button class="dialog-close" type="button" data-close-dialog aria-label="Close patient-profile review">Close</button></div>
-          <p class="dialog-intro">Submit only information that should be added or corrected. Your entry will be saved as a pending request; a BHW clinician must review it before clinical fields change.</p>
-          <div class="profile-form-grid">
-            <div class="field"><label for="profile-sex-at-birth">Sex assigned at birth</label><input id="profile-sex-at-birth" name="sexAtBirth" type="text" maxlength="160" autocomplete="off"></div>
-            <div class="field"><label for="profile-pronouns">Pronouns</label><input id="profile-pronouns" name="pronouns" type="text" maxlength="160" autocomplete="off"></div>
-            <div class="field"><label for="profile-language">Preferred language</label><input id="profile-language" name="preferredLanguage" type="text" maxlength="160" autocomplete="language"></div>
-          </div>
-          <div class="profile-clinical-fields">
+          <p class="dialog-intro">You can review every section below and submit additions or corrections. Your information is saved as patient-reported and routed to BHW for reconciliation. It does not directly replace the clinician-shared chart.</p>
+          <section class="profile-editor-section" aria-labelledby="profile-demographics-heading">
+            <div class="profile-editor-heading"><p class="profile-card-label">Identity &amp; contact</p><h3 id="profile-demographics-heading">Demographics</h3></div>
+            <div class="profile-form-grid">
+              <div class="field"><label for="profile-first-name">Legal first name</label><input id="profile-first-name" name="legalFirstName" type="text" maxlength="120" autocomplete="given-name"></div>
+              <div class="field"><label for="profile-last-name">Legal last name</label><input id="profile-last-name" name="legalLastName" type="text" maxlength="120" autocomplete="family-name"></div>
+              <div class="field"><label for="profile-preferred-name">Preferred name</label><input id="profile-preferred-name" name="preferredName" type="text" maxlength="120" autocomplete="nickname"></div>
+              <div class="field"><label for="profile-date-of-birth">Date of birth</label><input id="profile-date-of-birth" name="dateOfBirth" type="date" autocomplete="bday"></div>
+              <div class="field"><label for="profile-sex-at-birth">Sex assigned at birth</label><input id="profile-sex-at-birth" name="sexAtBirth" type="text" maxlength="120" autocomplete="off"></div>
+              <div class="field"><label for="profile-gender-identity">Gender identity</label><input id="profile-gender-identity" name="genderIdentity" type="text" maxlength="160" autocomplete="off"></div>
+              <div class="field"><label for="profile-pronouns">Pronouns</label><input id="profile-pronouns" name="pronouns" type="text" maxlength="120" autocomplete="off"></div>
+              <div class="field"><label for="profile-language">Preferred language</label><input id="profile-language" name="preferredLanguage" type="text" maxlength="120" autocomplete="language"></div>
+              <div class="field"><label for="profile-phone">Phone</label><input id="profile-phone" name="phone" type="tel" maxlength="80" autocomplete="tel"></div>
+              <div class="field"><label for="profile-email">Email</label><input id="profile-email" name="email" type="email" maxlength="254" autocomplete="email"></div>
+              <div class="field profile-field-wide"><label for="profile-address">Home address</label><input id="profile-address" name="address" type="text" maxlength="500" autocomplete="street-address"></div>
+            </div>
+          </section>
+          <section class="profile-editor-section" aria-labelledby="profile-insurance-heading">
+            <div class="profile-editor-heading"><p class="profile-card-label">Coverage on file</p><h3 id="profile-insurance-heading">Insurance</h3></div>
+            <div class="field">
+              <label for="profile-insurance">Insurance plans</label>
+              <textarea id="profile-insurance" name="insurance" rows="4" placeholder="One per line: payer | plan | member ID | group number | relationship | status"></textarea>
+              <label class="confirm-empty"><input id="profile-no-insurance" type="checkbox"> I am reporting no active insurance for BHW review.</label>
+            </div>
+          </section>
+          <section class="profile-editor-section" aria-labelledby="profile-clinical-heading">
+            <div class="profile-editor-heading"><p class="profile-card-label">Medication and nutrition safety</p><h3 id="profile-clinical-heading">Clinical lists</h3></div>
+            <div class="profile-clinical-fields">
             <div class="field">
               <label for="profile-allergies">Allergies</label>
               <textarea id="profile-allergies" name="allergies" rows="4" placeholder="One per line: substance | reaction | severity"></textarea>
@@ -231,12 +299,27 @@
               <label class="confirm-empty"><input id="profile-no-intolerances" type="checkbox"> I am reporting no intolerances for clinician review.</label>
             </div>
             <div class="field">
+              <label for="profile-medications">Medications</label>
+              <textarea id="profile-medications" name="medications" rows="5" placeholder="One per line: name | dose or directions | status"></textarea>
+              <label class="confirm-empty"><input id="profile-no-medications" type="checkbox"> I am reporting no current medications for clinician review.</label>
+            </div>
+            <div class="field">
+              <label for="profile-supplements">Supplements, vitamins &amp; herbs</label>
+              <textarea id="profile-supplements" name="supplements" rows="5" placeholder="One per line: name | dose or directions | status"></textarea>
+              <label class="confirm-empty"><input id="profile-no-supplements" type="checkbox"> I am reporting no current supplements for clinician review.</label>
+            </div>
+            <div class="field">
               <label for="profile-specialists">Specialists</label>
               <textarea id="profile-specialists" name="specialists" rows="4" placeholder="One per line: name | specialty | practice | phone"></textarea>
               <label class="confirm-empty"><input id="profile-no-specialists" type="checkbox"> I am reporting no current specialists for review.</label>
             </div>
-          </div>
-          <p class="form-boundary">Do not use this form for urgent symptoms or medication instructions. Call BHW for time-sensitive clinical concerns.</p>
+            </div>
+          </section>
+          <section class="profile-editor-section" aria-labelledby="profile-reason-heading">
+            <div class="profile-editor-heading"><p class="profile-card-label">For the reviewer</p><h3 id="profile-reason-heading">What should BHW know?</h3></div>
+            <div class="field"><label for="profile-reason">Reason or context for these changes (optional)</label><textarea id="profile-reason" name="reason" rows="3" maxlength="1200" placeholder="For example: new insurance card, medication stopped by a specialist, or updated contact information."></textarea></div>
+          </section>
+          <p class="form-boundary">Submitting this form requests a BHW review; it does not change a prescription or tell you to start or stop anything. Do not use this form for urgent symptoms or time-sensitive medication instructions.</p>
           <div class="dialog-actions"><p id="profile-form-status" class="dialog-status" role="status" aria-live="polite"></p><button id="profile-submit-button" class="button" type="submit">Send for BHW review</button></div>
         </form>
       </dialog>
@@ -250,6 +333,6 @@
   </main>
   <footer class="site-footer">BHW Medical Group · 2131 Maryland Ave, Baltimore, MD 21218 · 443.762.5343</footer>
   <script defer src="../assets/bhw-transparent-anatomy.js?v=4"></script>
-  <script type="module" src="./app.mjs?v=referrals-profile-1"></script>
+  <script type="module" src="./app.mjs?v=nutrition-intake-2"></script>
 </body>
 </html>

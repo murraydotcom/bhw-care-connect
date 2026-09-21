@@ -45,6 +45,7 @@ test("Health Core starts with the interactive living Blueprint", () => {
   assert.ok(vitals > blueprint && vitals < systems, "vital-sign entry should be available in the first Blueprint viewport");
   assert.match(source, /<span>BHW Health Core<\/span><strong>Clinician-shared<\/strong>/);
   assert.match(source, /<p class="eyebrow">Glad to see you back<\/p>/);
+  assert.ok(source.indexOf("health-core-identity") < source.indexOf("Glad to see you back"), "Health Core identity should appear above the welcome greeting");
   assert.match(source, /<h1><span id="preferred-name">Patient<\/span>\. Your medical story\. Your Health Blueprint\.<\/h1>/);
   assert.match(source, /aria-label="Health Core sections"/);
   assert.doesNotMatch(source, /evolving story|health story/i);
@@ -66,10 +67,10 @@ test("the main portal shares patient profile details and routes to the full life
   const controller = readFileSync(new URL("../patient/app.mjs", import.meta.url), "utf8");
   const preview = readFileSync(new URL("../patient/portal-data.mjs", import.meta.url), "utf8");
   const checkin = readFileSync(new URL("../pages/bhw-checkin.html", import.meta.url), "utf8");
-  for (const id of ["patient-demographics", "patient-allergies", "patient-intolerances", "patient-specialists", "patient-referrals"]) {
+  for (const id of ["patient-demographics", "patient-insurance", "patient-allergies", "patient-intolerances", "patient-medication-profile", "patient-supplements", "patient-specialists", "patient-referrals"]) {
     assert.match(source, new RegExp(`id="${id}"`));
   }
-  for (const id of ["profile-overall-status", "demographics-verification", "allergies-verification", "intolerances-verification", "specialists-verification", "profile-dialog", "profile-form"]) {
+  for (const id of ["profile-overall-status", "demographics-verification", "insurance-verification", "allergies-verification", "intolerances-verification", "medications-verification", "supplements-verification", "specialists-verification", "profile-dialog", "profile-form"]) {
     assert.match(source, new RegExp(`id="${id}"`));
   }
   assert.match(source, /Nutrition plan · food and barcode scan · water · movement · sleep/);
@@ -82,6 +83,8 @@ test("the main portal shares patient profile details and routes to the full life
   assert.match(controller, /REFERRAL_TERMINAL_STATUSES/);
   assert.match(preview, /bhwPatientId: "BHW0000"/);
   assert.match(preview, /allergies:/);
+  assert.match(preview, /insurance:/);
+  assert.match(preview, /supplements:/);
   assert.match(preview, /intolerances:/);
   assert.match(preview, /specialists:/);
   assert.match(preview, /status: "referral-sent"/);
