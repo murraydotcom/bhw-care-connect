@@ -409,7 +409,7 @@ document.getElementById('programPill').textContent=P.name;
 document.getElementById('todayDate').textContent=new Date().toLocaleDateString([],{weekday:'long',month:'long',day:'numeric'});
 document.getElementById('sub').textContent=LOCAL_PREVIEW?'Synthetic BHW0000 preview · entries stay on this device.':'A quick snapshot for your Health Blueprint and care team.';
 const back=document.getElementById('back');
-back.href=params.get('return')==='portal'?'/patient/'+(LOCAL_PREVIEW?'?preview=1':''):P.back;
+back.href=params.get('return')==='card'?'/bhw-care-card.html':params.get('return')==='portal'?'/patient/'+(LOCAL_PREVIEW?'?preview=1':''):P.back;
 document.getElementById('symProg').textContent='· '+P.name;
 
 // symptoms (program-specific, multi-select)
