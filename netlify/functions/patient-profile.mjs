@@ -6,11 +6,22 @@ import { createCloudIntake } from "./_shared/operations.mjs";
 import { asLambdaHandler } from "./_shared/lambda-adapter.mjs";
 
 const PROFILE_FIELDS = new Set([
+  "legalFirstName",
+  "legalLastName",
+  "preferredName",
+  "dateOfBirth",
   "sexAtBirth",
+  "genderIdentity",
   "pronouns",
   "preferredLanguage",
+  "phone",
+  "email",
+  "address",
+  "insurance",
   "allergies",
   "intolerances",
+  "medications",
+  "supplements",
   "specialists",
 ]);
 
@@ -52,6 +63,10 @@ function safeChanges(value) {
   return Object.fromEntries(Object.entries(value).filter(([field]) => PROFILE_FIELDS.has(field)));
 }
 
+function safeReason(value) {
+  return String(value || "").trim().slice(0, 1200);
+}
+
 function queueBody(session, profileRequest) {
   const fields = Array.isArray(profileRequest.fields)
     ? profileRequest.fields.filter((field) => PROFILE_FIELDS.has(field))
@@ -77,6 +92,7 @@ function queueBody(session, profileRequest) {
     sourceMetadata: {
       sourceRecordId: profileRequest.requestId,
       sourcePage: "care-connect-patient-profile",
+      sections: fields,
     },
   };
 }
@@ -107,6 +123,7 @@ export function createPatientProfileHandler({
     let submitted;
     try { submitted = JSON.parse(raw || "{}"); } catch { return json(400, { ok: false, error: "The profile update is invalid." }); }
     const changes = safeChanges(submitted.changes);
+    const reason = safeReason(submitted.reason);
     if (!Object.keys(changes).length) return json(400, { ok: false, error: "Choose at least one profile section to update." });
 
     const upstreamToken = signHealthCorePatientToken(session, env.CARE_CONNECT_PATIENT_TOKEN_SECRET, now());
@@ -122,7 +139,7 @@ export function createPatientProfileHandler({
             "Content-Type": "application/json",
             "Idempotency-Key": key,
           },
-          body: JSON.stringify({ changes }),
+          body: JSON.stringify({ changes, ...(reason ? { reason } : {}) }),
           signal: AbortSignal.timeout(8000),
         },
       );

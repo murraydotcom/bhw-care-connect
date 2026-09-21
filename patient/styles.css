@@ -694,6 +694,18 @@ body.portal-open .shell {
   padding: 18px;
   background: var(--pearl);
 }
+.profile-card-action {
+  margin-top: 14px;
+  border: 0;
+  border-bottom: 1px solid var(--sage);
+  padding: 2px 0;
+  color: var(--sage-deep);
+  background: transparent;
+  font: inherit;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
 .profile-card-label { color: var(--sage); font-size: 10px; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; }
 .patient-profile-card h3 { margin-top: 4px; color: var(--ink-strong); font-size: 22px; }
 .profile-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 11px 16px; margin-top: 15px; }
@@ -716,9 +728,14 @@ body.portal-open .shell {
 .profile-dialog { width: min(920px, calc(100vw - 32px)); }
 .profile-form-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
 .profile-clinical-fields { display: grid; gap: 14px; margin-top: 16px; }
+.profile-editor-section { margin-top: 20px; border-top: 1px solid var(--border); padding-top: 18px; }
+.profile-editor-heading { margin-bottom: 13px; }
+.profile-editor-heading h3 { margin-top: 3px; color: var(--ink-strong); font-size: 23px; }
+.profile-field-wide { grid-column: span 2; }
 .profile-dialog textarea { width: 100%; resize: vertical; min-height: 88px; }
 .confirm-empty { display: flex; align-items: flex-start; gap: 8px; margin-top: 8px; color: var(--muted); font-size: 12px; line-height: 1.45; }
 .confirm-empty input { flex: 0 0 auto; width: 16px; height: 16px; margin-top: 1px; }
+.section-action { display: inline-flex; margin: 12px 0 4px; }
 .quick-action { text-decoration: none; }
 
 .blueprint-studio {
@@ -1070,6 +1087,7 @@ body.portal-open .shell {
   .patient-profile-head { grid-template-columns: 1fr; }
   .patient-profile-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .profile-form-grid { grid-template-columns: 1fr; }
+  .profile-field-wide { grid-column: auto; }
   .demographics-card { grid-column: 1 / -1; }
   .blueprint-studio-head { grid-template-columns: 1fr; }
   .quick-actions { max-width: none; justify-self: stretch; }

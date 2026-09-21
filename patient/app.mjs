@@ -132,6 +132,54 @@ function renderClinicalList(targetId, value, emptyMessage, type) {
   });
 }
 
+function renderInsurance(value) {
+  const target = $("patient-insurance");
+  target.replaceChildren();
+  const items = clinicalItems(value);
+  if (!items.length) {
+    target.append(node("p", "profile-empty", "No insurance information is currently shared in this portal view."));
+    return;
+  }
+  items.forEach((coverage) => {
+    const card = node("article", "clinical-entry clinical-entry-insurance");
+    if (typeof coverage === "string") card.append(node("strong", "", coverage));
+    else {
+      const head = node("div", "clinical-entry-head");
+      head.append(node("strong", "", coverage.payerName || coverage.planName || "Insurance coverage"));
+      if (coverage.status) head.append(node("span", "chip", formatStatus(coverage.status)));
+      card.append(head);
+      const details = [coverage.planName, coverage.memberId ? `Member ${coverage.memberId}` : "", coverage.groupNumber ? `Group ${coverage.groupNumber}` : ""].filter(Boolean);
+      if (details.length) card.append(node("p", "", details.join(" · ")));
+      const subscriber = [coverage.subscriberRelationship, coverage.effectiveDate ? `Effective ${readableDate(coverage.effectiveDate)}` : ""].filter(Boolean);
+      if (subscriber.length) card.append(node("small", "", subscriber.join(" · ")));
+    }
+    target.append(card);
+  });
+}
+
+function renderMedicationProfileList(targetId, value, label) {
+  const target = $(targetId);
+  target.replaceChildren();
+  const items = clinicalItems(value);
+  if (!items.length) {
+    target.append(node("p", "profile-empty", `No ${label} are currently shared in this portal view.`));
+    return;
+  }
+  items.forEach((entry) => {
+    const card = node("article", "clinical-entry clinical-entry-medication");
+    if (typeof entry === "string") card.append(node("strong", "", entry));
+    else {
+      const head = node("div", "clinical-entry-head");
+      head.append(node("strong", "", entry.name || "Recorded item"));
+      if (entry.clinicalStatus || entry.status) head.append(node("span", "chip", formatStatus(entry.clinicalStatus || entry.status)));
+      card.append(head);
+      const details = [entry.dose, entry.frequency, entry.instructions].filter(Boolean);
+      if (details.length) card.append(node("p", "", details.join(" · ")));
+    }
+    target.append(card);
+  });
+}
+
 const REFERRAL_TERMINAL_STATUSES = new Set(["completed", "referral-completed", "closed", "closed-without-scheduling", "cancelled"]);
 
 function activeReferrals(requests = []) {
@@ -166,14 +214,17 @@ function renderActiveReferrals(requests = []) {
   });
 }
 
-function renderPatientProfile(patient = {}, requests = []) {
+function renderPatientProfile(patient = {}, requests = [], medications = [], supplements = []) {
   const verification = patient.verification || {};
   const fieldStatus = verification.fields || {};
   renderProfileVerification(verification);
   renderDemographics(patient);
+  renderInsurance(patient.insurance);
   renderClinicalList("patient-allergies", patient.allergies, profileEmptyCopy("allergies", fieldStatus.allergies), "allergy");
   renderClinicalList("patient-intolerances", patient.intolerances, profileEmptyCopy("intolerances", fieldStatus.intolerances), "intolerance");
   renderClinicalList("patient-specialists", patient.specialists, profileEmptyCopy("specialists", fieldStatus.specialists), "specialist");
+  renderMedicationProfileList("patient-medication-profile", medications, "medications");
+  renderMedicationProfileList("patient-supplements", supplements, "supplements");
   renderActiveReferrals(requests);
 }
 
@@ -208,10 +259,13 @@ function renderVerificationBadge(id, status) {
 function renderProfileVerification(verification = {}) {
   const fields = verification.fields || {};
   renderVerificationBadge("profile-overall-status", verification.overallStatus || "not-reviewed");
-  renderVerificationBadge("demographics-verification", sectionVerificationStatus(fields, ["sexAtBirth", "pronouns", "preferredLanguage"]));
+  renderVerificationBadge("demographics-verification", sectionVerificationStatus(fields, ["legalFirstName", "legalLastName", "preferredName", "dateOfBirth", "sexAtBirth", "genderIdentity", "pronouns", "preferredLanguage", "phone", "email", "address"]));
+  renderVerificationBadge("insurance-verification", fields.insurance || "not-reviewed");
   renderVerificationBadge("allergies-verification", fields.allergies || "not-reviewed");
   renderVerificationBadge("intolerances-verification", fields.intolerances || "not-reviewed");
   renderVerificationBadge("specialists-verification", fields.specialists || "not-reviewed");
+  renderVerificationBadge("medications-verification", fields.medications || "not-reviewed");
+  renderVerificationBadge("supplements-verification", fields.supplements || "not-reviewed");
 }
 
 function profileEmptyCopy(field, status) {
@@ -226,19 +280,33 @@ function clinicalEditorLines(value, type) {
   return clinicalItems(value).map((item) => {
     if (typeof item === "string") return item;
     if (type === "specialist") return [item.name, item.specialty, item.organization || item.practice, item.phone].filter(Boolean).join(" | ");
+    if (type === "insurance") return [item.payerName || item.payer, item.planName || item.plan, item.memberId, item.groupNumber, item.subscriberRelationship, item.status].filter(Boolean).join(" | ");
+    if (["medication", "supplement"].includes(type)) return [item.name, item.dose || item.instructions, item.clinicalStatus || item.status].filter(Boolean).join(" | ");
     return [item.substance || item.name, item.reaction, item.severity].filter(Boolean).join(" | ");
   }).filter(Boolean).join("\n");
 }
 
 function prepareProfileForm() {
   const patient = currentDashboard?.patient || {};
+  $("profile-first-name").value = patient.firstName || "";
+  $("profile-last-name").value = patient.lastName || "";
+  $("profile-preferred-name").value = patient.preferredName || "";
+  $("profile-date-of-birth").value = patient.dateOfBirth || "";
   $("profile-sex-at-birth").value = patient.sexAtBirth || "";
+  $("profile-gender-identity").value = patient.genderIdentity || "";
   $("profile-pronouns").value = patient.pronouns || "";
   $("profile-language").value = patient.preferredLanguage || "";
+  $("profile-phone").value = patient.phone || "";
+  $("profile-email").value = patient.email || "";
+  $("profile-address").value = typeof patient.address === "string" ? patient.address : patient.address?.formatted || "";
+  $("profile-insurance").value = clinicalEditorLines(patient.insurance, "insurance");
   $("profile-allergies").value = clinicalEditorLines(patient.allergies, "allergy");
   $("profile-intolerances").value = clinicalEditorLines(patient.intolerances, "intolerance");
+  $("profile-medications").value = clinicalEditorLines(currentDashboard?.medications, "medication");
+  $("profile-supplements").value = clinicalEditorLines(currentDashboard?.supplements, "supplement");
   $("profile-specialists").value = clinicalEditorLines(patient.specialists, "specialist");
-  for (const id of ["profile-no-allergies", "profile-no-intolerances", "profile-no-specialists"]) $(id).checked = false;
+  $("profile-reason").value = "";
+  for (const id of ["profile-no-insurance", "profile-no-allergies", "profile-no-intolerances", "profile-no-medications", "profile-no-supplements", "profile-no-specialists"]) $(id).checked = false;
   const pending = patient.verification?.pendingRequest;
   $("profile-form-status").textContent = pending?.status === "pending-review"
     ? "Your previous correction request is saved and awaiting clinician review."
@@ -256,6 +324,14 @@ function parseClinicalLines(value, type) {
       const [name, specialty, organization, phone] = parts;
       return Object.fromEntries(Object.entries({ name, specialty, organization, phone }).filter(([, entry]) => entry));
     }
+    if (type === "insurance") {
+      const [payerName, planName, memberId, groupNumber, subscriberRelationship, status] = parts;
+      return Object.fromEntries(Object.entries({ payerName, planName, memberId, groupNumber, subscriberRelationship, status }).filter(([, entry]) => entry));
+    }
+    if (["medication", "supplement"].includes(type)) {
+      const [name, instructions, status] = parts;
+      return Object.fromEntries(Object.entries({ name, instructions, status }).filter(([, entry]) => entry));
+    }
     const [substance, reaction, severity] = parts;
     return Object.fromEntries(Object.entries({ substance, reaction, severity }).filter(([, entry]) => entry));
   });
@@ -265,23 +341,34 @@ function profileChangesFromForm() {
   const patient = currentDashboard?.patient || {};
   const changes = {};
   const scalars = [
-    ["sexAtBirth", $("profile-sex-at-birth").value],
-    ["pronouns", $("profile-pronouns").value],
-    ["preferredLanguage", $("profile-language").value],
+    ["legalFirstName", $("profile-first-name").value, patient.firstName],
+    ["legalLastName", $("profile-last-name").value, patient.lastName],
+    ["preferredName", $("profile-preferred-name").value, patient.preferredName],
+    ["dateOfBirth", $("profile-date-of-birth").value, patient.dateOfBirth],
+    ["sexAtBirth", $("profile-sex-at-birth").value, patient.sexAtBirth],
+    ["genderIdentity", $("profile-gender-identity").value, patient.genderIdentity],
+    ["pronouns", $("profile-pronouns").value, patient.pronouns],
+    ["preferredLanguage", $("profile-language").value, patient.preferredLanguage],
+    ["phone", $("profile-phone").value, patient.phone],
+    ["email", $("profile-email").value, patient.email],
+    ["address", $("profile-address").value, typeof patient.address === "string" ? patient.address : patient.address?.formatted],
   ];
-  for (const [field, raw] of scalars) {
+  for (const [field, raw, currentValue] of scalars) {
     const value = raw.trim();
-    if (value && value !== String(patient[field] || "").trim()) changes[field] = value;
+    if (value !== String(currentValue || "").trim()) changes[field] = value;
   }
   const lists = [
-    ["allergies", "profile-allergies", "profile-no-allergies", "allergy"],
-    ["intolerances", "profile-intolerances", "profile-no-intolerances", "intolerance"],
-    ["specialists", "profile-specialists", "profile-no-specialists", "specialist"],
+    ["insurance", "profile-insurance", "profile-no-insurance", "insurance", patient.insurance],
+    ["allergies", "profile-allergies", "profile-no-allergies", "allergy", patient.allergies],
+    ["intolerances", "profile-intolerances", "profile-no-intolerances", "intolerance", patient.intolerances],
+    ["medications", "profile-medications", "profile-no-medications", "medication", currentDashboard?.medications],
+    ["supplements", "profile-supplements", "profile-no-supplements", "supplement", currentDashboard?.supplements],
+    ["specialists", "profile-specialists", "profile-no-specialists", "specialist", patient.specialists],
   ];
-  for (const [field, inputId, emptyId, type] of lists) {
+  for (const [field, inputId, emptyId, type, currentValue] of lists) {
     const raw = $(inputId).value.trim();
     const confirmedEmpty = $(emptyId).checked;
-    const current = parseClinicalLines(clinicalEditorLines(patient[field], type), type);
+    const current = parseClinicalLines(clinicalEditorLines(currentValue, type), type);
     if (!raw && !confirmedEmpty && current.length) throw new Error(`Select the no-${field} confirmation if you intend to clear that list.`);
     const next = confirmedEmpty ? [] : parseClinicalLines(raw, type);
     if (confirmedEmpty || JSON.stringify(next) !== JSON.stringify(current)) changes[field] = next;
@@ -300,7 +387,7 @@ function applyPendingProfileRequest(request, savedAt) {
     submittedAt: savedAt,
   };
   for (const field of request.fields || []) patient.verification.fields[field] = "changes-pending";
-  renderPatientProfile(patient, currentDashboard.requests);
+  renderPatientProfile(patient, currentDashboard.requests, currentDashboard.medications, currentDashboard.supplements);
 }
 
 async function submitProfileChanges(event) {
@@ -339,7 +426,7 @@ async function submitProfileChanges(event) {
         "Content-Type": "application/json",
         "Idempotency-Key": profileSubmissionKey,
       },
-      body: JSON.stringify({ changes }),
+      body: JSON.stringify({ changes, reason: $("profile-reason").value.trim() }),
     });
     const body = await response.json().catch(() => ({}));
     if (!response.ok || body.ok !== true) {
@@ -1025,7 +1112,7 @@ function renderDashboard(dashboard) {
   $("updated").textContent = Number.isNaN(generated.getTime()) ? "" : `Blueprint updated ${generated.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`;
   $("printable-blueprint-link").href = patientHref("/bhw-patient-portal-mockup.html");
   $("summary-printable-link").href = patientHref("/bhw-patient-portal-mockup.html");
-  renderPatientProfile(dashboard.patient, dashboard.requests);
+  renderPatientProfile(dashboard.patient, dashboard.requests, dashboard.medications, dashboard.supplements);
   renderPrograms(dashboard);
   renderSystems(dashboard);
   renderPlan(dashboard.plan);

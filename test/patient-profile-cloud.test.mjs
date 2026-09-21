@@ -72,22 +72,27 @@ test("profile bridge saves to Health Core and queues only a metadata reference i
   const response = await handler(profileRequest({
     patientName: "Do not forward",
     bhwPatientId: "BHW9999",
+    reason: "Synthetic updated insurance card",
     changes: {
       pronouns: "they/them",
       allergies: [{ substance: "Synthetic allergen", reaction: "Synthetic reaction" }],
-      email: "omit@example.test",
+      email: "updated.synthetic@example.test",
+      insurance: [{ payerName: "Synthetic payer", memberId: "MEMBER-TEST" }],
+      medications: [{ name: "Synthetic medication", instructions: "One daily" }],
+      supplements: [{ name: "Synthetic vitamin", instructions: "One daily" }],
     },
   }));
   assert.equal(response.status, 201);
   assert.equal(upstream.url, "https://health-core.synthetic.test/v1/patient-portal/BHW0000/profile-change-requests");
   assert.equal(upstream.options.headers["Idempotency-Key"], "profile:synthetic-0001");
-  assert.deepEqual(Object.keys(upstream.body.changes).sort(), ["allergies", "pronouns"]);
+  assert.deepEqual(Object.keys(upstream.body.changes).sort(), ["allergies", "email", "insurance", "medications", "pronouns", "supplements"]);
+  assert.equal(upstream.body.reason, "Synthetic updated insurance card");
 
   const queued = JSON.stringify(queue);
   assert.match(queued, /PVR-11111111111111111111111111111111/);
   assert.match(queued, /pronouns, allergies/);
   assert.match(queued, /"bhwPatientId":"BHW0000"/);
-  assert.doesNotMatch(queued, /they\/them|Synthetic allergen|Synthetic reaction|Do not forward|omit@example/);
+  assert.doesNotMatch(queued, /they\/them|Synthetic allergen|Synthetic reaction|Do not forward|updated\.synthetic|Synthetic payer|MEMBER-TEST|One daily|updated insurance card/);
   assert.equal(queue.body.routing.assignedTeam, "clinical");
   assert.equal(queue.body.routing.ownerRole, "provider");
   assert.equal(queue.body.requestType, "clinical-review");
@@ -130,6 +135,6 @@ test("profile bridge fails closed for missing auth, identity, key, and unsupport
     body: JSON.stringify({ changes: { pronouns: "they/them" } }),
   });
   assert.equal((await handler(missingKey)).status, 400);
-  assert.equal((await handler(profileRequest({ changes: { email: "unsupported@example.test" } }))).status, 400);
+  assert.equal((await handler(profileRequest({ changes: { socialSecurityNumber: "unsupported" } }))).status, 400);
   assert.equal(calls, 0);
 });
