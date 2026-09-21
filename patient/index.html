@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex, nofollow">
   <meta name="theme-color" content="#f8f6f1">
-  <meta name="description" content="BHW Health Core brings your clinician-shared profile, Health Blueprint, results, medications, and care updates into one private patient view.">
-  <title>BHW Health Core | Patient Care Space</title>
+  <meta name="description" content="myBHW connects you to your care team, check-ins, medication help, Health Blueprint, and shared results through BHW Care Connect.">
+  <title>myBHW | BHW Care Connect</title>
   <link rel="stylesheet" href="./fonts/bhw-playfair-display.css?v=care-connect-1">
   <link rel="stylesheet" href="./opal-ironstone-tokens.css?v=health-core-1">
   <link rel="stylesheet" href="./styles.css?v=health-core-1">
@@ -17,7 +17,7 @@
     <div class="topbar-inner">
       <a class="brand" href="/" aria-label="BHW Medical Group home">
         <img class="brand-logo" src="./assets/bhw-medical-logo.png" alt="BHW Medical">
-        <span class="product-lockup" aria-hidden="true"><small>Patient care space</small><strong>Health Core</strong></span>
+        <span class="product-lockup" aria-hidden="true"><small>BHW Care Connect</small><strong>myBHW</strong></span>
       </a>
       <div class="topbar-actions"><span class="secure-portal-status"><span aria-hidden="true"></span>Private portal</span><a class="help" href="tel:+14437625343">Need help? 443.762.5343</a></div>
     </div>
@@ -26,13 +26,13 @@
   <main id="main" class="shell">
     <section id="login-view" class="login-grid">
       <div>
-        <p class="eyebrow">BHW Health Core</p>
-        <h1>Your health record, made <em>clearer.</em></h1>
-        <p class="intro">Sign in to one private, clinically structured view of your BHW Health Blueprint, enrolled programs, shared results, medication directions, and care updates.</p>
-        <div class="trust"><span>One-time sign-in code</span><span>Clinician-shared view</span><span>No employee tools</span></div>
+        <p class="eyebrow">BHW Care Connect</p>
+        <h1>Your care. <em>Connected.</em></h1>
+        <p class="intro">Welcome to myBHW. Check in, ask for help with a medicine, and see updates from your care team.</p>
+        <div class="trust"><span>Your private care space</span><span>One-time sign-in code</span><span>Your BHW care team</span></div>
       </div>
       <form id="login-form" class="card login-card" novalidate>
-        <h2>Sign in to Health Core</h2>
+        <h2>Sign in to myBHW</h2>
         <p>We’ll send a one-time 6-digit code. No password to remember.</p>
         <div class="field">
           <label id="identity-label" for="identity">Email</label>
@@ -49,14 +49,14 @@
         <button id="submit-button" class="button" type="submit">Email my code</button>
         <button id="mode-button" class="link-button" type="button">No email? Use a mobile number</button>
         <p id="login-status" class="status" role="status" aria-live="polite"></p>
-        <p class="fine">The code message may look general because it is sent by our sign-in provider. You are signing in to BHW Medical Group’s patient care space.</p>
+        <p class="fine">You are signing in to myBHW, your private patient space in BHW Care Connect.</p>
       </form>
     </section>
 
     <section id="dashboard-view" class="portal-home" hidden>
       <div class="portal-homebar">
         <div class="welcome-lockup">
-          <div class="health-core-identity"><span>BHW Health Core</span><strong>Clinician-shared</strong></div>
+          <div class="health-core-identity"><span>myBHW</span><strong>BHW Care Connect</strong></div>
           <p class="eyebrow">Glad to see you back</p>
           <h1><span id="preferred-name">Patient</span>. Your medical story. Your Health Blueprint.</h1>
           <p class="portal-intro">One clear view of your verified health profile, Health Blueprint, results, medications, and care-team updates.</p>
@@ -72,7 +72,7 @@
         </div>
       </div>
 
-      <nav class="portal-section-nav" aria-label="Health Core sections">
+      <nav class="portal-section-nav" aria-label="myBHW sections">
         <a href="#health-profile">Health profile</a>
         <a href="#health-blueprint">Health Blueprint</a>
         <a href="#nutrition-intelligence">Nutrition</a>
@@ -237,9 +237,9 @@
       </section>
 
       <div class="dashboard-layout portal-lower-grid">
-        <section id="lab-results" class="card section portal-span-two"><p class="eyebrow">Health Core results</p><h2>Labs &amp; clinician-shared interpretation</h2><p class="section-intro">Select a shared result to see how your care team connected it to your Health Blueprint.</p><div id="labs" class="lab-grid"></div></section>
-        <section id="medication-requests" class="card section"><p class="eyebrow">Health Core medication view</p><h2>Medications &amp; request status</h2><p class="section-intro">Medication status and request status are shown separately, so “sent to pharmacy” never means a medication was approved by insurance. If this list is incomplete or incorrect, send a patient-reported update for BHW review.</p><button class="quiet-action section-action" type="button" data-open-dialog="profile-dialog">Update my medication or supplement list</button><div id="medications" class="list"></div></section>
-        <section id="care-team-updates" class="card section"><p class="eyebrow">Health Core care coordination</p><h2>Care-team updates</h2><div id="requests" class="list"></div></section>
+        <section id="lab-results" class="card section portal-span-two"><p class="eyebrow">Your results</p><h2>Labs &amp; clinician-shared interpretation</h2><p class="section-intro">Select a shared result to see how your care team connected it to your Health Blueprint.</p><div id="labs" class="lab-grid"></div></section>
+        <section id="medication-requests" class="card section"><p class="eyebrow">Your medicines</p><h2>Medications &amp; request status</h2><p class="section-intro">Medication status and request status are shown separately, so “sent to pharmacy” never means a medication was approved by insurance. If this list is incomplete or incorrect, send a patient-reported update for BHW review.</p><button class="quiet-action section-action" type="button" data-open-dialog="profile-dialog">Update my medication or supplement list</button><div id="medications" class="list"></div></section>
+        <section id="care-team-updates" class="card section"><p class="eyebrow">Your care team</p><h2>Care-team updates</h2><div id="requests" class="list"></div></section>
       </div>
 
       <dialog id="vitals-dialog" class="portal-dialog" aria-labelledby="vitals-title">
