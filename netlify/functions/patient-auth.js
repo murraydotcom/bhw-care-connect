@@ -293,6 +293,19 @@ exports.handler = async (event) => {
         const r = await stytch("/otps/authenticate", { method_id: body.methodId, code });
         if (!r.ok)
           return json(401, { error: r.data.error_message || "That code didn't match or has expired." });
+        // Bind the contact to the exact method Stytch just authenticated, not
+        // another contact supplied by the browser or attached to the same user.
+        const method = r.data.method_id;
+        const contacts = phone ? r.data.user?.phone_numbers : r.data.user?.emails;
+        const matches = Array.isArray(contacts) ? contacts.filter((contact) =>
+          (phone ? contact.phone_id : contact.email_id) === method
+          && contact.verified === true
+          && (phone ? normalizePhone(contact.phone_number) === phone
+            : String(contact.email || "").trim().toLowerCase() === email)
+        ) : [];
+        if (!method || method !== body.methodId || matches.length !== 1) {
+          return json(401, { error: "We could not verify this sign-in. Please request a new code." });
+        }
       }
       // (DEMO mode — no Stytch keys — accepts any 6-digit code above.)
 
@@ -339,6 +352,7 @@ exports.handler = async (event) => {
       if (process.env.SESSION_SECRET) {
         token = sign({
           kind: "patient",
+          patientAuthVersion: 2,
           email,
           phone,
           patientId: family.patient.id || null,
@@ -357,15 +371,24 @@ exports.handler = async (event) => {
     // ---- medications for a patient (self or a linked dependent) -------------
     if (body.action === "meds") {
       const sess = body.token ? verify(body.token) : null;
+      if (!sess || sess.kind !== "patient" || sess.patientAuthVersion !== 2 || !Number.isFinite(sess.exp) || sess.exp <= Date.now()) {
+        return json(401, { error: "Please sign in again." });
+      }
+      // Preview credentials must never query a real medication collection.
+      if (sess.demo) {
+        if (DEMO_MODE && !body.patientId && !sess.patientId) return json(200, { ok: true, meds: demoMeds(), demo: true });
+        return json(403, { error: "Preview access cannot read patient medications." });
+      }
       const pid = body.patientId || (sess && sess.patientId) || null;
-      if (sess && pid && sess.patientId !== pid && !(sess.dependentIds || []).includes(pid)) {
+      if (!pid || typeof pid !== "string") return json(409, { error: "Your patient record is not linked. Please use your myBHW care space." });
+      const dependentIds = Array.isArray(sess.dependentIds) ? sess.dependentIds : [];
+      if (sess.patientId !== pid && !dependentIds.includes(pid)) {
         return json(403, { error: "Not authorized for that record." });
       }
-      if (!pid) return json(200, { ok: true, meds: demoMeds(), demo: true });
       try {
         return json(200, { ok: true, meds: await loadMeds(pid) });
       } catch {
-        return json(200, { ok: true, meds: [] });
+        return json(502, { error: "Your medications could not be loaded. Please try again." });
       }
     }
 
