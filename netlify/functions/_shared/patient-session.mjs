@@ -16,7 +16,7 @@ function verifiedPayload(token, secret) {
 
 export function verifyCareConnectPatientSession(token, secret, now = Date.now()) {
   const claims = verifiedPayload(token, secret);
-  if (claims?.kind !== "patient" || !Number.isFinite(claims?.exp) || claims.exp < now) return null;
+  if (claims?.kind !== "patient" || claims.patientAuthVersion !== 2 || !Number.isFinite(claims?.exp) || claims.exp <= now) return null;
   const bhwPatientId = String(claims.bhwPatientId || "");
   if (!/^BHW\d{4}$/.test(bhwPatientId)) return { ...claims, bhwPatientId: "" };
   const validPilotAuthorization = claims.schemaVersion === "bhw.patient-portal-access.v1"

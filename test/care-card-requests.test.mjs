@@ -5,7 +5,7 @@ import { createCareCardRequestsHandler } from '../netlify/functions/_shared/care
 const secret='synthetic-only-card-test', now=Date.now();
 function token(overrides={}) {
  const date=new Date(now).toISOString();
- const p=Buffer.from(JSON.stringify({kind:'patient',bhwPatientId:'BHW0000',exp:now+60000,schemaVersion:'bhw.patient-portal-access.v1',accessType:'self',proxyAccessAllowed:false,pilotCohort:'primary-care-adult-v1',programs:['primary'],portalAccessStatus:'active',preferredChannel:'email',verifiedChannel:'email',contactVerifiedAt:date,consentedAt:date,portalInvitedAt:date,authorizationUpdatedAt:date,...overrides})).toString('base64url');
+ const p=Buffer.from(JSON.stringify({kind:'patient',patientAuthVersion:2,bhwPatientId:'BHW0000',exp:now+60000,schemaVersion:'bhw.patient-portal-access.v1',accessType:'self',proxyAccessAllowed:false,pilotCohort:'primary-care-adult-v1',programs:['primary'],portalAccessStatus:'active',preferredChannel:'email',verifiedChannel:'email',contactVerifiedAt:date,consentedAt:date,portalInvitedAt:date,authorizationUpdatedAt:date,...overrides})).toString('base64url');
  return p+'.'+crypto.createHmac('sha256',secret).update(p).digest('base64url');
 }
 const body={type:'refill',medication:'Synthetic medicine',message:'Please review',bhwPatientId:'BHW9999'};

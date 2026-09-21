@@ -14,7 +14,7 @@ const ENV = {
 
 function sessionToken(overrides = {}) {
   const claims = {
-    kind: "patient",
+    kind: "patient", patientAuthVersion: 2,
     bhwPatientId: "BHW0000",
     schemaVersion: "bhw.patient-portal-access.v1",
     accessType: "self",
