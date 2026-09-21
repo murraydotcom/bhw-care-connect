@@ -1211,7 +1211,7 @@ async function submitLogin(event) {
     const body = await response.json().catch(() => ({}));
     if (!response.ok || !body.token) throw new Error(body.error || "That code did not match.");
     sessionStorage.setItem(SESSION_KEY, body.token);
-    renderDashboard(await loadPortalDashboard());
+    openRequestedCarePage(await loadPortalDashboard());
   } catch (error) {
     setStatus(error.message || "Please try again.");
   } finally {
@@ -1236,6 +1236,15 @@ function toggleMode() {
 function signOut() {
   sessionStorage.removeItem(SESSION_KEY);
   location.reload();
+}
+
+function openRequestedCarePage(dashboard) {
+  // Only this fixed internal destination is accepted; never redirect to arbitrary query URLs.
+  if (new URLSearchParams(location.search).get('next') === 'care-card') {
+    location.replace('/bhw-care-card.html');
+    return;
+  }
+  renderDashboard(dashboard);
 }
 
 $("login-form").addEventListener("submit", submitLogin);
@@ -1268,7 +1277,7 @@ if (isLocalPreview) {
   renderDashboard(previewDashboard());
 } else if (sessionStorage.getItem(SESSION_KEY)) {
   setStatus("Opening your private care space…");
-  loadPortalDashboard().then(renderDashboard).catch((error) => {
+  loadPortalDashboard().then(openRequestedCarePage).catch((error) => {
     sessionStorage.removeItem(SESSION_KEY);
     setStatus(error.message || "Please sign in again.");
   });
