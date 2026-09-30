@@ -1,7 +1,7 @@
 // Temporary full-site safety gate. Remove this edge function from the deployed
 // branch only after Care Connect release verification is complete.
 const MAINTENANCE_MESSAGE =
-  'myBHW is temporarily unavailable while BHW Medical Group completes secure system maintenance.';
+  'The BHW Crew is improving myBHW. Patient access remains temporarily unavailable while we securely finish and verify the updates.';
 
 const COMMON_HEADERS = {
   'Cache-Control': 'no-store, max-age=0',
@@ -19,7 +19,7 @@ const MAINTENANCE_HTML = `<!doctype html>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="robots" content="noindex,nofollow">
-  <title>myBHW is temporarily unavailable</title>
+  <title>The BHW Crew is improving myBHW</title>
   <style>
     :root {
       color-scheme: light;
@@ -105,8 +105,9 @@ const MAINTENANCE_HTML = `<!doctype html>
   <main aria-labelledby="maintenance-title">
     <p class="brand">BHW Medical Group · myBHW</p>
     <div class="rule" aria-hidden="true"></div>
-    <h1 id="maintenance-title">myBHW is temporarily unavailable</h1>
-    <p>We are completing secure system maintenance before reopening patient access. This page does not accept messages, forms, sign-ins, or health information.</p>
+    <h1 id="maintenance-title">The BHW Crew is improving myBHW</h1>
+    <p>We are making secure updates to create a smoother, safer way to connect with your care team. myBHW will remain temporarily unavailable while we finish and verify this work.</p>
+    <p class="note">For your privacy, this page does not accept messages, forms, sign-ins, or health information.</p>
     <section class="help" aria-label="How to get help">
       <p><strong>Need help with your care?</strong><br>Call BHW Medical Group at 443.762.5343.</p>
       <div class="actions">

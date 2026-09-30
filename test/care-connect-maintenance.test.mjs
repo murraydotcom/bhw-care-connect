@@ -15,7 +15,9 @@ test('patient pages return a no-store 503 maintenance page with safe help routes
   assert.equal(response.headers.get('cache-control'), 'no-store, max-age=0');
   assert.equal(response.headers.get('x-robots-tag'), 'noindex, nofollow');
   assert.match(response.headers.get('content-type'), /^text\/html/);
-  assert.match(html, /myBHW is temporarily unavailable/);
+  assert.match(html, /The BHW Crew is improving myBHW/);
+  assert.match(html, /smoother, safer way to connect with your care team/i);
+  assert.match(html, /temporarily unavailable/i);
   assert.match(html, /443\.762\.5343/);
   assert.match(html, /call 911/i);
   assert.match(html, /call or text 988/i);
