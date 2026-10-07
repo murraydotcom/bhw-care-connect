@@ -9,6 +9,7 @@ import {
   updateNutritionQuestionnaireVisibility,
 } from "./nutrition-questionnaire-v14.mjs?v=care-connect-2";
 import { NUTRITION_PREVIEW_CONTRACT } from "./nutrition-preview-contract.mjs?v=care-connect-2";
+import { CHECKIN_PROGRAM_IDS, createVitalsSubmitHandler } from "./vitals-form.mjs?v=checkin-bridge-1";
 
 const auth = { mode: "email", sent: false, methodId: null };
 const PREVIEW_STATE_KEY = "bhw_patient_blueprint_preview_state_v2";
@@ -18,12 +19,6 @@ const PROGRAM_MARKS = {
   "mind-mood": "/assets/mind-mood-logo.png",
   "charmed-minds": "/assets/charmed-minds-logo.png",
   flow: "/assets/brand/flow.png",
-};
-const CHECKIN_PROGRAM_IDS = {
-  "primary-care": "primary",
-  "mind-mood": "mind",
-  "charmed-minds": "charmed",
-  flow: "flow",
 };
 const $ = (id) => document.getElementById(id);
 let currentDashboard = null;
@@ -38,6 +33,7 @@ let nutritionContract = null;
 let nutritionQuestionnaire = null;
 let nutritionIntake = null;
 let nutritionLoading = false;
+let vitalsCloudSave = null;
 
 function patientFirstName(patient = {}) {
   return String(patient.preferredName || patient.firstName || "").trim();
@@ -484,7 +480,12 @@ function setPersistence(message, state = "not-saved") {
 
 function reflectPersistence() {
   if (!isLocalPreview) {
-    setPersistence("New entries are not connected to BHW Cloud yet", "not-saved");
+    if (vitalsCloudSave) {
+      const review = vitalsCloudSave.reviewConfirmed ? "clinician review pending" : "review notice not confirmed";
+      setPersistence(`Vital signs saved to BHW Cloud · ${review}`, vitalsCloudSave.reviewConfirmed ? "cloud-saved" : "saved-review-pending");
+    } else {
+      setPersistence("Vital signs use secure check-in · daily-path selections are not saved", "not-saved");
+    }
     return;
   }
   if (interactionState.updatedAt) {
@@ -1130,7 +1131,7 @@ function openDialog(id) {
   const dialog = $(id);
   if (!dialog) return;
   const status = id === "vitals-dialog" ? $("vitals-status") : null;
-  if (status) status.textContent = isLocalPreview ? "Preview only: use synthetic information. Nothing has been saved yet." : "Secure BHW Cloud saving is not connected yet.";
+  if (status && !status.textContent) status.textContent = isLocalPreview ? "Preview only: use synthetic information. Nothing has been saved yet." : "Nothing has been saved yet. Measurements use your secure BHW check-in connection.";
   if (id === "profile-dialog") prepareProfileForm();
   dialog.showModal();
 }
@@ -1139,31 +1140,25 @@ function closeDialog(button) {
   button.closest("dialog")?.close();
 }
 
-function submitVitals(event) {
-  event.preventDefault();
-  const form = event.currentTarget;
-  if (!form.reportValidity()) return;
-  const data = Object.fromEntries(new FormData(form));
-  const values = Object.fromEntries(Object.entries(data).map(([key, value]) => [key, String(value).trim()]));
-  const anyValue = Object.values(values).some(Boolean);
-  if (!anyValue) {
-    $("vitals-status").textContent = "Enter at least one measurement.";
-    return;
-  }
-  if ((values.systolic && !values.diastolic) || (!values.systolic && values.diastolic)) {
-    $("vitals-status").textContent = "Enter both numbers for blood pressure.";
-    return;
-  }
-  if (!isLocalPreview) {
-    $("vitals-status").textContent = "Not saved. This needs the secure BHW Cloud vital-sign connection.";
-    setPersistence("Not saved · secure BHW Cloud write connection required", "not-saved");
-    return;
-  }
-  interactionState.vitals = { ...values, recordedAt: new Date().toISOString() };
-  persistInteractionState();
-  renderRecentSignals();
-  $("vitals-status").textContent = `Saved on this device only at ${formatSavedTime(interactionState.updatedAt)}.`;
-}
+const submitVitals = createVitalsSubmitHandler({
+  isPreview: isLocalPreview,
+  getProgramId: () => activeProgramId,
+  getSessionToken: () => sessionStorage.getItem(SESSION_KEY),
+  savePreview: (values) => {
+    interactionState.vitals = { ...values, recordedAt: new Date().toISOString() };
+    persistInteractionState();
+    renderRecentSignals();
+    return interactionState.updatedAt;
+  },
+  onSaved: (values, savedAt, reviewConfirmed) => {
+    // Cloud readings remain ephemeral in this view; never persist them in
+    // the preview browser store or send them to the operations queue.
+    interactionState.vitals = { ...values, recordedAt: savedAt };
+    vitalsCloudSave = { savedAt, reviewConfirmed };
+    renderRecentSignals();
+    reflectPersistence();
+  },
+});
 
 function identityPayload() {
   const value = $("identity").value.trim();

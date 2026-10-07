@@ -149,13 +149,29 @@ summary. Program pages remain distinct and appear below the connected system
 map. The legacy printable Blueprint remains a separate, explicit action.
 
 Local and Netlify draft-deploy `?preview=1` testing use synthetic data only. The
-host gate does not enable this mode on `mybhw.com` or the canonical Netlify site. Daily-path selections,
-synthetic check-ins, and synthetic vital signs are stored under the device-only
+host gate does not enable this mode on `mybhw.com` or the canonical Netlify site.
+Daily-path selections and synthetic vital signs are stored under the device-only
 `bhw_patient_blueprint_preview_state_v2` browser key, and the interface labels
-that state as `Saved on this device only`. Outside local preview, these actions
-fail closed and display `Not saved` until the shared operations API provides an
-authenticated BHW Cloud write contract. Do not connect this home to the legacy
-Notion-backed `checkin-save` function.
+that state as `Saved on this device only`. Daily-path selections fail closed
+outside preview. Outside preview, Add vital signs uses
+the existing authenticated `/api/patient-portal/check-ins` bridge: systolic and
+diastolic become `bp`, pulse becomes `hr`, weight in pounds becomes `wt`, oxygen
+percentage becomes `o2`, and Fahrenheit temperature becomes `temp`. The active
+program lens uses the same `CHECKIN_PROGRAM_IDS` mapping as Daily check-in.
+Clinical values are sent only to Health Core; Operations receives the existing
+clinician-review reference and routing metadata. A Health Core save with an
+unconfirmed review notice is labeled separately and can be retried with the
+same readings. Cloud readings are not written to browser storage.
+
+Health Core currently stores one check-in per program per day. The standalone
+form checks authenticated history and refuses to replace an existing same-day
+entry; use Daily check-in to add or update those readings. This history check
+is not an atomic merge and cannot resolve simultaneous submissions from
+different tabs. An atomic Health Core update contract is required before
+releasing concurrent standalone vital entry to real patients. This change does
+not enable patient-pilot switches, remove the maintenance gate, or deploy.
+Validate with BHW0000 only. Do not connect this home to the legacy Notion-backed
+`checkin-save` function.
 
 ### Program and body-system page rules
 

@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import assert from "node:assert/strict";
 import test from "node:test";
 import { createPatientCheckinsHandler } from "../netlify/functions/patient-checkins.mjs";
+import { vitalsCheckinPayload } from "../patient/vitals-form.mjs";
 
 const NOW = Date.parse("2026-08-30T12:00:00.000Z");
 const SESSION_SECRET = "synthetic-session-secret";
@@ -37,6 +38,63 @@ function sessionToken(overrides = {}) {
 }
 
 const auth = (token = sessionToken()) => ({ Authorization: `Bearer ${token}` });
+
+test("standalone vitals go to the signed BHW0000 Health Core route; operations receives review metadata only", async () => {
+  const payload = vitalsCheckinPayload({ systolic: "124", diastolic: "82", pulse: "74", weight: "165.5", oxygen: "97", temperature: "98.6" }, "flow", "2026-08-30");
+  let clinicalRecord;
+  let queued;
+  const handler = createPatientCheckinsHandler({
+    environment: ENV,
+    now: () => NOW,
+    fetchImpl: async (url, options) => {
+      assert.equal(url, "https://health-core.synthetic.test/v1/patient-portal/BHW0000/check-ins");
+      const token = options.headers.Authorization.replace(/^Bearer /, "");
+      const [claims, signature] = token.split(".");
+      assert.equal(signature, crypto.createHmac("sha256", PATIENT_SECRET).update(claims).digest("base64url"));
+      const identity = JSON.parse(Buffer.from(claims, "base64url").toString());
+      assert.equal(identity.bhwPatientId, "BHW0000");
+      assert.equal(identity.role, "patient-portal");
+      assert.equal(identity.exp - identity.iat, 60);
+      clinicalRecord = JSON.parse(options.body);
+      return Response.json({ ok: true, savedAt: "2026-08-30T12:00:01.000Z", monitoring: {
+        checkInId: "2026-08-30-flow", program: "flow", checkInDate: "2026-08-30", submittedAt: "2026-08-30T12:00:01.000Z",
+        reviewPriority: "routine", signalCount: 0,
+        // Even unexpected upstream clinical fields must not enter Operations.
+        vitals: payload.vitals, summary: "Synthetic clinical narrative", symptoms: ["Synthetic symptom"],
+      } });
+    },
+    queueImpl: async (input) => { queued = input; return { patientRequest: { id: "synthetic-vitals-review" } }; },
+  });
+  const response = await handler(new Request("https://care.synthetic.test/api/patient-portal/check-ins", {
+    method: "POST", headers: { ...auth(), "Content-Type": "application/json" }, body: JSON.stringify(payload),
+  }));
+  assert.equal(response.status, 200);
+  assert.deepEqual(clinicalRecord.vitals, payload.vitals);
+  assert.equal(clinicalRecord.program, "flow");
+  assert.equal(clinicalRecord.patient, undefined);
+  assert.deepEqual(Object.keys(queued.body.sourceMetadata).sort(), ["reviewPriority", "signalCount", "sourcePage", "sourceRecordId"]);
+  assert.equal(queued.body.sourceReference, "2026-08-30-flow");
+  assert.equal(queued.body.notificationMode, "none");
+  assert.equal(queued.body.routing.ownerRole, "provider");
+  for (const key of ["vitals", "well", "nutrition", "symptoms", "foods", "medicationsTaken"]) assert.equal(queued.body[key], undefined);
+  assert.doesNotMatch(JSON.stringify(queued), /124\/82|165\.5|98\.6|clinical narrative|Synthetic symptom/);
+  assert.deepEqual(await response.json(), { ok: true, savedAt: "2026-08-30T12:00:01.000Z", queueReference: "synthetic-vitals-review" });
+});
+
+test("standalone vitals cannot reach Health Core or operations with an expired or forged session", async () => {
+  let calls = 0;
+  const handler = createPatientCheckinsHandler({ environment: ENV, now: () => NOW,
+    fetchImpl: async () => { calls += 1; return Response.json({ ok: true }); },
+    queueImpl: async () => { calls += 1; return {}; },
+  });
+  for (const token of [sessionToken({ exp: NOW - 1 }), `${sessionToken()}forged`]) {
+    const response = await handler(new Request("https://care.synthetic.test/api/patient-portal/check-ins", {
+      method: "POST", headers: auth(token), body: JSON.stringify(vitalsCheckinPayload({ pulse: "74" }, "primary-care", "2026-08-30")),
+    }));
+    assert.equal(response.status, 401);
+  }
+  assert.equal(calls, 0);
+});
 
 test("check-in bridge forwards a normalized record without patient identity fields", async () => {
   let captured;
