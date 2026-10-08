@@ -149,13 +149,34 @@ summary. Program pages remain distinct and appear below the connected system
 map. The legacy printable Blueprint remains a separate, explicit action.
 
 Local and Netlify draft-deploy `?preview=1` testing use synthetic data only. The
-host gate does not enable this mode on `mybhw.com` or the canonical Netlify site. Daily-path selections,
-synthetic check-ins, and synthetic vital signs are stored under the device-only
+host gate does not enable this mode on `mybhw.com` or the canonical Netlify site.
+Daily-path selections and synthetic vital signs are stored under the device-only
 `bhw_patient_blueprint_preview_state_v2` browser key, and the interface labels
-that state as `Saved on this device only`. Outside local preview, these actions
-fail closed and display `Not saved` until the shared operations API provides an
-authenticated BHW Cloud write contract. Do not connect this home to the legacy
-Notion-backed `checkin-save` function.
+that state as `Saved on this device only`. Daily-path selections fail closed
+outside preview. Outside preview, Add vital signs uses
+the existing authenticated `/api/patient-portal/check-ins` bridge: systolic and
+diastolic become `bp`, pulse becomes `hr`, weight in pounds becomes `wt`, oxygen
+percentage becomes `o2`, and Fahrenheit temperature becomes `temp`. The active
+program lens uses the same `CHECKIN_PROGRAM_IDS` mapping as Daily check-in.
+Clinical values are sent only to Health Core; Operations receives the existing
+clinician-review reference and routing metadata. A Health Core save with an
+unconfirmed review notice is labeled separately and can be retried with the
+same readings. Cloud readings are not written to browser storage.
+
+Health Core keeps one daily record per program and appends timestamped readings
+without replacing the daily answers. The form asks when readings were taken;
+the record date uses the existing UTC date contract. Unchanged retries reuse a
+submission ID, while edited readings or measurement times get a new ID. Daily
+check-in also keeps its ID and submission time across unchanged retries.
+The bridge uses the authenticated Health Core `/check-ins/vitals` suffix, which
+fails closed on older backend releases. Release the companion Health Core
+atomic update contract before this portal change. Health Core retains up to
+100 reading entries per daily record and rejects further additions without
+discarding history. Each submission sends only its frozen review metadata to
+Operations under a separate retry-safe key. This change does not enable
+patient-pilot switches, remove the maintenance gate, or deploy.
+Validate with BHW0000 only. Do not connect this home to the legacy Notion-backed
+`checkin-save` function.
 
 ### Program and body-system page rules
 

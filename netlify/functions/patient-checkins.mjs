@@ -77,6 +77,18 @@ function normalizeCheckin(body) {
   if (!PROGRAMS.has(program)) return null;
   const date = /^\d{4}-\d{2}-\d{2}$/.test(String(body?.date || "")) ? body.date : null;
   if (!date) return null;
+  const submissionId = text(body.submissionId, 80);
+  const recorded = new Date(body.recordedAt || "");
+  const recordedAt = Number.isNaN(recorded.getTime()) ? "" : recorded.toISOString();
+  const hasSubmission = body.submissionId !== undefined || body.recordedAt !== undefined;
+  if (hasSubmission && (!/^[a-z0-9][a-z0-9_-]{15,79}$/i.test(submissionId) || !recordedAt)) return null;
+  const submission = hasSubmission ? { submissionId, recordedAt } : {};
+  if (body.submissionType === "vitals") {
+    const vitals = selectedObject(body.vitals, VITAL_KEYS, 40);
+    if (!hasSubmission || !Object.keys(vitals).length) return null;
+    return { schemaVersion: "bhw.patient-checkin.v2", submissionType: "vitals", program, date, vitals, ...submission };
+  }
+  if (body.submissionType && body.submissionType !== "daily") return null;
   const nutritionSource = selectedObject(body.nutrition, NUTRITION_KEYS, 30);
   const nutrition = Object.fromEntries(Object.entries(nutritionSource).map(([key, value]) => [key, number(value)]).filter(([, value]) => value !== null));
   const waterCups = number(body.waterCups, 0, 40);
@@ -97,6 +109,7 @@ function normalizeCheckin(body) {
     monitoringPlanVersion: number(body.monitoringPlanVersion, 1, 100000),
     moduleResponses: moduleResponses(body.moduleResponses),
     summary: text(body.summary, 5000),
+    ...submission,
   };
 }
 
@@ -186,15 +199,22 @@ export function createPatientCheckinsHandler({
       try { submitted = JSON.parse(raw || "{}"); } catch { return json(400, { ok: false, error: "Invalid check-in." }); }
       const checkin = normalizeCheckin(submitted);
       if (!checkin) return json(400, { ok: false, error: "The check-in is incomplete." });
-      const response = await fetchImpl(path, {
+      // A separate suffix on the same authenticated check-in boundary makes
+      // older Health Core releases fail closed instead of treating a partial
+      // vital entry as a full daily replacement.
+      const response = await fetchImpl(checkin.submissionType === "vitals" ? `${path}/vitals` : path, {
         method: "POST",
         headers: { ...headers, "Content-Type": "application/json" },
         body: JSON.stringify(checkin),
         signal: AbortSignal.timeout(8000),
       });
       const body = await response.json().catch(() => null);
-      if (!response.ok || body?.ok !== true) return json(502, { ok: false, error: "The check-in could not be saved." });
+      if (!response.ok || body?.ok !== true) return json(502, { ok: false, ...(response.ok ? { saveUnconfirmed: true } : {}), error: "The check-in save could not be confirmed. Retry with the same readings." });
       const savedAt = body.savedAt || new Date(now()).toISOString();
+      if (checkin.submissionType === "vitals" && body.submissionId !== checkin.submissionId) return json(502, {
+        ok: false, saved: true, savedAt,
+        error: "Your readings were saved to BHW Cloud, but the submission confirmation could not be verified. Retry with the same readings.",
+      });
       const queueBody = monitoringQueueBody(context.session, body.monitoring);
       if (!queueBody) return json(502, {
         ok: false,
@@ -204,12 +224,12 @@ export function createPatientCheckinsHandler({
       });
       try {
         const queued = await queueImpl({
-          submissionId: `care-connect-checkin:${context.session.bhwPatientId}:${queueBody.sourceReference}`,
+          submissionId: `care-connect-checkin:${context.session.bhwPatientId}:${queueBody.sourceReference}${body.submissionId ? `:${body.submissionId}` : ""}`,
           body: queueBody,
         });
         const queueReference = queued?.patientRequest?.patientRequestId || queued?.patientRequest?.id || queued?.request?.id;
         if (!queueReference) throw new Error("operations queue returned no request reference");
-        return json(200, { ok: true, savedAt, queueReference });
+        return json(200, { ok: true, savedAt, queueReference, ...(body.submissionId ? { submissionId: body.submissionId, recordedAt: body.recordedAt, replayed: body.replayed === true } : {}) });
       } catch {
         return json(502, {
           ok: false,
@@ -219,7 +239,7 @@ export function createPatientCheckinsHandler({
         });
       }
     } catch {
-      return json(502, { ok: false, error: request.method === "GET" ? "Check-in history could not be loaded." : "The check-in could not be saved." });
+      return json(502, { ok: false, ...(request.method === "POST" ? { saveUnconfirmed: true } : {}), error: request.method === "GET" ? "Check-in history could not be loaded." : "The check-in save could not be confirmed. Retry with the same readings." });
     }
   };
 }

@@ -246,6 +246,7 @@
         <form id="vitals-form">
           <div class="dialog-head"><div><p class="eyebrow">Add a measurement</p><h2 id="vitals-title">Vital signs</h2></div><button class="dialog-close" type="button" data-close-dialog aria-label="Close vital-sign entry">Close</button></div>
           <p class="dialog-intro">Enter only measurements you took today. Leave anything you did not measure blank.</p>
+          <div class="field"><label for="vital-recorded-at">When did you take these readings?</label><input id="vital-recorded-at" name="recordedAt" type="datetime-local" required></div>
           <div class="vitals-grid">
             <div class="field bp-field"><label>Blood pressure</label><div class="bp-inputs"><input name="systolic" type="number" min="60" max="260" inputmode="numeric" placeholder="Systolic" aria-label="Systolic blood pressure"><span>/</span><input name="diastolic" type="number" min="30" max="160" inputmode="numeric" placeholder="Diastolic" aria-label="Diastolic blood pressure"></div></div>
             <div class="field"><label for="vital-pulse">Pulse</label><div class="unit-input"><input id="vital-pulse" name="pulse" type="number" min="30" max="220" inputmode="numeric" placeholder="72"><span>bpm</span></div></div>
@@ -334,6 +335,6 @@
   </main>
   <footer class="site-footer">BHW Medical Group · 2131 Maryland Ave, Baltimore, MD 21218 · 443.762.5343</footer>
   <script defer src="../assets/bhw-transparent-anatomy.js?v=4"></script>
-  <script type="module" src="./app.mjs?v=nutrition-intake-2"></script>
+  <script type="module" src="./app.mjs?v=vitals-checkin-bridge-2"></script>
 </body>
 </html>

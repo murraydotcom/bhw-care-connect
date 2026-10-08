@@ -727,6 +727,12 @@ async function saveAll(){
     monitoringPlanId:ACTIVE_MONITORING_PLAN?.planId||'',monitoringPlanVersion:ACTIVE_MONITORING_PLAN?.version||null,moduleResponses:monitoringResponses(),
     vitals:{bp:v('v_bp'),hr:v('v_hr'),wt:v('v_wt'),glu:v('v_glu'),temp:v('v_temp'),o2:v('v_o2'),steps:v('v_steps')},
   };
+  const fingerprint=JSON.stringify(payload);
+  if(!saveAll.pendingSubmission||saveAll.pendingSubmission.fingerprint!==fingerprint){
+    saveAll.pendingSubmission={fingerprint,submissionId:crypto.randomUUID(),recordedAt:new Date().toISOString()};
+  }
+  payload.submissionId=saveAll.pendingSubmission.submissionId;
+  payload.recordedAt=saveAll.pendingSubmission.recordedAt;
   if(LOCAL_PREVIEW){
     try{
       const local=JSON.parse(localStorage.getItem(LOCAL_CHECKIN_KEY)||'[]');
