@@ -1,6 +1,7 @@
 import test from "node:test";
 import assert from "node:assert/strict";
 import { readFile } from "node:fs/promises";
+import vm from "node:vm";
 
 test("daily check-in uses the Care Connect design and explicit save states", async () => {
   const [html, css] = await Promise.all([
@@ -38,4 +39,39 @@ test("plate-photo AI is visibly gated while barcode scanning remains available",
   assert.match(html, /id="offScan"/);
   assert.doesNotMatch(html, /type="file"/);
   assert.doesNotMatch(html, /food-vision|estimatePlate|VISION_API/);
+});
+
+test("daily check-in retries reuse their submission ID and time; edited answers get a new ID", async () => {
+  const html = await readFile(new URL("../pages/bhw-checkin.html", import.meta.url), "utf8");
+  const saveFunction = html.slice(html.indexOf("async function saveAll(){"), html.indexOf("</script>", html.indexOf("async function saveAll(){")));
+  const controls = new Map();
+  const control = (id) => {
+    if (!controls.has(id)) controls.set(id, { value: id === "v_hr" ? "72" : "", textContent: "", setAttribute() {}, removeAttribute() {} });
+    return controls.get(id);
+  };
+  let nonce = 0;
+  const calls = [];
+  const context = vm.createContext({
+    document: { getElementById: control, querySelectorAll: () => [] },
+    STATE: { Feeling: "Good" }, FOODS: ["Synthetic breakfast"], NUTRI: {}, R: (value) => value || 0,
+    WATER: 6, WATER_GOAL: 8, MEALS: 0, P: { name: "Synthetic primary" }, PROGKEY: "primary",
+    ACTIVE_MONITORING_PLAN: null, monitoringResponses: () => [], LOCAL_PREVIEW: false,
+    SAVE_API: "/api/patient-portal/check-ins", SESSION_TOKEN: "synthetic-BHW0000-session",
+    crypto: { randomUUID: () => `synthetic-daily-${++nonce}` },
+    fetch: async (_url, options) => {
+      calls.push(JSON.parse(options.body));
+      if (calls.length === 1) throw new Error("Synthetic lost response");
+      return Response.json({ ok: true });
+    },
+  });
+  vm.runInContext(saveFunction, context);
+  await context.saveAll();
+  await context.saveAll();
+  assert.deepEqual(calls[0], calls[1]);
+  assert.equal(calls[0].submissionId, "synthetic-daily-1");
+  assert.ok(Number.isFinite(Date.parse(calls[0].recordedAt)));
+  context.STATE.Feeling = "OK";
+  await context.saveAll();
+  assert.equal(calls[2].submissionId, "synthetic-daily-2");
+  assert.equal(control("saveButton").disabled, false);
 });
