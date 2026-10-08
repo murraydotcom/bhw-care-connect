@@ -14,7 +14,7 @@ const VITAL_FIELDS = {
   temperature: [90, 110, false],
 };
 
-export function vitalsCheckinPayload(fields, programId, date) {
+export function vitalsCheckinPayload(fields, programId, date, submission = null) {
   const values = Object.fromEntries(Object.keys(VITAL_FIELDS).map((key) => [key, String(fields[key] ?? "").trim()]));
   if (!Object.values(values).some(Boolean)) throw new Error("Enter at least one measurement.");
   if (Boolean(values.systolic) !== Boolean(values.diastolic)) throw new Error("Enter both numbers for blood pressure.");
@@ -32,7 +32,7 @@ export function vitalsCheckinPayload(fields, programId, date) {
   for (const [field, key] of [["pulse", "hr"], ["weight", "wt"], ["oxygen", "o2"], ["temperature", "temp"]]) {
     if (values[field]) vitals[key] = values[field];
   }
-  return { schemaVersion: "bhw.patient-checkin.v2", program, date, vitals };
+  return { schemaVersion: "bhw.patient-checkin.v2", program, date, vitals, ...(submission ? { submissionType: "vitals", ...submission } : {}) };
 }
 
 export function createVitalsSubmitHandler({
@@ -43,10 +43,12 @@ export function createVitalsSubmitHandler({
   onSaved,
   fetchImpl = fetch,
   now = () => new Date(),
+  createSubmissionId = () => crypto.randomUUID(),
   readFields = (form) => Object.fromEntries(new FormData(form)),
 }) {
   let submitting = false;
-  let pendingReview = null;
+  let pendingReview = false;
+  let pendingSubmission = null;
   const savedTime = (value) => {
     const date = new Date(value);
     return Number.isNaN(date.getTime()) ? "" : ` at ${date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
@@ -62,7 +64,17 @@ export function createVitalsSubmitHandler({
     let payload;
     try {
       values = readFields(form);
-      payload = vitalsCheckinPayload(values, getProgramId(), now().toISOString().slice(0, 10));
+      const clock = now();
+      const recorded = new Date(values.recordedAt || clock.toISOString());
+      if (Number.isNaN(recorded.getTime()) || recorded > clock) throw new Error("Enter a valid measurement time that is not in the future.");
+      const recordedAt = recorded.toISOString();
+      payload = vitalsCheckinPayload(values, getProgramId(), recordedAt.slice(0, 10));
+      const fingerprint = JSON.stringify({ ...payload, recordedAt });
+      if (pendingSubmission?.fingerprint !== fingerprint) {
+        pendingSubmission = { fingerprint, payload: { ...payload, submissionType: "vitals", submissionId: createSubmissionId(), recordedAt } };
+        pendingReview = false;
+      }
+      payload = pendingSubmission.payload;
     } catch (error) {
       status.textContent = pendingReview ? `Review notice not confirmed. ${error.message}` : error.message;
       status.dataset.state = pendingReview ? "saved-review-pending" : "not-saved";
@@ -72,6 +84,7 @@ export function createVitalsSubmitHandler({
     button.disabled = true;
     form.setAttribute("aria-busy", "true");
     status.dataset.state = "saving";
+    let saveUnconfirmed = false;
     try {
       if (isPreview) {
         const savedAt = savePreview(values);
@@ -82,26 +95,9 @@ export function createVitalsSubmitHandler({
       const token = getSessionToken();
       if (!token) throw new Error("Please sign in again.");
       const serialized = JSON.stringify(payload);
-      if (pendingReview && pendingReview !== serialized) {
-        throw new Error("These vital signs were already saved. Keep the original readings to retry the review notice, or use Daily check-in to update them.");
-      }
       const headers = { Authorization: `Bearer ${token}`, Accept: "application/json" };
-      if (!pendingReview) {
-        status.textContent = "Checking today's check-in…";
-        const historyResponse = await fetchImpl(`/api/patient-portal/check-ins?program=${encodeURIComponent(payload.program)}&days=1`, {
-          headers, cache: "no-store", signal: AbortSignal.timeout(20_000),
-        });
-        const history = await historyResponse.json().catch(() => null);
-        if (!historyResponse.ok || history?.ok !== true || !Array.isArray(history.series)) {
-          throw new Error(history?.error || "Check-in history could not be confirmed. Please try again.");
-        }
-        // Health Core currently stores one record per date/program. Do not
-        // replace an existing daily check-in with a vitals-only submission.
-        if (history.series.some((entry) => entry.date === payload.date)) {
-          throw new Error("A check-in is already saved for this program today. Use Daily check-in to add or update your readings.");
-        }
-      }
       status.textContent = "Saving vital signs to BHW Cloud…";
+      saveUnconfirmed = true;
       const response = await fetchImpl("/api/patient-portal/check-ins", {
         method: "POST",
         headers: { ...headers, "Content-Type": "application/json" },
@@ -109,17 +105,18 @@ export function createVitalsSubmitHandler({
         signal: AbortSignal.timeout(20_000),
       });
       const result = await response.json().catch(() => null);
+      if (result?.ok === false || result?.ok === true) saveUnconfirmed = result.saveUnconfirmed === true;
       const confirmed = response.ok && result?.ok === true;
       if (!confirmed && result?.saved !== true) throw new Error(result?.error || "The vital signs could not be saved.");
-      pendingReview = confirmed ? null : serialized;
+      pendingReview = !confirmed;
       status.textContent = confirmed
         ? `Saved to BHW Cloud${savedTime(result.savedAt)} · ready for clinician review in CrewHQ.`
         : `Saved to BHW Cloud${savedTime(result.savedAt)}. The clinician review notice is not confirmed; retry Save with the same readings.`;
       status.dataset.state = confirmed ? "cloud-saved" : "saved-review-pending";
-      onSaved(values, result.savedAt, confirmed);
+      onSaved(values, result.savedAt, confirmed, payload.recordedAt);
     } catch (error) {
-      status.textContent = `${pendingReview ? "Review notice not confirmed." : "Not saved."} ${error.message || "Please try again."}`;
-      status.dataset.state = pendingReview ? "saved-review-pending" : "not-saved";
+      status.textContent = `${pendingReview ? "Review notice not confirmed." : saveUnconfirmed ? "Save not confirmed. Retry Save with the same readings." : "Not saved."} ${error.message || "Please try again."}`;
+      status.dataset.state = pendingReview ? "saved-review-pending" : saveUnconfirmed ? "save-unconfirmed" : "not-saved";
     } finally {
       submitting = false;
       button.disabled = false;

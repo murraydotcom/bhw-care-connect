@@ -9,7 +9,7 @@ import {
   updateNutritionQuestionnaireVisibility,
 } from "./nutrition-questionnaire-v14.mjs?v=care-connect-2";
 import { NUTRITION_PREVIEW_CONTRACT } from "./nutrition-preview-contract.mjs?v=care-connect-2";
-import { CHECKIN_PROGRAM_IDS, createVitalsSubmitHandler } from "./vitals-form.mjs?v=checkin-bridge-1";
+import { CHECKIN_PROGRAM_IDS, createVitalsSubmitHandler } from "./vitals-form.mjs?v=checkin-bridge-2";
 
 const auth = { mode: "email", sent: false, methodId: null };
 const PREVIEW_STATE_KEY = "bhw_patient_blueprint_preview_state_v2";
@@ -592,7 +592,7 @@ function renderRecentSignals() {
   }
   if (interactionState.vitals) {
     const item = node("div", "recent-signal");
-    item.append(node("strong", "", "Latest vital signs"), node("span", "", summarizeVitals(interactionState.vitals)));
+    item.append(node("strong", "", "Latest vital signs"), node("span", "", `${summarizeVitals(interactionState.vitals)} · Recorded ${new Date(interactionState.vitals.recordedAt).toLocaleString([], { dateStyle: "short", timeStyle: "short" })}`));
     target.append(item);
   }
   if (!target.childElementCount) {
@@ -1131,6 +1131,10 @@ function openDialog(id) {
   const dialog = $(id);
   if (!dialog) return;
   const status = id === "vitals-dialog" ? $("vitals-status") : null;
+  if (id === "vitals-dialog" && (!$("vital-recorded-at").value || ["cloud-saved", "device-only"].includes(status.dataset.state))) {
+    const clock = new Date();
+    $("vital-recorded-at").value = new Date(clock.getTime() - clock.getTimezoneOffset() * 60_000).toISOString().slice(0, 16);
+  }
   if (status && !status.textContent) status.textContent = isLocalPreview ? "Preview only: use synthetic information. Nothing has been saved yet." : "Nothing has been saved yet. Measurements use your secure BHW check-in connection.";
   if (id === "profile-dialog") prepareProfileForm();
   dialog.showModal();
@@ -1145,15 +1149,15 @@ const submitVitals = createVitalsSubmitHandler({
   getProgramId: () => activeProgramId,
   getSessionToken: () => sessionStorage.getItem(SESSION_KEY),
   savePreview: (values) => {
-    interactionState.vitals = { ...values, recordedAt: new Date().toISOString() };
+    interactionState.vitals = { ...values, recordedAt: new Date(values.recordedAt || Date.now()).toISOString() };
     persistInteractionState();
     renderRecentSignals();
     return interactionState.updatedAt;
   },
-  onSaved: (values, savedAt, reviewConfirmed) => {
+  onSaved: (values, savedAt, reviewConfirmed, recordedAt) => {
     // Cloud readings remain ephemeral in this view; never persist them in
     // the preview browser store or send them to the operations queue.
-    interactionState.vitals = { ...values, recordedAt: savedAt };
+    interactionState.vitals = { ...values, recordedAt };
     vitalsCloudSave = { savedAt, reviewConfirmed };
     renderRecentSignals();
     reflectPersistence();

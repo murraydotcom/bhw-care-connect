@@ -163,13 +163,18 @@ clinician-review reference and routing metadata. A Health Core save with an
 unconfirmed review notice is labeled separately and can be retried with the
 same readings. Cloud readings are not written to browser storage.
 
-Health Core currently stores one check-in per program per day. The standalone
-form checks authenticated history and refuses to replace an existing same-day
-entry; use Daily check-in to add or update those readings. This history check
-is not an atomic merge and cannot resolve simultaneous submissions from
-different tabs. An atomic Health Core update contract is required before
-releasing concurrent standalone vital entry to real patients. This change does
-not enable patient-pilot switches, remove the maintenance gate, or deploy.
+Health Core keeps one daily record per program and appends timestamped readings
+without replacing the daily answers. The form asks when readings were taken;
+the record date uses the existing UTC date contract. Unchanged retries reuse a
+submission ID, while edited readings or measurement times get a new ID. Daily
+check-in also keeps its ID and submission time across unchanged retries.
+The bridge uses the authenticated Health Core `/check-ins/vitals` suffix, which
+fails closed on older backend releases. Release the companion Health Core
+atomic update contract before this portal change. Health Core retains up to
+100 reading entries per daily record and rejects further additions without
+discarding history. Each submission sends only its frozen review metadata to
+Operations under a separate retry-safe key. This change does not enable
+patient-pilot switches, remove the maintenance gate, or deploy.
 Validate with BHW0000 only. Do not connect this home to the legacy Notion-backed
 `checkin-save` function.
 

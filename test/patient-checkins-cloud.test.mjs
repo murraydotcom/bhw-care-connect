@@ -40,14 +40,14 @@ function sessionToken(overrides = {}) {
 const auth = (token = sessionToken()) => ({ Authorization: `Bearer ${token}` });
 
 test("standalone vitals go to the signed BHW0000 Health Core route; operations receives review metadata only", async () => {
-  const payload = vitalsCheckinPayload({ systolic: "124", diastolic: "82", pulse: "74", weight: "165.5", oxygen: "97", temperature: "98.6" }, "flow", "2026-08-30");
+  const payload = vitalsCheckinPayload({ systolic: "124", diastolic: "82", pulse: "74", weight: "165.5", oxygen: "97", temperature: "98.6" }, "flow", "2026-08-30", { submissionId: "synthetic-vitals-0001", recordedAt: "2026-08-30T12:00:00.000Z" });
   let clinicalRecord;
   let queued;
   const handler = createPatientCheckinsHandler({
     environment: ENV,
     now: () => NOW,
     fetchImpl: async (url, options) => {
-      assert.equal(url, "https://health-core.synthetic.test/v1/patient-portal/BHW0000/check-ins");
+      assert.equal(url, "https://health-core.synthetic.test/v1/patient-portal/BHW0000/check-ins/vitals");
       const token = options.headers.Authorization.replace(/^Bearer /, "");
       const [claims, signature] = token.split(".");
       assert.equal(signature, crypto.createHmac("sha256", PATIENT_SECRET).update(claims).digest("base64url"));
@@ -56,7 +56,7 @@ test("standalone vitals go to the signed BHW0000 Health Core route; operations r
       assert.equal(identity.role, "patient-portal");
       assert.equal(identity.exp - identity.iat, 60);
       clinicalRecord = JSON.parse(options.body);
-      return Response.json({ ok: true, savedAt: "2026-08-30T12:00:01.000Z", monitoring: {
+      return Response.json({ ok: true, savedAt: "2026-08-30T12:00:01.000Z", submissionId: payload.submissionId, recordedAt: payload.recordedAt, monitoring: {
         checkInId: "2026-08-30-flow", program: "flow", checkInDate: "2026-08-30", submittedAt: "2026-08-30T12:00:01.000Z",
         reviewPriority: "routine", signalCount: 0,
         // Even unexpected upstream clinical fields must not enter Operations.
@@ -72,13 +72,16 @@ test("standalone vitals go to the signed BHW0000 Health Core route; operations r
   assert.deepEqual(clinicalRecord.vitals, payload.vitals);
   assert.equal(clinicalRecord.program, "flow");
   assert.equal(clinicalRecord.patient, undefined);
+  assert.equal(clinicalRecord.well, undefined);
+  assert.equal(clinicalRecord.foods, undefined);
+  assert.equal(queued.submissionId, `care-connect-checkin:BHW0000:2026-08-30-flow:${payload.submissionId}`);
   assert.deepEqual(Object.keys(queued.body.sourceMetadata).sort(), ["reviewPriority", "signalCount", "sourcePage", "sourceRecordId"]);
   assert.equal(queued.body.sourceReference, "2026-08-30-flow");
   assert.equal(queued.body.notificationMode, "none");
   assert.equal(queued.body.routing.ownerRole, "provider");
   for (const key of ["vitals", "well", "nutrition", "symptoms", "foods", "medicationsTaken"]) assert.equal(queued.body[key], undefined);
   assert.doesNotMatch(JSON.stringify(queued), /124\/82|165\.5|98\.6|clinical narrative|Synthetic symptom/);
-  assert.deepEqual(await response.json(), { ok: true, savedAt: "2026-08-30T12:00:01.000Z", queueReference: "synthetic-vitals-review" });
+  assert.deepEqual(await response.json(), { ok: true, savedAt: "2026-08-30T12:00:01.000Z", queueReference: "synthetic-vitals-review", submissionId: payload.submissionId, recordedAt: payload.recordedAt, replayed: false });
 });
 
 test("standalone vitals cannot reach Health Core or operations with an expired or forged session", async () => {
@@ -94,6 +97,55 @@ test("standalone vitals cannot reach Health Core or operations with an expired o
     assert.equal(response.status, 401);
   }
   assert.equal(calls, 0);
+});
+
+test("older backend releases fail closed on the vitals suffix without queueing a review", async () => {
+  let queues = 0;
+  const handler = createPatientCheckinsHandler({ environment: ENV, now: () => NOW,
+    fetchImpl: async (url) => { assert.match(url, /check-ins\/vitals$/); return Response.json({ ok: false }, { status: 404 }); },
+    queueImpl: async () => { queues += 1; return {}; },
+  });
+  const payload = vitalsCheckinPayload({ pulse: "74" }, "primary-care", "2026-08-30", { submissionId: "synthetic-vitals-0001", recordedAt: new Date(NOW).toISOString() });
+  const response = await handler(new Request("https://care.synthetic.test/api/patient-portal/check-ins", {
+    method: "POST", headers: auth(), body: JSON.stringify({ ...payload, foods: ["Do not replace"], well: { feeling: "Do not replace" } }),
+  }));
+  assert.equal(response.status, 502);
+  assert.equal((await response.json()).saved, undefined);
+  assert.equal(queues, 0);
+});
+
+test("review retries keep a submission key; a new reading gets a distinct bounded key", async () => {
+  const queued = [];
+  const handler = createPatientCheckinsHandler({ environment: ENV, now: () => NOW,
+    fetchImpl: async (_url, options) => {
+      const body = JSON.parse(options.body);
+      return Response.json({ ok: true, savedAt: new Date(NOW).toISOString(), submissionId: body.submissionId, recordedAt: body.recordedAt,
+        monitoring: { checkInId: "2026-08-30-primary", program: "primary", checkInDate: "2026-08-30", submittedAt: new Date(NOW).toISOString() } });
+    },
+    queueImpl: async (input) => { queued.push(input); if (queued.length === 1) throw new Error("Synthetic queue outage"); return { patientRequest: { id: "synthetic-review" } }; },
+  });
+  const send = (submissionId) => handler(new Request("https://care.synthetic.test/api/patient-portal/check-ins", {
+    method: "POST", headers: auth(), body: JSON.stringify(vitalsCheckinPayload({ pulse: "74" }, "primary-care", "2026-08-30", { submissionId, recordedAt: new Date(NOW).toISOString() })),
+  }));
+  assert.equal((await (await send("synthetic-vitals-0001")).json()).saved, true);
+  assert.equal((await send("synthetic-vitals-0001")).status, 200);
+  assert.equal((await send("s".repeat(80))).status, 200);
+  assert.deepEqual(queued[0], queued[1]);
+  assert.notEqual(queued[1].submissionId, queued[2].submissionId);
+  assert.match(queued[2].submissionId, /^[A-Za-z0-9][A-Za-z0-9._:-]{7,127}$/);
+});
+
+test("lost upstream responses report an unconfirmed save and never queue a review", async () => {
+  for (const upstream of [async () => { throw new Error("Synthetic lost response"); }, async () => new Response("invalid JSON")]) {
+    let queues = 0;
+    const handler = createPatientCheckinsHandler({ environment: ENV, now: () => NOW, fetchImpl: upstream, queueImpl: async () => { queues += 1; } });
+    const response = await handler(new Request("https://care.synthetic.test/api/patient-portal/check-ins", {
+      method: "POST", headers: auth(), body: JSON.stringify({ program: "primary", date: "2026-08-30" }),
+    }));
+    assert.equal(response.status, 502);
+    assert.equal((await response.json()).saveUnconfirmed, true);
+    assert.equal(queues, 0);
+  }
 });
 
 test("check-in bridge forwards a normalized record without patient identity fields", async () => {
