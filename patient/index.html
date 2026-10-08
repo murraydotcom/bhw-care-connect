@@ -66,7 +66,7 @@
           </div>
         </div>
         <div class="portal-homebar-actions">
-          <a id="printable-blueprint-link" class="quiet-action" href="/bhw-patient-portal-mockup.html">Printable Blueprint</a>
+          <button id="printable-blueprint-link" class="quiet-action" type="button" data-print-blueprint disabled>Print released Blueprint</button>
           <a href="/bhw-care-card.html" class="portal-signout">Check-In &amp; medication help</a>
           <button id="signout-button" class="portal-signout" type="button">Sign out</button>
         </div>
@@ -151,6 +151,10 @@
             <button class="quick-action" type="button" data-open-dialog="summary-dialog"><span aria-hidden="true">03</span><strong>View my summary</strong><small>See priorities and next steps</small></button>
           </div>
         </header>
+
+        <div id="blueprint-release-status" class="blueprint-release-status" data-state="not-released" role="status" aria-live="polite">
+          <strong>Checking Blueprint release…</strong>
+        </div>
 
         <section class="atlas-programs" aria-labelledby="programs-title">
           <div class="atlas-programs-heading">
@@ -329,10 +333,11 @@
       <dialog id="summary-dialog" class="portal-dialog summary-dialog" aria-labelledby="summary-title">
         <div class="dialog-head"><div><p class="eyebrow">Your Health Blueprint</p><h2 id="summary-title">Your current care summary</h2></div><button class="dialog-close" type="button" data-close-dialog aria-label="Close summary">Close</button></div>
         <div id="plan"></div>
-        <div class="summary-actions"><a id="summary-printable-link" class="button" href="/bhw-patient-portal-mockup.html">Open printable Blueprint</a></div>
+        <div class="summary-actions"><button id="summary-printable-link" class="button" type="button" data-print-blueprint disabled>Print released Blueprint</button></div>
       </dialog>
     </section>
   </main>
+  <section id="released-blueprint-print" class="blueprint-print" aria-label="Printable released Health Blueprint"></section>
   <footer class="site-footer">BHW Medical Group · 2131 Maryland Ave, Baltimore, MD 21218 · 443.762.5343</footer>
   <script defer src="../assets/bhw-transparent-anatomy.js?v=4"></script>
   <script type="module" src="./app.mjs?v=vitals-checkin-bridge-2"></script>

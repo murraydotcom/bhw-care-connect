@@ -292,6 +292,29 @@ body.portal-open .topbar-inner { max-width: 1440px; }
 .lab-interpretation p { margin-top:6px; color:var(--muted); font-size:10px; line-height:1.6; }
 .lab-interpretation .insight-eyebrow { color:var(--blue-deep); }
 .lab-connection { padding-top:8px; border-top:1px solid var(--border); }
+.lab-panel { grid-column:1 / -1; padding:18px; border:1px solid var(--border); border-radius:18px; background:rgba(254,253,251,.72); }
+.lab-panel-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:18px; }
+.lab-panel-heading .eyebrow { margin-bottom:3px; }
+.lab-panel-heading h3 { font-size:20px; }
+.lab-panel-summary { max-width:850px; margin-top:7px; color:var(--muted); font-size:11px; }
+.lab-panel-results { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:11px; margin-top:14px; }
+
+.blueprint-release-status { position:relative; z-index:2; display:flex; align-items:center; justify-content:space-between; gap:20px; border-top:1px solid rgba(255,255,255,.09); border-bottom:1px solid rgba(255,255,255,.09); padding:10px 30px; color:rgba(247,243,234,.62); background:rgba(4,15,24,.35); font-size:9px; }
+.blueprint-release-status strong { color:#e7d7ad; font-size:9px; letter-spacing:.07em; text-transform:uppercase; }
+.blueprint-release-status[data-state="released"] strong { color:#bdd8dc; }
+.blueprint-release-metadata { display:flex; flex-wrap:wrap; gap:6px 14px; margin:12px 0 4px; color:var(--muted); font-size:9px; font-weight:720; letter-spacing:.06em; text-transform:uppercase; }
+.blueprint-detail-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:10px; margin-top:10px; }
+.blueprint-detail-card,.blueprint-stage,.blueprint-care-section { margin-top:10px; border:1px solid var(--border); border-radius:12px; padding:13px; background:var(--cream); }
+.blueprint-detail-card strong,.blueprint-care-section > strong { color:var(--ink-strong); font-size:12px; }
+.blueprint-detail-card p,.blueprint-care-section p,.blueprint-stage p,.blueprint-priority-list p { margin-top:5px; color:var(--muted); font-size:10px; line-height:1.55; }
+.blueprint-detail-note { padding-top:7px; border-top:1px solid var(--border); }
+.blueprint-priority-list { display:grid; gap:8px; padding-left:23px; }
+.blueprint-priority-list li { padding-left:4px; }
+.blueprint-stage-heading { display:flex; align-items:flex-start; justify-content:space-between; gap:14px; }
+.blueprint-stage .actions,.blueprint-care-section .actions { margin-bottom:0; }
+.blueprint-safety-note { margin-top:10px; border-left:3px solid var(--gold); padding:9px 11px; color:var(--muted); background:rgba(240,221,175,.24); font-size:10px; }
+.quiet-action[data-print-blueprint]:disabled,.button[data-print-blueprint]:disabled { cursor:not-allowed; opacity:.5; }
+.blueprint-print { display:none; }
 
 .portal-dialog { width: min(680px, calc(100% - 30px)); max-height: calc(100vh - 34px); overflow: auto; border: 1px solid rgba(43,58,64,.16); border-radius: 24px; padding: 28px; color: var(--ink); background: var(--porcelain); box-shadow: 0 35px 100px rgba(10,24,34,.35); }
 .portal-dialog::backdrop { background: rgba(7,19,29,.72); backdrop-filter: blur(6px); }
@@ -454,6 +477,8 @@ body.portal-open .topbar-inner { max-width: 1440px; }
   .blueprint-studio-foot { display: grid; padding-inline: 18px; }
   .program-ribbon { grid-template-columns: 1fr; }
   .lab-grid { grid-template-columns:1fr; }
+  .lab-panel-results,.blueprint-detail-grid { grid-template-columns:1fr; }
+  .blueprint-release-status { align-items:flex-start; flex-direction:column; gap:3px; padding-inline:18px; }
   .choice-grid { grid-template-columns: repeat(2,1fr); }
   .dialog-grid, .vitals-grid { grid-template-columns: 1fr; }
   .bp-field { grid-column: auto; }
@@ -473,6 +498,31 @@ body.portal-open .topbar-inner { max-width: 1440px; }
   .hero-copy h1 { font-size: 42px; }
   .anatomy-row { grid-template-columns: 1fr; gap: 8px; }
   .service-grid { grid-template-columns: 1fr; }
+}
+
+@media print {
+  @page { size:auto; margin:14mm; }
+  body { color:#1f292d; background:white; font-size:10pt; }
+  body > :not(.blueprint-print) { display:none !important; }
+  .blueprint-print { display:block !important; }
+  .blueprint-print h1 { font-size:25pt; }
+  .blueprint-print h2 { margin-top:22px; border-bottom:1px solid #b9b9b9; padding-bottom:5px; font-size:17pt; }
+  .blueprint-print h3 { margin-top:16px; font-size:12pt; }
+  .blueprint-print p,.blueprint-print li { line-height:1.45; }
+  .blueprint-print-heading { border-bottom:2px solid #223b47; padding-bottom:14px; }
+  .blueprint-print-heading > p:last-child { margin-top:6px; color:#4c5c62; }
+  .blueprint-print-patient { display:grid; grid-template-columns:max-content 1fr max-content 1fr; gap:4px 12px; margin:16px 0; }
+  .blueprint-print-patient dt { color:#4c5c62; font-weight:700; }
+  .blueprint-print-patient dd { margin:0; }
+  .blueprint-print-story { border-left:3px solid #967c3e; padding:8px 12px; background:#f7f2e6; }
+  .blueprint-print .blueprint-detail-grid { grid-template-columns:repeat(2,1fr); }
+  .blueprint-print .blueprint-detail-card,.blueprint-print .blueprint-stage,.blueprint-print .blueprint-care-section { break-inside:avoid; background:white; }
+  .blueprint-print-lab-panel { break-inside:avoid; }
+  .blueprint-print-result { display:grid; grid-template-columns:1.3fr .7fr 1.4fr; gap:8px; border-bottom:1px solid #ddd; padding:8px 0; }
+  .blueprint-print-result p { grid-column:1 / -1; margin-top:2px; color:#4c5c62; }
+  .blueprint-print-result small { color:#4c5c62; }
+  .blueprint-emergency-notice { margin-top:22px; border:2px solid #7d2e2e; padding:10px; color:#682525; font-weight:700; }
+  .blueprint-print-footer { margin-top:24px; border-top:1px solid #bbb; padding-top:8px; color:#5d666a; font-size:8pt; }
 }
 
 @media (prefers-reduced-motion: reduce) {

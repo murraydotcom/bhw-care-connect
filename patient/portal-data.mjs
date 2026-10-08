@@ -15,6 +15,116 @@ export function patientHref(path, id) {
   return `${url.pathname}${url.search}`;
 }
 
+function previewHealthBlueprint() {
+  return {
+    schemaVersion: "bhw.patient-health-blueprint.v1",
+    document: {
+      documentId: "SYN-PREVIEW-BLUEPRINT-0000",
+      title: "My Health Blueprint",
+      companionTitle: "My Integrated Lab Analysis",
+      version: 1,
+      generatedAt: "2026-09-20T15:00:00.000Z",
+      clinicalOwner: "BHW Health Core",
+      projectionTarget: "BHW Care Connect",
+    },
+    release: {
+      status: "patient-shared",
+      clinicalReviewStatus: "provider-approved",
+      patientShareAuthorized: true,
+      criticalSafetyClosed: true,
+      signedContentHash: "0".repeat(64),
+      notice: "Synthetic preview only. This is not a clinical record or patient instruction.",
+      requiredForPatientRelease: [],
+    },
+    patient: {
+      displayName: "Synthetic Patient",
+      preferredName: "Synthetic",
+      ageDisplay: "40 years",
+      collectionDate: "2026-09-18",
+      orderingClinician: "Synthetic Provider, CRNP",
+      mainConcern: "This synthetic example connects energy, blood pressure, movement, recovery, and cardiovascular follow-up.",
+      healthGoal: "Improve day-to-day energy and movement consistency.",
+    },
+    safety: {
+      emergencyNotice: "Call 911 or seek urgent care for severe chest pain, trouble breathing, fainting, new weakness, confusion, uncontrolled bleeding, or another emergency.",
+      medicationNotice: "Do not start, stop, or change a prescription based only on this page. Confirm medication changes with the prescribing clinician.",
+      supplementNotice: "Supplements can interact with prescriptions and health conditions. Use only the product and dose reviewed by your care team.",
+    },
+    overview: {
+      mainStory: "This synthetic Blueprint shows how Care Connect presents an exact provider-released plan. The example connects cardiovascular risk, kidney function, daily movement, and follow-up without treating one result in isolation.",
+      patientGoals: ["Improve day-to-day energy.", "Build a sustainable movement routine."],
+      whatMattersMost: [
+        {
+          level: "important",
+          title: "Review cardiovascular risk as a pattern",
+          summary: "Apolipoprotein B is interpreted alongside blood pressure, history, and the rest of the synthetic risk profile.",
+          whyItMatters: "A single result does not determine the treatment plan.",
+        },
+        {
+          level: "reassuring",
+          title: "Kidney filtration is stable in this example",
+          summary: "The synthetic eGFR supports the current blood-pressure and medication-safety review.",
+          whyItMatters: "Kidney function is reviewed with blood pressure, fluid balance, and medication choices.",
+        },
+      ],
+    },
+    healthBlueprint: {
+      topPriorities: [
+        { rank: 1, title: "Keep blood pressure in the shared target range", detail: "Use the clinician-reviewed home-reading technique and bring the trend to follow-up." },
+        { rank: 2, title: "Build movement gradually", detail: "Advance only after the current interval is tolerated within the shared symptom limit." },
+      ],
+      stagedPlan: [{
+        window: "This week",
+        status: "Foundation",
+        actions: ["Take medication as directed.", "Complete a 10-minute walk after lunch.", "Bring home readings to the next visit."],
+        whyNow: "This synthetic stage starts with a small number of measurable actions.",
+      }],
+      careSections: [{
+        title: "Movement and cardiovascular support",
+        goal: "Build a repeatable routine without exceeding the clinician-shared symptom limit.",
+        recommendations: ["Use the current 10-minute movement interval.", "Track tolerance and recovery."],
+        safety: "New or worsening chest pain, fainting, severe shortness of breath, or neurologic symptoms need prompt evaluation.",
+      }],
+      trackingPlan: [{ measure: "Home blood-pressure pattern", method: "Use the reviewed technique and record the trend.", cadence: "As documented", owner: "Patient and BHW care team" }],
+      repeatTesting: [{ test: "Provider-selected cardiovascular and kidney markers", why: "Review change over time.", when: "At the provider-approved interval", preparation: "Recommendation only; this Blueprint does not create a laboratory order." }],
+      onePageTakeaway: {
+        mainStory: "This synthetic Blueprint connects cardiovascular risk, kidney function, medication consistency, gradual movement, and follow-up.",
+        doNow: ["Take medication as directed.", "Complete a 10-minute walk after lunch.", "Bring home readings to the next visit."],
+        doNext: ["Review the blood-pressure and movement trends."],
+        keepDoing: ["Use the shared home-reading technique."],
+        followUp: "Review progress with the synthetic care team.",
+      },
+    },
+    labAnalysis: {
+      intro: "Synthetic provider-approved results and patient-facing explanations.",
+      panels: [{
+        id: "synthetic-cardiorenal",
+        title: "Cardiovascular and kidney pattern",
+        status: "Reviewed",
+        summary: "These synthetic results are considered together with blood pressure, medication safety, and the care plan.",
+        results: [
+          { observationId: "SYN-APOB", name: "Apolipoprotein B", value: "92", unit: "mg/dL", labRange: "Individualized by risk", status: "Monitor", trend: "Not separately documented in this synthetic release", meaning: "This synthetic result is followed as part of the overall atherogenic-particle and cardiovascular-risk pattern, not interpreted alone." },
+          { observationId: "SYN-EGFR", name: "Estimated GFR", value: "88", unit: "mL/min/1.73 m²", labRange: "Trend with clinical context", status: "Stable", trend: "Stable in this synthetic example", meaning: "This synthetic result is included because kidney filtration, fluid balance, blood pressure, and medication safety are reviewed together." },
+        ],
+      }],
+      patternCrossChecks: [],
+      bodyConnections: [],
+    },
+    followUp: {
+      monitor: ["Home blood-pressure pattern", "Movement tolerance"],
+      contactSooner: ["Contact the care team for new or worsening symptoms or difficulty tolerating the plan."],
+      careTeam: "BHW Medical Group",
+      contact: "Use the approved BHW Care Connect message or phone pathway.",
+      nextReview: "2026-10-20",
+    },
+    provenance: {
+      reviewedBy: "Synthetic Provider, CRNP",
+      reviewedAt: "2026-09-20T14:00:00.000Z",
+      legalRecordNotice: "Synthetic preview only. BHW Health Core retains the signed clinical artifact and auditable release record for real releases.",
+    },
+  };
+}
+
 export function previewDashboard() {
   return {
     schemaVersion: "bhw.patient-portal.v1",
@@ -219,6 +329,7 @@ export function previewDashboard() {
         },
       ],
     },
+    healthBlueprint: previewHealthBlueprint(),
     labs: [
       {
         id: "synthetic-apob",
