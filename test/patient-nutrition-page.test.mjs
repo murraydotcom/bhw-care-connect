@@ -19,7 +19,7 @@ test("authoritative Care Connect patient page includes the adaptive Nutrition In
     readFile(new URL("../patient/styles.css", import.meta.url), "utf8"),
     readFile(new URL("../patient/nutrition-preview-contract.mjs", import.meta.url), "utf8"),
   ]);
-  assert.match(html, /BHW Health Core \| Patient Care Space/);
+  assert.match(html, /<title>myBHW \| BHW Care Connect<\/title>/);
   assert.match(html, /id="nutrition-intelligence"/);
   assert.match(html, /Tell us what eating is really like for you/);
   assert.match(html, /Save and finish later/);

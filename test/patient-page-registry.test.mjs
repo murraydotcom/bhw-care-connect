@@ -33,7 +33,7 @@ test("registry contains the four approved programs and seven approved systems", 
   ]);
 });
 
-test("Health Core starts with the interactive living Blueprint", () => {
+test("myBHW starts with the interactive living Blueprint", () => {
   const source = readFileSync(new URL("../patient/index.html", import.meta.url), "utf8");
   const blueprint = source.indexOf('id="blueprint-title"');
   const checkin = source.indexOf("data-checkin-link", blueprint);
@@ -43,11 +43,11 @@ test("Health Core starts with the interactive living Blueprint", () => {
   assert.ok(blueprint > -1, "living Blueprint is missing");
   assert.ok(blueprint < checkin && checkin < programs && programs < systems, "the program lens, connected body map, and patient actions should lead the portal");
   assert.ok(vitals > blueprint && vitals < systems, "vital-sign entry should be available in the first Blueprint viewport");
-  assert.match(source, /<span>BHW Health Core<\/span><strong>Clinician-shared<\/strong>/);
+  assert.match(source, /<span>myBHW<\/span><strong>BHW Care Connect<\/strong>/);
   assert.match(source, /<p class="eyebrow">Glad to see you back<\/p>/);
-  assert.ok(source.indexOf("health-core-identity") < source.indexOf("Glad to see you back"), "Health Core identity should appear above the welcome greeting");
+  assert.ok(source.indexOf("health-core-identity") < source.indexOf("Glad to see you back"), "myBHW identity should appear above the welcome greeting");
   assert.match(source, /<h1><span id="preferred-name">Patient<\/span>\. Your medical story\. Your Health Blueprint\.<\/h1>/);
-  assert.match(source, /aria-label="Health Core sections"/);
+  assert.match(source, /aria-label="myBHW sections"/);
   assert.doesNotMatch(source, /evolving story|health story/i);
   assert.equal((source.match(/id="plan"/g) || []).length, 1, "the Health Blueprint summary should not be duplicated");
   assert.match(source, /Printable Blueprint/);
