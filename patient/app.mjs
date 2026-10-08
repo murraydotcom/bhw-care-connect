@@ -9,6 +9,11 @@ import {
   updateNutritionQuestionnaireVisibility,
 } from "./nutrition-questionnaire-v14.mjs?v=care-connect-2";
 import { NUTRITION_PREVIEW_CONTRACT } from "./nutrition-preview-contract.mjs?v=care-connect-2";
+import {
+  blueprintLabPanels,
+  blueprintPlanView,
+  releasedHealthBlueprint,
+} from "./health-blueprint-contract.mjs?v=care-connect-1";
 
 const auth = { mode: "email", sent: false, methodId: null };
 const PREVIEW_STATE_KEY = "bhw_patient_blueprint_preview_state_v2";
@@ -27,6 +32,7 @@ const CHECKIN_PROGRAM_IDS = {
 };
 const $ = (id) => document.getElementById(id);
 let currentDashboard = null;
+let currentPlan = null;
 let sharedSystems = [];
 let activeProgramId = null;
 let activeSystemId = null;
@@ -513,7 +519,101 @@ function empty(target, message) {
   target.replaceChildren(node("p", "empty", message));
 }
 
-function renderPlan(plan) {
+function appendBlueprintList(target, title, values) {
+  const items = (Array.isArray(values) ? values : []).filter(Boolean);
+  if (!items.length) return;
+  target.append(node("h3", "", title));
+  const list = node("ul", "actions");
+  items.forEach((value) => list.append(node("li", "", String(value))));
+  target.append(list);
+}
+
+function renderBlueprintDetails(target, healthBlueprint) {
+  const blueprint = releasedHealthBlueprint(healthBlueprint);
+  if (!blueprint) return;
+  const metadata = node("div", "blueprint-release-metadata");
+  const version = Number(blueprint.document?.version);
+  const reviewedAt = readableDate(blueprint.provenance?.reviewedAt || blueprint.document?.generatedAt);
+  [
+    Number.isFinite(version) ? `Version ${version}` : "",
+    blueprint.provenance?.reviewedBy ? `Reviewed by ${blueprint.provenance.reviewedBy}` : "",
+    reviewedAt ? `Released ${reviewedAt}` : "",
+  ].filter(Boolean).forEach((value) => metadata.append(node("span", "", value)));
+  target.append(metadata);
+
+  appendBlueprintList(target, "Your goals", blueprint.overview?.patientGoals);
+
+  const matters = Array.isArray(blueprint.overview?.whatMattersMost) ? blueprint.overview.whatMattersMost : [];
+  if (matters.length) {
+    target.append(node("h3", "", "What matters most"));
+    const grid = node("div", "blueprint-detail-grid");
+    matters.forEach((matter) => {
+      const item = node("article", "blueprint-detail-card");
+      item.append(node("strong", "", matter.title || "Finding reviewed with your care team"));
+      if (matter.summary) item.append(node("p", "", matter.summary));
+      if (matter.whyItMatters) item.append(node("p", "blueprint-detail-note", matter.whyItMatters));
+      grid.append(item);
+    });
+    target.append(grid);
+  }
+
+  const priorities = Array.isArray(blueprint.healthBlueprint?.topPriorities) ? blueprint.healthBlueprint.topPriorities : [];
+  if (priorities.length) {
+    target.append(node("h3", "", "First priorities"));
+    const list = node("ol", "blueprint-priority-list");
+    priorities.forEach((priority) => {
+      const item = node("li");
+      item.append(node("strong", "", priority.title || `Priority ${priority.rank || ""}`));
+      if (priority.detail && priority.detail !== priority.title) item.append(node("p", "", priority.detail));
+      list.append(item);
+    });
+    target.append(list);
+  }
+
+  const stages = Array.isArray(blueprint.healthBlueprint?.stagedPlan) ? blueprint.healthBlueprint.stagedPlan : [];
+  if (stages.length) {
+    target.append(node("h3", "", "Your staged plan"));
+    stages.forEach((stage) => {
+      const section = node("section", "blueprint-stage");
+      const heading = node("div", "blueprint-stage-heading");
+      heading.append(node("strong", "", stage.status || "Provider-approved stage"), node("span", "chip", stage.window || "Timing in your signed plan"));
+      section.append(heading);
+      appendBlueprintList(section, "Actions", stage.actions);
+      if (stage.whyNow) section.append(node("p", "blueprint-detail-note", stage.whyNow));
+      target.append(section);
+    });
+  }
+
+  const careSections = Array.isArray(blueprint.healthBlueprint?.careSections) ? blueprint.healthBlueprint.careSections : [];
+  if (careSections.length) {
+    target.append(node("h3", "", "Care plan"));
+    careSections.forEach((care) => {
+      const section = node("section", "blueprint-care-section");
+      section.append(node("strong", "", care.title || "Care-plan section"));
+      if (care.goal) section.append(node("p", "", care.goal));
+      appendBlueprintList(section, "Recommendations", care.recommendations);
+      if (care.safety) section.append(node("p", "blueprint-safety-note", care.safety));
+      target.append(section);
+    });
+  }
+
+  appendBlueprintList(
+    target,
+    "What to track",
+    (blueprint.healthBlueprint?.trackingPlan || []).map((item) => [item.measure, item.method].filter(Boolean).join(" — ")),
+  );
+  appendBlueprintList(
+    target,
+    "Repeat testing discussed",
+    (blueprint.healthBlueprint?.repeatTesting || []).map((item) => [item.test, item.when, item.preparation].filter(Boolean).join(" — ")),
+  );
+  appendBlueprintList(target, "Contact the care team sooner if", blueprint.followUp?.contactSooner);
+
+  const safety = [blueprint.safety?.medicationNotice, blueprint.safety?.supplementNotice].filter(Boolean);
+  safety.forEach((message) => target.append(node("p", "blueprint-safety-note", message)));
+}
+
+function renderPlan(plan, healthBlueprint = null) {
   const target = $("plan");
   target.replaceChildren();
   if (!plan) return empty(target, "Your care team has not shared a Health Blueprint yet.");
@@ -525,12 +625,13 @@ function renderPlan(plan) {
     plan.today.forEach((action) => list.append(node("li", "", action)));
     target.append(list);
   }
-  if (plan.priorities?.length) {
+  if (!releasedHealthBlueprint(healthBlueprint) && plan.priorities?.length) {
     target.append(node("h3", "", "First priorities"));
     const list = node("ul", "actions");
     plan.priorities.forEach((action) => list.append(node("li", "", action)));
     target.append(list);
   }
+  renderBlueprintDetails(target, healthBlueprint);
 }
 
 function renderTodayPath(plan) {
@@ -555,7 +656,7 @@ function renderTodayPath(plan) {
       selected.has(actionId) ? selected.delete(actionId) : selected.add(actionId);
       interactionState.completed = [...selected];
       persistInteractionState();
-      renderTodayPath(currentDashboard?.plan);
+      renderTodayPath(currentPlan);
     });
     target.append(button);
   });
@@ -634,36 +735,50 @@ function renderRequests(requests) {
   });
 }
 
-function renderLabs(labs) {
+function renderLabs(panels) {
   const target = $("labs");
   target.replaceChildren();
-  if (!labs?.length) return empty(target, "No individualized laboratory interpretation has been shared in this view yet.");
-  labs.forEach((lab) => {
-    const item = node("article", "lab-result");
-    const button = node("button", "lab-result-button");
-    button.type = "button";
-    button.setAttribute("aria-expanded", "false");
-    const heading = node("span", "lab-result-heading");
-    heading.append(node("strong", "", lab.name), node("span", "chip", formatStatus(lab.status)));
-    button.append(
-      heading,
-      node("span", "lab-result-value", `${lab.value}${lab.unit ? ` ${lab.unit}` : ""}`),
-      node("span", "lab-result-range", lab.referenceRange ? `Reference ${lab.referenceRange}` : "Patient-specific interpretation available"),
-    );
-    const interpretation = node("div", "lab-interpretation");
-    interpretation.hidden = true;
-    interpretation.append(
-      node("span", "insight-eyebrow", "From your completed Health Blueprint"),
-      node("p", "", lab.interpretation?.summary || "Your care team has not shared an individualized interpretation yet."),
-    );
-    if (lab.interpretation?.connection) interpretation.append(node("p", "lab-connection", lab.interpretation.connection));
-    button.addEventListener("click", () => {
-      const expanded = button.getAttribute("aria-expanded") === "true";
-      button.setAttribute("aria-expanded", String(!expanded));
-      interpretation.hidden = expanded;
+  if (!panels?.length) return empty(target, "No individualized laboratory interpretation has been shared in this view yet.");
+  panels.forEach((panel) => {
+    const panelElement = node("section", "lab-panel");
+    const panelHeading = node("header", "lab-panel-heading");
+    const panelTitle = node("div");
+    panelTitle.append(node("p", "eyebrow", panel.source === "released-health-blueprint" ? "Released Blueprint analysis" : "Clinician-shared result"));
+    panelTitle.append(node("h3", "", panel.title));
+    panelHeading.append(panelTitle, node("span", "chip", formatStatus(panel.status)));
+    panelElement.append(panelHeading);
+    if (panel.summary) panelElement.append(node("p", "lab-panel-summary", panel.summary));
+    const results = node("div", "lab-panel-results");
+    panel.results.forEach((lab) => {
+      const item = node("article", "lab-result");
+      const button = node("button", "lab-result-button");
+      button.type = "button";
+      button.setAttribute("aria-expanded", "false");
+      const heading = node("span", "lab-result-heading");
+      heading.append(node("strong", "", lab.name), node("span", "chip", formatStatus(lab.status)));
+      button.append(
+        heading,
+        node("span", "lab-result-value", `${lab.value}${lab.unit ? ` ${lab.unit}` : ""}`),
+        node("span", "lab-result-range", lab.labRange ? `Laboratory reference ${lab.labRange}` : "Patient-specific interpretation available"),
+      );
+      const interpretation = node("div", "lab-interpretation");
+      interpretation.hidden = true;
+      interpretation.append(
+        node("span", "insight-eyebrow", panel.source === "released-health-blueprint" ? "From your provider-approved Health Blueprint" : "From the earlier portal result view"),
+        node("p", "", lab.meaning || "Your care team has not shared an individualized interpretation yet."),
+      );
+      if (lab.trend) interpretation.append(node("p", "lab-connection", `Trend: ${lab.trend}`));
+      if (lab.connection) interpretation.append(node("p", "lab-connection", lab.connection));
+      button.addEventListener("click", () => {
+        const expanded = button.getAttribute("aria-expanded") === "true";
+        button.setAttribute("aria-expanded", String(!expanded));
+        interpretation.hidden = expanded;
+      });
+      item.append(button, interpretation);
+      results.append(item);
     });
-    item.append(button, interpretation);
-    target.append(item);
+    panelElement.append(results);
+    target.append(panelElement);
   });
 }
 
@@ -1103,21 +1218,108 @@ async function saveNutritionIntake(action) {
   }
 }
 
+function renderBlueprintRelease(healthBlueprint) {
+  const release = releasedHealthBlueprint(healthBlueprint);
+  const target = $("blueprint-release-status");
+  const printTarget = $("released-blueprint-print");
+  printTarget.replaceChildren();
+  document.querySelectorAll("[data-print-blueprint]").forEach((button) => {
+    button.disabled = !release;
+    button.setAttribute("aria-disabled", String(!release));
+    button.title = release ? "Print the exact provider-approved Blueprint shown in this care space" : "A provider-approved Blueprint has not been released to this care space yet";
+  });
+  target.replaceChildren();
+  target.dataset.state = release ? "released" : "not-released";
+  if (!release) {
+    target.append(
+      node("strong", "", "Released Blueprint not available"),
+      node("span", "", "This view may still show earlier clinician-shared portal information. Printing stays locked until Health Core supplies a provider-approved, safety-closed patient release."),
+    );
+    return;
+  }
+  const version = Number(release.document?.version);
+  target.append(
+    node("strong", "", isLocalPreview ? "Synthetic released-Blueprint preview" : "Provider-approved Blueprint released"),
+    node("span", "", [
+      Number.isFinite(version) ? `Version ${version}` : "",
+      release.provenance?.reviewedBy ? `reviewed by ${release.provenance.reviewedBy}` : "",
+      readableDate(release.provenance?.reviewedAt || release.document?.generatedAt),
+    ].filter(Boolean).join(" · ")),
+  );
+}
+
+function renderPrintableBlueprint(healthBlueprint) {
+  const blueprint = releasedHealthBlueprint(healthBlueprint);
+  if (!blueprint) return false;
+  const target = $("released-blueprint-print");
+  target.replaceChildren();
+  const heading = node("header", "blueprint-print-heading");
+  heading.append(
+    node("p", "eyebrow", "BHW Medical Group · myBHW"),
+    node("h1", "", blueprint.document?.title || "My Health Blueprint"),
+    node("p", "", blueprint.release?.notice || "Provider-approved patient release"),
+  );
+  const patient = node("dl", "blueprint-print-patient");
+  [
+    ["Patient", blueprint.patient?.displayName],
+    ["Age", blueprint.patient?.ageDisplay],
+    ["Laboratory collection", readableDate(blueprint.patient?.collectionDate)],
+    ["Ordering clinician", blueprint.patient?.orderingClinician],
+  ].filter(([, value]) => value).forEach(([label, value]) => {
+    patient.append(node("dt", "", label), node("dd", "", value));
+  });
+  target.append(heading, patient);
+  const summary = blueprint.healthBlueprint?.onePageTakeaway?.mainStory || blueprint.overview?.mainStory;
+  if (summary) target.append(node("p", "blueprint-print-story", summary));
+  renderBlueprintDetails(target, blueprint);
+
+  const panels = blueprintLabPanels(blueprint);
+  if (panels.length) {
+    target.append(node("h2", "", blueprint.document?.companionTitle || "My Integrated Lab Analysis"));
+    panels.forEach((panel) => {
+      const section = node("section", "blueprint-print-lab-panel");
+      section.append(node("h3", "", panel.title));
+      if (panel.summary) section.append(node("p", "", panel.summary));
+      panel.results.forEach((result) => {
+        const item = node("article", "blueprint-print-result");
+        item.append(
+          node("strong", "", result.name),
+          node("span", "", `${result.value}${result.unit ? ` ${result.unit}` : ""}`),
+          node("small", "", [result.status, result.labRange ? `Laboratory reference ${result.labRange}` : ""].filter(Boolean).join(" · ")),
+        );
+        if (result.meaning) item.append(node("p", "", result.meaning));
+        section.append(item);
+      });
+      target.append(section);
+    });
+  }
+  if (blueprint.safety?.emergencyNotice) target.append(node("p", "blueprint-emergency-notice", blueprint.safety.emergencyNotice));
+  target.append(node("footer", "blueprint-print-footer", blueprint.provenance?.legalRecordNotice || "BHW Health Core retains the signed clinical artifact and release record."));
+  return true;
+}
+
+function printReleasedBlueprint() {
+  const blueprint = releasedHealthBlueprint(currentDashboard?.healthBlueprint);
+  if (!renderPrintableBlueprint(blueprint)) return;
+  window.print();
+}
+
 function renderDashboard(dashboard) {
   currentDashboard = dashboard;
+  const healthBlueprint = releasedHealthBlueprint(dashboard.healthBlueprint);
+  currentPlan = blueprintPlanView(healthBlueprint, dashboard.plan);
   document.body.classList.add("portal-open");
   const firstName = patientFirstName(dashboard.patient);
   $("preferred-name").textContent = firstName || "Patient";
   const generated = new Date(dashboard.generatedAt);
   $("updated").textContent = Number.isNaN(generated.getTime()) ? "" : `Blueprint updated ${generated.toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}`;
-  $("printable-blueprint-link").href = patientHref("/bhw-patient-portal-mockup.html");
-  $("summary-printable-link").href = patientHref("/bhw-patient-portal-mockup.html");
   renderPatientProfile(dashboard.patient, dashboard.requests, dashboard.medications, dashboard.supplements);
+  renderBlueprintRelease(healthBlueprint);
   renderPrograms(dashboard);
   renderSystems(dashboard);
-  renderPlan(dashboard.plan);
-  renderTodayPath(dashboard.plan);
-  renderLabs(dashboard.labs);
+  renderPlan(currentPlan, healthBlueprint);
+  renderTodayPath(currentPlan);
+  renderLabs(blueprintLabPanels(healthBlueprint, dashboard.labs));
   renderMedications(dashboard.medications);
   renderRequests(dashboard.requests);
   reflectPersistence();
@@ -1267,6 +1469,7 @@ $("nutrition-questionnaire").addEventListener("click", (event) => {
 });
 $("nutrition-save-button").addEventListener("click", () => saveNutritionIntake("save-progress"));
 $("nutrition-submit-button").addEventListener("click", () => saveNutritionIntake("submit"));
+document.querySelectorAll("[data-print-blueprint]").forEach((button) => button.addEventListener("click", printReleasedBlueprint));
 document.querySelectorAll("[data-open-dialog]").forEach((button) => button.addEventListener("click", () => openDialog(button.dataset.openDialog)));
 document.querySelectorAll("[data-close-dialog]").forEach((button) => button.addEventListener("click", () => closeDialog(button)));
 document.addEventListener("keydown", (event) => {
