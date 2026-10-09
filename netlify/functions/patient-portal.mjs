@@ -26,6 +26,7 @@ function healthCoreBaseUrl(value) {
     const url = new URL(value);
     const local = ["localhost", "127.0.0.1"].includes(url.hostname);
     if (url.protocol !== "https:" && !(local && url.protocol === "http:")) return null;
+    if (url.username || url.password || url.search || url.hash || !['', '/'].includes(url.pathname)) return null;
     return url.href.replace(/\/$/, "");
   } catch {
     return null;
@@ -62,6 +63,8 @@ export function createPatientPortalHandler({
         `${baseUrl}/v1/patient-portal/${encodeURIComponent(session.bhwPatientId)}/dashboard`,
         {
           method: "GET",
+          redirect: 'error',
+          cache: 'no-store',
           headers: { Authorization: `Bearer ${upstreamToken}`, Accept: "application/json" },
           signal: AbortSignal.timeout(8000),
         },
