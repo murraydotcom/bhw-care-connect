@@ -95,6 +95,9 @@
           <div id="new-message-fields"><label for="message-subject">Subject</label><input id="message-subject" maxlength="120" required>
           <label for="message-topic">What is this about?</label><select id="message-topic"><option value="general">General question</option><option value="appointments">Appointments</option><option value="billing">Billing</option><option value="clinical">Nonurgent care question</option></select></div>
           <label for="message-body">Your message</label><textarea id="message-body" maxlength="4000" rows="5" required></textarea>
+          <label for="message-files">Attach files</label><input id="message-files" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.txt" aria-describedby="message-file-help" disabled>
+          <p id="message-file-help" class="fine">File attachments are currently unavailable.</p><p id="message-file-selection" class="fine" aria-live="polite"></p>
+          <button id="message-clear-files" type="button">Remove attached files</button>
           <label class="message-checkbox"><input id="message-nonurgent" type="checkbox" required> This is not an urgent concern. I understand I should call for concerns that need attention today.</label>
           <button id="message-send" class="button" type="submit">Send message</button>
         </form></div></div>

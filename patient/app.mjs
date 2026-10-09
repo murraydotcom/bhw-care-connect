@@ -1,4 +1,4 @@
-import { mountPatientMessages } from './messages.mjs?v=messaging-1';
+import { mountPatientMessages } from './messages.mjs?v=messaging-2';
 import { getProgramSystemContext, resolveProgramId, visiblePrograms, visibleSystems } from "./page-registry.mjs?v=interactive-atlas-1";
 import { SESSION_KEY, formatStatus, isLocalPreview, loadPortalDashboard, node, patientHref, previewDashboard } from "./portal-data.mjs?v=interactive-atlas-1";
 import {
