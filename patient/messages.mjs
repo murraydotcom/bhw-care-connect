@@ -2,7 +2,8 @@ import {createMessagesClient} from './messages-client.mjs?v=messaging-1';
 export function mountPatientMessages({root,getToken,isPreview=false,onExpired=()=>{}}) {
   const $=id=>root.querySelector('#'+id);
   const api=createMessagesClient({getToken});
-  let current=null,pending=null,nextBefore=null,rows=[],generation=0,active=true,loading=false,idleTimer=null,pollTimer=null;
+  let current=null,pending=null,nextBefore=null,rows=[],generation=0,active=true,loading=false,idleTimer=null,pollTimer=null,featureAvailable=false;
+  $('message-new').disabled=true;
   const status=text=>{$('message-status').textContent=text;};
   const node=(tag,text)=>{const e=document.createElement(tag);e.textContent=text;return e;};
   const clear=()=>{active=false;clearTimeout(idleTimer);clearInterval(pollTimer);generation++;current=pending=null;rows=[];$('conversation-title').textContent='Choose a conversation';$('conversation-list').replaceChildren();$('conversation-messages').replaceChildren();$('message-form').reset();$('message-form').hidden=true;};
@@ -33,6 +34,7 @@ export function mountPatientMessages({root,getToken,isPreview=false,onExpired=()
     try {
     const data=await api({query:more&&nextBefore?{before:nextBefore}:{}});
     if(version!==generation)return;
+    if(!featureAvailable){featureAvailable=true;$('message-new').disabled=false;scheduleExpiry();}
     rows=more?[...rows,...data.threads]:data.threads;nextBefore=data.nextBefore;
     if(data.preferences)$('message-badge-preference').checked=data.preferences.showUnreadBadge;
     renderList();status('Messages loaded. Synthetic BHW0000 only.');
@@ -67,17 +69,18 @@ export function mountPatientMessages({root,getToken,isPreview=false,onExpired=()
     catch(error){$('message-badge-preference').checked=!$('message-badge-preference').checked;fail(error);}
   };
   function scheduleExpiry(){
+    if(!active||!featureAvailable)return;
     clearTimeout(idleTimer);let expires=Date.now()+15*60*1000;
     try{const claims=JSON.parse(atob(getToken().split('.')[0].replace(/-/g,'+').replace(/_/g,'/')));expires=Math.min(expires,claims.exp);}catch{}
     idleTimer=setTimeout(()=>{clear();onExpired();},Math.max(0,expires-Date.now()));
   }
-  root.addEventListener('pointerdown',scheduleExpiry);root.addEventListener('keydown',scheduleExpiry);
+  document.addEventListener('pointerdown',scheduleExpiry);document.addEventListener('keydown',scheduleExpiry);
   window.addEventListener('pagehide',clear,{once:true});
   if(!isPreview){scheduleExpiry();pollTimer=setInterval(async()=>{
-    if(!active||pending||document.hidden||$('message-body').value)return;
+    if(!active||!featureAvailable||pending||document.hidden||$('message-body').value)return;
     try{await load();if(current){const latest=rows.find(r=>r.id===current.id);if(latest&&latest.revision!==current.revision)await open(current.id);}}catch(error){fail(error);}
   },30000);}
   if(isPreview){$('message-new').disabled=true;status('Messaging requires authenticated BHW0000 testing. This visual preview does not save messages.');}
   else void load().catch(fail);
-  return {clear:()=>{clear();root.removeEventListener('pointerdown',scheduleExpiry);root.removeEventListener('keydown',scheduleExpiry);}};
+  return {clear:()=>{clear();document.removeEventListener('pointerdown',scheduleExpiry);document.removeEventListener('keydown',scheduleExpiry);}};
 }
