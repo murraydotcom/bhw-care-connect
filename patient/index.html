@@ -79,9 +79,30 @@
         <a href="#lab-results">Results</a>
         <a href="#medication-requests">Medications</a>
         <a href="#care-team-updates">Care updates</a>
+        <a href="#patient-messages">Messages</a>
       </nav>
 
       <div class="notice portal-notice">Your Health Blueprint contains medical guidance shared by your BHW clinician. If your symptoms or circumstances change, contact BHW before changing your care plan. For urgent symptoms, call 911. For a mental health crisis, call or text 988.</div>
+
+      <section id="patient-messages" class="card messaging-space" aria-labelledby="messages-title">
+        <header><p class="eyebrow">Your care team</p><h2 id="messages-title">Messages</h2><p>Ask a nonurgent question or continue a conversation with BHW.</p></header>
+        <p class="notice">Messages are not monitored continuously. For an emergency, call 911. For a concern that needs attention today, call <a href="tel:+14437625343">443.762.5343</a>. Sending a message does not book an appointment or change a prescription.</p>
+        <div class="message-actions"><button id="message-new" class="button" type="button">New message</button><button id="messages-refresh" type="button">Refresh inbox</button></div>
+        <p id="message-status" role="status" aria-live="polite"></p>
+        <div class="messaging-columns"><div><h3>Inbox</h3><div id="conversation-list"></div><button id="messages-more" type="button" hidden>Older conversations</button></div>
+        <div><h3 id="conversation-title">Choose a conversation</h3><div id="conversation-messages" aria-label="Conversation"></div>
+        <form id="message-form" hidden>
+          <div id="new-message-fields"><label for="message-subject">Subject</label><input id="message-subject" maxlength="120" required>
+          <label for="message-topic">What is this about?</label><select id="message-topic"><option value="general">General question</option><option value="appointments">Appointments</option><option value="billing">Billing</option><option value="clinical">Nonurgent care question</option></select></div>
+          <label for="message-body">Your message</label><textarea id="message-body" maxlength="4000" rows="5" required></textarea>
+          <label for="message-files">Attach files</label><input id="message-files" type="file" multiple accept=".pdf,.png,.jpg,.jpeg,.txt" aria-describedby="message-file-help" disabled>
+          <p id="message-file-help" class="fine">File attachments are currently unavailable.</p><p id="message-file-selection" class="fine" aria-live="polite"></p>
+          <button id="message-clear-files" type="button">Remove attached files</button>
+          <label class="message-checkbox"><input id="message-nonurgent" type="checkbox" required> This is not an urgent concern. I understand I should call for concerns that need attention today.</label>
+          <button id="message-send" class="button" type="submit">Send message</button>
+        </form></div></div>
+        <label class="message-checkbox"><input id="message-badge-preference" type="checkbox" checked> Show unread counts in my inbox</label><p class="fine">Replies appear here. Email and text alerts are disabled during synthetic testing. Message drafts stay in this page and clear when you sign out.</p>
+      </section>
 
       <section id="health-profile" class="patient-profile" aria-labelledby="health-profile-title">
         <header class="patient-profile-head">
