@@ -1,3 +1,4 @@
+import { mountPatientMessages } from './messages.mjs?v=messaging-1';
 import { getProgramSystemContext, resolveProgramId, visiblePrograms, visibleSystems } from "./page-registry.mjs?v=interactive-atlas-1";
 import { SESSION_KEY, formatStatus, isLocalPreview, loadPortalDashboard, node, patientHref, previewDashboard } from "./portal-data.mjs?v=interactive-atlas-1";
 import {
@@ -26,6 +27,7 @@ const PROGRAM_MARKS = {
   flow: "/assets/brand/flow.png",
 };
 const $ = (id) => document.getElementById(id);
+let messagingView = null;
 let currentDashboard = null;
 let currentPlan = null;
 let sharedSystems = [];
@@ -1327,6 +1329,9 @@ function renderDashboard(dashboard) {
   $("login-view").hidden = true;
   $("dashboard-view").hidden = false;
   void loadNutritionIntake();
+  messagingView?.clear();
+  messagingView = mountPatientMessages({ root:$('patient-messages'), getToken:()=>sessionStorage.getItem(SESSION_KEY), isPreview:isLocalPreview,
+    onExpired:()=>{ sessionStorage.removeItem(SESSION_KEY); $('dashboard-view').hidden=true; $('login-view').hidden=false; } });
 }
 
 function openDialog(id) {
@@ -1435,6 +1440,7 @@ function toggleMode() {
 }
 
 function signOut() {
+  messagingView?.clear();
   sessionStorage.removeItem(SESSION_KEY);
   location.reload();
 }

@@ -1631,3 +1631,16 @@ body.portal-open .shell {
   .nutrition-form-actions .button,
   .nutrition-form-actions .quiet-action { width: 100%; justify-content: center; }
 }
+
+.messaging-space { margin: 2rem 0; scroll-margin-top: 6rem; }
+.messaging-columns { display:grid; grid-template-columns:minmax(12rem,1fr) minmax(0,2fr); gap:1.5rem; }
+.message-actions { display:flex; flex-wrap:wrap; gap:0.75rem; }
+.message-thread-button { display:block; width:100%; text-align:left; padding:0.8rem; margin:0.5rem 0; }
+.portal-message { padding:1rem; margin:0.75rem 0; background:#f2eee7; border-radius:0.75rem; }
+.portal-message.patient { background:#edf3f1; }
+.portal-message small { display:block; margin:0.4rem 0; }
+.portal-message p { white-space:pre-wrap; overflow-wrap:anywhere; }
+#message-form label { display:block; margin:0.7rem 0; }
+#message-form input:not([type=checkbox]), #message-form select, #message-form textarea { width:100%; }
+.message-checkbox input { width:auto; }
+@media(max-width:700px){ .messaging-columns { grid-template-columns:1fr; } }

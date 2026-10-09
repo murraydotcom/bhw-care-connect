@@ -1,0 +1,13 @@
+# Care Connect Messages — BHW0000 candidate
+
+The authenticated `/patient/` dashboard has a separate Messages section. Patients can compose a nonurgent message, browse conversation history/status, read staff replies and reply within a thread. It uses `/api/patient-portal/messages` independently of check-ins or medication requests. The existing patient-session contract and Health Core token exchange provide identity; no body/query field selects another patient. Real-patient messaging is hard-disabled.
+
+Dependent Health Core PR adds the authoritative synthetic messaging service and clinical/privacy review packet at `docs/portal-messaging-synthetic-review.md`. Dependent CrewOS PR adds the staff operational inbox. Deploying this interface alone cannot enable messages. No deployment is performed in this PR.
+
+All defaults are off. A separately approved private BHW0000 target needs `SYNTHETIC_PORTAL_MESSAGING_ENABLED=true` here and in the backend, plus the existing `SESSION_SECRET`, `CARE_CONNECT_PATIENT_TOKEN_SECRET`, and HTTPS `HEALTH_CORE_API_URL`. Do not enable real patient access or external notifications. Visual preview shows the messaging area but cannot save or simulate an authoritative message.
+
+Subjects/messages are literal text, never injected HTML. Drafts and retry payloads exist only in memory. Unconfirmed writes retry the same command ID/payload; changing draft content is locked until confirmation. After a reload, inspect the inbox before composing an unconfirmed message again. Existing-session expiry and 15-minute messaging inactivity clear the view and drafts; server authorization always governs access. Thirty-second polling pauses for hidden pages and unsent drafts. An unread-display preference affects inbox badges only; email/SMS delivery remains disabled.
+
+Persistent urgent-concern copy and a required nonurgent acknowledgment explain that messages are not continuously monitored, urgent/same-day concerns require calling, and sending a message neither books a visit nor changes a prescription. Read status means opened, not reviewed. Clinical record capture remains a provider workflow in Health Core/CrewHQ; the portal does not sign chart entries.
+
+Validation: selected portal regression suite 43/43 passing, including four messaging bridge/client tests. A local integrated HTTP journey with all three actual handlers passes both directions, staff initiation, retries and denied unauthorized access. The backing database was a transaction double. Browser acceptance is pending because the local browser executable is unavailable; full build/CI and private desktop/mobile/keyboard/draft/retry/session-expiry acceptance are required. No production settings changed.
