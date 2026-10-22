@@ -1,5 +1,6 @@
 import { mountPatientMessages } from './messages.mjs?v=messaging-2';
 import { returnedLabPanels, renderVisitSummaries } from './visit-handoffs.mjs?v=handoffs-1';
+import { renderBlueprintTasks } from './blueprint-tasks.mjs';
 import { getProgramSystemContext, resolveProgramId, visiblePrograms, visibleSystems } from "./page-registry.mjs?v=interactive-atlas-1";
 import { SESSION_KEY, formatStatus, isLocalPreview, loadPortalDashboard, node, patientHref, previewDashboard } from "./portal-data.mjs?v=interactive-atlas-1";
 import {
@@ -1326,6 +1327,7 @@ function renderDashboard(dashboard) {
   renderTodayPath(currentPlan);
   renderLabs([...returnedLabPanels(dashboard.labReports), ...blueprintLabPanels(healthBlueprint, dashboard.labs)]);
   renderVisitSummaries($('visit-summaries'), dashboard.visitSummaries);
+  renderBlueprintTasks($('blueprint-tasks'), dashboard.blueprintTasks);
   renderMedications(dashboard.medications);
   renderRequests(dashboard.requests);
   reflectPersistence();
