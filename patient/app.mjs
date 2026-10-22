@@ -1,4 +1,5 @@
 import { mountPatientMessages } from './messages.mjs?v=messaging-2';
+import { returnedLabPanels, renderVisitSummaries } from './visit-handoffs.mjs?v=handoffs-1';
 import { getProgramSystemContext, resolveProgramId, visiblePrograms, visibleSystems } from "./page-registry.mjs?v=interactive-atlas-1";
 import { SESSION_KEY, formatStatus, isLocalPreview, loadPortalDashboard, node, patientHref, previewDashboard } from "./portal-data.mjs?v=interactive-atlas-1";
 import {
@@ -715,6 +716,7 @@ function renderMedications(medications) {
     head.append(node("h3", "", medication.name), node("span", "chip", formatStatus(medication.clinicalStatus)));
     item.append(head);
     if (medication.instructions) item.append(node("p", "", medication.instructions));
+    if (medication.reportedUse) item.append(node('p', '', `Provider-verified reported use: ${medication.reportedUse}`));
     if (medication.request) {
       const request = node("div", "request");
       request.append(node("strong", "", formatStatus(medication.request.status)), node("p", "", medication.request.message));
@@ -746,7 +748,7 @@ function renderLabs(panels) {
     const panelElement = node("section", "lab-panel");
     const panelHeading = node("header", "lab-panel-heading");
     const panelTitle = node("div");
-    panelTitle.append(node("p", "eyebrow", panel.source === "released-health-blueprint" ? "Released Blueprint analysis" : "Clinician-shared result"));
+    panelTitle.append(node("p", "eyebrow", panel.source === 'returned-laboratory-report' ? 'Returned laboratory result' : panel.source === "released-health-blueprint" ? "Released Blueprint analysis" : "Clinician-shared result"));
     panelTitle.append(node("h3", "", panel.title));
     panelHeading.append(panelTitle, node("span", "chip", formatStatus(panel.status)));
     panelElement.append(panelHeading);
@@ -767,7 +769,7 @@ function renderLabs(panels) {
       const interpretation = node("div", "lab-interpretation");
       interpretation.hidden = true;
       interpretation.append(
-        node("span", "insight-eyebrow", panel.source === "released-health-blueprint" ? "From your provider-approved Health Blueprint" : "From the earlier portal result view"),
+        node("span", "insight-eyebrow", panel.source === 'returned-laboratory-report' ? 'Result and provider review status' : panel.source === "released-health-blueprint" ? "From your provider-approved Health Blueprint" : "From the earlier portal result view"),
         node("p", "", lab.meaning || "Your care team has not shared an individualized interpretation yet."),
       );
       if (lab.trend) interpretation.append(node("p", "lab-connection", `Trend: ${lab.trend}`));
@@ -1322,7 +1324,8 @@ function renderDashboard(dashboard) {
   renderSystems(dashboard);
   renderPlan(currentPlan, healthBlueprint);
   renderTodayPath(currentPlan);
-  renderLabs(blueprintLabPanels(healthBlueprint, dashboard.labs));
+  renderLabs([...returnedLabPanels(dashboard.labReports), ...blueprintLabPanels(healthBlueprint, dashboard.labs)]);
+  renderVisitSummaries($('visit-summaries'), dashboard.visitSummaries);
   renderMedications(dashboard.medications);
   renderRequests(dashboard.requests);
   reflectPersistence();
