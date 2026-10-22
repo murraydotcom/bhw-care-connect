@@ -50,6 +50,11 @@
   to = "/.netlify/functions/patient-profile"
   status = 200
 
+[[redirects]]
+  from = "/api/patient-portal/messages"
+  to = "/.netlify/functions/patient-messages"
+  status = 200
+
 [[headers]]
   for = "/*"
   [headers.values]
