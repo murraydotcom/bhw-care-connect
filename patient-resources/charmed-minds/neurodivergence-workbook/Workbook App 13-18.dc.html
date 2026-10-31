@@ -55,8 +55,11 @@ textarea::placeholder{color:rgba(254,252,247,.32)}
 </div>
 <div style="flex:1"></div>
 <div style="display:flex;flex-direction:column;gap:10px">
+<aside role="note" aria-labelledby="workbook-privacy-title" style="border-radius:16px;border:1px solid rgba(240,168,40,.42);background:rgba(240,168,40,.10);padding:14px 16px;color:rgba(254,252,247,.88)">
+<div id="workbook-privacy-title" style="font:600 10px/1 var(--font-body,'Instrument Sans',sans-serif);letter-spacing:.16em;color:var(--gold-500,#f0a828);margin:0 0 8px;text-transform:uppercase">Before you begin</div>
+<div style="font:400 12px/1.55 var(--font-body,'Instrument Sans',sans-serif)">Your responses are stored in this browser on this device. This workbook does not send answers to BHW automatically. Another person who uses this browser may be able to see them. To remove them, open this age version and choose <strong>Clear all answers</strong>. Repeat for any other age version you used.</div>
+</aside>
 <button onClick="{{ startApp }}" style="min-height:52px;border-radius:999px;border:0;background:var(--gold-500,#f0a828);color:#04122d;font:600 12px/1 var(--font-body,'Instrument Sans',sans-serif);letter-spacing:.14em;text-transform:uppercase;cursor:pointer;box-shadow:0 0 30px rgba(240,168,40,.3)" style-hover="background:#f7b843">Begin</button>
-<div style="font:400 12px/1.5 var(--font-body,'Instrument Sans',sans-serif);color:rgba(254,252,247,.45);text-align:center">Answers stay on this device. Nothing is sent anywhere.</div>
 </div>
 </div>
 </sc-if>
@@ -497,7 +500,7 @@ class Component extends DCLogic {
       setDay: e => this.set('__remDay', e.target.value),
       setTime: e => this.set('__remTime', e.target.value),
       doPrint: () => window.print(),
-      doClear: () => { if (confirm('Clear every answer on this device?')) { try { localStorage.removeItem(this.key); } catch (e) {} this.setState({ answers: {} }); } },
+      doClear: () => { if (confirm('Clear every answer for this age version from this device?')) { try { localStorage.removeItem(this.key); } catch (e) {} this.setState({ answers: {} }); } },
       saveNote: this.state.saveNote
     };
   }

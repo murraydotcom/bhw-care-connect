@@ -17,7 +17,12 @@ test("CharmEd Minds myBHW page links the reviewed workbook resource", () => {
   const page = readFileSync(new URL("../pages/bhw-charmed-patient-mockup.html", import.meta.url), "utf8");
   assert.match(page, /id="neurodivergence-workbook-title"/);
   assert.match(page, /\/patient-resources\/charmed-minds\/neurodivergence-workbook\//);
-  assert.match(page, /Answers save only in this browser/);
+  assert.match(page, /responses are stored in this browser on this device/i);
+  assert.match(page, /does not send answers to BHW automatically/i);
+  assert.match(page, /Another person who uses this browser may be able to see them/i);
+  assert.match(page, /Clear all answers/);
+  assert.match(page, /role="note" aria-labelledby="workbook-entry-privacy-title"/);
+  assert.ok(page.indexOf("workbook-entry-privacy-title") < page.indexOf("Open workbook"));
   assert.match(page, /@media\(max-width:720px\)\{\.workbook-resource\{grid-template-columns:1fr/);
 });
 
@@ -33,11 +38,19 @@ test("Care Connect build publishes the complete multi-file workbook bundle", () 
 test("workbook preserves age routing, device-only autosave, and PDF printing", () => {
   const index = readFileSync(new URL("index.html", resource), "utf8");
   for (const file of ageFiles) assert.match(index, new RegExp(file.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")));
+  assert.match(index, /role="note"/);
+  assert.match(index, /Another person who uses this browser may be able to see them/);
+  assert.ok(index.indexOf('role="note"') < index.indexOf('<div style="display:grid'));
   for (const file of ageFiles) {
     const page = readFileSync(new URL(file, resource), "utf8");
     assert.match(page, /localStorage\.setItem/);
     assert.match(page, /doPrint: \(\) => window\.print\(\)/);
-    assert.match(page, /Clear every answer on this device/);
+    assert.match(page, /role="note" aria-labelledby="workbook-privacy-title"/);
+    assert.match(page, /stored in this browser on this device/);
+    assert.match(page, /does not send answers to BHW automatically/);
+    assert.match(page, /Another person who uses this browser may be able to see them/);
+    assert.match(page, /Clear every answer for this age version from this device/);
+    assert.ok(page.indexOf('role="note"') < page.indexOf('>Begin<'));
   }
   const printable = readFileSync(new URL("Neurodivergence Self-Reflection Workbook.dc.html", resource), "utf8");
   assert.match(printable, /Print \/ Save PDF/);
