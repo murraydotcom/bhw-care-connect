@@ -35,7 +35,11 @@ a:hover{color:var(--gold-500,#f0a828)}
 <div style="font:600 10px/1 var(--font-body,'Instrument Sans',sans-serif);letter-spacing:.22em;color:var(--teal-400,#4cc2c9);text-transform:uppercase">CharmEd Minds · BHW Medical Group</div>
 <h1 style="font:200 clamp(30px,5vw,46px)/1.1 var(--font-display,'Sora',sans-serif);letter-spacing:-.03em;color:#fefcf7;margin:16px 0 14px;text-wrap:pretty">Self-reflection workbook, by age.</h1>
 <p style="max-width:56ch;font:400 16px/1.62 var(--font-body,'Instrument Sans',sans-serif);color:rgba(254,252,247,.72);margin:0 0 12px;text-wrap:pretty">Seven versions of the same workbook. The questions, the reading level, the rating scales, and which pages appear all change with the band. Under 6, a parent or guardian answers as an interview about their child.</p>
-<p style="max-width:56ch;font:400 15px/1.6 var(--font-body,'Instrument Sans',sans-serif);color:rgba(254,252,247,.55);margin:0 0 34px">Each version saves separately on the device, and none of them expects to be finished in one sitting.</p>
+<p style="max-width:56ch;font:400 15px/1.6 var(--font-body,'Instrument Sans',sans-serif);color:rgba(254,252,247,.55);margin:0 0 20px">Each version saves separately on the device, and none of them expects to be finished in one sitting.</p>
+<aside role="note" aria-labelledby="workbook-privacy-title" style="max-width:760px;border-radius:18px;border:1px solid rgba(240,168,40,.42);background:rgba(240,168,40,.10);padding:17px 19px;margin:0 0 28px;color:rgba(254,252,247,.86)">
+<div id="workbook-privacy-title" style="font:600 10px/1 var(--font-body,'Instrument Sans',sans-serif);letter-spacing:.16em;color:var(--gold-500,#f0a828);margin:0 0 9px;text-transform:uppercase">Privacy on shared devices</div>
+<div style="font:400 14px/1.6 var(--font-body,'Instrument Sans',sans-serif)">Your responses are stored in this browser on this device. This workbook does not send answers to BHW automatically. Another person who uses this browser may be able to see them. In each age version, choose <strong>Clear all answers</strong> to remove that version&rsquo;s saved responses. Repeat for any other age version you used.</div>
+</aside>
 
 <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(248px,1fr));gap:14px">
 <sc-for list="{{ bands }}" as="b" hint-placeholder-count="7">
