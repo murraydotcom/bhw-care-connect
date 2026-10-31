@@ -49,4 +49,12 @@ for (const dir of ['fonts', 'hm-assets']) {
   }
 }
 
-console.log(`build-merge: copied ${copied} legacy patient page(s) + secure patient portal + assets + dashboard support folders into app/dist`)
+// 5) Patient resource bundles → dist/patient-resources. These may contain
+//    several HTML, JavaScript, and design-system files that must remain
+//    together (for example, the CharmEd Minds age-banded workbook).
+const patientResourcesSrc = new URL('./patient-resources/', base)
+if (existsSync(fileURLToPath(patientResourcesSrc))) {
+  cpSync(patientResourcesSrc, new URL('./patient-resources/', dist), { recursive: true })
+}
+
+console.log(`build-merge: copied ${copied} legacy patient page(s) + secure patient portal + patient resources + assets + dashboard support folders into app/dist`)

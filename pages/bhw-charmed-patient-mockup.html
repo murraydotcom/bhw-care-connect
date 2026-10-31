@@ -606,8 +606,10 @@ h1,h2,h3,h4,h5{margin:0; color:var(--fg-strong); text-wrap:balance;}
   /* PORTAL */
   .h-banner{padding:32px 0; background:var(--bg-warm); border-bottom:1px solid var(--border);}
   .h-banner .container{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:18px;}
+  .workbook-resource{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:24px;align-items:center;background:linear-gradient(135deg,#0B1228,#114766);color:#fff;border:1px solid rgba(44,167,166,.32);border-radius:18px;padding:26px 28px;box-shadow:var(--shadow-md);}
   .portal{display:grid; grid-template-columns:1.3fr 1fr; gap:18px; margin:36px 0 80px;}
   @media(max-width:1000px){.portal{grid-template-columns:1fr;}}
+  @media(max-width:720px){.workbook-resource{grid-template-columns:1fr;padding:22px}.workbook-resource .btn{width:100%;justify-content:center}}
   .panel{background:#fff; border:1px solid var(--border); border-radius:14px; padding:24px;}
   .panel h3{font-size:16px; font-weight:600; color:#0B1228;}
 
@@ -904,6 +906,17 @@ document.addEventListener('DOMContentLoaded',function(){
     </div>
   </section>
 
+  <section class="container" aria-labelledby="neurodivergence-workbook-title" style="padding-top:28px;">
+    <div class="workbook-resource">
+      <div>
+        <p class="eyebrow" style="color:#5bd0cf;margin:0 0 8px;">CharmEd Minds resource</p>
+        <h2 id="neurodivergence-workbook-title" style="color:#fff;font-size:clamp(23px,3vw,32px);font-weight:400;letter-spacing:-.02em;">Neurodivergence Self-Reflection Workbook</h2>
+        <p style="max-width:760px;margin:10px 0 0;color:rgba(255,255,255,.78);font-size:14px;line-height:1.65;">Choose the version for your age group, complete one page at a time, and export a PDF when you are ready to share. Answers save only in this browser, so use a private device and clear them when you are finished.</p>
+      </div>
+      <a class="btn btn--accent" href="/patient-resources/charmed-minds/neurodivergence-workbook/" style="background:#F2B134;color:#0B1228;justify-content:center;">Open workbook →</a>
+    </div>
+  </section>
+
   <div class="container">
     <div class="portal">
       <!-- LEFT -->
@@ -1057,7 +1070,7 @@ document.addEventListener('DOMContentLoaded',function(){
       <div class="bhw-footer__groups">
         <div><h5>Services</h5><ul><li><a href="#">Bright Insights™</a></li><li><a href="#">Brain Health &amp; Cognition Coaching</a></li><li><a href="#">Family work</a></li></ul></div>
         <div><h5>For families</h5><ul><li><a href="#">Online program</a></li><li><a href="#">In-clinic visits</a></li><li><a href="#">School advocacy</a></li></ul></div>
-        <div><h5>Resources</h5><ul><li><a href="#">Parent library</a></li><li><a href="#">Tool stack</a></li></ul></div>
+        <div><h5>Resources</h5><ul><li><a href="/patient-resources/charmed-minds/neurodivergence-workbook/">Neurodivergence workbook</a></li><li><a href="#">Tool stack</a></li></ul></div>
         <div><h5>Family</h5><ul><li><a href="index.html">All brands</a></li><li><a href="bhw-medical.html">BHW Medical</a></li></ul></div>
       </div>
     </div>
