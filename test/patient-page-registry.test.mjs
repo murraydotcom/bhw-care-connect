@@ -77,6 +77,7 @@ test("the main portal shares patient profile details and routes to the full life
   }
   assert.match(source, /Nutrition plan · food and barcode scan · water · movement · sleep/);
   assert.match(controller, /CHECKIN_PROGRAM_IDS/);
+  assert.match(controller, /patientHref\("\/patient\/program\/", program\.id\)/);
   assert.match(controller, /renderPatientProfile/);
   assert.match(controller, /submitProfileChanges/);
   assert.match(controller, /Saved to BHW Cloud/);
@@ -101,6 +102,15 @@ test("the main portal shares patient profile details and routes to the full life
   assert.match(checkin, /Clinician-shared nutrition targets/);
   assert.doesNotMatch(checkin, /Rosuvastatin|Icosapent|Connected ✓|sync automatically/);
   assert.doesNotMatch(checkin, /checkin-save|checkin-history|portal-message|Jordan Rivera|940-637-5470/);
+});
+
+test("secure enrolled-program pages expose their matching Health Core check-in", () => {
+  const detail = readFileSync(new URL("../patient/detail-app.mjs", import.meta.url), "utf8");
+  assert.match(detail, /CHECKIN_PROGRAM_IDS/);
+  assert.match(detail, /programCheckinHref/);
+  assert.match(detail, /Your program tools/);
+  assert.match(detail, /Open secure check-in/);
+  assert.match(detail, /does not send or save anything/);
 });
 
 test("preview interactions persist only synthetic local state and fail closed for cloud writes", () => {
