@@ -837,7 +837,7 @@ function renderPrograms(dashboard) {
     selector.append(mark, copy, node("span", "program-lens-copy", "Use this lens"));
     selector.addEventListener("click", () => selectProgram(program.id));
     const link = node("a", "program-page-link", "Open full program page →");
-    link.href = patientHref(program.patientHref || program.href);
+    link.href = patientHref("/patient/program/", program.id);
     link.setAttribute("aria-label", `Open the full ${program.name} page`);
     card.append(selector, link);
     target.append(card);
@@ -1452,8 +1452,14 @@ function signOut() {
 
 function openRequestedCarePage(dashboard) {
   // Only this fixed internal destination is accepted; never redirect to arbitrary query URLs.
-  if (new URLSearchParams(location.search).get('next') === 'care-card') {
+  const requested = new URLSearchParams(location.search).get("next") || "";
+  if (requested === "care-card") {
     location.replace('/bhw-care-card.html');
+    return;
+  }
+  const checkinProgram = requested.match(/^checkin-(primary|mind|charmed|flow)$/)?.[1];
+  if (checkinProgram) {
+    location.replace(`/bhw-checkin.html?program=${encodeURIComponent(checkinProgram)}&return=portal`);
     return;
   }
   renderDashboard(dashboard);

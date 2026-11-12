@@ -29,6 +29,8 @@ test("daily check-in uses the Care Connect design and explicit save states", asy
   assert.doesNotMatch(`${html}\n${css}`, /#9b7da5|#6a5480/i);
   assert.match(css, /"BHW Montserrat"/);
   assert.match(css, /"BHW Lora"/);
+  assert.match(html, /\/patient\/\?next=checkin-/);
+  assert.doesNotMatch(html, /bhw-patient-portal-mockup\.html\?next=dashboard/);
 });
 
 test("plate-photo AI is visibly gated while barcode scanning remains available", async () => {

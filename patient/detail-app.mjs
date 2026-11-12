@@ -6,7 +6,8 @@ import {
   visiblePrograms,
   visibleSystems,
 } from "./page-registry.mjs";
-import { SESSION_KEY, formatStatus, loadPortalDashboard, node, patientHref } from "./portal-data.mjs";
+import { SESSION_KEY, formatStatus, isLocalPreview, loadPortalDashboard, node, patientHref } from "./portal-data.mjs";
+import { CHECKIN_PROGRAM_IDS } from "./vitals-form.mjs?v=checkin-bridge-2";
 
 const $ = (id) => document.getElementById(id);
 const pageType = document.body.dataset.pageType;
@@ -14,6 +15,14 @@ const requestedId = new URLSearchParams(location.search).get("id");
 
 function linkBack() {
   location.href = patientHref("/patient/");
+}
+
+function programCheckinHref(programId) {
+  const url = new URL("/bhw-checkin.html", location.origin);
+  url.searchParams.set("program", CHECKIN_PROGRAM_IDS[programId] || "primary");
+  url.searchParams.set("return", "portal");
+  if (isLocalPreview) url.searchParams.set("preview", "1");
+  return `${url.pathname}${url.search}`;
 }
 
 function showGate(title, message, buttonLabel = "Return to my care space") {
@@ -202,7 +211,15 @@ function renderProgram(dashboard, entry) {
   });
   systems.append(related);
   grid.append(services, systems);
-  $("page-content").append(hero, grid);
+
+  const tools = node("section", "card content-card");
+  tools.append(node("p", "eyebrow", "Your program tools"), node("h2", "", `Check in with ${entry.name}`));
+  tools.append(node("p", "", "Use the secure check-in connected to this program. Your answers save to BHW Health Core only after you choose Save."));
+  const checkin = node("a", "related-link");
+  checkin.href = programCheckinHref(entry.id);
+  checkin.append(node("strong", "", `${entry.name} check-in`), node("span", "", "Open secure check-in →"));
+  tools.append(checkin, node("p", "clinical-note", "Opening the check-in does not send or save anything. Review your answers and choose Save when you are ready."));
+  $("page-content").append(hero, grid, tools);
 }
 
 async function start() {
