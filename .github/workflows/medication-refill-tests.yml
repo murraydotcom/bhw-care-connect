@@ -1,0 +1,18 @@
+name: Care Connect medication refill tests
+on:
+  pull_request:
+    paths: ['patient/**', 'netlify/functions/**', 'pages/bhw-care-card.html', 'test/**', '.github/workflows/medication-refill-tests.yml']
+  push:
+    branches: [main]
+    paths: ['patient/**', 'netlify/functions/**', 'pages/bhw-care-card.html', 'test/**', '.github/workflows/medication-refill-tests.yml']
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node --test test/care-card-requests.test.mjs test/patient-portal-cloud.test.mjs test/medication-refill-links.test.mjs

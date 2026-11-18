@@ -717,6 +717,13 @@ function renderMedications(medications) {
     head.append(node("h3", "", medication.name), node("span", "chip", formatStatus(medication.clinicalStatus)));
     item.append(head);
     if (medication.instructions) item.append(node("p", "", medication.instructions));
+    const details = [medication.strengthForm, medication.dose, medication.route, medication.frequency].filter(Boolean).join(' · ');
+    if (details) item.append(node('p', '', details));
+    if (medication.refill?.eligible && /^[a-f0-9]{64}$/.test(medication.refill.reference || '')) {
+      const link = node('a', 'quiet-action', 'Request a refill');
+      link.href = '/bhw-care-card.html?medication=' + encodeURIComponent(medication.refill.reference);
+      item.append(link);
+    }
     if (medication.reportedUse) item.append(node('p', '', `Provider-verified reported use: ${medication.reportedUse}`));
     if (medication.request) {
       const request = node("div", "request");
@@ -1501,3 +1508,4 @@ if (isLocalPreview) {
     setStatus(error.message || "Please sign in again.");
   });
 }
+
