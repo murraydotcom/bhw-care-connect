@@ -2,6 +2,7 @@ import crypto from 'node:crypto';
 import { verifyCareConnectPatientSession } from './patient-session.mjs';
 import { createCloudIntake, env, intakeConfigured } from './operations.mjs';
 import { createPatientPortalHandler } from '../patient-portal.mjs';
+import { medicationDescription, resolveMedicationSelection } from '../../../patient/medication-request-contract.mjs';
 
 const TYPES = { refill: 'Refill request', pharmacy: 'Pharmacy problem', question: 'Medication question', side: 'Reported side effect', change: 'Medication change question' };
 const json = (status, body) => Response.json(body, { status, headers: { 'Cache-Control': 'no-store, private' } });
@@ -22,26 +23,35 @@ export function createCareCardRequestsHandler({ secret = () => env('SESSION_SECR
     try { body = JSON.parse(raw); } catch { return json(400, { error: 'Invalid request.' }); }
     if (!body || !Object.hasOwn(TYPES, body.type)) return json(400, { error: 'Choose what you need.' });
     const medication = clean(body.medication, 500), pharmacy = clean(body.pharmacy, 300), message = clean(body.message, 2500), remaining = clean(body.remaining, 80);
-    if (!medication || !message) return json(400, { error: 'Enter the medication and what you need.' });
+    if ((!medication && !body.medicationReference) || !message) return json(400, { error: 'Choose the medication and tell us what you need.' });
     try {
       // Recheck current patient access with Health Core before writing; do not trust a browser patient ID.
       const access = await dashboard(new Request(new URL('/api/patient-portal/dashboard', request.url), { headers: { Authorization: `Bearer ${token}` } }));
       if (!access.ok) return json(access.status, { error: 'Your patient access could not be confirmed. Please sign in again or call the office.' });
+      const current = await access.json();
+      const selected = resolveMedicationSelection(body, current?.dashboard?.medications);
+      const medicationLine = selected ? `Medication from your current Health Core list: ${medicationDescription(selected)}` : `Patient-reported medication (not matched to the chart): ${medication}`;
+      const directions = selected?.instructions ? `Current recorded directions: ${selected.instructions}` : '';
+      const listReference = selected ? `health-core-medication:${selected.refill.reference}:${selected.refill.version}` : '';
+      const requestMessage = [medicationLine, directions, selected && `List status: ${selected.clinicalStatus}`, listReference && `Medication reference: ${listReference}`, `Request: ${TYPES[body.type]}`, remaining && `Amount left: ${remaining}`, pharmacy && `Pharmacy: ${pharmacy}`, message].filter(Boolean).join('\n');
+      if (requestMessage.length > 4000) return json(400, { error: 'Please shorten your message so the complete medication details can be sent together.' });
       const digest = crypto.createHash('sha256').update(`${session.bhwPatientId}:${key}`).digest('hex');
       const result = await queue({ submissionId: `care-card:${digest}`, body: {
         bhwPatientId: session.bhwPatientId, patientMatchStatus: 'matched', requestType: 'medication',
         priority: body.type === 'side' ? 'urgent' : 'high',
         summary: TYPES[body.type],
-        message: [`Patient-reported medication: ${medication}`, `Request: ${TYPES[body.type]}`, remaining && `Amount left: ${remaining}`, pharmacy && `Pharmacy: ${pharmacy}`, message].filter(Boolean).join('\n'),
+        message: requestMessage,
         requester: { preferredChannel: 'portal' }, source: 'care-connect', manualNotifyOnly: true, notificationMode: 'none',
-        routing: { targetSystem: 'crewos', assignedTeam: 'clinical', ownerRole: 'provider' },
+        routing: { targetSystem: 'crewos', assignedTeam: 'clinical', ownerRole: 'provider', ...(listReference ? { downstreamReference: listReference } : {}) },
         sourceMetadata: { sourceRecordId: `care-card:${digest}`, sourcePage: 'care-connect-care-card', medicationRequestType: body.type },
       }});
       const reference = result?.patientRequest?.patientRequestId;
       if (!reference) throw new Error('No saved reference');
       return json(200, { ok: true, reference, replayed: Boolean(result.replayed) });
-    } catch {
+    } catch (error) {
+      if (error.status === 409) return json(409, { error: error.message });
       return json(502, { error: 'We could not confirm your request was saved. Retry with the same details or call the office.' });
     }
   };
 }
+
