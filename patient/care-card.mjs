@@ -1,5 +1,6 @@
 const $ = id => document.getElementById(id);
 const titles = { refill:'Refill a medicine', pharmacy:'Pharmacy problem', question:'Medicine question', side:'Report a side effect', change:'Ask about changing a medicine' };
+const fromCheckIn = location.hash === '#check-in-refill';
 let type = '', payload = null, key = null, busy = false;
 const token = () => sessionStorage.getItem('bhw_pt_session') || '';
 function show(id) { for (const section of document.querySelectorAll('main > section')) section.hidden = section.id !== id; $('status').textContent = ''; const heading = $(id).querySelector('h2'); heading.tabIndex = -1; heading.focus(); }
@@ -15,7 +16,7 @@ $('another').onclick = reset;
 $('signout').onclick = () => { sessionStorage.removeItem('bhw_pt_session'); sessionStorage.removeItem('bhw_pt_family'); login(); };
 $('request-form').onsubmit = event => {
   event.preventDefault();
-  const next = { type, medication:$('medicine').value.trim(), remaining:$('remaining').value.trim(), pharmacy:$('pharmacy').value.trim(), message:$('message').value.trim() };
+  const next = { type, fromCheckIn, medication:$('medicine').value.trim(), remaining:$('remaining').value.trim(), pharmacy:$('pharmacy').value.trim(), message:$('message').value.trim() };
   if (!next.medication || !next.message) { $('status').textContent = 'Enter the medicine and what you need.'; return; }
   // Keep the retry reference for an unchanged request, including after an ambiguous network error.
   if (JSON.stringify(next) !== JSON.stringify(payload)) key = crypto.randomUUID();
@@ -45,7 +46,8 @@ async function start() {
     const name = data.dashboard.patient?.preferredName || data.dashboard.patient?.firstName;
     $('greeting').textContent = name ? `How can we help, ${name}?` : 'How can we help?';
     for (const med of data.dashboard.medications || []) if(med.name && med.clinicalStatus === 'active') { const option=document.createElement('option');option.value=[med.name,med.dose].filter(Boolean).join(' ');$('medicines').append(option); }
-    show('welcome');
+    if (fromCheckIn) document.querySelector('[data-type=refill]').click();
+    else show('welcome');
   } catch(error) { $('status').textContent = `${error.message} You can refresh to try again or call the office.`; }
 }
 start();

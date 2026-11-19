@@ -14,8 +14,9 @@ function handler(options={}) { return createCareCardRequestsHandler({secret:()=>
 test('patient identity comes from verified session and all five choices reach clinical review',async()=>{
  for(const type of ['refill','pharmacy','question','side','change']){
   let sent;
-  const r=await handler({queue:async value=>{sent=value;return {patientRequest:{patientRequestId:'REQ-SYNTHETIC'}};}})(request({...body,type}));
+  const r=await handler({queue:async value=>{sent=value;return {patientRequest:{patientRequestId:'REQ-SYNTHETIC'}};}})(request({...body,type,fromCheckIn:true}));
   assert.equal(r.status,200);assert.equal(sent.body.bhwPatientId,'BHW0000');assert.equal(sent.body.requestType,'medication');assert.equal(sent.body.routing.targetSystem,'crewos');assert.equal(sent.body.manualNotifyOnly,true);assert.equal(sent.body.notificationMode,'none');assert.equal(sent.body.priority,type==='side'?'urgent':'high');
+  assert.equal(sent.body.sourceMetadata.sourcePage,type==='refill'?'care-connect-check-in':'care-connect-care-card');
  }
 });
 test('invalid, expired, unlinked and inactive sessions cannot write',async()=>{

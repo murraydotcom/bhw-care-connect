@@ -35,7 +35,7 @@ export function createCareCardRequestsHandler({ secret = () => env('SESSION_SECR
         message: [`Patient-reported medication: ${medication}`, `Request: ${TYPES[body.type]}`, remaining && `Amount left: ${remaining}`, pharmacy && `Pharmacy: ${pharmacy}`, message].filter(Boolean).join('\n'),
         requester: { preferredChannel: 'portal' }, source: 'care-connect', manualNotifyOnly: true, notificationMode: 'none',
         routing: { targetSystem: 'crewos', assignedTeam: 'clinical', ownerRole: 'provider' },
-        sourceMetadata: { sourceRecordId: `care-card:${digest}`, sourcePage: 'care-connect-care-card', medicationRequestType: body.type },
+        sourceMetadata: { sourceRecordId: `care-card:${digest}`, sourcePage: body.type === 'refill' && body.fromCheckIn === true ? 'care-connect-check-in' : 'care-connect-care-card', medicationRequestType: body.type },
       }});
       const reference = result?.patientRequest?.patientRequestId;
       if (!reference) throw new Error('No saved reference');
