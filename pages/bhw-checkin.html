@@ -304,6 +304,7 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M10.5 20.5 4 14a5 5 0 0 1 7-7l6.5 6.5a5 5 0 0 1-7 7z"/><path d="M7.5 7.5 16 16"/></svg></span>Medications &amp; vitamins</h2>
     <div class="hint">Check off what you&rsquo;ve taken from the medication list shared in your Health Blueprint.</div>
     <div id="meds"></div>
+    <p id="refill-link" hidden><a href="/bhw-care-card.html#check-in-refill">Request a medication refill</a> <span class="hint">Save your check-in before opening the refill form.</span></p>
   </div>
 
   <!-- VITALS -->
@@ -462,6 +463,7 @@ const LOCAL_CHECKIN_KEY='bhw_patient_checkins_preview_v1';
 // preview uses only synthetic BHW0000 data; production identity comes from the signed session.
 const SESSION_PT=(function(){try{var f=JSON.parse(sessionStorage.getItem('bhw_pt_family')||'null');return (f&&f.patient)||null;}catch(e){return null;}})();
 const SESSION_TOKEN=sessionStorage.getItem('bhw_pt_session')||'';
+if(SESSION_TOKEN && !LOCAL_PREVIEW) document.getElementById('refill-link').hidden=false;
 const PATIENT={name:(SESSION_PT&&SESSION_PT.name)||(LOCAL_PREVIEW?'Synthetic Patient':'Patient'),phone:(SESSION_PT&&SESSION_PT.phone)||'',id:(SESSION_PT&&SESSION_PT.id)||(LOCAL_PREVIEW?'BHW0000':'')};
 let ACTIVE_MONITORING_PLAN=null;
 const MONITORING_ANSWERS={};
