@@ -302,7 +302,7 @@ body{font-family:'OpenSans',system-ui,sans-serif;color:var(--ink);font-size:14px
   <!-- MEDICATION / VITAMIN COMPLIANCE -->
   <div class="card" id="medications-card">
     <h2><span class="ic"><svg viewBox="0 0 24 24"><path d="M10.5 20.5 4 14a5 5 0 0 1 7-7l6.5 6.5a5 5 0 0 1-7 7z"/><path d="M7.5 7.5 16 16"/></svg></span>Medications &amp; vitamins</h2>
-    <div class="hint">Check off what you&rsquo;ve taken from the medication list shared in your Health Blueprint.</div>
+    <div class="hint">If your care team has shared a medication list in myBHW, check off what you took today.</div>
     <div id="meds"></div>
     <p id="refill-link" hidden><a href="/bhw-care-card.html#check-in-refill">Request a medication refill</a> <span class="hint">Save your check-in before opening the refill form.</span></p>
   </div>
@@ -529,7 +529,7 @@ const FEEL={Rough:1,Low:2,OK:3,Good:4,Great:5}, SLEEPS={Rough:1,OK:2,Good:3,Grea
 function renderMedicationChecklist(medications){
   const box=document.getElementById('meds'); box.innerHTML='';
   const active=(Array.isArray(medications)?medications:[]).filter(m=>m&&m.name&&m.clinicalStatus==='active');
-  if(!active.length){ box.innerHTML='<div class="off-status">No active medication list is shared in this view. Use the medication profile for requests or corrections.</div>'; return; }
+  if(!active.length){ box.innerHTML='<div class="off-status">No active medication list is available in Check In. You can still request a refill below.</div>'; return; }
   active.forEach((m,i)=>{
     const row=document.createElement('div'); row.className='chk'; row.dataset.med=String(i);
     row.addEventListener('click',()=>row.classList.toggle('on'));
